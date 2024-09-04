@@ -1,4 +1,4 @@
-import ProductCard from "src/components/event/EventCard";
+import ProductCard from "src/components/product/ProductCard";
 
 const Layout = () => {
   return (
