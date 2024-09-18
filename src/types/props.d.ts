@@ -1,3 +1,7 @@
-export interface IProductCardProps {
-  title: string;
+export {};
+
+declare global {
+  interface IProductCardProps {
+    title: string;
+  }
 }

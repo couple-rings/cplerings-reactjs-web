@@ -1,5 +1,3 @@
-import { IProductCardProps } from "src/types/props";
-
 const ProductCard = (props: IProductCardProps) => {
   const { title } = props;
 
