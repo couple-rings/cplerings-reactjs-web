@@ -1,11 +1,11 @@
-import ProductCard from "src/components/product/ProductCard";
+import { Outlet } from "react-router-dom";
+import Header from "src/components/header/Header";
 
 const Layout = () => {
   return (
     <div>
-      {[0, 1, 2].map((item) => {
-        return <ProductCard title={`Title ${item}`} key={item} />;
-      })}
+      <Header />
+      <Outlet />
     </div>
   );
 };

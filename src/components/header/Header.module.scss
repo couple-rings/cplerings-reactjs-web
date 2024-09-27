@@ -1,0 +1,70 @@
+.container {
+    text-align: center;
+
+    .slogan {
+        padding  : 1rem;
+        font-size: 1.1rem;
+        color    : #3a3a3a;
+    }
+
+    .transitionText {
+        background-color: #b43620;
+        color           : rgb(255, 255, 255);
+        padding         : 1rem;
+        display         : flex;
+        justify-content : center;
+        font-size       : 1.1rem;
+        cursor          : pointer;
+
+        @media screen and (max-width: 768px) {
+            font-size: 0.8rem;
+        }
+    }
+
+    .buyLink {
+        text-decoration: underline;
+        font-weight    : bold;
+    }
+
+    .tabBar {
+        background-color: white;
+        box-shadow      : none;
+        padding         : 1rem 0;
+
+        .logo {
+            width : 50%;
+            cursor: pointer;
+        }
+
+        .icon {
+            &:hover {
+                color: #b43620;
+            }
+        }
+
+        .iconContainer {
+            display    : flex;
+            align-items: center;
+            gap        : 8px;
+
+            .iconText {
+                font-size: 12px;
+            }
+
+            &:hover {
+                color: #b43620;
+            }
+        }
+
+        .tab {
+            color    : #3a3a3a;
+            font-size: 1.1rem;
+            cursor   : pointer;
+
+            &:hover {
+                color: #b43620;
+            }
+
+        }
+    }
+}
