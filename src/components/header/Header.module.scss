@@ -64,7 +64,79 @@
             &:hover {
                 color: #b43620;
             }
+        }
+    }
+}
 
+.tab {
+    padding: 1.5rem;
+
+    .columnsContainer {
+        display        : flex;
+        flex-direction : row;
+        justify-content: space-evenly;
+
+        .column {
+            display       : flex;
+            flex-direction: column;
+            gap           : 12px;
+
+            .title {
+                font-weight: 600;
+            }
+
+            .item {
+                cursor: pointer;
+
+                &:hover {
+                    color: #b43620;
+                }
+            }
+        }
+
+        .coverImg {
+            width: 15%;
+        }
+    }
+
+    .exploreLink {
+        margin-bottom: 1rem;
+        cursor       : pointer;
+
+        &:hover {
+            color: #b43620;
+        }
+    }
+
+    .cardsContainer {
+        display        : flex;
+        flex-direction : row;
+        justify-content: center;
+        gap            : 4rem;
+    }
+}
+
+.searchDrawerContent {
+    display        : flex;
+    justify-content: center;
+    padding        : 1.8rem 0;
+
+    .title {
+        font-weight: 600;
+    }
+
+    .listContainer {
+        display       : flex;
+        flex-direction: column;
+        width         : 65ch;
+        gap           : 13px;
+
+        .listItem {
+            cursor: pointer;
+
+            &:hover {
+                color: #b43620;
+            }
         }
     }
 }

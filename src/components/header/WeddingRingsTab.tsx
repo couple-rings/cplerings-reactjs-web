@@ -1,0 +1,88 @@
+import { Container } from "@mui/material";
+import styles from "./Header.module.scss";
+import weddingRing from "src/assets/weddingRing.png";
+
+const collections = [
+  "DR Heart",
+  "Believe",
+  "Love Mark",
+  "Eternal Love",
+  "Love Line",
+  "Love Palace",
+];
+
+const metals = [
+  "Vàng Trắng 14K",
+  "Vàng Trắng 18K",
+  "Vàng Thường 18K",
+  "Vàng Hồng 18K",
+];
+
+const prices = [
+  "Dưới 20 Triệu",
+  "20 - 40 Triệu",
+  "40 - 50 Triệu",
+  "Trên 50 Triệu",
+];
+
+const genders = ["Nhẫn Nam", "Nhẫn Nữ", "Nhẫn Cưới"];
+
+function WeddingRingsTab() {
+  return (
+    <div className={styles.tab}>
+      <div className={styles.columnsContainer}>
+        <div className={styles.column}>
+          <div className={styles.title}>Bộ Sưu Tập</div>
+          {collections.map((item, index) => {
+            return (
+              <div key={index} className={styles.item}>
+                {item}
+              </div>
+            );
+          })}
+        </div>
+
+        <div className={styles.column}>
+          <div className={styles.title}>Loại Vàng</div>
+          {metals.map((item, index) => {
+            return (
+              <div key={index} className={styles.item}>
+                {item}
+              </div>
+            );
+          })}
+        </div>
+
+        <div className={styles.column}>
+          <div className={styles.title}>Mức Giá</div>
+          {prices.map((item, index) => {
+            return (
+              <div key={index} className={styles.item}>
+                {item}
+              </div>
+            );
+          })}
+        </div>
+
+        <div className={styles.column}>
+          <div className={styles.title}>Giới Tính</div>
+          {genders.map((item, index) => {
+            return (
+              <div key={index} className={styles.item}>
+                {item}
+              </div>
+            );
+          })}
+        </div>
+
+        <img src={weddingRing} className={styles.coverImg} />
+      </div>
+
+      <div className={styles.exploreLink}>
+        <Container>Khám Phá Tất Cả Mẫu Nhẫn Cưới &gt;</Container>
+      </div>
+    </div>
+  );
+}
+
+export default WeddingRingsTab;

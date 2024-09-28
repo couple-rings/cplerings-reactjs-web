@@ -27,11 +27,20 @@ import ListItemText from "@mui/material/ListItemText";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import { useNavigate } from "react-router-dom";
+import { InputAdornment, OutlinedInput } from "@mui/material";
+import FormControl from "@mui/material/FormControl";
+
+const fastSearchs = [
+  "Nhẫn Cưới",
+  "Nhẫn Nam",
+  "Tình Yêu Vĩnh Cữu",
+  "Hình Trái Tim",
+  "Nhẫn Cặp",
+];
 
 const leftTabs = [
   {
     icon: <SearchOutlinedIcon className={styles.icon} />,
-    path: "",
   },
   {
     icon: <FmdGoodOutlinedIcon className={styles.icon} />,
@@ -106,6 +115,7 @@ const bottomMobileMenu = [
 const UpperBar = () => {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [open, setOpen] = useState(false);
+  const [openSearch, setOpenSearch] = useState(false);
 
   const navigate = useNavigate();
 
@@ -122,132 +132,180 @@ const UpperBar = () => {
   };
 
   return (
-    <AppBar position="static" className={styles.tabBar}>
-      <Container>
-        <Toolbar disableGutters>
-          {/* mobile screen - left part */}
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={toggleDrawer(true)}
-            >
-              <MenuIcon fontSize="large" />
-            </IconButton>
-
-            <Drawer open={open} onClose={toggleDrawer(false)}>
-              <List sx={{ width: 300 }}>
-                {bottomMobileMenu.map((item, index) => (
-                  <ListItem key={index} disablePadding>
-                    <ListItemButton>
-                      <ListItemIcon>{item.icon}</ListItemIcon>
-                      <ListItemText primary={item.text} />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
-              </List>
-              <Divider />
-              <List>
-                {bottomMobileMenu.map((item, index) => (
-                  <ListItem key={index} disablePadding>
-                    <ListItemButton>
-                      <ListItemIcon>{item.icon}</ListItemIcon>
-                      <ListItemText primary={item.text} />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
-              </List>
-            </Drawer>
-
-            <IconButton sx={{ my: 2 }}>
-              <SearchOutlinedIcon fontSize="large" />
-            </IconButton>
-          </Box>
-
-          {/* desktop screen - left part */}
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {leftTabs.map((item, index) => (
-              <IconButton key={index} sx={{ my: 2, mx: 1 }}>
-                {item.icon}
+    <>
+      <AppBar position="static" className={styles.tabBar}>
+        <Container>
+          <Toolbar disableGutters>
+            {/* mobile screen - left part */}
+            <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+              <IconButton
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={toggleDrawer(true)}
+              >
+                <MenuIcon fontSize="large" />
               </IconButton>
-            ))}
-          </Box>
 
-          {/* logo - center */}
-          <Box sx={{ flexGrow: 0, display: "flex", justifyContent: "center" }}>
-            <img src={logo} className={styles.logo} />
-          </Box>
+              <Drawer open={open} onClose={toggleDrawer(false)}>
+                <List sx={{ width: 300 }}>
+                  {bottomMobileMenu.map((item, index) => (
+                    <ListItem key={index} disablePadding>
+                      <ListItemButton>
+                        <ListItemIcon>{item.icon}</ListItemIcon>
+                        <ListItemText primary={item.text} />
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </List>
+                <Divider />
+                <List>
+                  {bottomMobileMenu.map((item, index) => (
+                    <ListItem key={index} disablePadding>
+                      <ListItemButton>
+                        <ListItemIcon>{item.icon}</ListItemIcon>
+                        <ListItemText primary={item.text} />
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </List>
+              </Drawer>
 
-          {/* desktop screen - right part */}
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: { xs: "none", md: "flex" },
-              justifyContent: "flex-end",
-            }}
-          >
-            <Tooltip title="Tài Khoản Của Tôi">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, mr: 1 }}>
-                <PermIdentityIcon fontSize="large" className={styles.icon} />
+              <IconButton sx={{ my: 2 }}>
+                <SearchOutlinedIcon fontSize="large" />
               </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "60px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "center",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting, index) => (
-                <MenuItem
+            </Box>
+
+            {/* desktop screen - left part */}
+            <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+              {leftTabs.map((item, index) => (
+                <IconButton
                   key={index}
+                  sx={{ my: 2, mx: 1 }}
                   onClick={() => {
-                    if (setting.path) navigate(setting.path);
+                    if (item.path !== undefined) navigate(item.path);
+                    else setOpenSearch(true);
                   }}
                 >
-                  <Typography sx={{ textAlign: "center" }}>
-                    {setting.text}
-                  </Typography>
-                </MenuItem>
+                  {item.icon}
+                </IconButton>
               ))}
-            </Menu>
+            </Box>
 
-            {rightTabs.map((item, index) => (
-              <IconButton
-                key={index}
-                sx={{ my: 2, mx: 1 }}
-                onClick={() => navigate(item.path)}
+            {/* logo - center */}
+            <Box
+              sx={{ flexGrow: 0, display: "flex", justifyContent: "center" }}
+            >
+              <img src={logo} className={styles.logo} />
+            </Box>
+
+            {/* desktop screen - right part */}
+            <Box
+              sx={{
+                flexGrow: 1,
+                display: { xs: "none", md: "flex" },
+                justifyContent: "flex-end",
+              }}
+            >
+              <Tooltip title="Tài Khoản Của Tôi">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, mr: 1 }}>
+                  <PermIdentityIcon fontSize="large" className={styles.icon} />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "60px" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
               >
-                {item.icon}
-              </IconButton>
-            ))}
-          </Box>
+                {settings.map((setting, index) => (
+                  <MenuItem
+                    key={index}
+                    onClick={() => {
+                      if (setting.path) navigate(setting.path);
+                    }}
+                  >
+                    <Typography sx={{ textAlign: "center" }}>
+                      {setting.text}
+                    </Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
 
-          {/* mobile screen - right part */}
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: { xs: "flex", md: "none" },
-              justifyContent: "flex-end",
-            }}
-          >
-            <IconButton sx={{ my: 2 }}>
-              <ShoppingBagOutlinedIcon fontSize="large" />
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+              {rightTabs.map((item, index) => (
+                <IconButton
+                  key={index}
+                  sx={{ my: 2, mx: 1 }}
+                  onClick={() => navigate(item.path)}
+                >
+                  {item.icon}
+                </IconButton>
+              ))}
+            </Box>
+
+            {/* mobile screen - right part */}
+            <Box
+              sx={{
+                flexGrow: 1,
+                display: { xs: "flex", md: "none" },
+                justifyContent: "flex-end",
+              }}
+            >
+              <IconButton sx={{ my: 2 }}>
+                <ShoppingBagOutlinedIcon fontSize="large" />
+              </IconButton>
+            </Box>
+          </Toolbar>
+        </Container>
+      </AppBar>
+
+      <Drawer
+        anchor={"top"}
+        open={openSearch}
+        onClose={() => setOpenSearch(false)}
+      >
+        <div className={styles.searchDrawerContent}>
+          <FormControl sx={{ width: "65ch" }} variant="outlined">
+            <OutlinedInput
+              id="outlined-adornment-weight"
+              startAdornment={
+                <InputAdornment position="start">
+                  <SearchOutlinedIcon />
+                </InputAdornment>
+              }
+              aria-describedby="outlined-weight-helper-text"
+              size="small"
+              sx={{ borderRadius: 0 }}
+            />
+          </FormControl>
+        </div>
+
+        <Divider />
+
+        <div className={styles.searchDrawerContent}>
+          <div className={styles.listContainer}>
+            <div className={styles.title}>Tìm Kiếm Nhanh</div>
+            {fastSearchs.map((item, index) => {
+              return (
+                <div key={index} className={styles.listItem}>
+                  {item}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </Drawer>
+    </>
   );
 };
 
