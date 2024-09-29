@@ -6,7 +6,6 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
@@ -18,17 +17,11 @@ import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
-import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import { useNavigate } from "react-router-dom";
-import { InputAdornment, OutlinedInput } from "@mui/material";
+import { InputAdornment, OutlinedInput, Grid } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
+import SideBar from "./SideBar";
 
 const fastSearchs = [
   "Nhẫn Cưới",
@@ -85,43 +78,12 @@ const settings = [
   },
 ];
 
-const bottomMobileMenu = [
-  {
-    icon: <PermIdentityIcon />,
-    text: "Tài Khoản Của Tôi",
-    path: "",
-  },
-  {
-    icon: <FavoriteBorderOutlinedIcon />,
-    text: "Danh Sách Yêu Thích",
-    path: "",
-  },
-  {
-    icon: <ShoppingBagOutlinedIcon />,
-    text: "Giỏ Hàng Của Tôi",
-    path: "",
-  },
-  {
-    icon: <PhoneOutlinedIcon />,
-    text: "Liên Hệ",
-    path: "",
-  },
-  {
-    icon: <LogoutOutlinedIcon />,
-    text: "Đăng Xuất",
-  },
-];
-
 const UpperBar = () => {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-  const [open, setOpen] = useState(false);
+
   const [openSearch, setOpenSearch] = useState(false);
 
   const navigate = useNavigate();
-
-  const toggleDrawer = (newOpen: boolean) => () => {
-    setOpen(newOpen);
-  };
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -138,40 +100,9 @@ const UpperBar = () => {
           <Toolbar disableGutters>
             {/* mobile screen - left part */}
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-              <IconButton
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={toggleDrawer(true)}
-              >
-                <MenuIcon fontSize="large" />
-              </IconButton>
+              <SideBar />
 
-              <Drawer open={open} onClose={toggleDrawer(false)}>
-                <List sx={{ width: 300 }}>
-                  {bottomMobileMenu.map((item, index) => (
-                    <ListItem key={index} disablePadding>
-                      <ListItemButton>
-                        <ListItemIcon>{item.icon}</ListItemIcon>
-                        <ListItemText primary={item.text} />
-                      </ListItemButton>
-                    </ListItem>
-                  ))}
-                </List>
-                <Divider />
-                <List>
-                  {bottomMobileMenu.map((item, index) => (
-                    <ListItem key={index} disablePadding>
-                      <ListItemButton>
-                        <ListItemIcon>{item.icon}</ListItemIcon>
-                        <ListItemText primary={item.text} />
-                      </ListItemButton>
-                    </ListItem>
-                  ))}
-                </List>
-              </Drawer>
-
-              <IconButton sx={{ my: 2 }}>
+              <IconButton sx={{ my: 2 }} onClick={() => setOpenSearch(true)}>
                 <SearchOutlinedIcon fontSize="large" />
               </IconButton>
             </Box>
@@ -274,26 +205,28 @@ const UpperBar = () => {
         open={openSearch}
         onClose={() => setOpenSearch(false)}
       >
-        <div className={styles.searchDrawerContent}>
-          <FormControl sx={{ width: "65ch" }} variant="outlined">
-            <OutlinedInput
-              id="outlined-adornment-weight"
-              startAdornment={
-                <InputAdornment position="start">
-                  <SearchOutlinedIcon />
-                </InputAdornment>
-              }
-              aria-describedby="outlined-weight-helper-text"
-              size="small"
-              sx={{ borderRadius: 0 }}
-            />
-          </FormControl>
-        </div>
+        <Grid container className={styles.searchDrawerContent}>
+          <Grid item xs={11} sm={8} md={5}>
+            <FormControl fullWidth variant="outlined">
+              <OutlinedInput
+                id="outlined-adornment-weight"
+                startAdornment={
+                  <InputAdornment position="start">
+                    <SearchOutlinedIcon />
+                  </InputAdornment>
+                }
+                aria-describedby="outlined-weight-helper-text"
+                size="small"
+                sx={{ borderRadius: 0 }}
+              />
+            </FormControl>
+          </Grid>
+        </Grid>
 
         <Divider />
 
-        <div className={styles.searchDrawerContent}>
-          <div className={styles.listContainer}>
+        <Grid container className={styles.searchDrawerContent}>
+          <Grid item xs={11} sm={8} md={5} className={styles.listContainer}>
             <div className={styles.title}>Tìm Kiếm Nhanh</div>
             {fastSearchs.map((item, index) => {
               return (
@@ -302,8 +235,8 @@ const UpperBar = () => {
                 </div>
               );
             })}
-          </div>
-        </div>
+          </Grid>
+        </Grid>
       </Drawer>
     </>
   );

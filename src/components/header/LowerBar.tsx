@@ -9,36 +9,7 @@ import Fade from "@mui/material/Fade";
 import WeddingRingsTab from "./WeddingRingsTab";
 import JewelryTab from "./JewelryTab";
 import OtherTab from "./OtherTab";
-import store from "src/assets/store.png";
-import story from "src/assets/story.jpg";
-import loveCheck from "src/assets/header_love_check.jpg";
-import loveAgreement from "src/assets/header_love_agreement.jpg";
-
-const certificateTabData = [
-  {
-    title: "Minh Chứng Tình Yêu",
-    subTitle: "Bắt Đầu Ngay >",
-    img: loveCheck,
-  },
-  {
-    title: "Khám Phá Thỏa Thuận Tình Yêu",
-    subTitle: "Khám Phá Thêm >",
-    img: loveAgreement,
-  },
-];
-
-const aboutTabData = [
-  {
-    title: "Sứ Mệnh CR",
-    subTitle: "Khám Phá Thêm >",
-    img: story,
-  },
-  {
-    title: "Tìm Cửa Hàng",
-    subTitle: "Tìm Hiểu Thêm >",
-    img: store,
-  },
-];
+import { aboutTabData, certificateTabData } from "src/utils/constants";
 
 const tabs = [
   {
@@ -83,14 +54,18 @@ const LowerBar = () => {
 
   return (
     <>
-      <AppBar position="static" className={styles.tabBar}>
+      <AppBar
+        position="static"
+        className={styles.tabBar}
+        sx={{ display: { xs: "none", md: "flex" } }}
+      >
         <Container>
           <Toolbar disableGutters>
             <Box
               sx={{
                 flexGrow: 1,
-                display: { xs: "none", md: "flex" },
                 justifyContent: "center",
+                display: "flex",
                 gap: 8,
               }}
             >
@@ -114,7 +89,7 @@ const LowerBar = () => {
             style: {
               width: "100%",
               boxShadow: "0 4px 2px -2px #ccc",
-              borderTop: "1px solid black",
+              borderTop: "1px solid #ccc",
               borderRadius: 0,
             },
           },

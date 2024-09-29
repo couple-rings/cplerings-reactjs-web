@@ -1,4 +1,10 @@
-import { Container } from "@mui/material";
+import {
+  Container,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
 import styles from "./Header.module.scss";
 import jewelry from "src/assets/Jewelry.png";
 
@@ -74,10 +80,64 @@ function JewelryTab() {
       </div>
 
       <div className={styles.exploreLink}>
-        <Container>Khám Phá Tất Cả Trang Sức &gt;</Container>
+        <Container sx={{ mt: 3 }}>Khám Phá Tất Cả Trang Sức &gt;</Container>
       </div>
     </div>
   );
 }
+
+export const JewelryTabMobile = () => {
+  return (
+    <List>
+      <ListItemButton>
+        <ListItemText primary={"Tất Các Trang Sức >"} />
+      </ListItemButton>
+
+      <ListItem>
+        <ListItemText primary={"Bộ Sưu Tập"} />
+      </ListItem>
+      {collections.map((item, index) => {
+        return (
+          <ListItemButton key={index} sx={{ pl: 5 }}>
+            <ListItemText secondary={item} />
+          </ListItemButton>
+        );
+      })}
+
+      <ListItem>
+        <ListItemText primary={"Loại Trang Sức"} />
+      </ListItem>
+      {categories.map((item, index) => {
+        return (
+          <ListItemButton key={index} sx={{ pl: 5 }}>
+            <ListItemText secondary={item} />
+          </ListItemButton>
+        );
+      })}
+
+      <ListItem>
+        <ListItemText primary={"Loại Vàng"} />
+      </ListItem>
+      {metals.map((item, index) => {
+        return (
+          <ListItemButton key={index} sx={{ pl: 5 }}>
+            <ListItemText secondary={item} />
+          </ListItemButton>
+        );
+      })}
+
+      <ListItem>
+        <ListItemText primary={"Giới Tính"} />
+      </ListItem>
+      {genders.map((item, index) => {
+        return (
+          <ListItemButton key={index} sx={{ pl: 5 }}>
+            <ListItemText secondary={item} />
+          </ListItemButton>
+        );
+      })}
+    </List>
+  );
+};
 
 export default JewelryTab;

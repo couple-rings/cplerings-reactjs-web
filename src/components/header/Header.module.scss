@@ -1,3 +1,5 @@
+@use 'src/index.scss'as index;
+
 .container {
     text-align: center;
 
@@ -8,7 +10,7 @@
     }
 
     .transitionText {
-        background-color: #b43620;
+        background-color: index.$secondaryColor;
         color           : rgb(255, 255, 255);
         padding         : 1rem;
         display         : flex;
@@ -38,7 +40,7 @@
 
         .icon {
             &:hover {
-                color: #b43620;
+                color: index.$secondaryColor;
             }
         }
 
@@ -52,24 +54,24 @@
             }
 
             &:hover {
-                color: #b43620;
+                color: index.$secondaryColor;
             }
         }
 
         .tab {
-            color    : #3a3a3a;
+            color    : #555;
             font-size: 1.1rem;
             cursor   : pointer;
 
             &:hover {
-                color: #b43620;
+                color: index.$secondaryColor;
             }
         }
     }
 }
 
 .tab {
-    padding: 1.5rem;
+    padding: 1.2rem;
 
     .columnsContainer {
         display        : flex;
@@ -89,7 +91,7 @@
                 cursor: pointer;
 
                 &:hover {
-                    color: #b43620;
+                    color: index.$secondaryColor;
                 }
             }
         }
@@ -104,7 +106,7 @@
         cursor       : pointer;
 
         &:hover {
-            color: #b43620;
+            color: index.$secondaryColor;
         }
     }
 
@@ -128,14 +130,13 @@
     .listContainer {
         display       : flex;
         flex-direction: column;
-        width         : 65ch;
         gap           : 13px;
 
         .listItem {
             cursor: pointer;
 
             &:hover {
-                color: #b43620;
+                color: index.$secondaryColor;
             }
         }
     }
