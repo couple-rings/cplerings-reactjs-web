@@ -4,6 +4,7 @@ import Common from "src/pages/Common/Layout";
 import ForgetPassword from "src/pages/Common/ForgetPassword/ForgetPassword";
 import ResetPassword from "src/pages/Common/ResetPassword/ResetPassword";
 import VerifyAccount from "src/pages/Common/VerifyAccount/VerifyAccount";
+import Login from "src/pages/Common/Login/Login";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: "verify-account",
         element: <VerifyAccount />,
+      },
+      {
+        path: "login",
+        element: <Login />,
       },
     ],
   },
