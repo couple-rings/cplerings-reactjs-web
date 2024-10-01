@@ -1,0 +1,73 @@
+@use 'src/index.scss'as *;
+
+.container {
+    .upper {
+        padding         : 2.5rem 0;
+        text-align      : center;
+        background-color: #fbfaf9;
+        border-bottom   : 1px solid #ccc;
+
+        .primaryText {
+            font-size: 1.8rem;
+        }
+
+        .secondaryText {
+            margin   : 1.5rem 0;
+            color    : #3a3a3a;
+            font-size: 1.1rem;
+        }
+
+        .iconBar {
+            display        : flex;
+            justify-content: center;
+            margin-top     : 2rem;
+            gap            : 40px;
+
+            .icon {
+                width : 35px;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .lower {
+        padding: 3rem;
+
+        .columnContainer {
+            display        : flex;
+            justify-content: space-evenly;
+
+            .column {
+                margin-bottom: 1rem;
+
+                .title {
+                    font-weight  : 600;
+                    margin-bottom: 2rem;
+                    font-size    : 1.1rem;
+                    color        : #3a3a3a;
+                }
+
+                .item {
+                    color        : #3a3a3a;
+                    margin-bottom: 15px;
+                    cursor       : pointer;
+
+                    &:hover {
+                        color: $secondaryColor;
+                    }
+                }
+
+                .plainTextItem {
+                    color        : #3a3a3a;
+                    margin-bottom: 15px;
+                }
+            }
+        }
+
+        .statement {
+            color     : #3a3a3a;
+            margin-top: 5rem;
+            text-align: center;
+        }
+    }
+}

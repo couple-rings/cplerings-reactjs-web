@@ -9,3 +9,11 @@ export const primaryBtn: SxProps = {
   },
   padding: 2,
 };
+
+export const iconBtn: SxProps = {
+  backgroundColor: "#a7a7a7",
+  borderRadius: 0,
+  "&: hover": {
+    backgroundColor: "#414141",
+  },
+};
