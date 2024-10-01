@@ -1,15 +1,30 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import HomeDefault from "src/pages/Home/Index";
-import Home from "src/pages/Home/Layout";
+import Home from "src/pages/Common/Index";
+import Common from "src/pages/Common/Layout";
+import ForgetPassword from "src/pages/Common/ForgetPassword/ForgetPassword";
+import ResetPassword from "src/pages/Common/ResetPassword/ResetPassword";
+import VerifyAccount from "src/pages/Common/VerifyAccount/VerifyAccount";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <Common />,
     children: [
       {
         index: true,
-        element: <HomeDefault />,
+        element: <Home />,
+      },
+      {
+        path: "forget-password",
+        element: <ForgetPassword />,
+      },
+      {
+        path: "reset-password",
+        element: <ResetPassword />,
+      },
+      {
+        path: "verify-account",
+        element: <VerifyAccount />,
       },
     ],
   },
