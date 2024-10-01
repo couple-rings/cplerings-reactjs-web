@@ -3,15 +3,21 @@ import {
   FormControl,
   FormControlLabel,
   OutlinedInput,
+  InputAdornment,
   Grid,
+  IconButton,
   Checkbox,
   FormHelperText,
 } from "@mui/material";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./Login.module.scss";
 import { primaryBtn } from "src/utils/styles";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { emailPattern } from "src/utils/constants";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { passwordPattern } from "src/utils/constants";
 
 interface IFormInput {
   email: string;
@@ -19,6 +25,7 @@ interface IFormInput {
 }
 
 const Login = () => {
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -55,11 +62,26 @@ const Login = () => {
             <FormControl variant="outlined">
               <OutlinedInput
                 sx={{ borderRadius: 0 }}
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Nhập Mật Khẩu"
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword((show) => !show)}
+                      edge="start"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
                 error={!!errors.password}
                 {...register("password", {
                   required: "Vui lòng nhập mật khẩu",
+                  pattern: {
+                    value: passwordPattern,
+                    message:
+                      "Tối thiểu 8 ký tự bao gồm ký tự đặc biệt, số và chữ cái",
+                  },
                 })}
               />
               {errors.password && (
@@ -72,7 +94,7 @@ const Login = () => {
                 control={
                   <Checkbox color="primary" />
                 }
-                label="Email me Darry Ring news, updates and offers."
+                label="Email tôi về tin tức, cập nhật và ưu đãi của Couple Rings."
               />
             </FormControl>
 
