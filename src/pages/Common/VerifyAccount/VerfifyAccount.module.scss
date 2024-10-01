@@ -1,0 +1,29 @@
+@use 'src/index.scss'as *;
+
+.container {
+    padding-top: 3rem;
+
+    .title {
+        font-size    : 2.2rem;
+        color        : #464646;
+        margin-bottom: 2rem;
+        text-align   : center;
+    }
+
+    .form {
+        display       : flex;
+        flex-direction: column;
+        gap           : 20px
+    }
+
+    .backBtn {
+        color     : #5c5c5c;
+        text-align: center;
+        padding   : 0.8rem;
+        cursor    : pointer;
+
+        &:hover {
+            color: $secondaryColor;
+        }
+    }
+}
