@@ -24,4 +24,5 @@ style
 *.sln
 *.sw?
 
+vite.config.js
 
