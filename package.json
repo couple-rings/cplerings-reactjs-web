@@ -32,7 +32,7 @@
     "react-text-transition": "^3.1.0",
     "react-toastify": "^10.0.5",
     "redux-persist": "^6.0.0",
-    "sass": "^1.77.8",
+    "sass": "^1.79.4",
     "slick-carousel": "^1.8.1",
     "socket.io-client": "^4.7.5",
     "turndown": "^7.2.0",
