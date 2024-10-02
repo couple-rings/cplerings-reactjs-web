@@ -273,7 +273,7 @@ const HomeDefault = () => {
 
         <Grid container className={styles.body}>
           <Grid item lg={5}>
-            <video width={"100%"} autoPlay loop>
+            <video width={"100%"} autoPlay loop muted>
               <source src={guide} type="video/mp4" />
             </video>
           </Grid>
