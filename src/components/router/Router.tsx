@@ -5,6 +5,7 @@ import ForgetPassword from "src/pages/Common/ForgetPassword/ForgetPassword";
 import ResetPassword from "src/pages/Common/ResetPassword/ResetPassword";
 import VerifyAccount from "src/pages/Common/VerifyAccount/VerifyAccount";
 import Login from "src/pages/Common/Login/Login";
+import Register from "src/pages/Common/Register/Register";
 
 const router = createBrowserRouter([
   {
@@ -31,8 +32,13 @@ const router = createBrowserRouter([
         path: "login",
         element: <Login />,
       },
+      {
+        path: "register",
+        element: <Register/>
+      }
     ],
   },
+  
 ]);
 
 function Router() {
