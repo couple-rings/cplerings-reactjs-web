@@ -1,5 +1,334 @@
+@use 'src/index.scss'as *;
+
 .container {
     .banner {
         width: 100%;
+    }
+
+    .process {
+        background-color: #fbfaf9;
+        padding         : 5.5rem 0;
+
+        .title {
+            font-size    : 2.5rem;
+            color        : #3a3a3a;
+            text-align   : center;
+            margin-bottom: 4rem;
+
+            @media screen and (max-width: 500px) {
+                font-size    : 2rem;
+                margin-bottom: 2rem;
+            }
+        }
+
+        .stepContainer {
+            display        : flex;
+            justify-content: center;
+            padding        : 0 1rem;
+
+            .step {
+                display        : flex;
+                align-items    : center;
+                justify-content: center;
+                margin-bottom  : 1rem;
+
+                .icon {
+                    width: 30%;
+                }
+
+                .text {
+                    font-size: 1.3rem;
+                    color    : #3a3a3a;
+                    max-width: 200px;
+                }
+
+                .arrow {
+                    width: 18%;
+                }
+            }
+        }
+    }
+
+    .customerStories {
+        padding: 5rem 10rem;
+
+        @media screen and (max-width: 768px) {
+            padding: 4rem;
+        }
+
+        .story {
+            display        : flex !important;
+            justify-content: space-between;
+
+            .coverImg {
+                width: 100%;
+            }
+
+            .intro {
+                padding-right: 3rem;
+
+                .text {
+                    color        : #555;
+                    font-size    : 1.3rem;
+                    margin-bottom: 1rem;
+                    line-height  : 2.5rem;
+                }
+
+                .nameImg {
+                    width        : 60%;
+                    margin-bottom: 1rem;
+                }
+
+                .author {
+                    color        : #555;
+                    font-size    : 1.3rem;
+                    text-align   : right;
+                    margin-bottom: 2rem;
+                }
+            }
+        }
+    }
+
+    .socialMedia {
+        padding-bottom: 7rem;
+
+        .title {
+            font-size : 2.3rem;
+            color     : #3a3a3a;
+            text-align: center;
+            margin    : 3rem 0;
+
+            @media screen and (max-width: 500px) {
+                font-size    : 2rem;
+                margin-bottom: 2rem;
+            }
+        }
+
+        .subtitle {
+            font-size    : 1.5rem;
+            color        : #3a3a3a;
+            text-align   : center;
+            margin-bottom: 4rem;
+        }
+
+        .sliderContainer {
+            justify-content: center;
+
+            img {
+                cursor: pointer;
+            }
+        }
+
+        .bottomText {
+            color     : #3a3a3a;
+            font-size : 1.1rem;
+            text-align: center;
+            margin-top: 3rem;
+            cursor    : pointer;
+
+            &:hover {
+                color: $secondaryColor;
+            }
+        }
+    }
+
+    .firstAgreement {
+        display        : flex;
+        justify-content: center;
+        align-items    : center;
+        padding        : 0 2rem;
+        padding-bottom : 5rem;
+        gap            : 5rem;
+
+        img {
+            width: 100%;
+        }
+
+        .title {
+            font-size    : 2.3rem;
+            color        : #3a3a3a;
+            margin-bottom: 3rem;
+
+            @media screen and (max-width: 500px) {
+                font-size: 1.8rem;
+            }
+        }
+
+        .text {
+            color        : #555;
+            font-size    : 1.3rem;
+            margin-bottom: 3rem;
+            line-height  : 2.5rem;
+        }
+
+        .author {
+            color        : #555;
+            font-size    : 1.3rem;
+            margin-bottom: 1rem;
+            text-align   : right;
+        }
+    }
+
+    .guide {
+        background-color: #fbfaf9;
+        padding         : 4rem 3rem;
+        position        : relative;
+
+        .title {
+            font-size    : 2.3rem;
+            color        : $secondaryColor;
+            margin-bottom: 2rem;
+            text-align   : center;
+
+            @media screen and (max-width: 500px) {
+                font-size: 1.8rem;
+            }
+        }
+
+        .subtitle {
+            font-size    : 1.2rem;
+            color        : #3a3a3a;
+            text-align   : center;
+            margin-bottom: 3rem;
+        }
+
+        .body {
+            justify-content: center;
+            align-items    : center;
+            gap            : 1rem;
+
+            video {
+                height: 350px;
+            }
+
+            .right {
+                .title {
+                    font-size    : 1.8rem;
+                    color        : #3a3a3a;
+                    margin-bottom: 1.5rem;
+                    text-align   : left;
+                }
+
+                .text {
+                    color        : #555;
+                    font-size    : 1.2rem;
+                    margin-bottom: 1.5rem;
+                    line-height  : 2rem;
+                }
+
+                .note {
+                    font-size : 0.9rem;
+                    color     : #555;
+                    margin-top: 1.5rem;
+                }
+            }
+        }
+
+        .brand {
+            width   : 120px;
+            position: absolute;
+            left    : 45%;
+
+            @media screen and (max-width: 700px) {
+                left: 40%;
+            }
+        }
+    }
+
+    .store {
+        background-color: #fbfaf9;
+        max-width       : 90%;
+        margin          : 0 auto;
+        margin-top      : 10rem;
+        justify-content : space-between;
+
+        .left {
+            padding       : 0 4rem;
+            padding-top   : 5rem;
+            padding-bottom: 2rem;
+
+            @media screen and (max-width: 500px) {
+                padding-left : 2rem;
+                padding-right: 2rem;
+            }
+
+            .title {
+                font-size    : 2.3rem;
+                color        : #3a3a3a;
+                margin-bottom: 1rem;
+
+                @media screen and (max-width: 500px) {
+                    font-size: 1.8rem;
+                }
+            }
+
+            .text {
+                color        : #3a3a3a;
+                font-size    : 1.2rem;
+                margin-bottom: 2rem;
+                line-height  : 2.5rem;
+            }
+
+            .bottomText {
+                color        : #3a3a3a;
+                font-size    : 1.2rem;
+                margin-bottom: 1rem;
+            }
+
+            .storeNumber {
+                color    : $secondaryColor;
+                font-size: 2rem;
+            }
+
+            .findBtn {
+                margin-top: 2rem;
+            }
+        }
+
+        img {
+            width : 100%;
+            height: -webkit-fill-available;
+        }
+    }
+
+    .advertisement {
+        padding: 7rem 0;
+
+
+        .title {
+            font-size    : 2.3rem;
+            color        : #3a3a3a;
+            margin-bottom: 5rem;
+            text-align   : center;
+
+            @media screen and (max-width: 500px) {
+                font-size: 1.8rem;
+            }
+        }
+
+        .sliderContainer {
+            display        : flex;
+            justify-content: space-evenly;
+
+            .adCard {
+                margin-bottom: 2rem;
+
+                img {
+                    width: 100%;
+                }
+
+                .title {
+                    font-size : 1.5rem;
+                    color     : #3a3a3a;
+                    margin    : 1.5rem 0;
+                    text-align: left;
+                }
+
+                .text {
+                    color      : #555;
+                    line-height: 1.5rem;
+                }
+            }
+        }
     }
 }

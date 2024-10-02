@@ -16,4 +16,17 @@ declare global {
   interface IOtherTabProps {
     cardsList: IHeaderCardProps[];
   }
+
+  interface IStoryProps {
+    coverImg: string;
+    nameImg: string;
+    intro: string;
+    author: string;
+  }
+
+  interface IAdCardProps {
+    coverImg: string;
+    title: string;
+    text: string;
+  }
 }
