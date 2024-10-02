@@ -6,6 +6,8 @@
   text-rendering         : optimizeLegibility;
   -webkit-font-smoothing : antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  overflow-x: hidden;
 }
 
 body {
@@ -14,3 +16,8 @@ body {
 }
 
 $secondaryColor: #b43620;
+
+.slick-track {
+  display: flex;
+  gap    : 1rem;
+}

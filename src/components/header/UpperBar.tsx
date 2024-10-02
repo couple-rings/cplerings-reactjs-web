@@ -127,7 +127,11 @@ const UpperBar = () => {
             <Box
               sx={{ flexGrow: 0, display: "flex", justifyContent: "center" }}
             >
-              <img src={logo} className={styles.logo} />
+              <img
+                src={logo}
+                className={styles.logo}
+                onClick={() => navigate("/")}
+              />
             </Box>
 
             {/* desktop screen - right part */}
