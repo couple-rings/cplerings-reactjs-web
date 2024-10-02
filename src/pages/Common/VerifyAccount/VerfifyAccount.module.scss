@@ -1,7 +1,8 @@
 @use 'src/index.scss'as *;
 
 .container {
-    padding-top: 3rem;
+    padding-top   : 3rem;
+    padding-bottom: 6rem;
 
     .title {
         font-size    : 2.2rem;
