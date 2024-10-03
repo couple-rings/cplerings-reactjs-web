@@ -15,6 +15,7 @@ import { emailPattern, passwordPattern } from "src/utils/constants";
 import { primaryBtn } from "src/utils/styles";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
+import { useNavigate } from "react-router-dom";
 
 interface IFormInput {
   email: string;
@@ -36,6 +37,8 @@ const Register = () => {
   } = useForm<IFormInput>();
   const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const code = Math.floor(1000 + Math.random() * 9000);
     setCode(code);
@@ -52,7 +55,6 @@ const Register = () => {
               <TextField
                 fullWidth
                 // className={styles.type}
-                id="outlined-basic"
                 label="Email"
                 error={!!errors.email}
                 {...register("email", {
@@ -74,7 +76,6 @@ const Register = () => {
                 fullWidth
                 // className={styles.type}
                 type={showPassword ? "text" : "password"}
-                id="outlined-basic"
                 label="Mật khẩu"
                 InputProps={{
                   sx: {
@@ -119,7 +120,6 @@ const Register = () => {
                 fullWidth
                 // className={styles.type}
                 type={showConfirmPassword ? "text" : "password"}
-                id="outlined-basic"
                 label="Xác nhận mật khẩu"
                 InputProps={{
                   sx: {
@@ -138,7 +138,11 @@ const Register = () => {
                           color: "black!important",
                         }} // Ensure no margin and padding on IconButton
                       >
-                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        {showConfirmPassword ? (
+                          <VisibilityOff />
+                        ) : (
+                          <Visibility />
+                        )}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -147,13 +151,15 @@ const Register = () => {
                 {...register("confirmPassword", {
                   required: "* Vui lòng nhập xác nhận mật khẩu",
                   validate: (value) =>
-                    value === watch('password') || "* Mật khẩu xác nhận không khớp",
-                  
+                    value === watch("password") ||
+                    "* Mật khẩu xác nhận không khớp",
                 })}
                 variant="outlined"
               />
               {errors.confirmPassword && (
-                <FormHelperText error>{errors.confirmPassword.message}</FormHelperText>
+                <FormHelperText error>
+                  {errors.confirmPassword.message}
+                </FormHelperText>
               )}
             </FormControl>
 
@@ -161,7 +167,6 @@ const Register = () => {
               <FormControl variant="outlined" sx={{ flex: 1 }} fullWidth>
                 <TextField
                   fullWidth
-                  id="outlined-basic"
                   label="Code"
                   error={!!errors.code}
                   {...register("code", {
@@ -193,8 +198,11 @@ const Register = () => {
               người dùng và các điều khoản về quyền riêng tư của CR
             </p>
 
-            <h2 className="note">Đã có tài khoản</h2>
-            <p className={styles.navigateSignIn}>
+            <h2 className="note">Đã có tài khoản?</h2>
+            <p
+              className={styles.navigateSignIn}
+              onClick={() => navigate("/login")}
+            >
               Đăng nhập{" "}
               <NavigateNextIcon
                 sx={{

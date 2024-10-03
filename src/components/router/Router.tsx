@@ -6,6 +6,8 @@ import ResetPassword from "src/pages/Common/ResetPassword/ResetPassword";
 import VerifyAccount from "src/pages/Common/VerifyAccount/VerifyAccount";
 import Login from "src/pages/Common/Login/Login";
 import Register from "src/pages/Common/Register/Register";
+import CustomerDefault from "src/pages/Customer/Index";
+import Address from "src/pages/Customer/Address/Address";
 
 const router = createBrowserRouter([
   {
@@ -34,11 +36,24 @@ const router = createBrowserRouter([
       },
       {
         path: "register",
-        element: <Register/>
-      }
+        element: <Register />,
+      },
     ],
   },
-  
+  {
+    path: "/customer",
+    element: <Common />,
+    children: [
+      {
+        index: true,
+        element: <CustomerDefault />,
+      },
+      {
+        path: "address",
+        element: <Address />,
+      },
+    ],
+  },
 ]);
 
 function Router() {

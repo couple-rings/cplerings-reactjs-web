@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { InputAdornment, OutlinedInput, Grid } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import SideBar from "./SideBar";
+import { useAppSelector } from "src/utils/hooks";
 
 const fastSearchs = [
   "Nhẫn Cưới",
@@ -83,10 +84,12 @@ const UpperBar = () => {
 
   const [openSearch, setOpenSearch] = useState(false);
 
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
+    if (isAuthenticated) setAnchorElUser(event.currentTarget);
+    else navigate("/login");
   };
 
   const handleCloseUserMenu = () => {

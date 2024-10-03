@@ -1,4 +1,4 @@
-@use 'src/index.scss'as index;
+@use 'src/index.scss'as *;
 
 .container {
     text-align: center;
@@ -6,11 +6,11 @@
     .slogan {
         padding  : 1rem;
         font-size: 1.1rem;
-        color    : #3a3a3a;
+        color    : $primaryColor;
     }
 
     .transitionText {
-        background-color: index.$secondaryColor;
+        background-color: $secondaryColor;
         color           : rgb(255, 255, 255);
         padding         : 1rem;
         display         : flex;
@@ -40,7 +40,7 @@
 
         .icon {
             &:hover {
-                color: index.$secondaryColor;
+                color: $secondaryColor;
             }
         }
 
@@ -54,7 +54,7 @@
             }
 
             &:hover {
-                color: index.$secondaryColor;
+                color: $secondaryColor;
             }
         }
 
@@ -64,7 +64,7 @@
             cursor   : pointer;
 
             &:hover {
-                color: index.$secondaryColor;
+                color: $secondaryColor;
             }
         }
     }
@@ -91,7 +91,7 @@
                 cursor: pointer;
 
                 &:hover {
-                    color: index.$secondaryColor;
+                    color: $secondaryColor;
                 }
             }
         }
@@ -106,7 +106,7 @@
         cursor       : pointer;
 
         &:hover {
-            color: index.$secondaryColor;
+            color: $secondaryColor;
         }
     }
 
@@ -136,7 +136,7 @@
             cursor: pointer;
 
             &:hover {
-                color: index.$secondaryColor;
+                color: $secondaryColor;
             }
         }
     }

@@ -10,6 +10,7 @@ import { primaryBtn } from "src/utils/styles";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { emailPattern } from "src/utils/constants";
+import { useNavigate } from "react-router-dom";
 
 interface IFormInput {
   email: string;
@@ -25,6 +26,8 @@ const ForgetPassword = () => {
     handleSubmit,
   } = useForm<IFormInput>();
   const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const code = Math.floor(1000 + Math.random() * 9000);
@@ -84,7 +87,9 @@ const ForgetPassword = () => {
               Xác Nhận
             </Button>
 
-            <div className={styles.backBtn}>Quay Lại</div>
+            <div className={styles.backBtn} onClick={() => navigate("/login")}>
+              Quay Lại
+            </div>
           </form>
         </Grid>
       </Grid>

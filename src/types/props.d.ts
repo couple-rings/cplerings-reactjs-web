@@ -29,4 +29,17 @@ declare global {
     title: string;
     text: string;
   }
+
+  interface IAddressCardProps {
+    receiverName: string;
+    address: string;
+    receiverPhone: string;
+    setOpenDelete: (v: boolean) => void;
+    setOpenUpdate: (v: boolean) => void;
+  }
+
+  interface IModalProps {
+    open: boolean;
+    setOpen: (v: boolean) => void;
+  }
 }
