@@ -1,0 +1,98 @@
+@use 'src/index.scss'as *;
+
+.container {
+    padding-top   : 2rem;
+    padding-bottom: 7rem;
+
+    .head {
+        justify-content: center;
+        margin-bottom  : 3rem;
+
+        .homeLink {
+            display    : flex;
+            align-items: center;
+
+            span {
+                font-size: 1.2rem;
+                color    : $primaryColor;
+            }
+        }
+    }
+
+    .body {
+        justify-content: center;
+
+        .titleContainer {
+            display        : flex;
+            justify-content: space-between;
+            margin-bottom  : 3rem;
+
+            .title {
+                font-size: 2.3rem;
+                color    : $primaryColor;
+            }
+
+            .addBtn {
+                display    : flex;
+                align-items: center;
+                gap        : 5px;
+                cursor     : pointer;
+
+                &:hover {
+                    opacity: 0.4;
+                }
+
+                .icon {
+                    color: $secondaryColor;
+                }
+
+                span {
+                    color    : $primaryColor;
+                    font-size: 1.2rem;
+                }
+            }
+        }
+
+        .addressList {
+            justify-content: space-between;
+
+            .addressCard {
+                margin-bottom: 3rem;
+
+                .content {
+                    padding: 0 2rem;
+
+                    .name {
+                        color        : $primaryColor;
+                        font-size    : 1.2rem;
+                        margin-bottom: 1rem;
+                    }
+
+                    .address {
+                        color        : #555;
+                        line-height  : 1.8rem;
+                        margin-bottom: 1rem;
+                        font-size    : 1.1rem;
+                    }
+
+                    .phone {
+                        color        : #555;
+                        font-size    : 1.1rem;
+                        margin-bottom: 1rem;
+                    }
+
+                    .btnGroup {
+                        padding-bottom: 1rem;
+                        text-align    : right;
+
+                        button {
+                            text-transform: capitalize;
+                            font-size     : 1.2rem;
+                            color         : rgb(26, 26, 26);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

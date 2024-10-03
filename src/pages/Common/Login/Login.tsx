@@ -10,7 +10,7 @@ import {
   FormHelperText,
 } from "@mui/material";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.scss";
 import { primaryBtn } from "src/utils/styles";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -33,6 +33,8 @@ const Login = () => {
     handleSubmit,
   } = useForm<IFormInput>();
   const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+
+  const navigate = useNavigate();
 
   return (
     <div className={styles.container}>
@@ -91,9 +93,7 @@ const Login = () => {
 
             <FormControl className={styles.newsLetter}>
               <FormControlLabel
-                control={
-                  <Checkbox color="primary" />
-                }
+                control={<Checkbox color="primary" />}
                 label="Email tôi về tin tức, cập nhật và ưu đãi của Couple Rings."
               />
             </FormControl>
@@ -102,18 +102,25 @@ const Login = () => {
               Đăng Nhập
             </Button>
 
-            <div className={styles.fwdBtn}>
-              <Link to="/forget-password">Quên mật khẩu?</Link>
+            <div
+              className={styles.fwdBtn}
+              onClick={() => navigate("/forget-password")}
+            >
+              <span>Quên mật khẩu?</span>
             </div>
           </form>
 
-          <div className={styles.title} style={{ marginTop: '3.5rem', marginBottom: '0.05rem' }}>Tôi là người mới</div>
-          <div className={styles.fwdBtn}>
-            <Link to="">Tạo tài khoản mới {'>'}</Link>
+          <div
+            className={styles.title}
+            style={{ marginTop: "3.5rem", marginBottom: "0.05rem" }}
+          >
+            Tôi là người mới
+          </div>
+          <div className={styles.fwdBtn} onClick={() => navigate("/register")}>
+            <span>Tạo tài khoản mới {">"}</span>
           </div>
         </Grid>
       </Grid>
-
     </div>
   );
 };
