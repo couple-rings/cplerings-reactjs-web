@@ -1,3 +1,5 @@
+import { DivisionType } from "src/utils/enums";
+
 export {};
 
 declare global {

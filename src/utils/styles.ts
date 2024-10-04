@@ -42,3 +42,9 @@ export const outlinedBtn: SxProps = {
   py: 1,
   px: 10,
 };
+
+export const textBtn: SxProps = {
+  textTransform: "capitalize",
+  color: "#555",
+  py: 2,
+};

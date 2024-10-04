@@ -8,6 +8,7 @@ import Login from "src/pages/Common/Login/Login";
 import Register from "src/pages/Common/Register/Register";
 import CustomerDefault from "src/pages/Customer/Index";
 import Address from "src/pages/Customer/Address/Address";
+import VerifyID from "src/pages/Customer/VerifyID/VerifyID";
 
 const router = createBrowserRouter([
   {
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
       {
         path: "address",
         element: <Address />,
+      },
+      {
+        path: "love-verification",
+        element: <VerifyID />,
       },
     ],
   },
