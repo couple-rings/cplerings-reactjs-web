@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import styles from "./Header.module.scss";
 import weddingRing from "src/assets/weddingRing.png";
+import { useNavigate } from "react-router-dom";
 
 const collections = [
   "DR Heart",
@@ -34,6 +35,8 @@ const prices = [
 const genders = ["Nhẫn Nam", "Nhẫn Nữ", "Nhẫn Cặp"];
 
 const WeddingRingsTab = () => {
+  const navigate = useNavigate();
+
   return (
     <div className={styles.tab}>
       <div className={styles.columnsContainer}>
@@ -84,7 +87,10 @@ const WeddingRingsTab = () => {
         <img src={weddingRing} className={styles.coverImg} />
       </div>
 
-      <div className={styles.exploreLink}>
+      <div
+        className={styles.exploreLink}
+        onClick={() => navigate("/wedding-rings")}
+      >
         <Container sx={{ mt: 3 }}>Tất Cả Mẫu Nhẫn Cưới &gt;</Container>
       </div>
     </div>

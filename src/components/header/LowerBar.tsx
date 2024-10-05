@@ -3,13 +3,14 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
 import styles from "./Header.module.scss";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import Menu from "@mui/material/Menu";
 import Fade from "@mui/material/Fade";
 import WeddingRingsTab from "./WeddingRingsTab";
 import JewelryTab from "./JewelryTab";
 import OtherTab from "./OtherTab";
 import { aboutTabData, certificateTabData } from "src/utils/constants";
+import { useLocation } from "react-router-dom";
 
 const tabs = [
   {
@@ -38,6 +39,8 @@ const LowerBar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
+  const location = useLocation();
+
   const handleClick = (
     event: React.MouseEvent<HTMLElement>,
     tabContent?: ReactElement
@@ -51,6 +54,10 @@ const LowerBar = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  useEffect(() => {
+    setAnchorEl(null);
+  }, [location.pathname]);
 
   return (
     <>

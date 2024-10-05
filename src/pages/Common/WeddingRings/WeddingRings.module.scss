@@ -1,0 +1,77 @@
+@use 'src/index.scss'as *;
+
+.container {
+    display       : flex;
+    flex-direction: column;
+    align-items   : center;
+    padding       : 3rem 0;
+
+    .headerContainer {
+        background-color: #fbfaf9;
+        display         : flex;
+        justify-content : center;
+        margin-bottom   : 2rem;
+
+        .header {
+            justify-content: space-between;
+
+            .intro {
+                display        : flex;
+                flex-direction : column;
+                justify-content: center;
+                padding        : 1rem 0;
+
+                .title {
+                    font-size    : 2.3rem;
+                    color        : $primaryColor;
+                    margin-bottom: 2rem;
+                    margin-left  : 1rem;
+                }
+
+                .text {
+                    color      : #555;
+                    font-size  : 1.2rem;
+                    line-height: 1.8rem;
+                }
+            }
+
+            .imgContainer {
+                display        : flex;
+                justify-content: center;
+                gap            : 1.5rem;
+            }
+
+            .img1 {
+                margin-top: 2.5rem;
+            }
+
+            .img2 {
+                margin-bottom: 2.5rem;
+                margin-top   : 1.5rem;
+            }
+        }
+    }
+
+    .filterSortBar {
+        display        : flex;
+        justify-content: space-between;
+        align-items    : center;
+        margin         : 2rem 0;
+
+        .filter {
+            display: flex;
+            gap    : 2rem;
+        }
+
+    }
+
+    .list {
+        margin-top   : 1rem;
+        margin-bottom: 5rem;
+    }
+
+    .bottom {
+        margin-top     : 5rem;
+        justify-content: center;
+    }
+}

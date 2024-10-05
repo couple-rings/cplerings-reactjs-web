@@ -5,3 +5,10 @@ export const showSlides = (minSM: boolean, minMD: boolean, minLG: boolean) => {
 
   return 1;
 };
+
+export const currencyFormatter = (price: number) => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(price);
+};

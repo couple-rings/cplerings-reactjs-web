@@ -2,7 +2,7 @@ export {};
 
 declare global {
   interface IProductCardProps {
-    title: string;
+    product: IProduct;
   }
 
   interface IHeaderCardProps {
@@ -41,5 +41,13 @@ declare global {
   interface IModalProps {
     open: boolean;
     setOpen: (v: boolean) => void;
+  }
+
+  interface IHoverMenuProps<T> {
+    title: string;
+
+    purpose: HoverMenuPurpose;
+
+    lists: T[];
   }
 }
