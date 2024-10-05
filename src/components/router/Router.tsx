@@ -9,6 +9,7 @@ import Register from "src/pages/Common/Register/Register";
 import CustomerDefault from "src/pages/Customer/Index";
 import Address from "src/pages/Customer/Address/Address";
 import VerifyID from "src/pages/Customer/VerifyID/VerifyID";
+import ChangePassword from "src/pages/Common/ChangePassword/ChangePassword";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
         element: <ResetPassword />,
       },
       {
+        path: "change-password",
+        element: <ChangePassword/>
+      },
+      {
         path: "verify-account",
         element: <VerifyAccount />,
       },
@@ -39,6 +44,7 @@ const router = createBrowserRouter([
         path: "register",
         element: <Register />,
       },
+      
     ],
   },
   {

@@ -92,7 +92,7 @@ const Register = () => {
                           margin: "0!important",
                           backgroundColor: "white!important",
                           color: "black!important",
-                        }} // Ensure no margin and padding on IconButton
+                        }} 
                       >
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
