@@ -1,0 +1,27 @@
+@use 'src/index.scss'as *;
+
+.container {
+    .mainTitle {
+        font-size: 2rem;
+        color    : $primaryColor;
+        padding  : 1rem 0;
+        margin   : 0 auto;
+    }
+
+    .title {
+        font-size: 1.5rem;
+        color    : $primaryColor;
+        padding  : 1rem 0;
+    }
+
+    .text {
+        font-size  : 1.2rem;
+        color      : #555;
+        line-height: 2rem;
+
+        span {
+            color : $secondaryColor;
+            cursor: pointer;
+        }
+    }
+}

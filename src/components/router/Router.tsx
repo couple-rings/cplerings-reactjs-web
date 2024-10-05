@@ -9,6 +9,7 @@ import Register from "src/pages/Common/Register/Register";
 import CustomerDefault from "src/pages/Customer/Index";
 import Address from "src/pages/Customer/Address/Address";
 import VerifyID from "src/pages/Customer/VerifyID/VerifyID";
+import WeddingRings from "src/pages/Common/WeddingRings/WeddingRings";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: "register",
         element: <Register />,
+      },
+      {
+        path: "wedding-rings",
+        element: <WeddingRings />,
       },
     ],
   },

@@ -14,4 +14,12 @@ declare global {
     division_type: DivisionType;
     name: string;
   }
+
+  interface IProduct {
+    coverImg: string;
+
+    name: string;
+
+    price: number;
+  }
 }

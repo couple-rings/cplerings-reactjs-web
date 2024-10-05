@@ -1,0 +1,55 @@
+@use 'src/index.scss'as *;
+
+.container {
+    cursor: pointer;
+
+    &:hover {
+        border: 1px solid #555;
+    }
+
+    &:hover .detailBtn {
+        display: block;
+    }
+
+    .name {
+        font-size: 1rem;
+        color    : $primaryColor;
+        padding  : 1rem
+    }
+
+    .price {
+        color         : #555;
+        padding       : 0 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .imgContainer {
+
+        position   : relative;
+        font-size  : 0;
+        line-height: 0;
+
+        img {
+            width     : 100%;
+            height    : 100%;
+            object-fit: cover;
+        }
+
+        .detailBtn {
+            position  : absolute;
+            margin    : 0 auto;
+            left      : 0;
+            right     : 0;
+            bottom    : 0;
+            text-align: center;
+            width     : 90%;
+        }
+    }
+
+    .favoriteBtn {
+        position: absolute;
+        top     : 5%;
+        right   : 5%;
+    }
+
+}
