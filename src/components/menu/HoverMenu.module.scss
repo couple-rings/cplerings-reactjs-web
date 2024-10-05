@@ -1,0 +1,12 @@
+@use 'src/index.scss'as *;
+
+.container {
+    .title {
+        display    : flex;
+        align-items: center;
+        gap        : 10px;
+        color      : $primaryColor;
+        font-size  : 1.1rem;
+        cursor     : pointer;
+    }
+}

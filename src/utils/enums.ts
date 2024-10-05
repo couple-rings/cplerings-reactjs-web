@@ -9,3 +9,8 @@ export enum PersonFace {
   Self = "Self",
   Partner = "Partner",
 }
+
+export enum HoverMenuPurpose {
+  Filter = "filter",
+  Sort = "sort",
+}
