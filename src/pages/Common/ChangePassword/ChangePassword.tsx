@@ -1,7 +1,8 @@
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import {
-    Button,
+  Button,
   FormControl,
   FormHelperText,
   Grid,
@@ -14,17 +15,20 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { passwordPattern } from "src/utils/constants";
 import { primaryBtn } from "src/utils/styles";
 import styles from "./ChangePassword.module.scss";
+import { useNavigate } from "react-router-dom";
 
 interface IFormInput {
-    password: string;
-    newPassword: string;
-    confirmNewPassword: string;
+  password: string;
+  newPassword: string;
+  confirmNewPassword: string;
 }
 
 const ChangePassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
+
+  const navigate = useNavigate();
 
   const {
     register,
@@ -63,7 +67,7 @@ const ChangePassword = () => {
                           color: "black!important",
                         }}
                       >
-                        {showPassword ? <VisibilityOff/> : <Visibility/>}
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -106,7 +110,7 @@ const ChangePassword = () => {
                           color: "black!important",
                         }}
                       >
-                        {showNewPassword ? <VisibilityOff/> : <Visibility/>}
+                        {showNewPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -123,7 +127,9 @@ const ChangePassword = () => {
                 variant="outlined"
               />
               {errors.newPassword && (
-                <FormHelperText error>{errors.newPassword.message}</FormHelperText>
+                <FormHelperText error>
+                  {errors.newPassword.message}
+                </FormHelperText>
               )}
             </FormControl>
 
@@ -141,7 +147,9 @@ const ChangePassword = () => {
                   endAdornment: (
                     <InputAdornment position="end" sx={{ margin: "0" }}>
                       <IconButton
-                        onClick={() => setShowConfirmNewPassword((show) => !show)}
+                        onClick={() =>
+                          setShowConfirmNewPassword((show) => !show)
+                        }
                         edge="start"
                         sx={{
                           margin: "0!important",
@@ -149,7 +157,11 @@ const ChangePassword = () => {
                           color: "black!important",
                         }}
                       >
-                        {showConfirmNewPassword ? <VisibilityOff/> : <Visibility/>}
+                        {showConfirmNewPassword ? (
+                          <VisibilityOff />
+                        ) : (
+                          <Visibility />
+                        )}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -157,15 +169,16 @@ const ChangePassword = () => {
                 error={!!errors.confirmNewPassword}
                 {...register("confirmNewPassword", {
                   required: "* Vui lòng xác nhận mật khẩu mới",
-                    validate: (value) =>
-                        value === watch("newPassword") ||
-                        "* Mật khẩu xác nhận không khớp",
-                
+                  validate: (value) =>
+                    value === watch("newPassword") ||
+                    "* Mật khẩu xác nhận không khớp",
                 })}
                 variant="outlined"
               />
               {errors.confirmNewPassword && (
-                <FormHelperText error>{errors.confirmNewPassword.message}</FormHelperText>
+                <FormHelperText error>
+                  {errors.confirmNewPassword.message}
+                </FormHelperText>
               )}
             </FormControl>
 
@@ -173,6 +186,10 @@ const ChangePassword = () => {
               Xác nhận
             </Button>
           </form>
+
+          <p className={styles.backHome} onClick={() => navigate("/login")}>
+            <ArrowBackIosIcon sx={{ fontSize: 15 }} /> Trang chủ{" "}
+          </p>
         </Grid>
       </Grid>
     </div>
