@@ -18,6 +18,7 @@ import { emailPattern } from "src/utils/constants";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { passwordPattern } from "src/utils/constants";
+import { postLogin } from "src/services/auth.service";
 
 interface IFormInput {
   email: string;
@@ -32,7 +33,10 @@ const Login = () => {
     formState: { errors },
     handleSubmit,
   } = useForm<IFormInput>();
-  const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    const res = await postLogin(data);
+    console.log(res);
+  };
 
   const navigate = useNavigate();
 
