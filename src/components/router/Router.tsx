@@ -12,6 +12,7 @@ import VerifyID from "src/pages/Customer/VerifyID/VerifyID";
 import WeddingRings from "src/pages/Common/WeddingRings/WeddingRings";
 import ChangePassword from "src/pages/Customer/ChangePassword/ChangePassword";
 import Jewelry from "src/pages/Common/Jewelry/Jewelry";
+import DesignDetail from "src/pages/Common/DesignDetail/DesignDetail";
 
 const router = createBrowserRouter([
   {
@@ -30,7 +31,6 @@ const router = createBrowserRouter([
         path: "reset-password",
         element: <ResetPassword />,
       },
-
       {
         path: "verify-account",
         element: <VerifyAccount />,
@@ -50,6 +50,10 @@ const router = createBrowserRouter([
       {
         path: "jewelry",
         element: <Jewelry />,
+      },
+      {
+        path: "design-detail/:id",
+        element: <DesignDetail />,
       },
     ],
   },

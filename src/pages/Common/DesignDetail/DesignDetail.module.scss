@@ -1,0 +1,87 @@
+@use 'src/index.scss'as *;
+
+.container {
+    padding        : 3rem;
+    justify-content: center;
+
+    .content {
+        justify-content: space-between;
+
+        img {
+            width: 100%;
+        }
+
+        .name {
+            font-size    : 2rem;
+            color        : $primaryColor;
+            margin-bottom: 1rem;
+        }
+
+        .rate {
+            display      : flex;
+            align-items  : center;
+            gap          : 5px;
+            margin-bottom: 1rem;
+
+            .number {
+                font-size: 1.3rem;
+                color    : #555;
+            }
+        }
+
+        .description {
+            font-size    : 1.2rem;
+            color        : #555;
+            line-height  : 2.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .price {
+            color        : $primaryColor;
+            font-size    : 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .options {
+            margin-top: 2rem;
+
+            .title {
+                color    : $primaryColor;
+                font-size: 1.4rem;
+            }
+
+            .metal {
+                display: flex;
+                gap    : 20px;
+
+                img {
+                    width : 50px;
+                    cursor: pointer;
+
+                    &.selected {
+                        border       : 1px solid;
+                        border-radius: 50%;
+                    }
+                }
+            }
+
+            .diamond {
+                justify-content: space-around;
+
+                .spec {
+                    border       : 1px solid;
+                    padding      : 0.8rem;
+                    color        : $primaryColor;
+                    text-align   : center;
+                    cursor       : pointer;
+                    margin-bottom: 1rem;
+
+                    &.selected {
+                        background-color: black;
+                        color           : white;
+                    }
+                }
+            }
+        }
+    }
+}
