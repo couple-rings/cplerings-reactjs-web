@@ -11,6 +11,7 @@ import Address from "src/pages/Customer/Address/Address";
 import VerifyID from "src/pages/Customer/VerifyID/VerifyID";
 import WeddingRings from "src/pages/Common/WeddingRings/WeddingRings";
 import ChangePassword from "src/pages/Customer/ChangePassword/ChangePassword";
+import EditProfile from "src/pages/Customer/EditProfile/EditProfile";
 
 const router = createBrowserRouter([
   {
@@ -56,6 +57,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <CustomerDefault />,
+      },
+      {
+        path: "profile",
+        element: <EditProfile />,
       },
       {
         path: "address",
