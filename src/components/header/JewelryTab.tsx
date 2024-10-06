@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import styles from "./Header.module.scss";
 import jewelry from "src/assets/Jewelry.png";
+import { useNavigate } from "react-router-dom";
 
 const collections = [
   "DR Heart",
@@ -29,6 +30,8 @@ const metals = [
 const genders = ["Trang Sức Nam", "Trang Sức Nữ"];
 
 function JewelryTab() {
+  const navigate = useNavigate();
+
   return (
     <div className={styles.tab}>
       <div className={styles.columnsContainer}>
@@ -79,7 +82,7 @@ function JewelryTab() {
         <img src={jewelry} className={styles.coverImg} />
       </div>
 
-      <div className={styles.exploreLink}>
+      <div className={styles.exploreLink} onClick={() => navigate("jewelry")}>
         <Container sx={{ mt: 3 }}>Khám Phá Tất Cả Trang Sức &gt;</Container>
       </div>
     </div>
