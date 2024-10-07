@@ -50,4 +50,10 @@ declare global {
 
     lists: T[];
   }
+
+  interface ISizeMenuProps {
+    size: number;
+
+    setSize: (v: number) => void;
+  }
 }

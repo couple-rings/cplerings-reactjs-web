@@ -82,6 +82,46 @@
                     }
                 }
             }
+
+            .size {
+                align-items    : center;
+                justify-content: space-between;
+            }
+        }
+
+        .btnGroup {
+            display: flex;
+            gap    : 1.5rem;
+        }
+
+        .note {
+            color     : $primaryColor;
+            margin-top: 1.5rem;
+        }
+
+        .policy {
+            display    : flex;
+            align-items: center;
+            color      : #555;
+            margin     : 1rem 0;
+            gap        : 0.5rem;
+        }
+
+        .moreLink {
+            text-align: right;
+            color     : $primaryColor;
+            cursor    : pointer;
+
+            &:hover {
+                color: $secondaryColor;
+            }
+        }
+
+        .detail {
+            .title {
+                color    : $primaryColor;
+                font-size: 1.4rem;
+            }
         }
     }
 }
