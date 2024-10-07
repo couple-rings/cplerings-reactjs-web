@@ -1,0 +1,78 @@
+@use 'src/index.scss' as *;
+
+.container {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+
+    .head {
+        justify-content: center;
+        margin-bottom: 3rem;
+
+        .homeLink {
+            display: flex;
+            align-items: center;
+
+            span {
+                font-size: 1.2rem;
+                color: $primaryColor;
+
+                &:hover {
+                    color: $secondaryColor;
+                }
+            }
+        }
+
+        &:hover {
+            color: $secondaryColor;
+        }
+    }
+
+    .title {
+        font-size: 2.2rem;
+        color: #464646;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px
+    }
+
+    .newsLetter {
+        margin-top: 10px;
+        color: #5c5c5c;
+        ;
+    }
+
+    .navBtn {
+        background-color: #ffffff;
+        color: #000000;
+        border: 1px solid #000000;
+        border-radius: 0;
+        padding: 1rem;
+
+        &:hover {
+            background-color: #b43620;
+            color: #ffffff;
+            border: none;
+        }
+    }
+
+    .fwdBtn {
+        color: #5c5c5c;
+        text-align: center;
+        padding: 0.8rem;
+        cursor: pointer;
+
+        &:hover {
+            color: $secondaryColor;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+    }
+}
