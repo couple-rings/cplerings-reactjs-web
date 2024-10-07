@@ -31,9 +31,6 @@ export const aboutTabData = [
 
 export const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-export const fullName = /^[A-Z][a-zA-Z' -]+(?:\s[A-Z][a-zA-Z' -]+)*$/;
-
-export const passwordPattern =
-  /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+export const passwordPattern = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 export const phonePattern = /^(0)\d{9}$/;

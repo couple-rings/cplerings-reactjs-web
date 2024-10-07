@@ -1,54 +1,48 @@
 import {
+    Box,
     Button,
     FormControl,
-    FormControlLabel,
     InputLabel,
-    Input,
     OutlinedInput,
     Grid,
     FormHelperText,
+    FormControlLabel,
     Checkbox,
-    Select,
-    MenuItem,
-    Collapse,
-    Typography,
-    IconButton,
+    Avatar,
 } from "@mui/material";
 import styles from "./EditProfile.module.scss";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { primaryBtn } from "src/utils/styles";
-import { emailPattern, fullName } from "src/utils/constants";
+import { emailPattern, phonePattern } from "src/utils/constants";
 import { SubmitHandler, useForm } from "react-hook-form";
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import { useState } from "react";
 
 interface IFormInput {
-    fullName: string;
+    username: string;
+    avatarImage: FileList;
     email: string;
-    gender: string;
-    maritalStatus: string;
-    description: string;
-    birthday: string;
-    weddingAnniversary: string;
-    loveAnniversary: string;
+    phone: string;
 }
 
 const EditProfile = () => {
-    const [isAnniversaryExpanded, setIsAnniversaryExpanded] = useState(false);
-    const handleAnniversaryClick = () => {
-        setIsAnniversaryExpanded(!isAnniversaryExpanded);
-    };
-
     const {
         register,
         formState: { errors },
         handleSubmit,
     } = useForm<IFormInput>();
+
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
     const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
 
     const navigate = useNavigate();
+
+    const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            setAvatarPreview(URL.createObjectURL(file));
+        }
+    };
 
     return (
         <div className={styles.container}>
@@ -63,28 +57,50 @@ const EditProfile = () => {
                     <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
                         <div className={styles.title}>Chỉnh sửa thông tin tài khoản</div>
 
-                        <FormControl variant="outlined">
+                        <Box display="flex" justifyContent="center">
+                            <Avatar
+                                src={avatarPreview || ""}
+                                sx={{ width: 300, height: 300, borderRadius: "50%" }}
+                            >
+                                {!avatarPreview && ""}
+                            </Avatar>
+                        </Box>
+
+
+                        <Button sx={primaryBtn} fullWidth variant="contained" component="label">
+                            Chọn ảnh đại diện
+                            <input
+                                type="file"
+                                hidden
+                                accept="image/*"
+                                {...register("avatarImage", {
+                                    required: "Vui lòng chọn ảnh đại diện",
+                                    onChange: handleAvatarChange,
+                                })}
+                            />
+                        </Button>
+                        {errors.avatarImage && (
+                            <FormHelperText error>{errors.avatarImage.message}</FormHelperText>
+                        )}
+
+                        <FormControl variant="outlined" fullWidth margin="normal">
                             <InputLabel htmlFor='display-name'>Họ và Tên</InputLabel>
                             <OutlinedInput
                                 sx={{ borderRadius: 0 }}
                                 placeholder="Họ và Tên"
                                 label="Họ và Tên"
-                                error={!!errors.fullName}
-                                {...register("fullName", {
-                                    required: "Vui lòng nhập đầy đủ Họ và Tên",
-                                    pattern: {
-                                        value: fullName,
-                                        message: "Họ Tên không hợp lệ",
-                                    },
+                                error={!!errors.username}
+                                {...register("username", {
+                                    required: "Vui lòng nhập tên tài khoản",
                                 })}
                             />
-                            {errors.fullName && (
-                                <FormHelperText error>{errors.fullName.message}</FormHelperText>
+                            {errors.username && (
+                                <FormHelperText error>{errors.username.message}</FormHelperText>
                             )}
                         </FormControl>
 
-                        <FormControl variant="outlined">
-                            <InputLabel htmlFor='display-name'>Email</InputLabel>
+                        <FormControl variant="outlined" fullWidth margin="normal">
+                            <InputLabel htmlFor='email'>Email</InputLabel>
                             <OutlinedInput
                                 sx={{ borderRadius: 0 }}
                                 placeholder="Email"
@@ -103,60 +119,24 @@ const EditProfile = () => {
                             )}
                         </FormControl>
 
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} md={6}>
-                                <FormControl variant="outlined" fullWidth>
-                                    <Select
-                                        displayEmpty
-                                        defaultValue=""
-                                        {...register("gender")}
-                                        error={!!errors.gender}
-                                    >
-                                        <MenuItem value="" disabled>Giới Tính</MenuItem> {/* Placeholder */}
-                                        <MenuItem value="male">Nam</MenuItem>
-                                        <MenuItem value="female">Nữ</MenuItem>
-                                        <MenuItem value="secret">Bí Mật</MenuItem>
-                                    </Select>
-                                    {errors.gender && (
-                                        <FormHelperText error>{errors.gender.message}</FormHelperText>
-                                    )}
-                                </FormControl>
-                            </Grid>
-
-                            <Grid item xs={12} md={6}>
-                                <FormControl variant="outlined" fullWidth>
-                                    <Select
-                                        displayEmpty
-                                        defaultValue=""
-                                        {...register("maritalStatus")}
-                                        error={!!errors.maritalStatus}
-                                    >
-                                        <MenuItem value="" disabled>Tình trạng hôn nhân</MenuItem> {/* Placeholder */}
-                                        <MenuItem value="yes">Có</MenuItem>
-                                        <MenuItem value="no">Không</MenuItem>
-                                        <MenuItem value="secret">Bí Mật</MenuItem>
-                                    </Select>
-                                    {errors.maritalStatus && (
-                                        <FormHelperText error>{errors.maritalStatus.message}</FormHelperText>
-                                    )}
-                                </FormControl>
-                            </Grid>
-                        </Grid>
-
-
-                        <FormControl variant="outlined">
-                            <InputLabel htmlFor='display-name'>Miêu tả</InputLabel>
+                        <FormControl variant="outlined" fullWidth margin="normal">
+                            <InputLabel htmlFor='phone'>Số điện thoại</InputLabel>
                             <OutlinedInput
                                 sx={{ borderRadius: 0 }}
-                                multiline
-                                rows={4}
-                                label="Miêu tả"
-                                placeholder="Miêu tả"
-                                error={!!errors.description}
-                                {...register("description")}
+                                placeholder="0123456789"
+                                label="Số điện thoại"
+                                type="tel"
+                                error={!!errors.phone}
+                                {...register("phone", {
+                                    required: "Vui lòng nhập số điện thoại",
+                                    pattern: {
+                                        value: phonePattern,
+                                        message: "Số điện thoại không đúng",
+                                    },
+                                })}
                             />
-                            {errors.description && (
-                                <FormHelperText error>{errors.description.message}</FormHelperText>
+                            {errors.phone && (
+                                <FormHelperText error>{errors.phone.message}</FormHelperText>
                             )}
                         </FormControl>
 
@@ -166,55 +146,6 @@ const EditProfile = () => {
                                 label="Email tôi về tin tức, cập nhật và ưu đãi của Couple Rings."
                             />
                         </FormControl>
-
-                        <div>
-                            <Typography variant="h6" onClick={handleAnniversaryClick}>
-                                Edit your Anniversary
-                                <IconButton onClick={handleAnniversaryClick}>
-                                    {isAnniversaryExpanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
-                                </IconButton>
-                            </Typography>
-                            <Collapse in={isAnniversaryExpanded}>
-                                <Grid container spacing={2} sx={{ padding: '2rem' }}>
-                                    <Grid item xs={12} md={12}>
-                                        <FormControl variant="outlined" fullWidth>
-                                            <InputLabel shrink htmlFor="birthday">Sinh Nhật</InputLabel>
-                                            <Input
-                                                type="date"
-                                                id="birthday"
-                                                placeholder=""
-                                                {...register("birthday")}
-                                            />
-                                        </FormControl>
-                                    </Grid>
-                                    <Grid item xs={12} md={12}>
-                                        <FormControl variant="outlined" fullWidth>
-                                            <InputLabel shrink htmlFor="weddingAnniversary">Ngày cưới</InputLabel>
-                                            <Input
-                                                type="date"
-                                                id="weddingAnniversary"
-                                                placeholder=""
-                                                {...register("weddingAnniversary")}
-                                            />
-                                        </FormControl>
-                                    </Grid>
-                                    <Grid item xs={12} md={12}>
-                                        <FormControl variant="outlined" fullWidth>
-                                            <InputLabel shrink htmlFor="loveAnniversary">Ngày kỷ niệm bên nhau</InputLabel>
-                                            <Input
-                                                type="date"
-                                                id="loveAnniversary"
-                                                {...register("loveAnniversary")}
-                                                inputProps={{
-                                                    placeholder: '',
-                                                    'data-placeholder': '',
-                                                }}
-                                            />
-                                        </FormControl>
-                                    </Grid>
-                                </Grid>
-                            </Collapse>
-                        </div>
 
                         <Button variant="contained" sx={primaryBtn} fullWidth type="submit">
                             Lưu Thay Đổi
@@ -234,7 +165,6 @@ const EditProfile = () => {
                         </Grid>
                     </Grid>
                 </Grid>
-
             </Grid>
         </div>
     );
