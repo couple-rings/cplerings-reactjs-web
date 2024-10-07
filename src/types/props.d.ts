@@ -5,6 +5,10 @@ declare global {
     product: IProduct;
   }
 
+  interface IBranchCardProps {
+    store: IStore;
+  }
+
   interface IHeaderCardProps {
     title: string;
 
