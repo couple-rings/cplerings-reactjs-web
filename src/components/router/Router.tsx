@@ -15,6 +15,9 @@ import NotFound from "src/pages/Error/NotFound/NotFound";
 import AuthRoute from "src/components/protected/AuthRoute";
 import CommonRoute from "src/components/protected/CommonRoute";
 import CustomerRoute from "src/components/protected/CustomerRoute";
+import EditProfile from "src/pages/Customer/EditProfile/EditProfile";
+import Jewelry from "src/pages/Common/Jewelry/Jewelry";
+import StoresBranches from "src/pages/Common/StoresBranches/StoresBranches";
 
 const router = createBrowserRouter([
   {
@@ -49,7 +52,6 @@ const router = createBrowserRouter([
           </AuthRoute>
         ),
       },
-
       {
         path: "verify-account",
         element: (
@@ -78,6 +80,14 @@ const router = createBrowserRouter([
         path: "wedding-rings",
         element: <WeddingRings />,
       },
+      {
+        path: "jewelry",
+        element: <Jewelry />,
+      },
+      {
+        path: "stores",
+        element: <StoresBranches />,
+      },
     ],
   },
   {
@@ -91,6 +101,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <CustomerDefault />,
+      },
+      {
+        path: "profile",
+        element: <EditProfile />,
       },
       {
         path: "address",
