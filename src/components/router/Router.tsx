@@ -11,7 +11,9 @@ import Address from "src/pages/Customer/Address/Address";
 import VerifyID from "src/pages/Customer/VerifyID/VerifyID";
 import WeddingRings from "src/pages/Common/WeddingRings/WeddingRings";
 import ChangePassword from "src/pages/Customer/ChangePassword/ChangePassword";
+import EditProfile from "src/pages/Customer/EditProfile/EditProfile";
 import Jewelry from "src/pages/Common/Jewelry/Jewelry";
+import StoresBranches from "src/pages/Common/StoresBranches/StoresBranches";
 
 const router = createBrowserRouter([
   {
@@ -51,6 +53,10 @@ const router = createBrowserRouter([
         path: "jewelry",
         element: <Jewelry />,
       },
+      {
+        path: "stores",
+        element: <StoresBranches/>
+      }
     ],
   },
   {
@@ -60,6 +66,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <CustomerDefault />,
+      },
+      {
+        path: "profile",
+        element: <EditProfile />,
       },
       {
         path: "address",
