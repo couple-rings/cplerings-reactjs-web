@@ -1,11 +1,11 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 // import { store } from "../redux/store";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const instance = axios.create({
   baseURL: backendUrl,
-  withCredentials: true,
+  // withCredentials: true,
 });
 
 instance.interceptors.request.use(
@@ -30,7 +30,12 @@ instance.interceptors.response.use(
 
     return response.data ? response.data : response;
   },
-  async function (error) {
+  async function (error: AxiosError<IResponse<undefined>>) {
+    if (error.response) {
+      const { errors } = error.response.data;
+      console.log(errors);
+    }
+
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     const status = error.response?.status || 500;

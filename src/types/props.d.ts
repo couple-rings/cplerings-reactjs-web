@@ -54,4 +54,8 @@ declare global {
 
     lists: T[];
   }
+
+  interface IProtectedRouteProps {
+    children: React.ReactNode;
+  }
 }

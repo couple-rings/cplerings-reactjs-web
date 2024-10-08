@@ -22,7 +22,8 @@ import { useNavigate } from "react-router-dom";
 import { InputAdornment, OutlinedInput, Grid } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import SideBar from "./SideBar";
-import { useAppSelector } from "src/utils/hooks";
+import { useAppDispatch, useAppSelector } from "src/utils/hooks";
+import { logout } from "src/redux/slice/auth.slice";
 
 const fastSearchs = [
   "Nhẫn Cưới",
@@ -64,15 +65,15 @@ const rightTabs = [
 const settings = [
   {
     text: "Trang Chủ",
-    path: "",
+    path: "/",
   },
   {
     text: "Đơn Mua",
-    path: "",
+    path: "/",
   },
   {
     text: "Thông Tin Cá Nhân",
-    path: "",
+    path: "/",
   },
   {
     text: "Đăng Xuất",
@@ -84,8 +85,10 @@ const UpperBar = () => {
 
   const [openSearch, setOpenSearch] = useState(false);
 
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     if (isAuthenticated) setAnchorElUser(event.currentTarget);
@@ -94,6 +97,12 @@ const UpperBar = () => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+    handleCloseUserMenu();
   };
 
   return (
@@ -171,6 +180,7 @@ const UpperBar = () => {
                     key={index}
                     onClick={() => {
                       if (setting.path) navigate(setting.path);
+                      else handleLogout();
                     }}
                   >
                     <Typography sx={{ textAlign: "center" }}>
