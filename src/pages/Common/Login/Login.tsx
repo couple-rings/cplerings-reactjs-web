@@ -18,6 +18,12 @@ import { emailPattern } from "src/utils/constants";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { passwordPattern } from "src/utils/constants";
+import { postLogin } from "src/services/auth.service";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { useAppDispatch, useAppSelector } from "src/utils/hooks";
+import { IUserinfo, login } from "src/redux/slice/auth.slice";
+import { jwtDecode } from "jwt-decode";
 
 interface IFormInput {
   email: string;
@@ -27,14 +33,39 @@ interface IFormInput {
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
+  const navigate = useNavigate();
+
+  const dispatch = useAppDispatch();
+  const { currentRoute } = useAppSelector((state) => state.route);
+
+  const mutation = useMutation({
+    mutationFn: (data: IFormInput) => {
+      return postLogin(data);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        const { refreshToken, token: accessToken } = response.data;
+        const userInfo = jwtDecode<IUserinfo>(accessToken);
+        const { id, ...rest } = userInfo;
+        dispatch(login({ ...rest, id: +id, accessToken, refreshToken }));
+
+        navigate(currentRoute);
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm<IFormInput>();
-  const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
-
-  const navigate = useNavigate();
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    mutation.mutate(data);
+  };
 
   return (
     <div className={styles.container}>
