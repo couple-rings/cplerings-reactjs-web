@@ -5,13 +5,22 @@ import { UserRole } from "src/utils/enums";
 export interface IInitState {
   isAuthenticated: boolean;
 
-  userInfo: IPayload;
+  userInfo: IUserinfo;
+
+  accessToken: string;
+
+  refreshToken: string;
 }
 
-export interface IPayload {
+export interface IUserinfo {
   id: number;
   sub: string;
   role: UserRole;
+}
+
+export interface IPayload extends IUserinfo {
+  accessToken: string;
+  refreshToken: string;
 }
 
 const initialState: IInitState = {
@@ -22,6 +31,10 @@ const initialState: IInitState = {
     sub: "",
     role: UserRole.Default,
   },
+
+  accessToken: "",
+
+  refreshToken: "",
 };
 
 export const authSlice = createSlice({
@@ -29,12 +42,17 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, { payload }: PayloadAction<IPayload>) => {
+      const { accessToken, refreshToken, ...rest } = payload;
       state.isAuthenticated = true;
-      state.userInfo = payload;
+      state.userInfo = rest;
+      state.accessToken = accessToken;
+      state.refreshToken = refreshToken;
     },
     logout: (state) => {
       state.isAuthenticated = false;
       state.userInfo = initialState.userInfo;
+      state.accessToken = "";
+      state.refreshToken = "";
     },
   },
 });

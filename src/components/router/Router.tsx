@@ -11,47 +11,82 @@ import Address from "src/pages/Customer/Address/Address";
 import VerifyID from "src/pages/Customer/VerifyID/VerifyID";
 import WeddingRings from "src/pages/Common/WeddingRings/WeddingRings";
 import ChangePassword from "src/pages/Customer/ChangePassword/ChangePassword";
+import NotFound from "src/pages/Error/NotFound/NotFound";
+import AuthRoute from "src/components/protected/AuthRoute";
+import CommonRoute from "src/components/protected/CommonRoute";
+import CustomerRoute from "src/components/protected/CustomerRoute";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Common />,
+    element: (
+      <CommonRoute>
+        <Common />
+      </CommonRoute>
+    ),
     children: [
       {
         index: true,
-        element: <Home />,
+        element: (
+          <AuthRoute>
+            <Home />
+          </AuthRoute>
+        ),
       },
       {
         path: "forget-password",
-        element: <ForgetPassword />,
+        element: (
+          <AuthRoute>
+            <ForgetPassword />
+          </AuthRoute>
+        ),
       },
       {
         path: "reset-password",
-        element: <ResetPassword />,
+        element: (
+          <AuthRoute>
+            <ResetPassword />
+          </AuthRoute>
+        ),
       },
-      
+
       {
         path: "verify-account",
-        element: <VerifyAccount />,
+        element: (
+          <AuthRoute>
+            <VerifyAccount />
+          </AuthRoute>
+        ),
       },
       {
         path: "login",
-        element: <Login />,
+        element: (
+          <AuthRoute>
+            <Login />
+          </AuthRoute>
+        ),
       },
       {
         path: "register",
-        element: <Register />,
+        element: (
+          <AuthRoute>
+            <Register />
+          </AuthRoute>
+        ),
       },
       {
         path: "wedding-rings",
         element: <WeddingRings />,
       },
-      
     ],
   },
   {
     path: "/customer",
-    element: <Common />,
+    element: (
+      <CustomerRoute>
+        <Common />
+      </CustomerRoute>
+    ),
     children: [
       {
         index: true,
@@ -67,9 +102,13 @@ const router = createBrowserRouter([
       },
       {
         path: "change-password",
-        element: <ChangePassword/>
+        element: <ChangePassword />,
       },
     ],
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 

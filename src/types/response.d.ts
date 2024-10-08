@@ -25,7 +25,7 @@ declare global {
     timestamp: string;
     type: ResponseType;
     errors?: IResponseError[];
-    data: T;
+    data?: T;
   }
 
   interface ILoginResponse {
