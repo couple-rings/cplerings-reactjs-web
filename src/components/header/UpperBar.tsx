@@ -73,7 +73,7 @@ const settings = [
   },
   {
     text: "Thông Tin Cá Nhân",
-    path: "/",
+    path: "/customer/profile",
   },
   {
     text: "Đăng Xuất",

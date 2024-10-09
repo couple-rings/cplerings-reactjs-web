@@ -1,0 +1,26 @@
+@use 'src/index.scss'as *;
+
+.container {
+    .title {
+        color    : #555;
+        font-size: 1.1rem;
+        cursor   : pointer;
+    }
+
+
+}
+
+.methodName {
+    font-size    : 1.3rem !important;
+    color        : $primaryColor;
+    margin-bottom: 1rem;
+    font-weight  : 600;
+}
+
+.methodImg {
+    width: 100%;
+}
+
+.methodDetail {
+    margin-bottom: 2rem;
+}

@@ -15,7 +15,7 @@ import { HoverMenuPurpose } from "src/utils/enums";
 import ringDesign from "src/assets/sampledata/ringdesign.png";
 import ProductCard from "src/components/product/ProductCard";
 import { useState } from "react";
-import WeddingRingsAccordian from "src/components/accordian/WeddingRings.Accordian";
+import WeddingRingsAccordian from "src/components/accordion/WeddingRings.Accordion";
 
 const collections = [
   "DR Heart",

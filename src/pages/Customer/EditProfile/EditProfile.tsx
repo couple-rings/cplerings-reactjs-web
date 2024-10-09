@@ -163,7 +163,7 @@ const EditProfile = () => {
             <Grid item xs={12} md={6}>
               <div
                 className={styles.fwdBtn}
-                onClick={() => navigate("../address")}
+                onClick={() => navigate("/customer/address")}
               >
                 <span>Quản lý địa chỉ {">"}</span>
               </div>

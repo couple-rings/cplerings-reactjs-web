@@ -17,6 +17,7 @@ import CommonRoute from "src/components/protected/CommonRoute";
 import CustomerRoute from "src/components/protected/CustomerRoute";
 import EditProfile from "src/pages/Customer/EditProfile/EditProfile";
 import Jewelry from "src/pages/Common/Jewelry/Jewelry";
+import DesignDetail from "src/pages/Common/DesignDetail/DesignDetail";
 import StoresBranches from "src/pages/Common/StoresBranches/StoresBranches";
 
 const router = createBrowserRouter([
@@ -83,6 +84,10 @@ const router = createBrowserRouter([
       {
         path: "jewelry",
         element: <Jewelry />,
+      },
+      {
+        path: "design-detail/:id",
+        element: <DesignDetail />,
       },
       {
         path: "stores",

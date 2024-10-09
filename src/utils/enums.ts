@@ -15,6 +15,12 @@ export enum HoverMenuPurpose {
   Sort = "sort",
 }
 
+export enum GoldColor {
+  White = "WHITE",
+  Rose = "ROSE",
+  Yellow = "YELLOW",
+}
+
 export enum UserRole {
   Default = "",
   Customer = "CUSTOMER",

@@ -38,6 +38,7 @@ const paperStyle: SxProps = {
 const boxStyle: SxProps = {
   display: "flex",
   alignItems: "center",
+  justifyContent: "flex-end",
 };
 
 const HoverMenu = (props: IHoverMenuProps<string>) => {
