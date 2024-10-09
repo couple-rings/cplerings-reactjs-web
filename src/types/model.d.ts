@@ -22,4 +22,11 @@ declare global {
 
     price: number;
   }
+
+  interface IStore {
+    coverImg: string;
+    name: string;
+    adr: string;
+    contact: string;
+  }
 }

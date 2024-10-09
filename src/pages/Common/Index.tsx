@@ -39,6 +39,7 @@ import guide from "src/assets/video/step.mp4";
 import brand from "src/assets/brand.png";
 import store from "src/assets/storeHD.png";
 import Advertisement from "src/components/advertisement/Advertisement";
+import { useNavigate } from "react-router-dom";
 
 const processSteps = [
   {
@@ -136,6 +137,8 @@ const HomeDefault = () => {
   const minSM = useMediaQuery(theme.breakpoints.up("sm"));
   const minMD = useMediaQuery(theme.breakpoints.up("md"));
   const minLG = useMediaQuery(theme.breakpoints.up("lg"));
+
+  const navigate = useNavigate();
 
   return (
     <div className={styles.container}>
@@ -252,7 +255,11 @@ const HomeDefault = () => {
               danh tính trước khi mua nhẫn cưới. Tên của người bạn đời sẽ không
               thể thay đổi hay xóa bỏ. Hãy chắc chắn rằng bạn đã sẵn sàng!
             </div>
-            <Button variant="outlined" sx={outlinedBtn}>
+            <Button
+              variant="outlined"
+              sx={outlinedBtn}
+              onClick={() => navigate("/customer/love-verification")}
+            >
               Xác Nhận
             </Button>
             <div className={styles.note}>
@@ -285,6 +292,7 @@ const HomeDefault = () => {
             variant="outlined"
             sx={outlinedBtn}
             className={styles.findBtn}
+            onClick={() => navigate("/stores")}
           >
             Tìm Cửa Hàng
           </Button>

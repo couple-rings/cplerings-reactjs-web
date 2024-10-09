@@ -5,6 +5,10 @@ declare global {
     product: IProduct;
   }
 
+  interface IBranchCardProps {
+    store: IStore;
+  }
+
   interface IHeaderCardProps {
     title: string;
 
@@ -65,5 +69,9 @@ declare global {
     date: string;
     setOpenDelete: (v: boolean) => void;
     setOpenUpdate: (v: boolean) => void;
+  }
+
+  interface IProtectedRouteProps {
+    children: React.ReactNode;
   }
 }

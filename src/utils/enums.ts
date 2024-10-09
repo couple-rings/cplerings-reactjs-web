@@ -20,3 +20,23 @@ export enum GoldColor {
   Rose = "ROSE",
   Yellow = "YELLOW",
 }
+
+export enum UserRole {
+  Default = "",
+  Customer = "CUSTOMER",
+  Staff = "STAFF",
+  Manager = "MANAGER",
+  Jeweler = "JEWELER",
+  Admin = "ADMIN",
+  Transporter = "TRANSPORTER",
+}
+
+export enum ResponseType {
+  Data = "DATA",
+  Error = "ERROR",
+}
+
+export enum ErrorType {
+  Validation = "VALIDATION",
+  Business = "BUSINESS",
+}
