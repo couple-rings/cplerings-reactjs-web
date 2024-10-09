@@ -1,0 +1,51 @@
+@use 'src/index.scss'as *;
+
+.container {
+    .title {
+        color    : $primaryColor;
+        font-size: 1.4rem;
+    }
+
+    .section {
+        justify-content: space-between;
+
+        .label {
+            font-size  : 1.2rem;
+            color      : $primaryColor;
+            line-height: 2.5rem;
+        }
+
+        .content {
+            font-size  : 1.2rem;
+            color      : #555;
+            line-height: 2.5rem;
+        }
+    }
+
+    .share {
+        display    : flex;
+        align-items: center;
+        margin-top : 1rem;
+
+        span {
+            color       : #555;
+            font-size   : 1.4rem;
+            margin-right: 1rem;
+        }
+
+        .iconBar {
+            display: flex;
+            gap    : 0.8rem;
+
+            .icon {
+                cursor: pointer;
+
+                &:hover {
+                    color: $secondaryColor;
+                }
+            }
+        }
+    }
+
+
+}

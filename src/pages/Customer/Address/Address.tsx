@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 import { saveList } from "src/redux/slice/district.slice";
 import DeleteModal from "src/components/modal/address/Delete.modal";
 import UpdateModal from "src/components/modal/address/Update.modal";
+import { useNavigate } from "react-router-dom";
 
 const addresses = [
   {
@@ -30,7 +31,9 @@ const Address = () => {
   const [openDelete, setOpenDelete] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
 
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
   const { districts } = useAppSelector((state) => state.district);
 
   useEffect(() => {
@@ -46,11 +49,11 @@ const Address = () => {
 
   return (
     <div className={styles.container}>
-      <Grid container className={styles.head}>
-        <Grid item xs={10} className={styles.homeLink}>
+      <Grid container item xs={10} className={styles.head}>
+        <div className={styles.homeLink} onClick={() => navigate("/")}>
           <ArrowBackIosIcon />
           <span>Trang Chủ</span>
-        </Grid>
+        </div>
       </Grid>
       <Grid container className={styles.body}>
         <Grid item xs={10} lg={8}>

@@ -2,7 +2,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import styles from "./WeddingRingsAccordian.module.scss";
+import styles from "./WeddingRingsAccordion.module.scss";
 
 const data = [
   {
@@ -197,7 +197,7 @@ const data = [
   },
 ];
 
-function WeddingRingsAccordian() {
+function WeddingRingsAccordion() {
   return (
     <div className={styles.container}>
       <Accordion sx={{ boxShadow: "none" }}>
@@ -261,4 +261,4 @@ function WeddingRingsAccordian() {
   );
 }
 
-export default WeddingRingsAccordian;
+export default WeddingRingsAccordion;

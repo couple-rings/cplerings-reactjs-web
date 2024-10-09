@@ -20,3 +20,7 @@ $primaryColor  : #3a3a3a;
   display: flex;
   gap    : 1rem;
 }
+
+.feedbackTabIndicator {
+  background-color: $primaryColor !important;
+}

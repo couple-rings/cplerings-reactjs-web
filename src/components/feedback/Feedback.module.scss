@@ -1,0 +1,47 @@
+@use 'src/index.scss'as *;
+
+.container {
+    display    : flex;
+    align-items: flex-start;
+    gap        : 1rem;
+
+
+    .right {
+        flex: 1;
+
+        .dateName {
+            display        : flex;
+            justify-content: space-between;
+            margin-bottom  : 0.7rem;
+
+            .name {
+                color    : $primaryColor;
+                font-size: 1.3rem;
+            }
+
+            .date {
+                color    : #888;
+                font-size: 1.3rem;
+            }
+        }
+
+        .title {
+            color     : $primaryColor;
+            font-size : 1.3rem;
+            margin-top: 1rem;
+        }
+
+        .comment {
+            color      : #888;
+            margin-top : 0.7rem;
+            font-size  : 1.1rem;
+            line-height: 1.7rem;
+        }
+
+        .iconBtnGroup {
+            text-align   : right;
+            margin-top   : 2rem;
+            margin-bottom: 1rem;
+        }
+    }
+}

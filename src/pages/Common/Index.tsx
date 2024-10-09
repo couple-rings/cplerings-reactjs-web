@@ -38,10 +38,8 @@ import firstAgreement from "src/assets/first-agreement.png";
 import guide from "src/assets/video/step.mp4";
 import brand from "src/assets/brand.png";
 import store from "src/assets/storeHD.png";
-import ad1 from "src/assets/ad01.png";
-import ad2 from "src/assets/ad02.png";
-import ad3 from "src/assets/ad03.png";
-import ad4 from "src/assets/ad04.png";
+import Advertisement from "src/components/advertisement/Advertisement";
+import { useNavigate } from "react-router-dom";
 
 const processSteps = [
   {
@@ -105,29 +103,6 @@ const mediaImgs = [
   media12,
 ];
 
-const advertisements = [
-  {
-    coverImg: ad1,
-    title: "Thiết Kế Độc Đáo",
-    text: "Những thiết kế đơn giản nhưng tinh tế và dịch vụ thiết kế cá nhân hóa từ trung tâm thiết kế CR Hồ Chí Minh.",
-  },
-  {
-    coverImg: ad2,
-    title: "Vận Chuyển An Toàn",
-    text: "Dịch vụ đổi trả trong vòng 15 ngày và vận chuyển được bảo hiểm toàn diện.",
-  },
-  {
-    coverImg: ad3,
-    title: "Chứng Nhận Kim Cương",
-    text: "Kim cương 100% tự nhiên, được chứng nhận bởi GIA.",
-  },
-  {
-    coverImg: ad4,
-    title: "Tình Yêu Độc Nhất",
-    text: "Sau khi xác minh tình yêu đích thực, tên của người ấy sẽ không bao giờ được thay đổi hay xóa bỏ.",
-  },
-];
-
 const processSettings: Settings = {
   dots: false,
   infinite: false,
@@ -157,18 +132,13 @@ const mediaSettings: Settings = {
   swipeToSlide: true,
 };
 
-const adSettings: Settings = {
-  dots: false,
-  infinite: false,
-  speed: 500,
-  swipeToSlide: true,
-};
-
 const HomeDefault = () => {
   const theme = useTheme();
   const minSM = useMediaQuery(theme.breakpoints.up("sm"));
   const minMD = useMediaQuery(theme.breakpoints.up("md"));
   const minLG = useMediaQuery(theme.breakpoints.up("lg"));
+
+  const navigate = useNavigate();
 
   return (
     <div className={styles.container}>
@@ -285,7 +255,11 @@ const HomeDefault = () => {
               danh tính trước khi mua nhẫn cưới. Tên của người bạn đời sẽ không
               thể thay đổi hay xóa bỏ. Hãy chắc chắn rằng bạn đã sẵn sàng!
             </div>
-            <Button variant="outlined" sx={outlinedBtn}>
+            <Button
+              variant="outlined"
+              sx={outlinedBtn}
+              onClick={() => navigate("/customer/love-verification")}
+            >
               Xác Nhận
             </Button>
             <div className={styles.note}>
@@ -318,6 +292,7 @@ const HomeDefault = () => {
             variant="outlined"
             sx={outlinedBtn}
             className={styles.findBtn}
+            onClick={() => navigate("/stores")}
           >
             Tìm Cửa Hàng
           </Button>
@@ -330,21 +305,7 @@ const HomeDefault = () => {
       {/* Store End */}
 
       {/* Advertisement Start */}
-      <div className={styles.advertisement}>
-        <div className={styles.title}>
-          Tình Yêu Làm Rạng Ngời Những Viên Kim Cương
-        </div>
-
-        <Slider {...adSettings}>
-          <div>
-            <Grid container className={styles.sliderContainer}>
-              {advertisements.map((ad, index) => {
-                return <AdCard key={index} {...ad} />;
-              })}
-            </Grid>
-          </div>
-        </Slider>
-      </div>
+      <Advertisement />
       {/* Advertisement End */}
     </div>
   );
@@ -373,18 +334,6 @@ const Story = (props: IStoryProps) => {
           </Button>
         </Grid>
       )}
-    </Grid>
-  );
-};
-
-const AdCard = (props: IAdCardProps) => {
-  const { coverImg, text, title } = props;
-
-  return (
-    <Grid item xs={8} sm={5.5} md={4.5} lg={2.3} className={styles.adCard}>
-      <img src={coverImg} />
-      <div className={styles.title}>{title}</div>
-      <div className={styles.text}>{text}</div>
     </Grid>
   );
 };
