@@ -56,4 +56,14 @@ declare global {
 
     setSize: (v: number) => void;
   }
+
+  interface IFeedbackProps {
+    username: string;
+    rating: number;
+    title: string;
+    comment: string;
+    date: string;
+    setOpenDelete: (v: boolean) => void;
+    setOpenUpdate: (v: boolean) => void;
+  }
 }

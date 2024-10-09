@@ -105,6 +105,7 @@ const LowerBar = () => {
         id="fade-menu"
         MenuListProps={{
           "aria-labelledby": "fade-button",
+          "aria-hidden": true,
         }}
         anchorEl={anchorEl}
         open={open}

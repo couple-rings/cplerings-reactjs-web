@@ -1,0 +1,21 @@
+@use 'src/index.scss'as *;
+
+.container {
+    margin-bottom: 2rem;
+
+    img {
+        width: 100%;
+    }
+
+    .title {
+        font-size : 1.5rem;
+        color     : $primaryColor;
+        margin    : 1.5rem 0;
+        text-align: left;
+    }
+
+    .text {
+        color      : #555;
+        line-height: 1.5rem;
+    }
+}
