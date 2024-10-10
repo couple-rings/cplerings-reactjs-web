@@ -10,7 +10,7 @@ import {
   InputAdornment,
   TextField,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { passwordPattern } from "src/utils/constants";
 import { primaryBtn } from "src/utils/styles";
@@ -37,6 +37,10 @@ const ChangePassword = () => {
     watch,
   } = useForm<IFormInput>();
   const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   return (
     <div className={styles.container}>

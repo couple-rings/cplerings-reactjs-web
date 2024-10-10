@@ -32,4 +32,10 @@ declare global {
     token: string;
     refreshToken: string;
   }
+
+  interface IRegisterResponse {
+    email: string;
+  }
+
+  interface IAccountVerifyResponse extends ILoginResponse {}
 }
