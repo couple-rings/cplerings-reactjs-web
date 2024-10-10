@@ -1,5 +1,4 @@
 import {
-  Button,
   FormControl,
   FormControlLabel,
   OutlinedInput,
@@ -10,7 +9,7 @@ import {
   FormHelperText,
 } from "@mui/material";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Location, useLocation, useNavigate } from "react-router-dom";
 import styles from "./Login.module.scss";
 import { primaryBtn } from "src/utils/styles";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -24,6 +23,7 @@ import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 import { IUserinfo, login } from "src/redux/slice/auth.slice";
 import { jwtDecode } from "jwt-decode";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 interface IFormInput {
   email: string;
@@ -34,7 +34,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
-
+  const location: Location<{ email: string }> = useLocation();
   const dispatch = useAppDispatch();
   const { currentRoute } = useAppSelector((state) => state.route);
 
@@ -62,7 +62,11 @@ const Login = () => {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm<IFormInput>();
+  } = useForm<IFormInput>({
+    defaultValues: {
+      email: location.state ? location.state.email : "",
+    },
+  });
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     mutation.mutate(data);
   };
@@ -129,9 +133,14 @@ const Login = () => {
               />
             </FormControl>
 
-            <Button variant="contained" sx={primaryBtn} fullWidth type="submit">
+            <LoadingButton
+              type="submit"
+              sx={primaryBtn}
+              variant="contained"
+              loading={mutation.isPending}
+            >
               Đăng Nhập
-            </Button>
+            </LoadingButton>
 
             <div
               className={styles.fwdBtn}

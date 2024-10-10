@@ -6,7 +6,7 @@ import photoIcon1 from "src/assets/icon-photo1.png";
 import photoIcon2 from "src/assets/icon-photo2.png";
 import cameraIcon from "src/assets/icon-carmera.png";
 import { primaryBtn, textBtn } from "src/utils/styles";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { PersonFace } from "src/utils/enums";
 import _ from "lodash";
@@ -99,6 +99,10 @@ function VerifyID() {
       setPartnerError(cloneState);
     }
   };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   return (
     <Grid container className={styles.container}>
