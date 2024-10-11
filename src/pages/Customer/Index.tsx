@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 const imgLists = [
   {
     img: orders,
-    path: "/customer",
+    path: "/customer/orders",
   },
   {
     img: wishlist,

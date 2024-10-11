@@ -19,6 +19,19 @@ import EditProfile from "src/pages/Customer/EditProfile/EditProfile";
 import Jewelry from "src/pages/Common/Jewelry/Jewelry";
 import DesignDetail from "src/pages/Common/DesignDetail/DesignDetail";
 import StoresBranches from "src/pages/Common/StoresBranches/StoresBranches";
+import StaffLayout from "src/pages/Staff/Layout";
+import StaffHome from "src/pages/Staff/Index";
+import JewelerLayout from "src/pages/Jeweler/Layout";
+import JewelerHome from "src/pages/Jeweler/Index";
+import ManagerLayout from "src/pages/Manager/Layout";
+import ManagerHome from "src/pages/Manager/Index";
+import AdminLayout from "src/pages/Admin/Layout";
+import AdminHome from "src/pages/Admin/Index";
+import StaffRoute from "src/components/protected/StaffRoute";
+import JewelerRoute from "src/components/protected/JewelerRoute";
+import ManagerRoute from "src/components/protected/ManagerRoute";
+import AdminRoute from "src/components/protected/AdminRoute";
+import Orders from "src/pages/Customer/Orders/Orders";
 
 const router = createBrowserRouter([
   {
@@ -122,6 +135,66 @@ const router = createBrowserRouter([
       {
         path: "change-password",
         element: <ChangePassword />,
+      },
+      {
+        path: "orders",
+        element: <Orders />,
+      },
+    ],
+  },
+  {
+    path: "/staff",
+    element: (
+      <StaffRoute>
+        <StaffLayout />
+      </StaffRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <StaffHome />,
+      },
+    ],
+  },
+  {
+    path: "/jeweler",
+    element: (
+      <JewelerRoute>
+        <JewelerLayout />
+      </JewelerRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <JewelerHome />,
+      },
+    ],
+  },
+  {
+    path: "/manager",
+    element: (
+      <ManagerRoute>
+        <ManagerLayout />
+      </ManagerRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <ManagerHome />,
+      },
+    ],
+  },
+  {
+    path: "/admin",
+    element: (
+      <AdminRoute>
+        <AdminLayout />
+      </AdminRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <AdminHome />,
       },
     ],
   },
