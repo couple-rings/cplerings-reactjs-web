@@ -82,7 +82,7 @@ function JewelryTab() {
         <img src={jewelry} className={styles.coverImg} />
       </div>
 
-      <div className={styles.exploreLink} onClick={() => navigate("jewelry")}>
+      <div className={styles.exploreLink} onClick={() => navigate("/jewelry")}>
         <Container sx={{ mt: 3 }}>Khám Phá Tất Cả Trang Sức &gt;</Container>
       </div>
     </div>

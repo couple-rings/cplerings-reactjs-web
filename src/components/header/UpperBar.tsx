@@ -24,6 +24,7 @@ import FormControl from "@mui/material/FormControl";
 import SideBar from "./SideBar";
 import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 import { logout } from "src/redux/slice/auth.slice";
+import { removeRoute } from "src/redux/slice/route.slice";
 
 const fastSearchs = [
   "Nhẫn Cưới",
@@ -101,6 +102,7 @@ const UpperBar = () => {
 
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(removeRoute());
     navigate("/login");
     handleCloseUserMenu();
   };
