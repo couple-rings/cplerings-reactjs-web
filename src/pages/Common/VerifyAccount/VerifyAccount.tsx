@@ -1,5 +1,4 @@
 import {
-  Button,
   FormControl,
   FormHelperText,
   Grid,
@@ -8,18 +7,58 @@ import {
 import styles from "./VerfifyAccount.module.scss";
 import { primaryBtn } from "src/utils/styles";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { Location, useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { postAccountVerify } from "src/services/customer.service";
+import { toast } from "react-toastify";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 interface IFormInput {
   otp: string;
 }
 
 const VerifyAccount = () => {
+  const navigate = useNavigate();
+  const location: Location<{ email: string }> = useLocation();
+
+  const mutation = useMutation({
+    mutationFn: (data: IAccountVerifyRequest) => {
+      return postAccountVerify(data);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        const { email } = location.state;
+        navigate("/login", { state: { email } });
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm<IFormInput>();
-  const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    const { email } = location.state;
+
+    mutation.mutate({
+      verificationCode: data.otp,
+      email,
+    });
+  };
+
+  useEffect(() => {
+    if (!location.state) {
+      navigate("/register");
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state]);
 
   return (
     <div className={styles.container}>
@@ -41,9 +80,15 @@ const VerifyAccount = () => {
               )}
             </FormControl>
 
-            <Button variant="contained" sx={primaryBtn} fullWidth type="submit">
+            <LoadingButton
+              fullWidth
+              type="submit"
+              sx={primaryBtn}
+              variant="contained"
+              loading={mutation.isPending}
+            >
               Xác Nhận
-            </Button>
+            </LoadingButton>
 
             <div className={styles.backBtn}>Gửi lại OTP</div>
           </form>

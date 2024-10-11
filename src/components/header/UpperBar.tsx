@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Header.module.scss";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -18,7 +18,7 @@ import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlin
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import Drawer from "@mui/material/Drawer";
 import Divider from "@mui/material/Divider";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { InputAdornment, OutlinedInput, Grid } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import SideBar from "./SideBar";
@@ -73,6 +73,10 @@ const settings = [
     path: "/",
   },
   {
+    text: "Tài Khoản Của Tôi",
+    path: "/customer",
+  },
+  {
     text: "Thông Tin Cá Nhân",
     path: "/customer/profile",
   },
@@ -87,6 +91,7 @@ const UpperBar = () => {
   const [openSearch, setOpenSearch] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useAppDispatch();
 
   const { isAuthenticated } = useAppSelector((state) => state.auth);
@@ -106,6 +111,10 @@ const UpperBar = () => {
     navigate("/login");
     handleCloseUserMenu();
   };
+
+  useEffect(() => {
+    setAnchorElUser(null);
+  }, [location.pathname]);
 
   return (
     <>
