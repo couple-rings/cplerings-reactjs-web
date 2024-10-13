@@ -32,6 +32,7 @@ import JewelerRoute from "src/components/protected/JewelerRoute";
 import ManagerRoute from "src/components/protected/ManagerRoute";
 import AdminRoute from "src/components/protected/AdminRoute";
 import Orders from "src/pages/Customer/Orders/Orders";
+import OrderDetail from "src/pages/Customer/OrderDetail/OrderDetail";
 
 const router = createBrowserRouter([
   {
@@ -139,6 +140,10 @@ const router = createBrowserRouter([
       {
         path: "orders",
         element: <Orders />,
+      },
+      {
+        path: "order-detail/:id",
+        element: <OrderDetail />,
       },
     ],
   },
