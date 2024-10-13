@@ -16,4 +16,14 @@ declare global {
     email: string;
     verificationCode: string;
   }
+
+  interface ISendOtpRequest {
+    email: string;
+  }
+
+  interface IResetPasswordRequest {
+    email: string;
+    newPassword: string;
+    otp: string;
+  }
 }

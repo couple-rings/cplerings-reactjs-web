@@ -38,4 +38,6 @@ declare global {
   }
 
   interface IAccountVerifyResponse extends ILoginResponse {}
+
+  interface ISendOtpResponse extends IRegisterResponse {}
 }

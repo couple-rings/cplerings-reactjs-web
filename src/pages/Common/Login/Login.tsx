@@ -24,6 +24,7 @@ import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 import { IUserinfo, login } from "src/redux/slice/auth.slice";
 import { jwtDecode } from "jwt-decode";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { ErrorCode } from "src/utils/enums";
 
 interface IFormInput {
   email: string;
@@ -42,7 +43,7 @@ const Login = () => {
     mutationFn: (data: IFormInput) => {
       return postLogin(data);
     },
-    onSuccess: (response) => {
+    onSuccess: (response, request) => {
       if (response.data) {
         const { refreshToken, token: accessToken } = response.data;
         const userInfo = jwtDecode<IUserinfo>(accessToken);
@@ -53,7 +54,13 @@ const Login = () => {
       }
 
       if (response.errors) {
-        response.errors.forEach((err) => toast.error(err.description));
+        response.errors.forEach((err) => {
+          if (err.code === ErrorCode.UnVerifiedAccount) {
+            const { email } = request;
+            navigate("/verify-account", { state: { email } });
+            toast.info("Vui lòng kích hoạt tài khoản");
+          } else toast.error(err.description);
+        });
       }
     },
   });

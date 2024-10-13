@@ -10,7 +10,10 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Location, useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { postAccountVerify } from "src/services/customer.service";
+import {
+  postAccountVerify,
+  postResendOtp,
+} from "src/services/customer.service";
 import { toast } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
 
@@ -30,6 +33,22 @@ const VerifyAccount = () => {
       if (response.data) {
         const { email } = location.state;
         navigate("/login", { state: { email } });
+        toast.success("Tài khoản đã được kích hoạt");
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
+  const resendMutation = useMutation({
+    mutationFn: (data: ISendOtpRequest) => {
+      return postResendOtp(data);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        toast.success("OTP đã được gửi đến email của bạn");
       }
 
       if (response.errors) {
@@ -50,6 +69,12 @@ const VerifyAccount = () => {
       verificationCode: data.otp,
       email,
     });
+  };
+
+  const resendOtp = () => {
+    const { email } = location.state;
+
+    resendMutation.mutate({ email });
   };
 
   useEffect(() => {
@@ -85,12 +110,14 @@ const VerifyAccount = () => {
               type="submit"
               sx={primaryBtn}
               variant="contained"
-              loading={mutation.isPending}
+              loading={mutation.isPending || resendMutation.isPending}
             >
               Xác Nhận
             </LoadingButton>
 
-            <div className={styles.backBtn}>Gửi lại OTP</div>
+            <div className={styles.backBtn} onClick={resendOtp}>
+              Gửi lại OTP
+            </div>
           </form>
         </Grid>
       </Grid>
