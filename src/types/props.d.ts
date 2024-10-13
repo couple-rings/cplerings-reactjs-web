@@ -74,4 +74,8 @@ declare global {
   interface IProtectedRouteProps {
     children: React.ReactNode;
   }
+
+  interface IStepperProps {
+    activeStep: number;
+  }
 }

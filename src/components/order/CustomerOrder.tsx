@@ -3,8 +3,11 @@ import styles from "./CustomerOrder.module.scss";
 import sample from "src/assets/sampledata/ringdesign.png";
 import { Box, Button, Divider, Grid } from "@mui/material";
 import { outlinedBtn, primaryBtn } from "src/utils/styles";
+import { useNavigate } from "react-router-dom";
 
 function CustomerOrder() {
+  const navigate = useNavigate();
+
   return (
     <>
       <div className={styles.container}>
@@ -55,6 +58,7 @@ function CustomerOrder() {
                 fullWidth
                 variant="outlined"
                 sx={{ ...outlinedBtn, px: 0 }}
+                onClick={() => navigate(`/customer/order-detail/1`)}
               >
                 Chi Tiết
               </Button>
