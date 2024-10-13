@@ -34,9 +34,14 @@ export enum UserRole {
 export enum ResponseType {
   Data = "DATA",
   Error = "ERROR",
+  Info = "INFO",
 }
 
 export enum ErrorType {
   Validation = "VALIDATION",
   Business = "BUSINESS",
+}
+
+export enum ErrorCode {
+  UnVerifiedAccount = "012",
 }

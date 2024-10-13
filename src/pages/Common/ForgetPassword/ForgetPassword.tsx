@@ -1,5 +1,4 @@
 import {
-  Button,
   FormControl,
   OutlinedInput,
   Grid,
@@ -11,6 +10,10 @@ import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { emailPattern } from "src/utils/constants";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { postRequestResetPW } from "src/services/customer.service";
+import { toast } from "react-toastify";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 interface IFormInput {
   email: string;
@@ -20,12 +23,34 @@ interface IFormInput {
 const ForgetPassword = () => {
   const [code, setCode] = useState(0);
 
+  const mutation = useMutation({
+    mutationFn: (data: ISendOtpRequest) => {
+      return postRequestResetPW(data);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        const { email } = response.data;
+
+        navigate("/reset-password", { state: { email } });
+        toast.success("OTP đã được gửi đến email của bạn");
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm<IFormInput>();
-  const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { code, ...rest } = data;
+    mutation.mutate(rest);
+  };
 
   const navigate = useNavigate();
 
@@ -83,9 +108,15 @@ const ForgetPassword = () => {
               <div className={styles.code}>{code}</div>
             </div>
 
-            <Button variant="contained" sx={primaryBtn} fullWidth type="submit">
+            <LoadingButton
+              fullWidth
+              type="submit"
+              sx={primaryBtn}
+              variant="contained"
+              loading={mutation.isPending}
+            >
               Xác Nhận
-            </Button>
+            </LoadingButton>
 
             <div className={styles.backBtn} onClick={() => navigate("/login")}>
               Quay Lại

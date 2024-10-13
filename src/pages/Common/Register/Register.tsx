@@ -42,6 +42,7 @@ const Register = () => {
         const { email } = response.data;
 
         navigate("/verify-account", { state: { email } });
+        toast.success("OTP đã được gửi đến email của bạn");
       }
 
       if (response.errors) {
