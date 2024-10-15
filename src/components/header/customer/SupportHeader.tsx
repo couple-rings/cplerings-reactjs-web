@@ -13,7 +13,7 @@ const containerStyle: SxProps = {
   flexGrow: 1,
   display: "flex",
   alignItems: "center",
-  gap: 5,
+  gap: 3,
 };
 
 const appBarStyle: SxProps = {

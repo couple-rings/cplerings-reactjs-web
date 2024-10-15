@@ -8,6 +8,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { saveNotifications } from "src/redux/slice/conversation.slice";
 import { putUpdateConversation } from "src/services/conversation.service";
 import { putUpdateMessage } from "src/services/message.service";
+import { Button, Grid } from "@mui/material";
+import { primaryBtn } from "src/utils/styles";
 
 const socket = io(import.meta.env.VITE_NESTJS_SERVER_URL);
 
@@ -83,8 +85,26 @@ function Index() {
     <div className={styles.container}>
       <ConversationList joinRooms={joinRooms} />
 
-      {_id && (
+      {_id ? (
         <Chatbox handleSend={handleSend} receiveMessage={receiveMessage} />
+      ) : (
+        <Grid container justifyContent={"center"}>
+          <Grid item xs={12} md={8}>
+            <div className={styles.intro}>
+              Chào mừng bạn đến với Trung Tâm Chăm Sóc Khách Hàng!
+            </div>
+            <div className={styles.guide}>
+              Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ mọi yêu cầu của bạn.
+              Hãy nhấn vào nút bên dưới để bắt đầu trò chuyện cùng nhân viên của
+              chúng tôi.
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <Button variant="contained" sx={{ ...primaryBtn, py: 1 }}>
+                Chat Ngay
+              </Button>
+            </div>
+          </Grid>
+        </Grid>
       )}
     </div>
   );

@@ -15,10 +15,13 @@ export const conversationSlice = createSlice({
     saveMessages: (state, { payload }: PayloadAction<IMessage[]>) => {
       state.messagesList = payload;
     },
+    removeMessages: (state) => {
+      state.messagesList = [];
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { saveMessages } = conversationSlice.actions;
+export const { saveMessages, removeMessages } = conversationSlice.actions;
 
 export default conversationSlice.reducer;

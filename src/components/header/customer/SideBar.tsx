@@ -14,10 +14,10 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
 import logo from "src/assets/logowhite.png";
 import { useNavigate } from "react-router-dom";
+import WidgetsOutlinedIcon from "@mui/icons-material/WidgetsOutlined";
 
 const bottomMobileMenu = [
   {
@@ -69,7 +69,7 @@ function SideBar() {
         aria-haspopup="true"
         onClick={toggleDrawer(true)}
       >
-        <MenuIcon fontSize="large" />
+        <WidgetsOutlinedIcon fontSize="large" />
       </IconButton>
 
       <Drawer open={open} onClose={toggleDrawer(false)}>
