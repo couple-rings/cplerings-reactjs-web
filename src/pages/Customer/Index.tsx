@@ -5,7 +5,7 @@ import wishlist from "src/assets/wish_list.png";
 import profile from "src/assets/profile.png";
 import verification from "src/assets/verification.png";
 import agreement from "src/assets/agreement.png";
-import medals from "src/assets/medals.png";
+import support from "src/assets/support.png";
 import { Grid, ListItemText, Menu, MenuItem, Switch } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -32,8 +32,8 @@ const imgLists = [
     path: "/customer",
   },
   {
-    img: medals,
-    path: "/customer",
+    img: support,
+    path: "/customer/support",
   },
 ];
 

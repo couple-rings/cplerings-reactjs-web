@@ -1,0 +1,22 @@
+.container {
+    display        : block;
+    text-decoration: none;
+
+    .content {
+        display    : flex;
+        align-items: center;
+        gap        : 15px;
+
+        .name {
+            font-weight  : 500;
+            margin-bottom: 5px;
+            overflow-wrap: anywhere;
+        }
+
+        .size {
+            font-size  : 0.9rem;
+            color      : gray;
+            font-weight: 400;
+        }
+    }
+}

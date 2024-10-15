@@ -1,0 +1,11 @@
+.container {
+    display      : flex;
+    align-items  : flex-start;
+    gap          : 15px;
+    margin-bottom: 30px;
+
+    .childrenContainer {
+        max-width: 80%;
+        min-width: 150px;
+    }
+}
