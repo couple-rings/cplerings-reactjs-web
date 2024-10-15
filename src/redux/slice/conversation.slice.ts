@@ -36,11 +36,21 @@ export const conversationSlice = createSlice({
     saveNotifications: (state, { payload }: PayloadAction<string[]>) => {
       state.notificationList = payload;
     },
+
+    removeConversations: (state) => {
+      state.conversationsList = [];
+      state.notificationList = [];
+      state.currentConversation = initialState.currentConversation;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { saveConversations, selectConversation, saveNotifications } =
-  conversationSlice.actions;
+export const {
+  saveConversations,
+  selectConversation,
+  saveNotifications,
+  removeConversations,
+} = conversationSlice.actions;
 
 export default conversationSlice.reducer;

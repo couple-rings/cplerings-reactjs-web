@@ -22,27 +22,33 @@ import { WeddingRingsTabMobile } from "./WeddingRingsTab";
 import { JewelryTabMobile } from "./JewelryTab";
 import { OtherTabMobile } from "./OtherTab";
 import { aboutTabData, certificateTabData } from "src/utils/constants";
+import { useAppDispatch, useAppSelector } from "src/utils/hooks";
+import { logout } from "src/redux/slice/auth.slice";
+import { removeRoute } from "src/redux/slice/route.slice";
+import { removeMessages } from "src/redux/slice/message.slice";
+import { removeConversations } from "src/redux/slice/conversation.slice";
+import { useNavigate } from "react-router-dom";
 
 const bottomMobileMenu = [
   {
     icon: <PermIdentityIcon />,
     text: "Tài Khoản Của Tôi",
-    path: "",
+    path: "/customer",
   },
   {
     icon: <FavoriteBorderOutlinedIcon />,
     text: "Danh Sách Yêu Thích",
-    path: "",
+    path: "/",
   },
   {
     icon: <ShoppingBagOutlinedIcon />,
     text: "Giỏ Hàng Của Tôi",
-    path: "",
+    path: "/",
   },
   {
     icon: <PhoneOutlinedIcon />,
     text: "Liên Hệ",
-    path: "",
+    path: "/",
   },
   {
     icon: <LogoutOutlinedIcon />,
@@ -76,6 +82,11 @@ function SideBar() {
   const [open, setOpen] = useState(false);
   const [openTabs, setOpenTabs] = useState<number[]>([]);
 
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
   const handleExpand = (index: number) => {
     if (openTabs.includes(index))
       setOpenTabs((currentArr) => currentArr.filter((item) => item !== index));
@@ -84,6 +95,15 @@ function SideBar() {
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    dispatch(removeRoute());
+    dispatch(removeMessages());
+    dispatch(removeConversations());
+    setOpen(false);
+    navigate("/login");
   };
 
   return (
@@ -140,14 +160,22 @@ function SideBar() {
         <Divider />
 
         <List sx={{ mt: 3 }}>
-          {bottomMobileMenu.map((item, index) => (
-            <ListItem key={index} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+          {bottomMobileMenu.map((item, index) => {
+            if (item.path || (!item.path && isAuthenticated))
+              return (
+                <ListItem key={index} disablePadding>
+                  <ListItemButton
+                    onClick={() => {
+                      if (item.path) navigate(item.path);
+                      else handleLogout();
+                    }}
+                  >
+                    <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItemText primary={item.text} />
+                  </ListItemButton>
+                </ListItem>
+              );
+          })}
         </List>
       </Drawer>
     </>
