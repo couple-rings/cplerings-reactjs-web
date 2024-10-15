@@ -78,4 +78,62 @@ declare global {
   interface IStepperProps {
     activeStep: number;
   }
+
+  interface IConversationProps {
+    conversation: IConversation;
+  }
+
+  interface IConversationListProps {
+    joinRooms: (v: string[]) => void;
+  }
+
+  interface IAttachmentMessageProps {
+    url: string;
+
+    name: string;
+
+    size: number | undefined;
+
+    cardBgColor?: string;
+  }
+
+  interface IAvatarMessageProps {
+    timestamp: string;
+
+    children: React.ReactElement;
+  }
+
+  interface IOwnMessageProps extends IAvatarMessageProps {}
+
+  export interface IImageMessageProps {
+    url: string;
+
+    handleOnLoad: () => void;
+  }
+
+  interface ITextMessageProps {
+    content: string;
+
+    cardBgColor?: string;
+  }
+
+  interface ISelectFileButtonProps {
+    children: React.ReactElement;
+
+    fileAccept: string;
+
+    handleSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  }
+
+  interface IFooterProps {
+    handleSubmitFile: (file: IFile, type: string) => void;
+
+    handleSubmitText: (v: string) => void;
+  }
+
+  interface IChatboxProps {
+    handleSend: (v: IMessage) => void;
+
+    receiveMessage: IMessage | null;
+  }
 }

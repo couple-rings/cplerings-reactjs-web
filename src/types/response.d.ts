@@ -40,4 +40,26 @@ declare global {
   interface IAccountVerifyResponse extends ILoginResponse {}
 
   interface ISendOtpResponse extends IRegisterResponse {}
+
+  interface ISecondaryResponse<T> {
+    statusCode: number;
+
+    message?: string;
+
+    error?: string | string[];
+
+    data?: T | null;
+  }
+
+  interface ISecondaryListResponse<T> {
+    currentPage: number;
+
+    pageSize: number;
+
+    totalPages: number;
+
+    totalItems: number;
+
+    items: T;
+  }
 }

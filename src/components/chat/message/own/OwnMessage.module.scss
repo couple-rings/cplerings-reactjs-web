@@ -1,0 +1,10 @@
+.container {
+    margin-bottom  : 30px;
+    display        : flex;
+    justify-content: end;
+
+    .childrenContainer {
+        max-width: 80%;
+        min-width: 150px;
+    }
+}

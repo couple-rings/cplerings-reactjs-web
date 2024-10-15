@@ -26,4 +26,22 @@ declare global {
     newPassword: string;
     otp: string;
   }
+
+  interface IUpdateConversationRequest {
+    userId: number;
+  }
+
+  interface IConversationFilterDto {
+    userId: number;
+  }
+
+  interface IUpdateMessageRequest {
+    read: boolean;
+  }
+
+  interface IMessageFilterDto {
+    conversationId: string;
+
+    current?: number;
+  }
 }
