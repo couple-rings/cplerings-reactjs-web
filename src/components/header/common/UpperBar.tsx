@@ -25,6 +25,8 @@ import SideBar from "./SideBar";
 import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 import { logout } from "src/redux/slice/auth.slice";
 import { removeRoute } from "src/redux/slice/route.slice";
+import { removeMessages } from "src/redux/slice/message.slice";
+import { removeConversations } from "src/redux/slice/conversation.slice";
 
 const fastSearchs = [
   "Nhẫn Cưới",
@@ -108,6 +110,8 @@ const UpperBar = () => {
   const handleLogout = () => {
     dispatch(logout());
     dispatch(removeRoute());
+    dispatch(removeMessages());
+    dispatch(removeConversations());
     navigate("/login");
     handleCloseUserMenu();
   };

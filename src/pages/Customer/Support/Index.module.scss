@@ -1,7 +1,24 @@
+@use 'src/index.scss'as *;
+
 .container {
     display       : flex;
     height        : 100vh;
     overflow      : hidden;
     padding       : 3rem;
     padding-bottom: 0;
+
+    .intro {
+        font-size : 1.5rem;
+        color     : $primaryColor;
+        text-align: center;
+        margin    : 2rem 0;
+    }
+
+    .guide {
+        text-align   : center;
+        color        : #555;
+        font-size    : 1.3rem;
+        line-height  : 1.8rem;
+        margin-bottom: 3rem;
+    }
 }
