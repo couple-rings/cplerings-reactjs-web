@@ -68,7 +68,7 @@ function UpdateModal(props: IModalProps) {
       }}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <DialogTitle>Sửa Địa Chỉ</DialogTitle>
+      <DialogTitle>Sửa Đánh Giá</DialogTitle>
       <DialogContent>
         <Controller
           control={control}

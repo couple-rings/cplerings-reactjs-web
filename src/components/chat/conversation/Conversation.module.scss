@@ -1,0 +1,32 @@
+.container {
+    .latestMessage {
+        display    : flex;
+        align-items: center;
+        margin-top : 10px;
+        gap        : 5px;
+
+        &.notified {
+            font-weight: 600;
+            color      : black;
+        }
+
+        .messageContent {
+            display      : inline-block;
+            overflow     : hidden;
+            white-space  : nowrap;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .right {
+        display      : flex;
+        align-items  : center;
+        gap          : 8px;
+        margin-bottom: 15px;
+
+        .date {
+            color    : gray;
+            font-size: 13px;
+        }
+    }
+}

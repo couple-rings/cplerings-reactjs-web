@@ -33,6 +33,8 @@ import ManagerRoute from "src/components/protected/ManagerRoute";
 import AdminRoute from "src/components/protected/AdminRoute";
 import Orders from "src/pages/Customer/Orders/Orders";
 import OrderDetail from "src/pages/Customer/OrderDetail/OrderDetail";
+import Support from "src/pages/Customer/Support/Layout";
+import SupportDefault from "src/pages/Customer/Support/Index";
 
 const router = createBrowserRouter([
   {
@@ -144,6 +146,16 @@ const router = createBrowserRouter([
       {
         path: "order-detail/:id",
         element: <OrderDetail />,
+      },
+      {
+        path: "support",
+        element: <Support />,
+        children: [
+          {
+            index: true,
+            element: <SupportDefault />,
+          },
+        ],
       },
     ],
   },
