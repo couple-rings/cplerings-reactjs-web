@@ -1,3 +1,5 @@
+import { SxProps } from "@mui/material";
+
 export {};
 
 declare global {
@@ -13,6 +15,8 @@ declare global {
     title: string;
 
     subTitle: string;
+
+    path: string;
 
     img: string;
   }
@@ -59,6 +63,36 @@ declare global {
     size: number;
 
     setSize: (v: number) => void;
+
+    label: boolean;
+
+    sx: SxProps;
+
+    paperStyle: SxProps;
+  }
+
+  interface IMetalMenuProps {
+    sx: SxProps;
+
+    metal: string;
+
+    setMetal: (v: string) => void;
+  }
+
+  interface IDiamondMenuProps {
+    sx: SxProps;
+
+    diamond: string;
+
+    setDiamond: (v: string) => void;
+  }
+
+  interface IEngravingMenuProps {
+    sx: SxProps;
+
+    engraving: string;
+
+    setEngraving: (v: string) => void;
   }
 
   interface IFeedbackProps {
@@ -135,5 +169,11 @@ declare global {
     handleSend: (v: IMessage) => void;
 
     receiveMessage: IMessage | null;
+  }
+
+  interface ISummaryProps {
+    productAmount: number;
+
+    discount: number;
   }
 }

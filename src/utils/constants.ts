@@ -7,11 +7,13 @@ export const certificateTabData = [
   {
     title: "Minh Chứng Tình Yêu",
     subTitle: "Bắt Đầu Ngay >",
+    path: "/",
     img: loveCheck,
   },
   {
     title: "Khám Phá Thỏa Thuận Tình Yêu",
     subTitle: "Khám Phá Thêm >",
+    path: "/",
     img: loveAgreement,
   },
 ];
@@ -21,11 +23,13 @@ export const aboutTabData = [
     title: "Sứ Mệnh CR",
     subTitle: "Khám Phá Thêm >",
     img: story,
+    path: "/",
   },
   {
     title: "Tìm Cửa Hàng",
     subTitle: "Tìm Hiểu Thêm >",
     img: store,
+    path: "/stores",
   },
 ];
 

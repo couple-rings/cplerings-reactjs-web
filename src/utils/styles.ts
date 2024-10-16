@@ -48,3 +48,27 @@ export const textBtn: SxProps = {
   color: "#555",
   py: 2,
 };
+
+export const sizeMenuStyle: SxProps = {
+  ...outlinedBtn,
+  justifyContent: "space-between",
+  px: 1,
+};
+
+export const bagItemMenuStyle: SxProps = {
+  ...sizeMenuStyle,
+  border: "none",
+  borderBottom: "1px solid #555",
+  "&:hover": {
+    backgroundColor: "white",
+    color: "black",
+    border: "none",
+    borderBottom: "1px solid #555",
+  },
+  p: 0,
+};
+
+export const menuPaperStyle: SxProps = {
+  borderRadius: 0,
+  px: 2,
+};

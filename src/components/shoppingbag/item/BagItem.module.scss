@@ -1,0 +1,53 @@
+@use 'src/index.scss'as *;
+
+.container {
+    margin: 2rem 0;
+
+    .info {
+        display        : flex;
+        align-items    : flex-start;
+        justify-content: space-between;
+
+        img {
+            width: 20%;
+        }
+
+        .detail {
+            margin-left: 2rem;
+
+            .name {
+                color        : #555;
+                margin-bottom: 0.5rem;
+
+                @media screen and (min-width: 600px) {
+                    font-size: 1.4rem;
+                }
+            }
+
+            .gender {
+                margin-bottom: 2rem;
+
+                @media screen and (min-width: 600px) {
+                    font-size: 1.4rem;
+                }
+            }
+
+            .label {
+                font-size: 1.1rem;
+                color    : #555;
+
+                @media screen and (min-width: 600px) {
+                    margin-bottom: 0.3rem;
+                }
+            }
+        }
+    }
+
+    .price {
+        display        : flex;
+        justify-content: space-between;
+        margin         : 2rem 0;
+        color          : $primaryColor;
+        font-size      : 1.3rem;
+    }
+}
