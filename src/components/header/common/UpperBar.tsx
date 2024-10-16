@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styles from "./Header.module.scss";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -19,7 +19,7 @@ import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import Drawer from "@mui/material/Drawer";
 import Divider from "@mui/material/Divider";
 import { useLocation, useNavigate } from "react-router-dom";
-import { InputAdornment, OutlinedInput, Grid } from "@mui/material";
+import { InputAdornment, OutlinedInput, Grid, Badge } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import SideBar from "./SideBar";
 import { useAppDispatch, useAppSelector } from "src/utils/hooks";
@@ -42,7 +42,7 @@ const leftTabs = [
   },
   {
     icon: <FmdGoodOutlinedIcon className={styles.icon} />,
-    path: "",
+    path: "/stores",
   },
   {
     icon: (
@@ -50,18 +50,7 @@ const leftTabs = [
         <EmailOutlinedIcon /> <span className={styles.iconText}>Liên Hệ</span>
       </div>
     ),
-    path: "",
-  },
-];
-
-const rightTabs = [
-  {
-    icon: <FavoriteBorderOutlinedIcon className={styles.icon} />,
-    path: "",
-  },
-  {
-    icon: <ShoppingBagOutlinedIcon className={styles.icon} />,
-    path: "",
+    path: "/",
   },
 ];
 
@@ -115,6 +104,23 @@ const UpperBar = () => {
     navigate("/login");
     handleCloseUserMenu();
   };
+
+  const rightTabs = useMemo(() => {
+    return [
+      {
+        icon: <FavoriteBorderOutlinedIcon className={styles.icon} />,
+        path: "/",
+      },
+      {
+        icon: (
+          <Badge badgeContent={3} color="error">
+            <ShoppingBagOutlinedIcon className={styles.icon} />
+          </Badge>
+        ),
+        path: "/customer/bag",
+      },
+    ];
+  }, []);
 
   useEffect(() => {
     setAnchorElUser(null);
@@ -224,8 +230,13 @@ const UpperBar = () => {
                 justifyContent: "flex-end",
               }}
             >
-              <IconButton sx={{ my: 2 }}>
-                <ShoppingBagOutlinedIcon fontSize="large" />
+              <IconButton
+                sx={{ my: 2 }}
+                onClick={() => navigate("/customer/bag")}
+              >
+                <Badge badgeContent={3} color="error">
+                  <ShoppingBagOutlinedIcon fontSize="large" />
+                </Badge>
               </IconButton>
             </Box>
           </Toolbar>

@@ -1,8 +1,7 @@
-import { Button, Menu, SxProps } from "@mui/material";
+import { Button, Menu } from "@mui/material";
 import styles from "./SizeMenu.module.scss";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { v4 as uuidv4 } from "uuid";
-import { outlinedBtn } from "src/utils/styles";
 import { useState } from "react";
 
 const sizes = [
@@ -28,16 +27,8 @@ const sizes = [
   },
 ];
 
-const paperStyle: SxProps = {
-  borderRadius: 0,
-  boxShadow: "none",
-  border: "1px solid",
-  borderTop: "none",
-  px: 2,
-};
-
 function SizeMenu(props: ISizeMenuProps) {
-  const { size, setSize } = props;
+  const { size, setSize, label, sx, paperStyle } = props;
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -57,13 +48,11 @@ function SizeMenu(props: ISizeMenuProps) {
         onClick={handleClick}
         endIcon={<KeyboardArrowDownIcon />}
         fullWidth
-        sx={{
-          ...outlinedBtn,
-          justifyContent: "space-between",
-          px: 1,
-        }}
+        sx={sx}
       >
-        <div>Chọn kích thước: {size !== 0 && size}</div>
+        <div>
+          {label && "Chọn kích thước:"} {size !== 0 && size}
+        </div>
       </Button>
       <Menu
         anchorEl={anchorEl}
@@ -80,7 +69,10 @@ function SizeMenu(props: ISizeMenuProps) {
                 <div
                   key={uuidv4()}
                   className={`${styles.item} ${selected}`}
-                  onClick={() => setSize(item.size)}
+                  onClick={() => {
+                    setSize(item.size);
+                    handleClose();
+                  }}
                 >
                   {item.size}
                 </div>

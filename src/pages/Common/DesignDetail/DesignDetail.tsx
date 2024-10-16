@@ -11,11 +11,12 @@ import {
   Link,
   OutlinedInput,
   Rating,
+  SxProps,
 } from "@mui/material";
 import styles from "./DesignDetail.module.scss";
 import ringDesign from "src/assets/sampledata/ringdesign.png";
 import { useNavigate, useParams } from "react-router-dom";
-import { primaryBtn } from "src/utils/styles";
+import { menuPaperStyle, primaryBtn, sizeMenuStyle } from "src/utils/styles";
 import { currencyFormatter } from "src/utils/functions";
 import { useEffect, useState } from "react";
 import CustomExpandIcon from "src/components/icon/CustomExpandIcon";
@@ -57,6 +58,13 @@ const diamondSpecs = [
   "10PT ,F ,VS2",
   "15PT ,G ,SI1",
 ];
+
+const sizeMenuPaperStyle: SxProps = {
+  ...menuPaperStyle,
+  boxShadow: "none",
+  border: "1px solid",
+  borderTop: "none",
+};
 
 function DesignDetail() {
   const [metal, setMetal] = useState({
@@ -195,7 +203,13 @@ function DesignDetail() {
                 <AccordionDetails>
                   <Grid container className={styles.size}>
                     <Grid item sm={7} sx={{ mb: 2 }}>
-                      <SizeMenu size={size} setSize={setSize} />
+                      <SizeMenu
+                        size={size}
+                        setSize={setSize}
+                        label={true}
+                        sx={sizeMenuStyle}
+                        paperStyle={sizeMenuPaperStyle}
+                      />
                     </Grid>
 
                     <Grid item sm={3} sx={{ mb: 2 }}>

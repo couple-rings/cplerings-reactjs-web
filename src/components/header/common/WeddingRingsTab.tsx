@@ -98,9 +98,11 @@ const WeddingRingsTab = () => {
 };
 
 export const WeddingRingsTabMobile = () => {
+  const navigate = useNavigate();
+
   return (
     <List>
-      <ListItemButton>
+      <ListItemButton onClick={() => navigate("/wedding-rings")}>
         <ListItemText primary={"Tất Các Mẫu Nhẫn Cưới >"} />
       </ListItemButton>
 

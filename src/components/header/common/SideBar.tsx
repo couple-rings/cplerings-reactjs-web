@@ -17,7 +17,7 @@ import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { WeddingRingsTabMobile } from "./WeddingRingsTab";
 import { JewelryTabMobile } from "./JewelryTab";
 import { OtherTabMobile } from "./OtherTab";
@@ -27,7 +27,7 @@ import { logout } from "src/redux/slice/auth.slice";
 import { removeRoute } from "src/redux/slice/route.slice";
 import { removeMessages } from "src/redux/slice/message.slice";
 import { removeConversations } from "src/redux/slice/conversation.slice";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const bottomMobileMenu = [
   {
@@ -43,7 +43,7 @@ const bottomMobileMenu = [
   {
     icon: <ShoppingBagOutlinedIcon />,
     text: "Giỏ Hàng Của Tôi",
-    path: "/",
+    path: "/customer/bag",
   },
   {
     icon: <PhoneOutlinedIcon />,
@@ -84,6 +84,7 @@ function SideBar() {
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { isAuthenticated } = useAppSelector((state) => state.auth);
 
@@ -105,6 +106,10 @@ function SideBar() {
     setOpen(false);
     navigate("/login");
   };
+
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
 
   return (
     <>
