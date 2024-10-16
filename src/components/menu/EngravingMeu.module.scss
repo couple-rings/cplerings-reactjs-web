@@ -1,0 +1,14 @@
+@use 'src/index.scss'as *;
+
+.container {
+    .title {
+        color        : $primaryColor;
+        font-size    : 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .input {
+        display: flex;
+        gap    : 1rem;
+    }
+}

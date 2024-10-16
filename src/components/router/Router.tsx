@@ -35,6 +35,7 @@ import Orders from "src/pages/Customer/Orders/Orders";
 import OrderDetail from "src/pages/Customer/OrderDetail/OrderDetail";
 import Support from "src/pages/Customer/Support/Layout";
 import SupportDefault from "src/pages/Customer/Support/Index";
+import ShoppingBag from "src/pages/Customer/ShoppingBag/ShoppingBag";
 
 const router = createBrowserRouter([
   {
@@ -156,6 +157,10 @@ const router = createBrowserRouter([
             element: <SupportDefault />,
           },
         ],
+      },
+      {
+        path: "bag",
+        element: <ShoppingBag />,
       },
     ],
   },

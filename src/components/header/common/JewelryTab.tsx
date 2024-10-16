@@ -90,9 +90,11 @@ function JewelryTab() {
 }
 
 export const JewelryTabMobile = () => {
+  const navigate = useNavigate();
+
   return (
     <List>
-      <ListItemButton>
+      <ListItemButton onClick={() => navigate("/jewelry")}>
         <ListItemText primary={"Tất Các Trang Sức >"} />
       </ListItemButton>
 

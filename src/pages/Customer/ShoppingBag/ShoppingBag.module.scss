@@ -1,0 +1,61 @@
+@use 'src/index.scss'as *;
+
+.container {
+    padding-top   : 2rem;
+    padding-bottom: 3rem;
+    display       : flex;
+    flex-direction: column;
+    align-items   : center;
+
+    .head {
+        justify-content: flex-start;
+        margin-bottom  : 3rem;
+
+        .homeLink {
+            display    : flex;
+            align-items: center;
+            cursor     : pointer;
+
+            span {
+                font-size: 1.2rem;
+                color    : $primaryColor;
+
+                &:hover {
+                    color: $secondaryColor;
+                }
+            }
+
+            &:hover {
+                color: $secondaryColor;
+            }
+        }
+    }
+
+    .body {
+        justify-content: center;
+
+        .title {
+            font-size    : 2.3rem;
+            color        : $primaryColor;
+            margin-bottom: 2rem;
+        }
+
+        .all {
+            .label {
+                color: #888;
+            }
+        }
+
+        .box {
+            position: relative;
+
+            .description {
+                position: absolute;
+                color   : $primaryColor;
+                top     : 30%;
+                left    : 45%;
+                right   : 5%;
+            }
+        }
+    }
+}
