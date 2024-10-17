@@ -47,3 +47,5 @@ export const validAttachments = [
 ];
 
 export const messageCardBg = "#e5efff";
+
+export const drawerWidth = 240;
