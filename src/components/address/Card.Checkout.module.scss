@@ -1,0 +1,37 @@
+@use 'src/index.scss'as *;
+
+.container {
+    margin-top: 1.5rem;
+
+    .content {
+        .name {
+            color        : $primaryColor;
+            font-size    : 1.3rem;
+            margin-bottom: 0;
+        }
+
+        .address {
+            color      : $primaryColor;
+            line-height: 1.8rem;
+            font-size  : 1.3rem;
+            margin-top : 1rem;
+        }
+
+        .phone {
+            color        : $primaryColor;
+            font-size    : 1.3rem;
+            margin-bottom: 0;
+        }
+
+        .btnGroup {
+            padding-bottom: 0.5rem;
+            text-align    : right;
+
+            button {
+                text-transform: capitalize;
+                font-size     : 1.2rem;
+                color         : rgb(26, 26, 26);
+            }
+        }
+    }
+}

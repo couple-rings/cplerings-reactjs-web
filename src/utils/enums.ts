@@ -45,3 +45,8 @@ export enum ErrorType {
 export enum ErrorCode {
   UnVerifiedAccount = "012",
 }
+
+export enum DeliveryMethod {
+  Shipping = "Shipping",
+  Pickup = "Pickup",
+}
