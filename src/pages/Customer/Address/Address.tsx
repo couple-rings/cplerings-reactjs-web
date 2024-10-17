@@ -1,4 +1,4 @@
-import { Button, Divider, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import styles from "./Address.module.scss";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -10,6 +10,7 @@ import { saveList } from "src/redux/slice/district.slice";
 import DeleteModal from "src/components/modal/address/Delete.modal";
 import UpdateModal from "src/components/modal/address/Update.modal";
 import { useNavigate } from "react-router-dom";
+import AddressCard from "src/components/address/Card.Manage";
 
 const addresses = [
   {
@@ -84,30 +85,6 @@ const Address = () => {
       <DeleteModal open={openDelete} setOpen={setOpenDelete} />
       <UpdateModal open={openUpdate} setOpen={setOpenUpdate} />
     </div>
-  );
-};
-
-const AddressCard = (props: IAddressCardProps) => {
-  const { address, receiverName, receiverPhone, setOpenDelete, setOpenUpdate } =
-    props;
-
-  return (
-    <Grid item md={5.5} className={styles.addressCard}>
-      <div className={styles.content}>
-        <div className={styles.name}>{receiverName}</div>
-        <div className={styles.address}>{address}</div>
-        <div className={styles.phone}>Tel {receiverPhone}</div>
-        <div className={styles.btnGroup}>
-          <Button variant="text" onClick={() => setOpenDelete(true)}>
-            Xóa
-          </Button>
-          <Button variant="text" onClick={() => setOpenUpdate(true)}>
-            Sửa
-          </Button>
-        </div>
-      </div>
-      <Divider sx={{ backgroundColor: "gray" }} />
-    </Grid>
   );
 };
 
