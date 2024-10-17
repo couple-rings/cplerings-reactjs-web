@@ -3,7 +3,6 @@ import styles from "./Register.module.scss";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
-  Button,
   FormControl,
   FormHelperText,
   Grid,
@@ -16,9 +15,14 @@ import { primaryBtn } from "src/utils/styles";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { postRegister } from "src/services/customer.service";
+import { toast } from "react-toastify";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 interface IFormInput {
   email: string;
+  username: string;
   password: string;
   confirmPassword: string;
   code: string;
@@ -29,13 +33,35 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const mutation = useMutation({
+    mutationFn: (data: IRegisterRequest) => {
+      return postRegister(data);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        const { email } = response.data;
+
+        navigate("/verify-account", { state: { email } });
+        toast.success("OTP đã được gửi đến email của bạn");
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
   const {
     register,
     formState: { errors },
     handleSubmit,
     watch,
   } = useForm<IFormInput>();
-  const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { code, confirmPassword, ...rest } = data;
+    mutation.mutate(rest);
+  };
 
   const navigate = useNavigate();
 
@@ -71,6 +97,21 @@ const Register = () => {
               )}
             </FormControl>
 
+            <FormControl fullWidth variant="outlined">
+              <TextField
+                fullWidth
+                label="Username"
+                error={!!errors.username}
+                {...register("username", {
+                  required: "* Vui lòng nhập username",
+                })}
+                variant="outlined"
+              />
+              {errors.username && (
+                <FormHelperText error>{errors.username.message}</FormHelperText>
+              )}
+            </FormControl>
+
             <FormControl fullWidth>
               <TextField
                 fullWidth
@@ -92,7 +133,7 @@ const Register = () => {
                           margin: "0!important",
                           backgroundColor: "white!important",
                           color: "black!important",
-                        }} 
+                        }}
                       >
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
@@ -189,9 +230,15 @@ const Register = () => {
               <div className={styles.code}>{code}</div>
             </div>
 
-            <Button variant="contained" sx={primaryBtn} fullWidth type="submit">
+            <LoadingButton
+              fullWidth
+              type="submit"
+              sx={primaryBtn}
+              variant="contained"
+              loading={mutation.isPending}
+            >
               Tạo tài khoản
-            </Button>
+            </LoadingButton>
 
             <p className={styles.description}>
               Bằng cách tạo tài khoản này, bạn đồng ý với thỏa thuận đăng ký

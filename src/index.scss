@@ -11,6 +11,7 @@
 body {
   margin          : 0;
   background-color: white;
+  padding         : 0 !important;
 }
 
 $secondaryColor: #b43620;
@@ -19,4 +20,8 @@ $primaryColor  : #3a3a3a;
 .slick-track {
   display: flex;
   gap    : 1rem;
+}
+
+.feedbackTabIndicator {
+  background-color: $primaryColor !important;
 }

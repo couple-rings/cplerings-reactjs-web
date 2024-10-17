@@ -1,5 +1,4 @@
 import {
-  Button,
   FormControl,
   FormHelperText,
   Grid,
@@ -9,11 +8,17 @@ import {
 } from "@mui/material";
 import styles from "./ResetPassword.module.scss";
 import { primaryBtn } from "src/utils/styles";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { passwordPattern } from "src/utils/constants";
+import { Location, useLocation, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { postResetPassword } from "src/services/customer.service";
+import { toast } from "react-toastify";
+import { ResponseType } from "src/utils/enums";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 interface IFormInput {
   password: string;
@@ -25,13 +30,48 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showCfnPassword, setShowCfnPassword] = useState(false);
 
+  const navigate = useNavigate();
+  const location: Location<{ email: string }> = useLocation();
+
+  const mutation = useMutation({
+    mutationFn: (data: IResetPasswordRequest) => {
+      return postResetPassword(data);
+    },
+    onSuccess: (response) => {
+      if (response.type === ResponseType.Info) {
+        const { email } = location.state;
+        navigate("/login", { state: { email } });
+        toast.success("Đổi mật khẩu thành công");
+      }
+
+      if (response.type === ResponseType.Error && response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
   const {
     register,
     formState: { errors },
     handleSubmit,
     getValues,
   } = useForm<IFormInput>();
-  const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    const { email } = location.state;
+
+    mutation.mutate({
+      otp: data.otp,
+      email,
+      newPassword: data.password,
+    });
+  };
+  useEffect(() => {
+    if (!location.state) {
+      navigate("/forget-password");
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state]);
 
   return (
     <div className={styles.container}>
@@ -119,9 +159,15 @@ const ResetPassword = () => {
               )}
             </FormControl>
 
-            <Button variant="contained" sx={primaryBtn} fullWidth type="submit">
+            <LoadingButton
+              fullWidth
+              type="submit"
+              sx={primaryBtn}
+              variant="contained"
+              loading={mutation.isPending}
+            >
               Xác Nhận
-            </Button>
+            </LoadingButton>
           </form>
         </Grid>
       </Grid>

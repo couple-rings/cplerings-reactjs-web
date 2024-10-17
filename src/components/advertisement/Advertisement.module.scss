@@ -1,0 +1,21 @@
+@use 'src/index.scss'as *;
+
+.container {
+    padding: 7rem 0;
+
+    .title {
+        font-size    : 2.3rem;
+        color        : $primaryColor;
+        margin-bottom: 5rem;
+        text-align   : center;
+
+        @media screen and (max-width: 500px) {
+            font-size: 1.8rem;
+        }
+    }
+
+    .sliderContainer {
+        display        : flex;
+        justify-content: space-evenly;
+    }
+}

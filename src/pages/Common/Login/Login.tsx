@@ -1,5 +1,4 @@
 import {
-  Button,
   FormControl,
   FormControlLabel,
   OutlinedInput,
@@ -10,7 +9,7 @@ import {
   FormHelperText,
 } from "@mui/material";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Location, useLocation, useNavigate } from "react-router-dom";
 import styles from "./Login.module.scss";
 import { primaryBtn } from "src/utils/styles";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -18,6 +17,14 @@ import { emailPattern } from "src/utils/constants";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { passwordPattern } from "src/utils/constants";
+import { postLogin } from "src/services/auth.service";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { useAppDispatch, useAppSelector } from "src/utils/hooks";
+import { IUserinfo, login } from "src/redux/slice/auth.slice";
+import { jwtDecode } from "jwt-decode";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { ErrorCode } from "src/utils/enums";
 
 interface IFormInput {
   email: string;
@@ -27,14 +34,49 @@ interface IFormInput {
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
+  const navigate = useNavigate();
+  const location: Location<{ email: string }> = useLocation();
+  const dispatch = useAppDispatch();
+  const { currentRoute } = useAppSelector((state) => state.route);
+
+  const mutation = useMutation({
+    mutationFn: (data: IFormInput) => {
+      return postLogin(data);
+    },
+    onSuccess: (response, request) => {
+      if (response.data) {
+        const { refreshToken, token: accessToken } = response.data;
+        const userInfo = jwtDecode<IUserinfo>(accessToken);
+        const { id, ...rest } = userInfo;
+        dispatch(login({ ...rest, id: +id, accessToken, refreshToken }));
+
+        navigate(currentRoute);
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => {
+          if (err.code === ErrorCode.UnVerifiedAccount) {
+            const { email } = request;
+            navigate("/verify-account", { state: { email } });
+            toast.info("Vui lòng kích hoạt tài khoản");
+          } else toast.error(err.description);
+        });
+      }
+    },
+  });
+
   const {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm<IFormInput>();
-  const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
-
-  const navigate = useNavigate();
+  } = useForm<IFormInput>({
+    defaultValues: {
+      email: location.state ? location.state.email : "",
+    },
+  });
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    mutation.mutate(data);
+  };
 
   return (
     <div className={styles.container}>
@@ -98,9 +140,14 @@ const Login = () => {
               />
             </FormControl>
 
-            <Button variant="contained" sx={primaryBtn} fullWidth type="submit">
+            <LoadingButton
+              type="submit"
+              sx={primaryBtn}
+              variant="contained"
+              loading={mutation.isPending}
+            >
               Đăng Nhập
-            </Button>
+            </LoadingButton>
 
             <div
               className={styles.fwdBtn}

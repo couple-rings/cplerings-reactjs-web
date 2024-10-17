@@ -16,7 +16,7 @@ import { primaryBtn } from "src/utils/styles";
 import { phonePattern } from "src/utils/constants";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface IFormInput {
   username: string;
@@ -42,6 +42,10 @@ const EditProfile = () => {
       setAvatarPreview(URL.createObjectURL(file));
     }
   };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -163,7 +167,7 @@ const EditProfile = () => {
             <Grid item xs={12} md={6}>
               <div
                 className={styles.fwdBtn}
-                onClick={() => navigate("../address")}
+                onClick={() => navigate("/customer/address")}
               >
                 <span>Quản lý địa chỉ {">"}</span>
               </div>

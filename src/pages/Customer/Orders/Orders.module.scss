@@ -1,0 +1,53 @@
+@use 'src/index.scss'as *;
+
+.container {
+    padding-top   : 2rem;
+    padding-bottom: 7rem;
+    display       : flex;
+    flex-direction: column;
+    align-items   : center;
+
+    .head {
+        justify-content: flex-start;
+        margin-bottom  : 3rem;
+
+        .homeLink {
+            display    : flex;
+            align-items: center;
+            cursor     : pointer;
+
+            span {
+                font-size: 1.2rem;
+                color    : $primaryColor;
+
+                &:hover {
+                    color: $secondaryColor;
+                }
+            }
+
+            &:hover {
+                color: $secondaryColor;
+            }
+        }
+    }
+
+    .body {
+        flex-direction: column;
+
+        .title {
+            font-size    : 2.3rem;
+            font-weight  : 600;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            color        : #888;
+            font-size    : 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .list {
+            margin-top: 3rem;
+        }
+    }
+}

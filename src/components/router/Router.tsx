@@ -11,39 +11,88 @@ import Address from "src/pages/Customer/Address/Address";
 import VerifyID from "src/pages/Customer/VerifyID/VerifyID";
 import WeddingRings from "src/pages/Common/WeddingRings/WeddingRings";
 import ChangePassword from "src/pages/Customer/ChangePassword/ChangePassword";
+import NotFound from "src/pages/Error/NotFound/NotFound";
+import AuthRoute from "src/components/protected/AuthRoute";
+import CommonRoute from "src/components/protected/CommonRoute";
+import CustomerRoute from "src/components/protected/CustomerRoute";
 import EditProfile from "src/pages/Customer/EditProfile/EditProfile";
 import Jewelry from "src/pages/Common/Jewelry/Jewelry";
+import DesignDetail from "src/pages/Common/DesignDetail/DesignDetail";
 import StoresBranches from "src/pages/Common/StoresBranches/StoresBranches";
+import StaffLayout from "src/pages/Staff/Layout";
+import StaffHome from "src/pages/Staff/Index";
+import JewelerLayout from "src/pages/Jeweler/Layout";
+import JewelerHome from "src/pages/Jeweler/Index";
+import ManagerLayout from "src/pages/Manager/Layout";
+import ManagerHome from "src/pages/Manager/Index";
+import AdminLayout from "src/pages/Admin/Layout";
+import AdminHome from "src/pages/Admin/Index";
+import StaffRoute from "src/components/protected/StaffRoute";
+import JewelerRoute from "src/components/protected/JewelerRoute";
+import ManagerRoute from "src/components/protected/ManagerRoute";
+import AdminRoute from "src/components/protected/AdminRoute";
+import Orders from "src/pages/Customer/Orders/Orders";
+import OrderDetail from "src/pages/Customer/OrderDetail/OrderDetail";
+import Support from "src/pages/Customer/Support/Layout";
+import SupportDefault from "src/pages/Customer/Support/Index";
+import ShoppingBag from "src/pages/Customer/ShoppingBag/ShoppingBag";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Common />,
+    element: (
+      <CommonRoute>
+        <Common />
+      </CommonRoute>
+    ),
     children: [
       {
         index: true,
-        element: <Home />,
+        element: (
+          <AuthRoute>
+            <Home />
+          </AuthRoute>
+        ),
       },
       {
         path: "forget-password",
-        element: <ForgetPassword />,
+        element: (
+          <AuthRoute>
+            <ForgetPassword />
+          </AuthRoute>
+        ),
       },
       {
         path: "reset-password",
-        element: <ResetPassword />,
+        element: (
+          <AuthRoute>
+            <ResetPassword />
+          </AuthRoute>
+        ),
       },
-
       {
         path: "verify-account",
-        element: <VerifyAccount />,
+        element: (
+          <AuthRoute>
+            <VerifyAccount />
+          </AuthRoute>
+        ),
       },
       {
         path: "login",
-        element: <Login />,
+        element: (
+          <AuthRoute>
+            <Login />
+          </AuthRoute>
+        ),
       },
       {
         path: "register",
-        element: <Register />,
+        element: (
+          <AuthRoute>
+            <Register />
+          </AuthRoute>
+        ),
       },
       {
         path: "wedding-rings",
@@ -54,14 +103,22 @@ const router = createBrowserRouter([
         element: <Jewelry />,
       },
       {
+        path: "design-detail/:id",
+        element: <DesignDetail />,
+      },
+      {
         path: "stores",
-        element: <StoresBranches/>
-      }
+        element: <StoresBranches />,
+      },
     ],
   },
   {
     path: "/customer",
-    element: <Common />,
+    element: (
+      <CustomerRoute>
+        <Common />
+      </CustomerRoute>
+    ),
     children: [
       {
         index: true,
@@ -83,7 +140,89 @@ const router = createBrowserRouter([
         path: "change-password",
         element: <ChangePassword />,
       },
+      {
+        path: "orders",
+        element: <Orders />,
+      },
+      {
+        path: "order-detail/:id",
+        element: <OrderDetail />,
+      },
+      {
+        path: "support",
+        element: <Support />,
+        children: [
+          {
+            index: true,
+            element: <SupportDefault />,
+          },
+        ],
+      },
+      {
+        path: "bag",
+        element: <ShoppingBag />,
+      },
     ],
+  },
+  {
+    path: "/staff",
+    element: (
+      <StaffRoute>
+        <StaffLayout />
+      </StaffRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <StaffHome />,
+      },
+    ],
+  },
+  {
+    path: "/jeweler",
+    element: (
+      <JewelerRoute>
+        <JewelerLayout />
+      </JewelerRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <JewelerHome />,
+      },
+    ],
+  },
+  {
+    path: "/manager",
+    element: (
+      <ManagerRoute>
+        <ManagerLayout />
+      </ManagerRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <ManagerHome />,
+      },
+    ],
+  },
+  {
+    path: "/admin",
+    element: (
+      <AdminRoute>
+        <AdminLayout />
+      </AdminRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <AdminHome />,
+      },
+    ],
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 

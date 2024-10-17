@@ -5,15 +5,45 @@ import wishlist from "src/assets/wish_list.png";
 import profile from "src/assets/profile.png";
 import verification from "src/assets/verification.png";
 import agreement from "src/assets/agreement.png";
-import medals from "src/assets/medals.png";
+import support from "src/assets/support.png";
 import { Grid, ListItemText, Menu, MenuItem, Switch } from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const imgLists = [orders, wishlist, profile, verification, agreement, medals];
+const imgLists = [
+  {
+    img: orders,
+    path: "/customer/orders",
+  },
+  {
+    img: wishlist,
+    path: "/customer",
+  },
+  {
+    img: profile,
+    path: "/customer/profile",
+  },
+  {
+    img: verification,
+    path: "/customer/love-verification",
+  },
+  {
+    img: agreement,
+    path: "/customer",
+  },
+  {
+    img: support,
+    path: "/customer/support",
+  },
+];
 
 function CustomerDefault() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
   const open = Boolean(anchorEl);
+
+  const navigate = useNavigate();
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -36,10 +66,15 @@ function CustomerDefault() {
           </span>
 
           <Grid container className={styles.body}>
-            {imgLists.map((img, index) => {
+            {imgLists.map((item, index) => {
               return (
-                <Grid item sm={5.8} key={index}>
-                  <img src={img} />
+                <Grid
+                  item
+                  sm={5.8}
+                  key={index}
+                  onClick={() => navigate(item.path)}
+                >
+                  <img src={item.img} />
                 </Grid>
               );
             })}
@@ -56,7 +91,7 @@ function CustomerDefault() {
           "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={() => navigate("/customer/change-password")}>
           <ListItemText primary="Bảo Mật" secondary={"Cập nhật mật khẩu"} />
         </MenuItem>
 

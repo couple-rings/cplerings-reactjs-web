@@ -23,6 +23,11 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ["@emotion/react", "@emotion/styled", "@mui/material/Tooltip"],
+    include: [
+      "@emotion/react",
+      "@emotion/styled",
+      "@mui/material/Tooltip",
+      "@fortawesome_free-solid-svg-icons",
+    ],
   },
 });
