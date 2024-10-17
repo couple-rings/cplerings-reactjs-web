@@ -1,3 +1,4 @@
+import queryString from "query-string";
 import axios from "src/config/axios.chat";
 
 export const putUpdateMessage = (id: string, data: IUpdateMessageRequest) => {
@@ -5,14 +6,10 @@ export const putUpdateMessage = (id: string, data: IUpdateMessageRequest) => {
 };
 
 export const getMessages = (queryObj: IMessageFilterDto) => {
-  const { current, conversationId } = queryObj;
+  const queryUrl = queryString.stringify(queryObj);
 
   return axios.get<
     unknown,
     ISecondaryResponse<ISecondaryListResponse<IMessage[]>>
-  >(
-    `messages?conversationId=${conversationId}&&${
-      current ? `current=${current}` : ""
-    }`
-  );
+  >(`messages?${queryUrl}`);
 };

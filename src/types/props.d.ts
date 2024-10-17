@@ -176,4 +176,16 @@ declare global {
 
     discount: number;
   }
+
+  interface ISideBarProps {
+    open: boolean;
+
+    setOpen: (v: boolean) => void;
+  }
+
+  interface IHeaderProps {
+    open: boolean;
+
+    setOpen: (v: boolean) => void;
+  }
 }
