@@ -1,0 +1,32 @@
+@use 'src/index.scss'as *;
+
+.container {
+    padding: 1.5rem 0;
+
+    img {
+        width: 100%;
+    }
+
+    .name {
+        font-size    : 1.3rem;
+        color        : $primaryColor;
+        margin-bottom: 2rem;
+    }
+
+    .spec {
+        font-size: 1.1rem;
+
+        .label {
+            color        : #555;
+            margin-bottom: 0.5rem;
+        }
+    }
+
+    .price {
+        display        : flex;
+        justify-content: space-between;
+        font-size      : 1.3rem;
+        color          : $primaryColor;
+        margin-top     : 2rem;
+    }
+}

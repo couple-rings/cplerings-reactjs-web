@@ -36,6 +36,7 @@ import OrderDetail from "src/pages/Customer/OrderDetail/OrderDetail";
 import Support from "src/pages/Customer/Support/Layout";
 import SupportDefault from "src/pages/Customer/Support/Index";
 import ShoppingBag from "src/pages/Customer/ShoppingBag/ShoppingBag";
+import Checkout from "src/pages/Customer/Checkout/Checkout";
 
 const router = createBrowserRouter([
   {
@@ -161,6 +162,10 @@ const router = createBrowserRouter([
       {
         path: "bag",
         element: <ShoppingBag />,
+      },
+      {
+        path: "checkout",
+        element: <Checkout />,
       },
     ],
   },

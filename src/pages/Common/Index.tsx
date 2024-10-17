@@ -47,16 +47,16 @@ const processSteps = [
     icon: step1,
   },
   {
+    text: "Xác Minh Bằng CCCD Và Khuôn Mặt",
+    icon: step4,
+  },
+  {
     text: "Chọn Mẫu Nhẫn Và Kim Cương",
     icon: step2,
   },
   {
     text: "Điền Thông Tin Và Thanh Toán",
     icon: step3,
-  },
-  {
-    text: "Xác Minh Bằng CCCD Và Khuôn Mặt",
-    icon: step4,
   },
   {
     text: "Ký Kết Thỏa Thuận Tình Yêu",
