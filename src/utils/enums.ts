@@ -51,3 +51,10 @@ export enum DeliveryMethod {
   Shipping = "Shipping",
   Pickup = "Pickup",
 }
+
+export enum CustomRequestStatus {
+  Waiting = "WAITING",
+  OnGoing = "ON GOING",
+  Completed = "COMPLETED",
+  Canceled = "CANCELED",
+}

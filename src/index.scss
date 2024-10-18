@@ -25,3 +25,17 @@ $primaryColor  : #3a3a3a;
 .feedbackTabIndicator {
   background-color: $primaryColor !important;
 }
+
+.MuiDataGrid-cell {
+  display    : flex;
+  align-items: center !important;
+}
+
+.MuiDataGrid-filler,
+.MuiDataGrid-columnHeader {
+  background-color: #ccc;
+}
+
+.MuiDataGrid-columnHeaderTitle {
+  font-weight: 600 !important;
+}
