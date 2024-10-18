@@ -37,6 +37,7 @@ import Support from "src/pages/Customer/Support/Layout";
 import SupportDefault from "src/pages/Customer/Support/Index";
 import ShoppingBag from "src/pages/Customer/ShoppingBag/ShoppingBag";
 import Checkout from "src/pages/Customer/Checkout/Checkout";
+import CustomRequest from "src/pages/Staff/CustomRequest/CustomRequest";
 
 const router = createBrowserRouter([
   {
@@ -176,6 +177,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <StaffHome />,
+      },
+      {
+        path: "custom-request",
+        element: <CustomRequest />,
       },
     ],
   },
