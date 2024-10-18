@@ -181,6 +181,12 @@ declare global {
     open: boolean;
 
     setOpen: (v: boolean) => void;
+
+    itemsList: {
+      text: string;
+      icon: JSX.Element;
+      path: string;
+    }[];
   }
 
   interface IHeaderProps {
