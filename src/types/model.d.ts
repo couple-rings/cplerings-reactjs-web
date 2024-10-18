@@ -69,4 +69,18 @@ declare global {
 
     originalName: string;
   }
+
+  interface IUser {
+    id: number;
+
+    email: string;
+
+    username: string;
+
+    phone: string;
+
+    avatar: string;
+
+    role: UserRole;
+  }
 }

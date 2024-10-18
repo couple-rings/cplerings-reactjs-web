@@ -1,4 +1,8 @@
 import axios, { AxiosError } from "axios";
+import { logout, saveToken } from "src/redux/slice/auth.slice";
+import { store } from "src/redux/store";
+import { postRefreshToken } from "src/services/auth.service";
+import { ErrorCode } from "src/utils/enums";
 // import { store } from "../redux/store";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -11,8 +15,10 @@ const instance = axios.create({
 instance.interceptors.request.use(
   function (config) {
     // Do something before request is sent
-    // const access_token = store?.getState()?.auth?.accessToken;
-    // config.headers["Authorization"] = "Bearer " + access_token;
+    if (config.url && config.url !== "auth/refresh") {
+      const access_token = store.getState().auth.accessToken;
+      config.headers["Authorization"] = "Bearer " + access_token;
+    }
 
     return config;
   },
@@ -43,32 +49,41 @@ instance.interceptors.response.use(
     switch (status) {
       // generic api error (server related) unexpected
       case 401: {
-        // if (error.config.url === "auth/verify-password") {
-        //   if (error.response.data.error === "Incorrect password")
-        //     return error.response.data;
-        // }
-
-        // if (error.config.url !== "auth/login") {
-        //   const refreshToken = store?.getState()?.auth?.refreshToken;
-        //   let res = await getNewToken({ refreshToken });
-        //   if (res.status === 200) {
-        //     const { accessToken } = res.data;
-
-        //     error.config.headers["Authorization"] = `Bearer ${accessToken}`;
-
-        //     store.dispatch(login(res.data));
-
-        //     return Promise.reject(error);
-        //   }
-        // }
-
         return error.response?.data ? error.response.data : error;
       }
 
       case 400: {
-        // if (error.config.url === "auth/refresh") {
-        //   store.dispatch(logout());
-        // }
+        if (error.response && error.config) {
+          const { errors } = error.response.data;
+
+          if (errors) {
+            for (const err of errors) {
+              if (err.code === ErrorCode.JwtExpired) {
+                if (error.config.url === "auth/refresh")
+                  store.dispatch(logout());
+                else {
+                  const refreshToken = store.getState().auth.refreshToken;
+                  const response = await postRefreshToken({ refreshToken });
+
+                  if (response.data) {
+                    const { token } = response.data;
+                    error.config.headers["Authorization"] = `Bearer ${token}`;
+                    store.dispatch(saveToken(response.data));
+
+                    return Promise.reject(error);
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        return error.response?.data ? error.response.data : error;
+      }
+
+      case 403: {
+        store.dispatch(logout());
+
         return error.response?.data ? error.response.data : error;
       }
 
