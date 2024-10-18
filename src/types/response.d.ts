@@ -1,4 +1,4 @@
-import { ErrorType, ResponseType } from "src/utils/enums";
+import { ErrorType, ResponseType, UserRole } from "src/utils/enums";
 
 export {};
 
@@ -33,6 +33,8 @@ declare global {
     refreshToken: string;
   }
 
+  interface IRefreshTokenResponse extends ILoginResponse {}
+
   interface IRegisterResponse {
     email: string;
   }
@@ -61,5 +63,25 @@ declare global {
     totalItems: number;
 
     items: T;
+  }
+
+  interface ITokenData {
+    id: number;
+
+    sub: string;
+
+    role: UserRole;
+  }
+
+  interface IProfileResponse {
+    id: number;
+
+    email: string;
+
+    username: string;
+
+    phone: string | null;
+
+    avatar: string | null;
   }
 }

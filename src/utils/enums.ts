@@ -44,6 +44,7 @@ export enum ErrorType {
 
 export enum ErrorCode {
   UnVerifiedAccount = "012",
+  JwtExpired = "008",
 }
 
 export enum DeliveryMethod {

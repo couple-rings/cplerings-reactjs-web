@@ -49,11 +49,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: (
-          <AuthRoute>
-            <Home />
-          </AuthRoute>
-        ),
+        element: <Home />,
       },
       {
         path: "forget-password",
