@@ -6,6 +6,10 @@ declare global {
     password: string;
   }
 
+  interface IRefreshTokenRequest {
+    refreshToken: string;
+  }
+
   interface IRegisterRequest {
     email: string;
     username: string;

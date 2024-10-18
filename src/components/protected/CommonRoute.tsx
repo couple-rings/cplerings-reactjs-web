@@ -1,6 +1,9 @@
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
+import { saveProfile } from "src/redux/slice/auth.slice";
 import { saveRoute } from "src/redux/slice/route.slice";
+import { getAccountProfile } from "src/services/account.service";
 import { UserRole } from "src/utils/enums";
 import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 
@@ -21,7 +24,24 @@ function CommonRoute(props: IProtectedRouteProps) {
   const dispatch = useAppDispatch();
 
   const { isAuthenticated, userInfo } = useAppSelector((state) => state.auth);
-  const { role } = userInfo;
+  const { role, username } = userInfo;
+
+  const { data: response } = useQuery({
+    queryKey: ["fetchAccountProfile"],
+    queryFn: () => {
+      return getAccountProfile();
+    },
+
+    enabled: isAuthenticated && !username,
+  });
+
+  useEffect(() => {
+    if (response && response.data) {
+      dispatch(saveProfile(response.data));
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response]);
 
   useEffect(() => {
     if (!isAuthenticated && !paths.includes(location.pathname)) {

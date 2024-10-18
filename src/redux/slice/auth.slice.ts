@@ -5,30 +5,34 @@ import { UserRole } from "src/utils/enums";
 export interface IInitState {
   isAuthenticated: boolean;
 
-  userInfo: IUserinfo;
+  userInfo: IUser;
 
   accessToken: string;
 
   refreshToken: string;
 }
 
-export interface IUserinfo {
+export interface ILoginPayload {
   id: number;
-  sub: string;
+  email: string;
   role: UserRole;
-}
-
-export interface IPayload extends IUserinfo {
   accessToken: string;
   refreshToken: string;
 }
+
+export interface ISaveProfilePayload extends IProfileResponse {}
+
+export interface ISaveTokenPayload extends IRefreshTokenResponse {}
 
 const initialState: IInitState = {
   isAuthenticated: false,
 
   userInfo: {
     id: 0,
-    sub: "",
+    email: "",
+    username: "",
+    phone: "",
+    avatar: "",
     role: UserRole.Default,
   },
 
@@ -41,10 +45,10 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    login: (state, { payload }: PayloadAction<IPayload>) => {
+    login: (state, { payload }: PayloadAction<ILoginPayload>) => {
       const { accessToken, refreshToken, ...rest } = payload;
       state.isAuthenticated = true;
-      state.userInfo = rest;
+      state.userInfo = { ...state.userInfo, ...rest };
       state.accessToken = accessToken;
       state.refreshToken = refreshToken;
     },
@@ -54,10 +58,22 @@ export const authSlice = createSlice({
       state.accessToken = "";
       state.refreshToken = "";
     },
+    saveProfile: (state, { payload }: PayloadAction<ISaveProfilePayload>) => {
+      const { phone, avatar, ...rest } = payload;
+      if (phone) state.userInfo.phone = phone;
+      if (avatar) state.userInfo.avatar = avatar;
+      state.userInfo = { ...state.userInfo, ...rest };
+    },
+    saveToken: (state, { payload }: PayloadAction<ISaveTokenPayload>) => {
+      const { refreshToken, token: accessToken } = payload;
+
+      state.accessToken = accessToken;
+      state.refreshToken = refreshToken;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { login, logout } = authSlice.actions;
+export const { login, logout, saveProfile, saveToken } = authSlice.actions;
 
 export default authSlice.reducer;
