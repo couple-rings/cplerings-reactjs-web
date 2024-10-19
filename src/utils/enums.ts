@@ -58,3 +58,16 @@ export enum CustomRequestStatus {
   Completed = "COMPLETED",
   Canceled = "CANCELED",
 }
+
+export enum FaceMatchResponseCode {
+  Success = "200",
+  FileFormatError = "408",
+  NoFileError = "409",
+}
+
+export enum IdReadingResponseCode {
+  Success = 0,
+  InvalidParams = 1,
+  InvalidFileFormat = 7,
+  InvalidImage = 3,
+}
