@@ -1,0 +1,35 @@
+@use 'src/index.scss'as *;
+
+.container {
+    padding: 2rem;
+
+    .title {
+        color        : $primaryColor;
+        font-size    : 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .completed {
+        background-color: #07bc0c;
+        color           : #ffffff;
+        border-radius   : 15px;
+        padding         : 5px 10px;
+        text-transform  : capitalize;
+    }
+
+    .canceled {
+        background-color: #e74c3c;
+        color           : #ffffff;
+        border-radius   : 15px;
+        padding         : 5px 10px;
+        text-transform  : capitalize;
+    }
+
+    .ongoing {
+        background-color: #f1c40f;
+        color           : #ffffff;
+        border-radius   : 15px;
+        padding         : 5px 10px;
+        text-transform  : capitalize;
+    }
+}

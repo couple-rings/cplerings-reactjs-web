@@ -36,6 +36,8 @@ import OrderDetail from "src/pages/Customer/OrderDetail/OrderDetail";
 import Support from "src/pages/Customer/Support/Layout";
 import SupportDefault from "src/pages/Customer/Support/Index";
 import ShoppingBag from "src/pages/Customer/ShoppingBag/ShoppingBag";
+import Checkout from "src/pages/Customer/Checkout/Checkout";
+import CustomRequest from "src/pages/Staff/CustomRequest/CustomRequest";
 
 const router = createBrowserRouter([
   {
@@ -48,11 +50,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: (
-          <AuthRoute>
-            <Home />
-          </AuthRoute>
-        ),
+        element: <Home />,
       },
       {
         path: "forget-password",
@@ -162,6 +160,10 @@ const router = createBrowserRouter([
         path: "bag",
         element: <ShoppingBag />,
       },
+      {
+        path: "checkout",
+        element: <Checkout />,
+      },
     ],
   },
   {
@@ -175,6 +177,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <StaffHome />,
+      },
+      {
+        path: "custom-request",
+        element: <CustomRequest />,
       },
     ],
   },

@@ -21,7 +21,7 @@ import { postLogin } from "src/services/auth.service";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "src/utils/hooks";
-import { IUserinfo, login } from "src/redux/slice/auth.slice";
+import { login } from "src/redux/slice/auth.slice";
 import { jwtDecode } from "jwt-decode";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { ErrorCode } from "src/utils/enums";
@@ -46,9 +46,11 @@ const Login = () => {
     onSuccess: (response, request) => {
       if (response.data) {
         const { refreshToken, token: accessToken } = response.data;
-        const userInfo = jwtDecode<IUserinfo>(accessToken);
-        const { id, ...rest } = userInfo;
-        dispatch(login({ ...rest, id: +id, accessToken, refreshToken }));
+        const userInfo = jwtDecode<ITokenData>(accessToken);
+        const { id, sub, role } = userInfo;
+        dispatch(
+          login({ id: +id, role, email: sub, accessToken, refreshToken })
+        );
 
         navigate(currentRoute);
       }

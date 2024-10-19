@@ -17,6 +17,7 @@ import { phonePattern } from "src/utils/constants";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useEffect, useState } from "react";
+import { useAppSelector } from "src/utils/hooks";
 
 interface IFormInput {
   username: string;
@@ -25,13 +26,23 @@ interface IFormInput {
 }
 
 const EditProfile = () => {
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
+  const { email, phone, username } = useAppSelector(
+    (state) => state.auth.userInfo
+  );
+
   const {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm<IFormInput>();
+  } = useForm<IFormInput>({
+    defaultValues: {
+      username,
+      phone,
+    },
+  });
 
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
 
   const navigate = useNavigate();
@@ -113,11 +124,7 @@ const EditProfile = () => {
             </FormControl>
 
             <FormControl variant="outlined" fullWidth margin="normal">
-              <OutlinedInput
-                sx={{ borderRadius: 0 }}
-                readOnly
-                value={"customer@gmail.com"}
-              />
+              <OutlinedInput sx={{ borderRadius: 0 }} readOnly value={email} />
             </FormControl>
 
             <FormControl variant="outlined" fullWidth margin="normal">

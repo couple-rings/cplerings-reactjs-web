@@ -44,4 +44,17 @@ export enum ErrorType {
 
 export enum ErrorCode {
   UnVerifiedAccount = "012",
+  JwtExpired = "008",
+}
+
+export enum DeliveryMethod {
+  Shipping = "Shipping",
+  Pickup = "Pickup",
+}
+
+export enum CustomRequestStatus {
+  Waiting = "WAITING",
+  OnGoing = "ON GOING",
+  Completed = "COMPLETED",
+  Canceled = "CANCELED",
 }
