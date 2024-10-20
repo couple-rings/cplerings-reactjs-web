@@ -84,4 +84,34 @@ declare global {
 
     avatar: string | null;
   }
+
+  interface IFaceIdMatchResponse {
+    similarity: number;
+
+    isMatch: boolean;
+  }
+
+  interface IFptResponseV1<T> {
+    code: string;
+
+    data: T;
+
+    message: string;
+  }
+
+  interface IIdReadingResponse {
+    id: string;
+
+    name: string;
+
+    dob: string;
+  }
+
+  interface IFptResponseV2<T> {
+    errorCode: number;
+
+    data: T;
+
+    errorMessage: string;
+  }
 }

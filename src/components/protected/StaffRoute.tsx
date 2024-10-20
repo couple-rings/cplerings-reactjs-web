@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { saveProfile } from "src/redux/slice/auth.slice";
-import { saveRoute } from "src/redux/slice/route.slice";
 import { getAccountProfile } from "src/services/account.service";
 import { UserRole } from "src/utils/enums";
 import { useAppDispatch, useAppSelector } from "src/utils/hooks";
@@ -10,18 +9,17 @@ import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 function StaffRoute(props: IProtectedRouteProps) {
   const { children } = props;
 
-  const location = useLocation();
   const dispatch = useAppDispatch();
   const { userInfo, isAuthenticated } = useAppSelector((state) => state.auth);
   const { role, username } = userInfo;
 
   const { data: response } = useQuery({
-    queryKey: ["fetchAccountProfile"],
+    queryKey: ["fetchStaffProfile"],
     queryFn: () => {
       return getAccountProfile();
     },
 
-    enabled: isAuthenticated && !username,
+    enabled: isAuthenticated && !username && role === UserRole.Staff,
   });
 
   useEffect(() => {
@@ -35,7 +33,6 @@ function StaffRoute(props: IProtectedRouteProps) {
   if (!isAuthenticated) return <Navigate to={"/login"} replace={true} />;
   if (role !== UserRole.Staff)
     return <Navigate to={"/not-found"} replace={true} />;
-  else dispatch(saveRoute(location.pathname));
 
   return <>{children}</>;
 }

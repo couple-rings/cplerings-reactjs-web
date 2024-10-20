@@ -1,7 +1,7 @@
 import styles from "./ImageMessage.module.scss";
 
 const ImageMessage = (props: IImageMessageProps) => {
-  const { handleOnLoad, url } = props;
+  const { url, handleOnLoad } = props;
 
   return (
     <div className={styles.container}>

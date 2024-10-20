@@ -27,12 +27,12 @@ function CommonRoute(props: IProtectedRouteProps) {
   const { role, username } = userInfo;
 
   const { data: response } = useQuery({
-    queryKey: ["fetchAccountProfile"],
+    queryKey: ["fetchCustomerProfile"],
     queryFn: () => {
       return getAccountProfile();
     },
 
-    enabled: isAuthenticated && !username,
+    enabled: isAuthenticated && !username && role === UserRole.Customer,
   });
 
   useEffect(() => {

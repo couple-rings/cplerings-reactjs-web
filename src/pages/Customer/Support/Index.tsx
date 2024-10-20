@@ -1,4 +1,3 @@
-import { io } from "socket.io-client";
 import ConversationList from "src/components/chat/conversation/ConversationList";
 import styles from "./Index.module.scss";
 import Chatbox from "src/components/chat/chatbox/Chatbox";
@@ -10,12 +9,7 @@ import { putUpdateConversation } from "src/services/conversation.service";
 import { putUpdateMessage } from "src/services/message.service";
 import { Button, Grid } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
-
-const socket = io(import.meta.env.VITE_NESTJS_SERVER_URL);
-
-socket.on("connect", () => {
-  console.log("socket client: ", socket.id);
-});
+import { socket } from "src/config/socket";
 
 function Index() {
   const [receiveMessage, setReceiveMessage] = useState<null | IMessage>(null);
@@ -80,6 +74,18 @@ function Index() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notificationList, currentConversation]);
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("socket connected: ", socket.connected);
+    });
+
+    return () => {
+      socket.off("connect", () => {
+        console.log("socket disconnected: ", socket.connected);
+      });
+    };
+  }, []);
 
   return (
     <div className={styles.container}>

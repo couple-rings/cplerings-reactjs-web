@@ -1,4 +1,4 @@
-import { Button, FormHelperText, Grid } from "@mui/material";
+import { FormHelperText, Grid } from "@mui/material";
 import styles from "./VerifyID.module.scss";
 import iso1 from "src/assets/27001.png";
 import iso2 from "src/assets/isoblack.png";
@@ -8,13 +8,33 @@ import cameraIcon from "src/assets/icon-carmera.png";
 import { primaryBtn, textBtn } from "src/utils/styles";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { PersonFace } from "src/utils/enums";
+import {
+  FaceMatchResponseCode,
+  IdReadingResponseCode,
+  PersonFace,
+  ResponseType,
+} from "src/utils/enums";
 import _ from "lodash";
+import { useMutation } from "@tanstack/react-query";
+import { postIdFaceMatching, postIdReading } from "src/services/fpt.service";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { postCreateSpouse } from "src/services/spouse.service";
+import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "src/utils/hooks";
+import moment from "moment";
 
 const initError = {
   empty: {
     value: false,
     msg: "* Vui lòng upload đầy đủ ảnh",
+  },
+  invalidID: {
+    value: false,
+    msg: "* Ảnh căn cước công dân không hợp lệ",
+  },
+  notMatch: {
+    value: false,
+    msg: "* Ảnh căn cước và ảnh cá nhân không khớp",
   },
 };
 
@@ -22,10 +42,139 @@ function VerifyID() {
   const [ownerIdImg, setOwnerIdImg] = useState<File | null>(null);
   const [ownerFaceImg, setOwnerFaceImg] = useState<File | null>(null);
   const [selfError, setSelfError] = useState(initError);
+  const [selfIdInfo, setSelfIdInfo] = useState<IIdReadingResponse | null>(null);
 
   const [partnerIdImg, setPartnerIdImg] = useState<File | null>(null);
   const [partnerFaceImg, setPartnerFaceImg] = useState<File | null>(null);
   const [partnerError, setPartnerError] = useState(initError);
+  const [partnerIdInfo, setPartnerIdInfo] = useState<IIdReadingResponse | null>(
+    null
+  );
+
+  const navigate = useNavigate();
+
+  const { id: customerId } = useAppSelector((state) => state.auth.userInfo);
+
+  const selfIdReadMutation = useMutation({
+    mutationFn: (file: File) => {
+      return postIdReading(file);
+    },
+    onSuccess: (response) => {
+      const selfState = _.cloneDeep(selfError);
+
+      if (response.errorCode === IdReadingResponseCode.Success) {
+        selfState.invalidID.value = false;
+        setSelfError(selfState);
+        setSelfIdInfo(response.data[0]);
+
+        // start matching face
+        if (ownerIdImg && ownerFaceImg)
+          selfFaceMatchMutation.mutate({
+            idImage: ownerIdImg,
+            faceImage: ownerFaceImg,
+          });
+      } else if (response.errorCode === IdReadingResponseCode.InvalidImage) {
+        // invalid id image
+        selfState.invalidID.value = true;
+        setSelfError(selfState);
+      } else {
+        toast.error(response.errorMessage);
+      }
+    },
+  });
+
+  const partnerIdReadMutation = useMutation({
+    mutationFn: (file: File) => {
+      return postIdReading(file);
+    },
+    onSuccess: (response) => {
+      const partnerState = _.cloneDeep(partnerError);
+
+      if (response.errorCode === IdReadingResponseCode.Success) {
+        partnerState.invalidID.value = false;
+        setPartnerError(partnerState);
+        setPartnerIdInfo(response.data[0]);
+
+        // start matching face
+        if (partnerIdImg && partnerFaceImg)
+          partnerFaceMatchMutation.mutate({
+            idImage: partnerIdImg,
+            faceImage: partnerFaceImg,
+          });
+      } else if (response.errorCode === IdReadingResponseCode.InvalidImage) {
+        // invalid id image
+        partnerState.invalidID.value = true;
+        setPartnerError(partnerState);
+      } else {
+        toast.error(response.errorMessage);
+      }
+    },
+  });
+
+  const selfFaceMatchMutation = useMutation({
+    mutationFn: (data: IFaceIdMatchRequest) => {
+      return postIdFaceMatching(data);
+    },
+    onSuccess: (response) => {
+      if (response.code === FaceMatchResponseCode.Success) {
+        const { isMatch } = response.data as IFaceIdMatchResponse;
+        const selfState = _.cloneDeep(selfError);
+
+        if (isMatch) {
+          selfState.notMatch.value = false;
+          setSelfError(selfState);
+
+          console.log(selfIdInfo);
+        } else {
+          selfState.notMatch.value = true;
+          setSelfError(selfState);
+        }
+      } else {
+        toast.error(response.data as string);
+      }
+    },
+  });
+
+  const partnerFaceMatchMutation = useMutation({
+    mutationFn: (data: IFaceIdMatchRequest) => {
+      return postIdFaceMatching(data);
+    },
+    onSuccess: (response) => {
+      if (response.code === FaceMatchResponseCode.Success) {
+        const { isMatch } = response.data as IFaceIdMatchResponse;
+
+        const partnerState = _.cloneDeep(partnerError);
+
+        if (isMatch) {
+          partnerState.notMatch.value = false;
+          setPartnerError(partnerState);
+
+          console.log(partnerIdInfo);
+        } else {
+          partnerState.notMatch.value = true;
+          setPartnerError(partnerState);
+        }
+      } else {
+        toast.error(response.data as string);
+      }
+    },
+  });
+
+  const createSpouseMutation = useMutation({
+    mutationFn: (data: ICreateSpouseRequest) => {
+      return postCreateSpouse(data);
+    },
+    onSuccess: (response) => {
+      if (response.type === ResponseType.Info) {
+        toast.success("Xác minh danh tính thành công");
+        navigate("/");
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
 
   const handleSelectFaceImg = (
     e: React.MouseEvent<HTMLLabelElement, MouseEvent>,
@@ -68,7 +217,7 @@ function VerifyID() {
     if (e.target.files && e.target.files.length > 0) {
       setPartnerIdImg(e.target.files[0]);
       if (partnerFaceImg) {
-        const cloneState = _.cloneDeep(selfError);
+        const cloneState = _.cloneDeep(partnerError);
         cloneState.empty.value = false;
         setPartnerError(cloneState);
       }
@@ -79,7 +228,7 @@ function VerifyID() {
     if (e.target.files && e.target.files.length > 0) {
       setPartnerFaceImg(e.target.files[0]);
       if (partnerIdImg) {
-        const cloneState = _.cloneDeep(selfError);
+        const cloneState = _.cloneDeep(partnerError);
         cloneState.empty.value = false;
         setPartnerError(cloneState);
       }
@@ -98,7 +247,60 @@ function VerifyID() {
       cloneState.empty.value = true;
       setPartnerError(cloneState);
     }
+
+    if (!ownerIdImg || !ownerFaceImg || !partnerIdImg || !partnerFaceImg)
+      return;
+
+    selfIdReadMutation.mutate(ownerIdImg);
+    partnerIdReadMutation.mutate(partnerIdImg);
   };
+
+  useEffect(() => {
+    // if matching is done processing
+    if (
+      !selfFaceMatchMutation.isPending &&
+      !partnerFaceMatchMutation.isPending
+    ) {
+      // if id info is available
+      if (selfIdInfo && partnerIdInfo) {
+        // if matching is success
+        if (!selfError.notMatch.value && !partnerError.notMatch.value) {
+          if (selfIdInfo.id === partnerIdInfo.id) {
+            toast.error("Căn cước công dân của bạn và bạn đời bị trùng");
+            return;
+          }
+
+          const data: ICreateSpouseRequest = {
+            primarySpouse: {
+              customerId,
+              citizenId: selfIdInfo.id,
+              fullName: selfIdInfo.name,
+              dateOfBirth: moment(selfIdInfo.dob, "DD/MM/YYYY").toISOString(),
+            },
+            secondarySpouse: {
+              citizenId: partnerIdInfo.id,
+              fullName: partnerIdInfo.name,
+              dateOfBirth: moment(
+                partnerIdInfo.dob,
+                "DD/MM/YYYY"
+              ).toISOString(),
+            },
+          };
+
+          createSpouseMutation.mutate(data);
+        }
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    partnerError.notMatch.value,
+    partnerFaceMatchMutation.isPending,
+    partnerIdInfo,
+    selfError.notMatch.value,
+    selfFaceMatchMutation.isPending,
+    selfIdInfo,
+  ]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -176,6 +378,12 @@ function VerifyID() {
             {selfError.empty.value && (
               <FormHelperText error>{selfError.empty.msg}</FormHelperText>
             )}
+            {selfError.invalidID.value && (
+              <FormHelperText error>{selfError.invalidID.msg}</FormHelperText>
+            )}
+            {selfError.notMatch.value && (
+              <FormHelperText error>{selfError.notMatch.msg}</FormHelperText>
+            )}
           </div>
 
           <div className={styles.photoSection}>
@@ -228,6 +436,14 @@ function VerifyID() {
             {partnerError.empty.value && (
               <FormHelperText error>{partnerError.empty.msg}</FormHelperText>
             )}
+            {partnerError.invalidID.value && (
+              <FormHelperText error>
+                {partnerError.invalidID.msg}
+              </FormHelperText>
+            )}
+            {partnerError.notMatch.value && (
+              <FormHelperText error>{partnerError.notMatch.msg}</FormHelperText>
+            )}
           </div>
         </div>
 
@@ -240,21 +456,46 @@ function VerifyID() {
             dạng: jpg, jpeg và png.
           </div>
         </div>
-        <Button
+        <LoadingButton
           variant="contained"
           sx={primaryBtn}
           fullWidth
           onClick={handleVerify}
+          loading={
+            selfIdReadMutation.isPending ||
+            partnerIdReadMutation.isPending ||
+            selfFaceMatchMutation.isPending ||
+            partnerFaceMatchMutation.isPending ||
+            createSpouseMutation.isPending
+          }
         >
           Tiếp Tục
-        </Button>
+        </LoadingButton>
 
-        <Button variant="contained" sx={{ ...primaryBtn, mt: 2 }} fullWidth>
-          Yêu Cầu Duyệt
-        </Button>
-        <Button variant="text" fullWidth sx={{ ...textBtn, mt: 2 }}>
+        {(selfError.notMatch.value || partnerError.notMatch.value) && (
+          <LoadingButton
+            variant="contained"
+            sx={{ ...primaryBtn, mt: 2 }}
+            fullWidth
+          >
+            Yêu Cầu Duyệt
+          </LoadingButton>
+        )}
+
+        <LoadingButton
+          variant="text"
+          fullWidth
+          sx={{ ...textBtn, mt: 2 }}
+          disabled={
+            selfIdReadMutation.isPending ||
+            partnerIdReadMutation.isPending ||
+            selfFaceMatchMutation.isPending ||
+            partnerFaceMatchMutation.isPending ||
+            createSpouseMutation.isPending
+          }
+        >
           Liên Hệ
-        </Button>
+        </LoadingButton>
       </Grid>
     </Grid>
   );

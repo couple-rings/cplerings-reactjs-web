@@ -48,4 +48,24 @@ declare global {
 
     current?: number;
   }
+
+  interface IFaceIdMatchRequest {
+    idImage: File;
+
+    faceImage: File;
+  }
+
+  interface ICreateSpouseRequest {
+    primarySpouse: {
+      citizenId: string;
+      dateOfBirth: string;
+      fullName: string;
+      customerId: number;
+    };
+    secondarySpouse: {
+      citizenId: string;
+      dateOfBirth: string;
+      fullName: string;
+    };
+  }
 }
