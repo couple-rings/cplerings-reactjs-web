@@ -1,0 +1,90 @@
+@use 'src/index.scss'as *;
+
+.container {
+    display       : flex;
+    align-items   : center;
+    flex-direction: column;
+    padding       : 3rem 1rem;
+
+    .title {
+        font-size    : 2rem;
+        color        : $primaryColor;
+        margin-bottom: 1rem;
+        text-align   : center;
+
+        @media screen and (max-width: 800px) {
+            font-size: 1.5rem;
+        }
+    }
+
+    .section {
+        margin          : 3rem 0;
+        justify-content : space-between;
+        align-items     : center;
+        background-color: #fcfaf8;
+        border-radius   : 10px;
+        padding         : 1rem;
+        box-shadow      : 0 4px 2px -2px #ccc;
+
+        .left {
+            text-align: center;
+            position  : relative;
+
+            .pdf {
+                position        : absolute;
+                background-color: #ccc;
+                color           : $primaryColor;
+                opacity         : 0.5;
+                font-size       : 2rem;
+                border-radius   : 15px;
+                top             : 10%;
+                left            : 10%;
+                width           : 80%;
+                height          : 80%;
+                display         : none;
+                cursor          : pointer;
+            }
+
+            &:hover {
+                .pdf {
+                    display        : flex;
+                    align-items    : center;
+                    justify-content: center;
+                    gap            : 0.5rem;
+                }
+            }
+
+            img {
+                width : 90%;
+                height: 100%;
+            }
+        }
+
+        .right {
+            padding-left: 1rem;
+            padding-top : 1rem;
+
+            .gender {
+                font-size    : 1.3rem;
+                color        : $primaryColor;
+                margin-bottom: 1rem;
+
+                img {
+                    width       : 25px;
+                    margin-right: 1rem;
+                }
+            }
+
+            .label {
+                color        : $primaryColor;
+                font-size    : 1.1rem;
+                margin-bottom: 1rem;
+            }
+
+            .item {
+                margin-bottom: 0.5rem;
+                color        : #555;
+            }
+        }
+    }
+}
