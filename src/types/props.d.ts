@@ -194,4 +194,10 @@ declare global {
 
     setOpen: (v: boolean) => void;
   }
+
+  interface IHoverCardProps {
+    image: string;
+
+    file: string;
+  }
 }

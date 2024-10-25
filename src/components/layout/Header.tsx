@@ -54,7 +54,11 @@ export default function Header(props: IHeaderProps) {
   };
 
   return (
-    <AppBar position="fixed" open={open} sx={{ backgroundColor: "#313131" }}>
+    <AppBar
+      position="fixed"
+      open={open}
+      sx={{ backgroundColor: "#313131", boxShadow: "none" }}
+    >
       <Toolbar>
         <IconButton
           color="inherit"
