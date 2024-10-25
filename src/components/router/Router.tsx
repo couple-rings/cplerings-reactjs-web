@@ -40,6 +40,7 @@ import Checkout from "src/pages/Customer/Checkout/Checkout";
 import CustomRequest from "src/pages/Staff/CustomRequest/CustomRequest";
 import CustomRequestDetail from "src/pages/Staff/CustomRequestDetail/CustomRequestDetail";
 import DesignVersions from "src/pages/Staff/DesignVersions/DesignVersions";
+import CustomDesign from "src/pages/Staff/CustomDesign/CustomDesign";
 
 const router = createBrowserRouter([
   {
@@ -191,6 +192,10 @@ const router = createBrowserRouter([
       {
         path: "custom-request/design-version",
         element: <DesignVersions />,
+      },
+      {
+        path: "custom-request/custom-design",
+        element: <CustomDesign />,
       },
     ],
   },
