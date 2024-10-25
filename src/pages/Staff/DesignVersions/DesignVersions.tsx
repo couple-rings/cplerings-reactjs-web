@@ -17,7 +17,7 @@ function DesignVersions() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Thiết Kế</div>
+      <div className={styles.title}>Thiết Kế Gốc</div>
       <Grid container justifyContent={"center"}>
         <Grid
           container
@@ -107,7 +107,7 @@ function DesignVersions() {
           <Grid item xs={12} md={3} onClick={() => setOpen(true)}>
             <Card className={`${styles.version} ${styles.addVersion}`}>
               <AddBoxOutlinedIcon className={styles.addIcon} />
-              <div className={styles.addText}>Tạo Thiết Kế</div>
+              <div className={styles.addText}>Tạo Bản Mới</div>
             </Card>
           </Grid>
         </Grid>
