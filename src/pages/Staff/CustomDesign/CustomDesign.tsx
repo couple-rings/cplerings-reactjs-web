@@ -15,6 +15,8 @@ import male from "src/assets/male-icon.png";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { primaryBtn } from "src/utils/styles";
+import HoverCard from "src/components/product/HoverCard";
+import blueprint from "src/assets/sampledata/blueprint.pdf";
 
 const metals = ["Vàng Trắng 18K", "Vàng Thường 18K", "Vàng Hồng 18K"];
 const diamonds = ["5PT - F - SI1", "10PT - F - VS2", "15PT - G - SI1"];
@@ -28,12 +30,12 @@ function CustomDesign() {
         <Grid
           container
           item
-          lg={10}
+          lg={11}
           justifyContent={"space-between"}
           alignItems={"center"}
         >
           <Grid item md={4} className={styles.left}>
-            <img src={menring} className={styles.thumbnail} />
+            <HoverCard file={blueprint} image={menring} shadow={true} />
             <div className={styles.label}>
               <img src={male} />
               <span>Nhẫn Nam</span>
@@ -129,12 +131,12 @@ function CustomDesign() {
         <Grid
           container
           item
-          lg={10}
+          lg={11}
           justifyContent={"space-between"}
           alignItems={"center"}
         >
           <Grid item md={4} className={styles.left}>
-            <img src={womenring} className={styles.thumbnail} />
+            <HoverCard file={blueprint} image={womenring} shadow={true} />
             <div className={styles.label}>
               <img src={female} />
               <span>Nhẫn Nữ</span>
