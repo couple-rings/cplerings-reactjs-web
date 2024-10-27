@@ -26,13 +26,13 @@
 
                 .number {
                     font-size: 1.3rem;
-                    color    : #555;
+                    color    : $grayColor;
                 }
             }
 
             .description {
                 font-size    : 1.2rem;
-                color        : #555;
+                color        : $grayColor;
                 line-height  : 2.2rem;
                 margin-bottom: 1.5rem;
             }
@@ -103,7 +103,7 @@
             .policy {
                 display    : flex;
                 align-items: center;
-                color      : #555;
+                color      : $grayColor;
                 margin     : 1rem 0;
                 gap        : 0.5rem;
             }

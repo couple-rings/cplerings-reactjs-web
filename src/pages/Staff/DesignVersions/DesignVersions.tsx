@@ -7,7 +7,7 @@ import HoverCard from "src/components/product/HoverCard";
 import male from "src/assets/male-icon.png";
 import female from "src/assets/female-icon.png";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
-import { primaryBtn } from "src/utils/styles";
+import { roundedPrimaryBtn } from "src/utils/styles";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AddModal from "src/components/modal/version/Add.modal";
 import { useState } from "react";
@@ -115,11 +115,7 @@ function DesignVersions() {
 
       <Grid container justifyContent={"center"} mt={10}>
         <Grid item xs={11} md={4}>
-          <Button
-            variant="contained"
-            sx={{ ...primaryBtn, borderRadius: 2 }}
-            fullWidth
-          >
+          <Button variant="contained" sx={roundedPrimaryBtn} fullWidth>
             Xác Nhận Tạo
           </Button>
         </Grid>

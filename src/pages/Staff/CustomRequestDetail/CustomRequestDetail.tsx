@@ -5,7 +5,7 @@ import womenring from "src/assets/sampledata/womenring.png";
 import { Button, Grid } from "@mui/material";
 import male from "src/assets/male-icon.png";
 import female from "src/assets/female-icon.png";
-import { primaryBtn } from "src/utils/styles";
+import { roundedPrimaryBtn } from "src/utils/styles";
 import blueprint from "src/assets/sampledata/blueprint.pdf";
 import HoverCard from "src/components/product/HoverCard";
 
@@ -124,9 +124,13 @@ function CustomRequestDetail() {
           </Grid>
         </Grid>
 
-        <Button variant="contained" sx={{ ...primaryBtn, py: 1 }}>
-          Nhận Yêu Cầu
-        </Button>
+        <Grid container justifyContent={"center"}>
+          <Grid item xs={8} md={4}>
+            <Button variant="contained" fullWidth sx={roundedPrimaryBtn}>
+              Nhận Yêu Cầu
+            </Button>
+          </Grid>
+        </Grid>
       </Grid>
     </div>
   );
