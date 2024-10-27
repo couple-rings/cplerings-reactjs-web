@@ -199,5 +199,7 @@ declare global {
     image: string;
 
     file: string;
+
+    shadow?: boolean;
   }
 }

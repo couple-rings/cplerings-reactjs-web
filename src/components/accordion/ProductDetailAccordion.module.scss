@@ -17,7 +17,7 @@
 
         .content {
             font-size  : 1.2rem;
-            color      : #555;
+            color      : $grayColor;
             line-height: 2.5rem;
         }
     }
@@ -28,7 +28,7 @@
         margin-top : 1rem;
 
         span {
-            color       : #555;
+            color       : $grayColor;
             font-size   : 1.4rem;
             margin-right: 1rem;
         }

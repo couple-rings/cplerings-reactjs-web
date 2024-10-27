@@ -41,6 +41,7 @@ import CustomRequest from "src/pages/Staff/CustomRequest/CustomRequest";
 import CustomRequestDetail from "src/pages/Staff/CustomRequestDetail/CustomRequestDetail";
 import DesignVersions from "src/pages/Staff/DesignVersions/DesignVersions";
 import CustomDesign from "src/pages/Staff/CustomDesign/CustomDesign";
+import CraftingRequestDetail from "src/pages/Staff/CraftingRequestDetail/CraftingRequestDetail";
 
 const router = createBrowserRouter([
   {
@@ -196,6 +197,10 @@ const router = createBrowserRouter([
       {
         path: "custom-request/custom-design",
         element: <CustomDesign />,
+      },
+      {
+        path: "crafting-request/detail",
+        element: <CraftingRequestDetail />,
       },
     ],
   },

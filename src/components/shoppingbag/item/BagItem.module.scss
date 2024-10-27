@@ -16,7 +16,7 @@
             margin-left: 2rem;
 
             .name {
-                color        : #555;
+                color        : $grayColor;
                 margin-bottom: 0.5rem;
 
                 @media screen and (min-width: 600px) {
@@ -34,7 +34,7 @@
 
             .label {
                 font-size: 1.1rem;
-                color    : #555;
+                color    : $grayColor;
 
                 @media screen and (min-width: 600px) {
                     margin-bottom: 0.3rem;

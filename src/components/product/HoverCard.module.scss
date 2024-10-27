@@ -14,7 +14,7 @@
         top             : 0;
         left            : 5%;
         width           : 90%;
-        height          : 98%;
+        height          : 99%;
         display         : none;
         cursor          : pointer;
     }
@@ -33,5 +33,9 @@
         aspect-ratio : 1 / 1;
         border-radius: 15px;
         object-fit   : cover;
+
+        &.boxShadow {
+            box-shadow: $boxShadow;
+        }
     }
 }
