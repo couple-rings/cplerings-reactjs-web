@@ -35,7 +35,7 @@ declare global {
     userId: number;
   }
 
-  interface IConversationFilterDto {
+  interface IConversationFilter {
     userId: number;
   }
 
@@ -43,7 +43,7 @@ declare global {
     read: boolean;
   }
 
-  interface IMessageFilterDto {
+  interface IMessageFilter {
     conversationId: string;
 
     current?: number;
@@ -67,5 +67,14 @@ declare global {
       dateOfBirth: string;
       fullName: string;
     };
+  }
+
+  interface ICoupleDesignFilter {
+    page: number;
+    pageSize: number;
+    collectionId?: number;
+    metalSpecificationId?: number;
+    minPrice?: number;
+    maxPrice?: number;
   }
 }

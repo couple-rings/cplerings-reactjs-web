@@ -4,10 +4,11 @@ import { Button, IconButton } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import { useNavigate } from "react-router-dom";
+import { ProductType } from "src/utils/enums";
 
 const ProductCard = (props: IProductCardProps) => {
-  const { product } = props;
-  const { coverImg, name, price } = product;
+  const { product, data } = props;
+  const { coverImg, name, price, type, id } = product;
 
   const navigate = useNavigate();
 
@@ -17,11 +18,17 @@ const ProductCard = (props: IProductCardProps) => {
     e.stopPropagation();
   };
 
+  const handleNavigate = () => {
+    if (type === ProductType.Jewelry)
+      navigate(`/jewelry/detail`, { state: { id } });
+    if (type === ProductType.Ring)
+      navigate(`/wedding-rings/detail`, {
+        state: { data },
+      });
+  };
+
   return (
-    <div
-      className={styles.container}
-      onClick={() => navigate(`/design-detail/${2}`)}
-    >
+    <div className={styles.container} onClick={handleNavigate}>
       <div className={styles.imgContainer}>
         <img src={coverImg} />
         <IconButton className={styles.favoriteBtn} onClick={handleAddFavorite}>

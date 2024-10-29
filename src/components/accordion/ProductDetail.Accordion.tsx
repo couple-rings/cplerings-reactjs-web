@@ -13,8 +13,11 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import PinterestIcon from "@mui/icons-material/Pinterest";
+import { meleeDiamondCarat } from "src/utils/constants";
 
-function ProductDetailAccordion() {
+function ProductDetailAccordion(props: IProductDetailAccordionProps) {
+  const { collectionName, category, maleDetail, femaleDetail } = props;
+
   return (
     <div className={styles.container}>
       <Accordion sx={{ boxShadow: "none" }}>
@@ -23,7 +26,9 @@ function ProductDetailAccordion() {
         </AccordionSummary>
         <AccordionDetails sx={{ p: 0 }}>
           <Box sx={{ mb: 2 }}>
-            <div className={styles.title}>Thông Tin Nhẫn</div>
+            <div className={styles.title}>
+              {category ? "Thông Tin Trang Sức" : "Thông Tin Nhẫn"}
+            </div>
             <Divider sx={{ backgroundColor: "#ccc", my: 2 }} />
 
             <Grid container className={styles.section}>
@@ -33,9 +38,13 @@ function ProductDetailAccordion() {
                 <div>Bộ sưu tập</div>
               </Grid>
               <Grid item xs={8} className={styles.content}>
-                <div>Nam: Nhẫn Cưới / Nữ: Nhẫn Cưới</div>
-                <div>Nam: Vàng hồng 18K / Nữ: Vàng trắng 18K</div>
-                <div>Nam: FOREVER / Nữ: FOREVER</div>
+                <div>{category ? category : "Nhẫn Cưới"}</div>
+                <div>
+                  {maleDetail &&
+                    femaleDetail &&
+                    `Nam: ${maleDetail.metalSpec.name} / Nữ: ${femaleDetail.metalSpec.name}`}
+                </div>
+                <div>{collectionName}</div>
               </Grid>
             </Grid>
           </Box>
@@ -52,10 +61,26 @@ function ProductDetailAccordion() {
                 <div>Độ tinh khiết</div>
               </Grid>
               <Grid item xs={8} className={styles.content}>
-                <div>Nam: 0.03 / Nữ: 0.03</div>
-                <div>Nam: Tròn / Nữ: Trái Tim</div>
-                <div>Nam: H / Nữ: F</div>
-                <div>Nam: SI1 / Nữ: VS1</div>
+                <div>
+                  {maleDetail &&
+                    femaleDetail &&
+                    `Nam: ${maleDetail.diamondSpec.weight} / Nữ: ${femaleDetail.diamondSpec.weight}`}
+                </div>
+                <div>
+                  {maleDetail &&
+                    femaleDetail &&
+                    `Nam: ${maleDetail.diamondSpec.shape} / Nữ: ${femaleDetail.diamondSpec.shape}`}
+                </div>
+                <div>
+                  {maleDetail &&
+                    femaleDetail &&
+                    `Nam: ${maleDetail.diamondSpec.color} / Nữ: ${femaleDetail.diamondSpec.color}`}
+                </div>
+                <div>
+                  {maleDetail &&
+                    femaleDetail &&
+                    `Nam: ${maleDetail.diamondSpec.clarity} / Nữ: ${femaleDetail.diamondSpec.clarity}`}
+                </div>
               </Grid>
             </Grid>
 
@@ -66,8 +91,21 @@ function ProductDetailAccordion() {
                 <div>Tổng trọng lượng</div>
               </Grid>
               <Grid item xs={8} className={styles.content}>
-                <div>Nam: 6 viên / Nữ: 8 viên</div>
-                <div>Nam: 0.07 / Nữ: 0.08</div>
+                <div>
+                  {maleDetail &&
+                    femaleDetail &&
+                    `Nam: ${maleDetail.sideDiamondsCount} viên / Nữ: ${femaleDetail.sideDiamondsCount} viên`}
+                </div>
+                <div>
+                  {" "}
+                  {maleDetail &&
+                    femaleDetail &&
+                    `Nam: ${
+                      maleDetail.sideDiamondsCount * meleeDiamondCarat
+                    } / Nữ: ${
+                      femaleDetail.sideDiamondsCount * meleeDiamondCarat
+                    }`}
+                </div>
               </Grid>
             </Grid>
           </Box>
