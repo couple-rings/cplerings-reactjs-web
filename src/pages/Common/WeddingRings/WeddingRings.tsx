@@ -11,11 +11,15 @@ import wedding1 from "src/assets/wedding1.png";
 import wedding2 from "src/assets/wedding2.png";
 import { useNavigate } from "react-router-dom";
 import HoverMenu from "src/components/menu/HoverMenu";
-import { HoverMenuPurpose } from "src/utils/enums";
-import ringDesign from "src/assets/sampledata/ringdesign.png";
+import { HoverMenuPurpose, ProductType } from "src/utils/enums";
 import ProductCard from "src/components/product/ProductCard";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import WeddingRingsAccordian from "src/components/accordion/WeddingRings.Accordion";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getCoupleDesigns } from "src/services/design.service";
+import { pageSize } from "src/utils/constants";
+import { calculateDefaultPrice } from "src/utils/functions";
+import LoadingProduct from "src/components/product/LoadingProduct";
 
 const collections = [
   "DR Heart",
@@ -40,40 +44,66 @@ const prices = [
   "Trên 50 Triệu",
 ];
 
-const characteristics = ["Nhẫn Nam", "Nhẫn Nữ", "Nhẫn Cặp"];
-
 const sorts = ["Mới nhất", "Giá - Thấp đến Cao", "Giá - Cao đến Thấp"];
 
-const designs = [
-  {
-    coverImg: ringDesign,
-    name: "CR FOREVER Simple Wedding Ring For Man",
-    price: 12000000,
-  },
-  {
-    coverImg: ringDesign,
-    name: "CR FOREVER Simple Wedding Ring For Man",
-    price: 12000000,
-  },
-  {
-    coverImg: ringDesign,
-    name: "CR FOREVER Simple Wedding Ring For Man",
-    price: 12000000,
-  },
-  {
-    coverImg: ringDesign,
-    name: "CR FOREVER Simple Wedding Ring For Man",
-    price: 12000000,
-  },
-];
+const initFilter = {
+  page: 0,
+  pageSize: pageSize,
+};
+
+const initMetaData = {
+  ...initFilter,
+  totalPages: 0,
+  count: 0,
+};
 
 function WeddingRings() {
+  const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
+  const [filterObj, setFilterObj] = useState<ICoupleDesignFilter>({
+    page: 0,
+    pageSize,
+  });
+
   const navigate = useNavigate();
 
-  const [page, setPage] = useState(1);
+  const ref = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
+
+  const { data: response, isLoading } = useQuery({
+    queryKey: ["fetchCoupleDesigns", filterObj],
+    queryFn: () => {
+      return getCoupleDesigns(filterObj);
+    },
+  });
+
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
+    setFilterObj({
+      ...filterObj,
+      page: value - 1,
+    });
   };
+
+  useEffect(() => {
+    if (response && response.data) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { items, ...rest } = response.data;
+      setMetaData(rest);
+
+      window.scrollTo({
+        top: ref.current?.offsetTop,
+        left: 0,
+        behavior: "smooth",
+      });
+    }
+  }, [response]);
+
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: ["fetchCoupleDesigns", filterObj],
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterObj]);
 
   return (
     <div className={styles.container}>
@@ -98,7 +128,7 @@ function WeddingRings() {
         </Grid>
       </div>
 
-      <Grid container item xs={10}>
+      <Grid container item xs={10} ref={ref}>
         <Breadcrumbs sx={{ mb: 2 }}>
           <Link
             sx={{ cursor: "pointer" }}
@@ -131,11 +161,6 @@ function WeddingRings() {
               title="Loại Vàng"
               lists={metals}
             />
-            <HoverMenu
-              purpose={HoverMenuPurpose.Filter}
-              title="Giới Tính"
-              lists={characteristics}
-            />
           </Grid>
 
           <Grid item>
@@ -152,18 +177,45 @@ function WeddingRings() {
       {/* Filter - Sort bar End */}
 
       <Grid container item xs={10} spacing={3} className={styles.list}>
-        {designs.map((item, index) => {
-          return (
+        {isLoading &&
+          new Array(8).fill(0).map((item, index) => (
             <Grid item sm={6} md={4} lg={3} key={index}>
-              <ProductCard product={item} />
+              <LoadingProduct />
             </Grid>
-          );
-        })}
+          ))}
+
+        {response &&
+          response.data &&
+          response.data.items.length > 0 &&
+          response.data.items.map((item) => {
+            const price = calculateDefaultPrice(item);
+
+            const product: IProduct = {
+              id: item.id,
+              coverImg: item.previewImage.url,
+              name: item.name,
+              price,
+              type: ProductType.Ring,
+            };
+            return (
+              <Grid item sm={6} md={4} lg={3} key={item.id}>
+                <ProductCard product={product} data={item} />
+              </Grid>
+            );
+          })}
       </Grid>
 
-      <div>
-        <Pagination count={10} page={page} onChange={handleChange} />
-      </div>
+      {response && response.data && response.data.items.length > 0 && (
+        <Pagination
+          count={metaData.totalPages}
+          page={metaData.page + 1}
+          onChange={handleChange}
+        />
+      )}
+
+      {response && response.data && response.data.items.length === 0 && (
+        <div className={styles.empty}>Không tìm thấy sản phẩm nào...</div>
+      )}
 
       <Grid container item xs={10} className={styles.bottom}>
         <Divider sx={{ backgroundColor: "#ccc", width: "100%", mb: 5 }} />

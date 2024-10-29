@@ -20,7 +20,7 @@ export interface ILoginPayload {
   refreshToken: string;
 }
 
-export interface ISaveProfilePayload extends IProfileResponse {}
+export interface ISaveProfilePayload extends Partial<IProfileResponse> {}
 
 export interface ISaveTokenPayload extends IRefreshTokenResponse {}
 
@@ -33,6 +33,7 @@ const initialState: IInitState = {
     username: "",
     phone: "",
     avatar: "",
+    hasSpouse: false,
     role: UserRole.Default,
   },
 

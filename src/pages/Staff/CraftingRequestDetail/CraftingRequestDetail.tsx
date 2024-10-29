@@ -14,8 +14,8 @@ function CraftingRequestDetail() {
       <div className={styles.title}>Yêu Cầu Chế Tác</div>
 
       <Grid container justifyContent={"center"}>
-        <Grid container item xs={10} justifyContent={"space-between"}>
-          <Grid item xs={5}>
+        <Grid container item lg={10} justifyContent={"space-between"}>
+          <Grid item md={5}>
             <HoverCard image={menring} file={blueprint} shadow={true} />
             <div className={styles.label}>
               <img src={male} />
@@ -54,7 +54,7 @@ function CraftingRequestDetail() {
             </div>
           </Grid>
 
-          <Grid item xs={5}>
+          <Grid item md={5}>
             <HoverCard image={womenring} file={blueprint} shadow={true} />
             <div className={styles.label}>
               <img src={female} />
@@ -94,13 +94,13 @@ function CraftingRequestDetail() {
           </Grid>
 
           <Grid container item xs={12} justifyContent={"center"} mt={3} gap={3}>
-            <Grid item xs={4}>
+            <Grid item xs={12} sm={4}>
               <Button variant="contained" fullWidth sx={roundedPrimaryBtn}>
                 Chấp Nhận
               </Button>
             </Grid>
 
-            <Grid item xs={4}>
+            <Grid item xs={12} sm={4}>
               <Button variant="contained" fullWidth sx={roundedPrimaryBtn}>
                 Từ Chối
               </Button>

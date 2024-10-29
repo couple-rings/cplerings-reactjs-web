@@ -40,6 +40,8 @@ import brand from "src/assets/brand.png";
 import store from "src/assets/storeHD.png";
 import Advertisement from "src/components/advertisement/Advertisement";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "src/utils/hooks";
+import { toast } from "react-toastify";
 
 const processSteps = [
   {
@@ -139,6 +141,16 @@ const HomeDefault = () => {
   const minLG = useMediaQuery(theme.breakpoints.up("lg"));
 
   const navigate = useNavigate();
+  const { hasSpouse } = useAppSelector((state) => state.auth.userInfo);
+
+  const redirectLoveVerification = () => {
+    if (hasSpouse) {
+      toast.info("Bạn đã hoàn thành xác minh tình yêu");
+      return;
+    }
+
+    navigate("/customer/love-verification");
+  };
 
   return (
     <div className={styles.container}>
@@ -258,7 +270,7 @@ const HomeDefault = () => {
             <Button
               variant="outlined"
               sx={outlinedBtn}
-              onClick={() => navigate("/customer/love-verification")}
+              onClick={redirectLoveVerification}
             >
               Xác Nhận
             </Button>
