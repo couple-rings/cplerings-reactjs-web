@@ -28,6 +28,17 @@ declare global {
     data?: T;
   }
 
+  interface IListMetaData {
+    page: number;
+    pageSize: number;
+    totalPages: number;
+    count: number;
+  }
+
+  interface IListResponse<T> extends IListMetaData {
+    items: T[];
+  }
+
   interface ILoginResponse {
     token: string;
     refreshToken: string;
@@ -83,6 +94,8 @@ declare global {
     phone: string | null;
 
     avatar: string | null;
+
+    hasSpouse: boolean;
   }
 
   interface IFaceIdMatchResponse {

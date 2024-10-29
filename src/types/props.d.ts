@@ -5,6 +5,8 @@ export {};
 declare global {
   interface IProductCardProps {
     product: IProduct;
+
+    data?: ICoupleDesign;
   }
 
   interface IBranchCardProps {
@@ -201,5 +203,27 @@ declare global {
     file: string;
 
     shadow?: boolean;
+  }
+
+  interface IProductDetailAccordionProps {
+    collectionName: string;
+
+    category?: string;
+
+    maleDetail?: {
+      metalSpec: IMetalSpec;
+
+      diamondSpec: IDiamondSpec;
+
+      sideDiamondsCount: number;
+    };
+
+    femaleDetail?: {
+      metalSpec: IMetalSpec;
+
+      diamondSpec: IDiamondSpec;
+
+      sideDiamondsCount: number;
+    };
   }
 }

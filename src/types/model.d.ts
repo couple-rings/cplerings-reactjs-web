@@ -1,4 +1,4 @@
-import { DivisionType } from "src/utils/enums";
+import { DesignCharacteristic, DivisionType, GoldColor } from "src/utils/enums";
 
 export {};
 
@@ -16,11 +16,15 @@ declare global {
   }
 
   interface IProduct {
+    id: number;
+
     coverImg: string;
 
     name: string;
 
     price: number;
+
+    type: ProductType;
   }
 
   interface IStore {
@@ -81,6 +85,94 @@ declare global {
 
     avatar: string;
 
+    hasSpouse: boolean;
+
     role: UserRole;
+  }
+
+  interface IMetalSpec {
+    id: number;
+
+    name: string;
+
+    pricePerUnit: number;
+
+    color: GoldColor;
+  }
+
+  interface IDiamondSpec {
+    id: number;
+
+    name: string;
+
+    weight: number;
+
+    color: string;
+
+    clarity: string;
+
+    shape: string;
+
+    price: number;
+  }
+
+  interface ICollection {
+    id: number;
+
+    name: string;
+
+    description: string;
+  }
+
+  interface IDesign {
+    id: number;
+
+    metalWeight: number;
+
+    name: string;
+
+    description: string;
+
+    blueprint: {
+      url: string;
+    };
+
+    characteristic: DesignCharacteristic;
+
+    size: number;
+
+    sideDiamondsCount: number;
+
+    designMetalSpecifications: {
+      id: number;
+
+      metalSpecification: IMetalSpec;
+
+      image: {
+        url: string;
+      };
+    }[];
+
+    designDiamondSpecifications: {
+      id: number;
+
+      diamondSpecification: IDiamondSpec;
+    }[];
+
+    designCollection: ICollection;
+  }
+
+  interface ICoupleDesign {
+    id: number;
+
+    previewImage: {
+      url: string;
+    };
+
+    name: string;
+
+    description: string;
+
+    designs: IDesign[];
   }
 }

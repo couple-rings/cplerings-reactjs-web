@@ -49,3 +49,11 @@ export const validAttachments = [
 export const messageCardBg = "#e5efff";
 
 export const drawerWidth = 240;
+
+export const pageSize = 8;
+
+export const metalWeightUnit = 3.75; // 1 chỉ vàng = 3.75 gram
+
+export const meleeDiamondCarat = 0.008;
+
+export const profitRatio = 1.3;
