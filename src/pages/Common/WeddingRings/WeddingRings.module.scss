@@ -29,7 +29,7 @@
                 }
 
                 .text {
-                    color      : #555;
+                    color      : $grayColor;
                     font-size  : 1.2rem;
                     line-height: 1.8rem;
                 }
@@ -68,6 +68,11 @@
     .list {
         margin-top   : 1rem;
         margin-bottom: 5rem;
+    }
+
+    .empty {
+        font-size: 1.2rem;
+        color    : $primaryColor;
     }
 
     .bottom {

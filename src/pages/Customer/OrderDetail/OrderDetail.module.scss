@@ -73,7 +73,7 @@
         }
 
         .label {
-            color       : #555;
+            color       : $grayColor;
             margin-right: 1rem;
         }
 
@@ -94,7 +94,7 @@
             .address,
             .phone,
             .name {
-                color        : #555;
+                color        : $grayColor;
                 font-size    : 1.3rem;
                 margin-bottom: 2rem;
                 line-height  : 2rem;
@@ -114,7 +114,7 @@
             .fee {
                 display        : flex;
                 justify-content: space-between;
-                color          : #555;
+                color          : $grayColor;
                 font-size      : 1.3rem;
                 margin-bottom  : 1rem;
             }

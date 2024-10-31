@@ -5,9 +5,9 @@ import womenring from "src/assets/sampledata/womenring.png";
 import { Button, Grid } from "@mui/material";
 import male from "src/assets/male-icon.png";
 import female from "src/assets/female-icon.png";
-import { primaryBtn } from "src/utils/styles";
+import { roundedPrimaryBtn } from "src/utils/styles";
 import blueprint from "src/assets/sampledata/blueprint.pdf";
-import DownloadIcon from "@mui/icons-material/Download";
+import HoverCard from "src/components/product/HoverCard";
 
 const metals = ["Vàng Trắng 18K", "Vàng Thường 18K", "Vàng Hồng 18K"];
 const diamonds = ["5PT ,F ,SI1", "10PT ,F ,VS2", "15PT ,G ,SI1"];
@@ -25,14 +25,8 @@ function CustomRequestDetail() {
 
       <Grid container item xs={12} justifyContent={"center"}>
         <Grid container className={styles.section}>
-          <Grid item xs={12} md={4} className={styles.left}>
-            <a href={blueprint}>
-              <img src={menring} />
-              <div className={styles.pdf}>
-                <DownloadIcon fontSize="large" />
-                <span>Tải file</span>
-              </div>
-            </a>
+          <Grid item xs={12} md={4}>
+            <HoverCard file={blueprint} image={menring} />
           </Grid>
 
           <Grid item xs={12} md={7.5} className={styles.right}>
@@ -81,14 +75,8 @@ function CustomRequestDetail() {
         </Grid>
 
         <Grid container className={styles.section}>
-          <Grid item xs={12} md={4} className={styles.left}>
-            <a href={blueprint}>
-              <img src={womenring} />
-              <div className={styles.pdf}>
-                <DownloadIcon fontSize="large" />
-                <span>Tải file</span>
-              </div>
-            </a>
+          <Grid item xs={12} md={4}>
+            <HoverCard file={blueprint} image={womenring} />
           </Grid>
 
           <Grid item xs={12} md={7.5} className={styles.right}>
@@ -136,9 +124,13 @@ function CustomRequestDetail() {
           </Grid>
         </Grid>
 
-        <Button variant="contained" sx={{ ...primaryBtn, py: 1 }}>
-          Nhận Yêu Cầu
-        </Button>
+        <Grid container justifyContent={"center"}>
+          <Grid item xs={8} md={4}>
+            <Button variant="contained" fullWidth sx={roundedPrimaryBtn}>
+              Nhận Yêu Cầu
+            </Button>
+          </Grid>
+        </Grid>
       </Grid>
     </div>
   );

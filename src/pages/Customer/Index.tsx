@@ -9,6 +9,8 @@ import support from "src/assets/support.png";
 import { Grid, ListItemText, Menu, MenuItem, Switch } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "src/utils/hooks";
+import { toast } from "react-toastify";
 
 const imgLists = [
   {
@@ -43,12 +45,22 @@ function CustomerDefault() {
   const open = Boolean(anchorEl);
 
   const navigate = useNavigate();
+  const { hasSpouse } = useAppSelector((state) => state.auth.userInfo);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleNavigate = (path: string) => {
+    if (hasSpouse && path === "/customer/love-verification") {
+      toast.info("Bạn đã hoàn thành xác minh tình yêu");
+      return;
+    }
+
+    navigate(path);
   };
 
   return (
@@ -72,7 +84,7 @@ function CustomerDefault() {
                   item
                   sm={5.8}
                   key={index}
-                  onClick={() => navigate(item.path)}
+                  onClick={() => handleNavigate(item.path)}
                 >
                   <img src={item.img} />
                 </Grid>

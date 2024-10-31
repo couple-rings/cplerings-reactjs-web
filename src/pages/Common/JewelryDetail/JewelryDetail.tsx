@@ -13,9 +13,9 @@ import {
   Rating,
   SxProps,
 } from "@mui/material";
-import styles from "./DesignDetail.module.scss";
+import styles from "./JewelryDetail.module.scss";
 import ringDesign from "src/assets/sampledata/ringdesign.png";
-import { useNavigate, useParams } from "react-router-dom";
+import { Location, useLocation, useNavigate } from "react-router-dom";
 import { menuPaperStyle, primaryBtn, sizeMenuStyle } from "src/utils/styles";
 import { currencyFormatter } from "src/utils/functions";
 import { useEffect, useState } from "react";
@@ -66,7 +66,7 @@ const sizeMenuPaperStyle: SxProps = {
   borderTop: "none",
 };
 
-function DesignDetail() {
+function JewelryDetail() {
   const [metal, setMetal] = useState({
     img: white,
     name: "Vàng Trắng 18K",
@@ -77,7 +77,8 @@ function DesignDetail() {
 
   const navigate = useNavigate();
 
-  const { id } = useParams<{ id: string }>();
+  const location: Location<{ id: number }> = useLocation();
+  const { id } = location.state;
   console.log(id);
 
   useEffect(() => {
@@ -264,7 +265,7 @@ function DesignDetail() {
 
             <Divider sx={{ backgroundColor: "#ccc", mt: 3 }} />
 
-            <ProductDetailAccordion />
+            <ProductDetailAccordion collectionName="FOREVER" />
           </Grid>
         </Grid>
       </Grid>
@@ -296,4 +297,4 @@ function DesignDetail() {
   );
 }
 
-export default DesignDetail;
+export default JewelryDetail;

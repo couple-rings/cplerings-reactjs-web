@@ -10,6 +10,11 @@ export const primaryBtn: SxProps = {
   padding: 2,
 };
 
+export const roundedPrimaryBtn: SxProps = {
+  ...primaryBtn,
+  borderRadius: 2,
+};
+
 export const secondaryBtn: SxProps = {
   backgroundColor: "#b43620",
   textTransform: "capitalize",

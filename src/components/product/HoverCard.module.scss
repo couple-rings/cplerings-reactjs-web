@@ -1,0 +1,41 @@
+@use 'src/index.scss'as *;
+
+.container {
+    text-align: center;
+    position  : relative;
+
+    .pdf {
+        position        : absolute;
+        background-color: #ccc;
+        color           : $primaryColor;
+        opacity         : 0.5;
+        font-size       : 2rem;
+        border-radius   : 15px;
+        top             : 0;
+        left            : 5%;
+        width           : 90%;
+        height          : 99%;
+        display         : none;
+        cursor          : pointer;
+    }
+
+    &:hover {
+        .pdf {
+            display        : flex;
+            align-items    : center;
+            justify-content: center;
+            gap            : 0.5rem;
+        }
+    }
+
+    img {
+        width        : 90%;
+        aspect-ratio : 1 / 1;
+        border-radius: 15px;
+        object-fit   : cover;
+
+        &.boxShadow {
+            box-shadow: $boxShadow;
+        }
+    }
+}

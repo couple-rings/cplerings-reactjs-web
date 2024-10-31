@@ -1,7 +1,7 @@
 import axios from "src/config/axios.chat";
 import queryString from "query-string";
 
-export const getConversations = (queryObj: IConversationFilterDto) => {
+export const getConversations = (queryObj: IConversationFilter) => {
   const queryUrl = queryString.stringify(queryObj);
 
   return axios.get<unknown, ISecondaryResponse<IConversation[]>>(
