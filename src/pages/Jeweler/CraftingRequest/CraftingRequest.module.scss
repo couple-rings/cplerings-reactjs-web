@@ -1,38 +1,52 @@
-@use 'src/index.scss'as *;
+@use "src/index.scss" as *;
 
 .container {
     padding: 3rem;
+    
+    .customHeader {
+        background-color: #1976d2 !important;
+        color: #ffffff !important;
+      }
 
     .title {
-        color        : $primaryColor;
-        font-size    : 2rem;
+        color: $primaryColor;
+        font-size: 2rem;
         margin-bottom: 2rem;
     }
 
     .completed {
-        background-color: #07bc0c;
-        color           : #ffffff;
-        border-radius   : 15px;
-        padding         : 5px 10px;
-        text-transform  : capitalize;
-        width           : 100px;
+        background-color: #D9ECC0;
+        color: #35714E;
+        border-radius: 15px;
+        padding: 5px 10px;
+        text-transform: capitalize;
+        width: 100px;
     }
 
     .delivering {
-        background-color: #e74c3c;
-        color           : #ffffff;
-        border-radius   : 15px;
-        padding         : 5px 10px;
-        text-transform  : capitalize;
-        width           : 100px;
+        background-color: #C0EAEC;
+        color: #355A71;
+        border-radius: 15px;
+        padding: 5px 10px;
+        text-transform: capitalize;
+        width: 100px;
     }
 
     .ongoing {
         background-color: #f1c40f;
-        color           : #ffffff;
-        border-radius   : 15px;
-        padding         : 5px 10px;
-        text-transform  : capitalize;
-        width           : 100px;
+        color: #453924;
+        border-radius: 15px;
+        padding: 5px 10px;
+        text-transform: capitalize;
+        width: 100px;
+    }
+
+    .done {
+        background-color: #FFA500;
+        color: #355A71;
+        border-radius: 15px;
+        padding: 5px 10px;
+        text-transform: capitalize;
+        width: 100px;
     }
 }

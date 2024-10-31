@@ -105,7 +105,7 @@ function CraftingRequest() {
           if (row.status === CraftingRequestStatus.InProgress)
             classname = styles.ongoing;
           if (row.status === CraftingRequestStatus.Done)
-            classname = styles.ongoing;
+            classname = styles.done;
           if (row.status === CraftingRequestStatus.Delivering)
             classname = styles.delivering;
           if (row.status === CraftingRequestStatus.Completed)
@@ -146,7 +146,7 @@ function CraftingRequest() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Yêu cầu thiết kế</div>
+      <div className={styles.title}>Yêu cầu gia công</div>
 
       <DataGrid
         getRowHeight={() => "auto"}
@@ -158,6 +158,7 @@ function CraftingRequest() {
         disableColumnSelector
         disableRowSelectionOnClick
         autoHeight
+        
       />
     </div>
   );
