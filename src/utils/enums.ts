@@ -60,6 +60,14 @@ export enum CustomRequestStatus {
   Canceled = "CANCELED",
 }
 
+export enum CraftingRequestStatus {
+  Waiting = "WAITING",
+  InProgress = "IN PROGRESS",
+  Done = "DONE",
+  Completed = "COMPLETED",
+  Delivering = "DELIVERING"
+}
+
 export enum FaceMatchResponseCode {
   Success = "200",
   FileFormatError = "408",
