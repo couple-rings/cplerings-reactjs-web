@@ -100,12 +100,14 @@ const LowerBar = () => {
               borderRadius: 0,
             },
           },
+          root: {
+            "aria-hidden": false,
+          },
         }}
         sx={{ mt: "15px" }}
         id="fade-menu"
         MenuListProps={{
           "aria-labelledby": "fade-button",
-          "aria-hidden": true,
         }}
         anchorEl={anchorEl}
         open={open}

@@ -1,0 +1,56 @@
+@use 'src/index.scss'as *;
+
+.container {
+    display       : flex;
+    align-items   : center;
+    flex-direction: column;
+    padding       : 4rem;
+
+    .title {
+        font-size    : 2rem;
+        color        : $primaryColor;
+        margin-bottom: 3rem;
+        text-align   : center;
+
+        @media screen and (max-width: 800px) {
+            font-size: 1.5rem;
+        }
+    }
+
+    .section {
+        margin-bottom   : 4rem;
+        justify-content : space-between;
+        align-items     : center;
+        background-color: #F5F5F5;
+        border-radius   : 10px;
+        padding         : 1rem;
+        box-shadow      : 0 4px 2px -2px #ccc;
+
+        .right {
+            padding-left: 1rem;
+            padding-top : 1rem;
+
+            .gender {
+                font-size    : 1.3rem;
+                color        : $primaryColor;
+                margin-bottom: 1rem;
+
+                img {
+                    width       : 25px;
+                    margin-right: 1rem;
+                }
+            }
+
+            .label {
+                color        : $primaryColor;
+                font-size    : 1.1rem;
+                margin-bottom: 1rem;
+            }
+
+            .item {
+                margin-bottom: 0.5rem;
+                color        : $grayColor;
+            }
+        }
+    }
+}

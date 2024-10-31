@@ -16,6 +16,10 @@ body {
 
 $secondaryColor: #b43620;
 $primaryColor  : #3a3a3a;
+$grayColor     : #555;
+$boxShadow     : 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
+0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+0px 1px 3px 0px rgba(0, 0, 0, 0.12);
 
 .slick-track {
   display: flex;

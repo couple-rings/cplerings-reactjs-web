@@ -17,7 +17,7 @@ import CommonRoute from "src/components/protected/CommonRoute";
 import CustomerRoute from "src/components/protected/CustomerRoute";
 import EditProfile from "src/pages/Customer/EditProfile/EditProfile";
 import Jewelry from "src/pages/Common/Jewelry/Jewelry";
-import DesignDetail from "src/pages/Common/DesignDetail/DesignDetail";
+import JewelryDetail from "src/pages/Common/JewelryDetail/JewelryDetail";
 import StoresBranches from "src/pages/Common/StoresBranches/StoresBranches";
 import StaffLayout from "src/pages/Staff/Layout";
 import StaffHome from "src/pages/Staff/Index";
@@ -38,6 +38,11 @@ import SupportDefault from "src/pages/Customer/Support/Index";
 import ShoppingBag from "src/pages/Customer/ShoppingBag/ShoppingBag";
 import Checkout from "src/pages/Customer/Checkout/Checkout";
 import CustomRequest from "src/pages/Staff/CustomRequest/CustomRequest";
+import CustomRequestDetail from "src/pages/Staff/CustomRequestDetail/CustomRequestDetail";
+import DesignVersions from "src/pages/Staff/DesignVersions/DesignVersions";
+import CustomDesign from "src/pages/Staff/CustomDesign/CustomDesign";
+import CraftingRequestDetail from "src/pages/Staff/CraftingRequestDetail/CraftingRequestDetail";
+import WeddingRingsDetail from "src/pages/Common/WeddingRingsDetail/WeddingRingsDetail";
 
 const router = createBrowserRouter([
   {
@@ -101,8 +106,12 @@ const router = createBrowserRouter([
         element: <Jewelry />,
       },
       {
-        path: "design-detail/:id",
-        element: <DesignDetail />,
+        path: "jewelry/detail",
+        element: <JewelryDetail />,
+      },
+      {
+        path: "wedding-rings/detail",
+        element: <WeddingRingsDetail />,
       },
       {
         path: "stores",
@@ -181,6 +190,22 @@ const router = createBrowserRouter([
       {
         path: "custom-request",
         element: <CustomRequest />,
+      },
+      {
+        path: "custom-request/detail/:id",
+        element: <CustomRequestDetail />,
+      },
+      {
+        path: "custom-request/design-version",
+        element: <DesignVersions />,
+      },
+      {
+        path: "custom-request/custom-design",
+        element: <CustomDesign />,
+      },
+      {
+        path: "crafting-request/detail",
+        element: <CraftingRequestDetail />,
       },
     ],
   },

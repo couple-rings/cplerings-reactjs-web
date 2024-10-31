@@ -35,6 +35,7 @@ export enum ResponseType {
   Data = "DATA",
   Error = "ERROR",
   Info = "INFO",
+  Paginated = "PAGINATED_DATA",
 }
 
 export enum ErrorType {
@@ -70,4 +71,14 @@ export enum IdReadingResponseCode {
   InvalidParams = 1,
   InvalidFileFormat = 7,
   InvalidImage = 3,
+}
+
+export enum DesignCharacteristic {
+  Male = "MASCULINE",
+  Female = "FEMININE",
+}
+
+export enum ProductType {
+  Ring = "RING",
+  Jewelry = "JEWELRY",
 }

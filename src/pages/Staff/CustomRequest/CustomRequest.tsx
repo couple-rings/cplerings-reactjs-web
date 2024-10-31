@@ -10,6 +10,7 @@ import styles from "./CustomRequest.module.scss";
 import { Button } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 import { CustomRequestStatus } from "src/utils/enums";
+import { useNavigate } from "react-router-dom";
 
 interface Row {
   id: number;
@@ -50,6 +51,8 @@ const rows = [
 ];
 
 function CustomRequest() {
+  const navigate = useNavigate();
+
   const columns: GridColDef<Row>[] = useMemo(
     () => [
       {
@@ -116,14 +119,14 @@ function CustomRequest() {
           <Button
             variant="contained"
             sx={{ ...primaryBtn, py: 1, m: 2, borderRadius: 5 }}
-            onClick={() => console.log(row)}
+            onClick={() => navigate(`/staff/custom-request/detail/${row.id}`)}
           >
             Chi Tiết
           </Button>
         ),
       },
     ],
-    []
+    [navigate]
   );
 
   const handleFilter = (model: GridFilterModel) => {

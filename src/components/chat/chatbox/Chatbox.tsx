@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import moment from "moment";
 import { positionValues, Scrollbars } from "react-custom-scrollbars-2";
@@ -102,13 +102,13 @@ const Chatbox = (props: IChatboxProps) => {
     }
   };
 
-  const handleOnLoad = () => {
+  const handleOnLoad = useCallback(() => {
     if (
       previousAction.current === "" ||
       previousAction.current === "enter_new_message"
     )
       scrollbarRef.current?.scrollToBottom();
-  };
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -140,7 +140,7 @@ const Chatbox = (props: IChatboxProps) => {
 
       {/* chat box body*/}
       <Scrollbars
-        style={{ height: "80vh", backgroundColor: "#eef0f1" }}
+        style={{ height: "60vh", backgroundColor: "#eef0f1" }}
         autoHide
         autoHideTimeout={1000}
         autoHideDuration={200}
@@ -150,7 +150,7 @@ const Chatbox = (props: IChatboxProps) => {
         }}
       >
         <div style={{ padding: 30 }}>
-          {messagesList.map((message) => {
+          {messagesList.map((message, index) => {
             //text message of the other person
             if (
               message.sender !== userId &&
@@ -166,7 +166,7 @@ const Chatbox = (props: IChatboxProps) => {
             //image message of the other person
             if (message.sender !== userId && message.imageId)
               return (
-                <AvatarMessage timestamp={message.sentAt} key={uuid()}>
+                <AvatarMessage timestamp={message.sentAt} key={index}>
                   <ImageMessage
                     url={message.imageId.url}
                     handleOnLoad={handleOnLoad}
@@ -204,7 +204,7 @@ const Chatbox = (props: IChatboxProps) => {
             //image message of the author
             if (message.sender === userId && message.imageId)
               return (
-                <OwnMessage timestamp={message.sentAt} key={uuid()}>
+                <OwnMessage timestamp={message.sentAt} key={index}>
                   <ImageMessage
                     handleOnLoad={handleOnLoad}
                     url={message.imageId.url}

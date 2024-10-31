@@ -20,8 +20,9 @@ import { postIdFaceMatching, postIdReading } from "src/services/fpt.service";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { postCreateSpouse } from "src/services/spouse.service";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "src/utils/hooks";
+import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 import moment from "moment";
+import { saveProfile } from "src/redux/slice/auth.slice";
 
 const initError = {
   empty: {
@@ -52,6 +53,7 @@ function VerifyID() {
   );
 
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const { id: customerId } = useAppSelector((state) => state.auth.userInfo);
 
@@ -167,6 +169,7 @@ function VerifyID() {
     onSuccess: (response) => {
       if (response.type === ResponseType.Info) {
         toast.success("Xác minh danh tính thành công");
+        dispatch(saveProfile({ hasSpouse: true }));
         navigate("/");
       }
 

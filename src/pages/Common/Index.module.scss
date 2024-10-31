@@ -68,7 +68,7 @@
                 padding-right: 3rem;
 
                 .text {
-                    color        : #555;
+                    color        : $grayColor;
                     font-size    : 1.3rem;
                     margin-bottom: 1rem;
                     line-height  : 2.5rem;
@@ -80,7 +80,7 @@
                 }
 
                 .author {
-                    color        : #555;
+                    color        : $grayColor;
                     font-size    : 1.3rem;
                     text-align   : right;
                     margin-bottom: 2rem;
@@ -155,14 +155,14 @@
         }
 
         .text {
-            color        : #555;
+            color        : $grayColor;
             font-size    : 1.3rem;
             margin-bottom: 3rem;
             line-height  : 2.5rem;
         }
 
         .author {
-            color        : #555;
+            color        : $grayColor;
             font-size    : 1.3rem;
             margin-bottom: 1rem;
             text-align   : right;
@@ -210,7 +210,7 @@
                 }
 
                 .text {
-                    color        : #555;
+                    color        : $grayColor;
                     font-size    : 1.2rem;
                     margin-bottom: 1.5rem;
                     line-height  : 2rem;
@@ -218,7 +218,7 @@
 
                 .note {
                     font-size : 0.9rem;
-                    color     : #555;
+                    color     : $grayColor;
                     margin-top: 1.5rem;
                 }
             }
@@ -325,7 +325,7 @@
                 }
 
                 .text {
-                    color      : #555;
+                    color      : $grayColor;
                     line-height: 1.5rem;
                 }
             }

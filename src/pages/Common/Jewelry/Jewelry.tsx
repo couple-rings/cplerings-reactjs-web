@@ -10,7 +10,7 @@ import styles from "./Jewelry.module.scss";
 import jewelry from "src/assets/jewelryheader.png";
 import { useNavigate } from "react-router-dom";
 import HoverMenu from "src/components/menu/HoverMenu";
-import { HoverMenuPurpose } from "src/utils/enums";
+import { HoverMenuPurpose, ProductType } from "src/utils/enums";
 import jewelryDesign from "src/assets/sampledata/sampleJewelry.png";
 import ProductCard from "src/components/product/ProductCard";
 import { useState } from "react";
@@ -157,7 +157,9 @@ function Jewelry() {
         {designs.map((item, index) => {
           return (
             <Grid item sm={6} md={4} lg={3} key={index}>
-              <ProductCard product={item} />
+              <ProductCard
+                product={{ ...item, type: ProductType.Jewelry, id: 1 }}
+              />
             </Grid>
           );
         })}
