@@ -1,8 +1,8 @@
-@use 'src/index.scss'as *;
+@use "src/index.scss" as *;
 
 .container {
     display: flex;
-    gap    : 1rem;
+    gap: 1rem;
 
     .column {
         .title {
@@ -11,27 +11,28 @@
         }
 
         .item {
-            border    : 1px solid;
+            border: 1px solid;
             text-align: center;
-            margin    : 10px 0;
-            padding   : 3px 0;
-            cursor    : pointer;
+            margin: 10px 0;
+            padding: 3px 0;
+            cursor: pointer;
 
             &.selected {
                 background-color: $secondaryColor;
-                color           : white;
+
+                color: white;
             }
 
             &:hover {
                 background-color: $secondaryColor;
-                color           : white;
+                color: white;
             }
         }
 
         .plainItem {
             text-align: center;
-            margin    : 12px 0;
-            padding   : 3px 0;
+            margin: 12px 0;
+            padding: 3px 0;
         }
     }
 }
