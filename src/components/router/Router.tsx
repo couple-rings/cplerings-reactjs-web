@@ -44,6 +44,8 @@ import CustomDesign from "src/pages/Staff/CustomDesign/CustomDesign";
 import CraftingRequestDetail from "src/pages/Staff/CraftingRequestDetail/CraftingRequestDetail";
 import WeddingRingsDetail from "src/pages/Common/WeddingRingsDetail/WeddingRingsDetail";
 import DesignFee from "src/pages/Customer/DesignFee/DesignFee";
+import CustomOrder from "src/pages/Jeweler/CustomOrder/CustomOrder";
+import CustomOrderDetail from "src/pages/Jeweler/CustomOrderDetail/CustomOrderDetail";
 
 const router = createBrowserRouter([
   {
@@ -225,6 +227,14 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <JewelerHome />,
+      },
+      {
+        path: "custom-order",
+        element: <CustomOrder />,
+      },
+      {
+        path: "custom-order/detail/:id",
+        element: <CustomOrderDetail />,
       },
     ],
   },

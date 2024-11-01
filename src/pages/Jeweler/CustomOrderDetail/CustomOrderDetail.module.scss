@@ -1,0 +1,51 @@
+@use "src/index.scss" as *;
+
+.container {
+    padding: 3rem;
+    .divider {
+        background-color: rgb(255, 0, 0)!important;
+        height: 2px;
+        color: aquamarine;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 100px;
+
+        .title {
+            font-size: 30px;
+            font-weight: 500;
+        }
+    }
+
+    .customName {
+        text-align: center;
+        font-size: 30px;
+        padding-bottom: 50px;
+
+    }
+
+    .genderDefine {
+        display: flex;
+        justify-content: center;
+    }
+
+    .infoDetail {
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem 0;
+    }
+
+    button {
+        
+        background-color: black;
+        color: white;
+        padding: 1rem;
+        border-radius: 15px;
+        margin-top: 50px;
+        text-transform: capitalize;
+    }
+
+    
+}
