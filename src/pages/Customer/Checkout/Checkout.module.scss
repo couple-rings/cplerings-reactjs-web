@@ -81,11 +81,16 @@
             }
 
             .radio {
-                display    : flex;
-                align-items: center;
-                color      : $primaryColor;
-                font-size  : 1.1rem;
-                gap        : 1rem;
+                display      : flex;
+                align-items  : center;
+                color        : $primaryColor;
+                font-size    : 1.1rem;
+                gap          : 1rem;
+                margin-bottom: 1rem;
+
+                .notAvailable {
+                    color: #ccc;
+                }
 
                 img {
                     width: 35px;

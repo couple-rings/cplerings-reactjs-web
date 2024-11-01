@@ -43,6 +43,7 @@ import DesignVersions from "src/pages/Staff/DesignVersions/DesignVersions";
 import CustomDesign from "src/pages/Staff/CustomDesign/CustomDesign";
 import CraftingRequestDetail from "src/pages/Staff/CraftingRequestDetail/CraftingRequestDetail";
 import WeddingRingsDetail from "src/pages/Common/WeddingRingsDetail/WeddingRingsDetail";
+import DesignFee from "src/pages/Customer/DesignFee/DesignFee";
 import CustomOrder from "src/pages/Jeweler/CustomOrder/CustomOrder";
 import CustomOrderDetail from "src/pages/Jeweler/CustomOrderDetail/CustomOrderDetail";
 
@@ -175,6 +176,10 @@ const router = createBrowserRouter([
         path: "checkout",
         element: <Checkout />,
       },
+      {
+        path: "design-fee",
+        element: <DesignFee />,
+      },
     ],
   },
   {
@@ -225,12 +230,12 @@ const router = createBrowserRouter([
       },
       {
         path: "custom-order",
-        element: <CustomOrder/>
+        element: <CustomOrder />,
       },
       {
         path: "custom-order/detail/:id",
-        element: <CustomOrderDetail/>
-      }
+        element: <CustomOrderDetail />,
+      },
     ],
   },
   {
