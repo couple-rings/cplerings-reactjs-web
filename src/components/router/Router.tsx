@@ -43,8 +43,8 @@ import DesignVersions from "src/pages/Staff/DesignVersions/DesignVersions";
 import CustomDesign from "src/pages/Staff/CustomDesign/CustomDesign";
 import CraftingRequestDetail from "src/pages/Staff/CraftingRequestDetail/CraftingRequestDetail";
 import WeddingRingsDetail from "src/pages/Common/WeddingRingsDetail/WeddingRingsDetail";
-import CraftingRequest from "src/pages/Jeweler/CraftingRequest/CraftingRequest";
-import OrderCustomDetail from "src/pages/Jeweler/OrderCustomDetail/OrderCustomDetail";
+import CustomOrder from "src/pages/Jeweler/CustomOrder/CustomOrder";
+import CustomOrderDetail from "src/pages/Jeweler/CustomOrderDetail/CustomOrderDetail";
 
 const router = createBrowserRouter([
   {
@@ -224,12 +224,12 @@ const router = createBrowserRouter([
         element: <JewelerHome />,
       },
       {
-        path: "crafting-request",
-        element: <CraftingRequest/>
+        path: "custom-order",
+        element: <CustomOrder/>
       },
       {
         path: "custom-order/detail/:id",
-        element: <OrderCustomDetail/>
+        element: <CustomOrderDetail/>
       }
     ],
   },

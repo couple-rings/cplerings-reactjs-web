@@ -10,7 +10,7 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { CraftingRequestStatus } from "src/utils/enums";
 import { primaryBtn } from "src/utils/styles";
-import styles from "./CraftingRequest.module.scss";
+import styles from "./CustomOrder.module.scss";
 
 interface Row {
   id: number;
@@ -61,7 +61,7 @@ const rows = [
   },
 ];
 
-function CraftingRequest() {
+function CustomOrder() {
   const navigate = useNavigate();
 
   const columns: GridColDef<Row>[] = useMemo(
@@ -177,4 +177,4 @@ function CraftingRequest() {
   );
 }
 
-export default CraftingRequest;
+export default CustomOrder;

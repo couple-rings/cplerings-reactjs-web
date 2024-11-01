@@ -18,7 +18,7 @@ const sidebarList = [
   {
     text: "Yêu Cầu Gia Công",
     icon: <PaletteIcon />,
-    path: "/jeweler/crafting-request",
+    path: "/jeweler/custom-order",
   },
 ];
 

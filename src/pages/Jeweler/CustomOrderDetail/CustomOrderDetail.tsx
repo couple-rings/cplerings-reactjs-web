@@ -5,9 +5,10 @@ import blueprint from "src/assets/sampledata/blueprint.pdf";
 import menring from "src/assets/sampledata/menring.png";
 import HoverCard from "src/components/product/HoverCard";
 import MaleIcon from "@mui/icons-material/Male";
-import styles from "./OrderCustomDetail.module.scss";
+import FemaleIcon from '@mui/icons-material/Female';
+import styles from "./CustomOrderDetail.module.scss";
 
-function OrderCustomDetail() {
+function CustomOrderDetail() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -154,7 +155,7 @@ function OrderCustomDetail() {
 
           <Grid container pb={5} className={styles.genderDefine}>
             <Grid item className="gender-icon">
-              <MaleIcon sx={{ color: "#ea394b" }} />
+              <FemaleIcon sx={{ color: "#ea394b" }} />
             </Grid>
             <Grid item className="gender-name">
               Nữ giới
@@ -264,4 +265,4 @@ function OrderCustomDetail() {
   );
 }
 
-export default OrderCustomDetail;
+export default CustomOrderDetail;
