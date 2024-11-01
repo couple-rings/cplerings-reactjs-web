@@ -46,6 +46,7 @@ import WeddingRingsDetail from "src/pages/Common/WeddingRingsDetail/WeddingRings
 import DesignFee from "src/pages/Customer/DesignFee/DesignFee";
 import CustomOrder from "src/pages/Jeweler/CustomOrder/CustomOrder";
 import CustomOrderDetail from "src/pages/Jeweler/CustomOrderDetail/CustomOrderDetail";
+import Invoice from "src/pages/Customer/Invoice/Invoice";
 
 const router = createBrowserRouter([
   {
@@ -179,6 +180,10 @@ const router = createBrowserRouter([
       {
         path: "design-fee",
         element: <DesignFee />,
+      },
+      {
+        path: "payment",
+        element: <Invoice />,
       },
     ],
   },
