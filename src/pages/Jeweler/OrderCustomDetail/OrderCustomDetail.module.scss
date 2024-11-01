@@ -1,0 +1,33 @@
+@use "src/index.scss" as *;
+
+.container {
+    padding: 3rem;
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 30px;
+
+        .title {
+            font-size: 25px;
+            font-weight: 500;
+        }
+    }
+
+    .customName {
+        text-align: center;
+        font-size: 30px;
+        padding-bottom: 50px;
+
+    }
+
+    .genderDefine {
+        display: flex;
+        justify-content: center;
+    }
+
+    .infoDetail {
+        display: flex;
+        justify-content: space-between;
+    }
+}

@@ -126,7 +126,7 @@ function CraftingRequest() {
           <Button
             variant="contained"
             sx={{ ...primaryBtn, py: 1, m: 2, borderRadius: 5 }}
-            onClick={() => navigate(`/staff/custom-request/detail/${row.id}`)}
+            onClick={() => navigate(`/jeweler/custom-order/detail/${row.id}`)}
           >
             Chi Tiết
           </Button>
