@@ -1,0 +1,111 @@
+@use 'src/index.scss'as *;
+
+.container {
+    display        : flex;
+    justify-content: center;
+    padding        : 3rem;
+    color          : $primaryColor;
+
+    .title {
+        font-size  : 2rem;
+        font-weight: 600;
+    }
+
+    .paymentMethod {
+        margin-bottom: 3rem;
+
+        .title {
+            color        : $primaryColor;
+            font-size    : 1.3rem;
+            margin-bottom: 1.5rem;
+            font-weight  : 600;
+        }
+
+        .radio {
+            display      : flex;
+            align-items  : center;
+            color        : $primaryColor;
+            font-size    : 1.1rem;
+            gap          : 1rem;
+            margin-bottom: 1rem;
+
+            .notAvailable {
+                color: #ccc;
+            }
+
+            img {
+                width: 35px;
+            }
+        }
+    }
+
+    .summary {
+        border : 1px solid #B43620;
+        padding: 3rem 4rem;
+
+        @media screen and (max-width: 500px) {
+            padding: 2rem;
+        }
+
+        .title {
+            color        : $primaryColor;
+            font-size    : 1.3rem;
+            margin-bottom: 1rem;
+            font-weight  : 600;
+        }
+
+        .body {
+            border : 1px solid #888;
+            padding: 2rem;
+
+            .title {
+                color        : $primaryColor;
+                font-size    : 1.2rem;
+                margin-bottom: 2rem;
+                font-weight  : 600;
+            }
+
+            .design {
+                align-items  : center;
+                margin-bottom: 2.5rem;
+
+                .left {
+                    img {
+                        width : 100%;
+                        border: 1px solid #ccc;
+                    }
+                }
+
+                .name {
+                    font-weight: 500;
+                    font-size  : 0.9rem;
+                }
+
+                .collection {
+                    margin   : 1rem 0;
+                    font-size: 0.9rem;
+                }
+
+                .gender {
+                    font-size: 0.9rem;
+                    color    : #888;
+
+                    img {
+                        width       : 0.9rem;
+                        margin-right: 0.5rem;
+                    }
+                }
+            }
+
+            .noteTitle {
+                font-weight  : 500;
+                margin-bottom: 0.5rem;
+            }
+
+            .note {
+                color    : #888;
+                font-size: 0.9rem;
+            }
+        }
+    }
+}

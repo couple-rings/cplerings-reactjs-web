@@ -12,6 +12,8 @@ import { DeliveryMethod } from "src/utils/enums";
 import { useEffect, useState } from "react";
 import { primaryBtn } from "src/utils/styles";
 import vnpay from "src/assets/vnpay.png";
+import momo from "src/assets/momo.png";
+import paypal from "src/assets/paypal.png";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import AddressCard from "src/components/address/Card.Checkout";
 import DeleteModal from "src/components/modal/address/Delete.modal";
@@ -168,6 +170,18 @@ function Checkout() {
               <Radio checked />
               <img src={vnpay} />
               <div>VNPAY</div>
+            </div>
+
+            <div className={styles.radio}>
+              <Radio disabled />
+              <img src={momo} />
+              <div className={styles.notAvailable}>MoMo (Sắp ra mắt)</div>
+            </div>
+
+            <div className={styles.radio}>
+              <Radio disabled />
+              <img src={paypal} />
+              <div className={styles.notAvailable}>Paypal (Sắp ra mắt)</div>
             </div>
           </div>
 
