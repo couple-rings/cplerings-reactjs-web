@@ -1,0 +1,146 @@
+@use 'src/index.scss'as *;
+
+.container {
+    color           : $primaryColor;
+    display         : flex;
+    justify-content : center;
+    padding         : 3rem;
+    padding-bottom  : 5rem;
+    background-color: #F5F5F5;
+
+    .page {
+        border-radius: 15px;
+        margin-bottom: 3rem;
+
+        .header {
+            background-color       : black;
+            border-top-left-radius : 15px;
+            border-top-right-radius: 15px;
+            padding                : 2rem 0;
+            text-align             : center;
+
+            img {
+                width: 3rem;
+            }
+
+            .brand {
+                font-size  : 1.5rem;
+                font-weight: 500;
+                color      : white;
+            }
+
+            .name {
+                color     : #FBE6A8;
+                font-size : 1.3rem;
+                margin-top: 0.3rem;
+            }
+        }
+
+        .contact {
+            display    : flex;
+            align-items: center;
+            gap        : 10px;
+            color      : #888;
+            font-weight: 300;
+        }
+
+        .content {
+            background-color          : white;
+            border-bottom-left-radius : 15px;
+            border-bottom-right-radius: 15px;
+
+            .info {
+                font-weight  : 300;
+                margin-bottom: 1rem;
+            }
+
+            .title {
+                background-color: black;
+                border-radius   : 10px;
+                color           : white;
+                text-align      : center;
+                width           : 100%;
+                padding         : 1rem 0;
+                margin-bottom   : 1rem;
+
+                &.bottom {
+                    display        : flex;
+                    justify-content: space-around;
+                    margin-top     : 2rem;
+
+                    .item {
+                        display    : flex;
+                        align-items: center;
+                        gap        : 5px;
+                    }
+                }
+            }
+
+            ol {
+                li {
+                    margin-bottom: 1rem;
+                }
+            }
+
+            ul {
+                li {
+                    margin-bottom: 1.5rem;
+                    line-height  : 1.5rem;
+                }
+            }
+
+            .tableWrapper {
+                border       : 1px solid #8f8f8f;
+                margin       : 1rem 0;
+                width        : 100%;
+                border-radius: 10px;
+                overflow     : hidden;
+
+                table {
+                    border-collapse: collapse;
+                    width          : 100%;
+                    border-radius  : 10px;
+                    font-weight    : 300;
+
+                    td,
+                    th {
+                        text-align: left;
+                        padding   : 10px;
+                    }
+
+                    th {
+                        background-color: #D9D9D9;
+                    }
+                }
+            }
+        }
+
+        .label {
+            font-weight  : 600;
+            font-size    : 1.2rem;
+            margin-bottom: 1rem;
+        }
+    }
+
+    .download {
+        display        : flex;
+        justify-content: center;
+        align-items    : center;
+        gap            : 5px;
+        text-decoration: none;
+        color          : $primaryColor;
+        font-size      : 1.5rem;
+
+        &:hover {
+            color: $secondaryColor;
+        }
+    }
+
+    .errorText {
+        color      : red;
+        font-weight: 300;
+        text-align : center;
+        width      : 100%;
+        margin-top : 2rem;
+    }
+}
