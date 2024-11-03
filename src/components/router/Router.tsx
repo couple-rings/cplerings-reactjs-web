@@ -47,6 +47,7 @@ import DesignFee from "src/pages/Customer/DesignFee/DesignFee";
 import CustomOrder from "src/pages/Jeweler/CustomOrder/CustomOrder";
 import CustomOrderDetail from "src/pages/Jeweler/CustomOrderDetail/CustomOrderDetail";
 import Invoice from "src/pages/Customer/Invoice/Invoice";
+import Contract from "src/pages/Customer/Contract/Contract";
 
 const router = createBrowserRouter([
   {
@@ -184,6 +185,10 @@ const router = createBrowserRouter([
       {
         path: "payment",
         element: <Invoice />,
+      },
+      {
+        path: "contract",
+        element: <Contract />,
       },
     ],
   },

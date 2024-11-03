@@ -232,4 +232,8 @@ declare global {
 
     backgroundColor: string;
   }
+
+  interface IContractFileProps {
+    signature: string;
+  }
 }
