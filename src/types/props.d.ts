@@ -227,6 +227,10 @@ declare global {
     };
   }
 
+  interface IImageProcessProps {
+    imageSrcs: string[];
+    setImageSrcs: (newImageSrcs: string[]) => void;
+  }
   interface IPulseIconProps {
     icon: React.ReactNode;
 
