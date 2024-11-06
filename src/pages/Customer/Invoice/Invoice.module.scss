@@ -1,0 +1,116 @@
+@use 'src/index.scss'as *;
+
+.container {
+    padding-top    : 2rem;
+    padding-bottom : 3rem;
+    display        : flex;
+    justify-content: center;
+    color          : $primaryColor;
+
+    .homeLink {
+        display      : flex;
+        align-items  : center;
+        cursor       : pointer;
+        margin-bottom: 3rem;
+
+        span {
+            font-size: 1.2rem;
+            color    : $primaryColor;
+
+            &:hover {
+                color: $secondaryColor;
+            }
+        }
+
+        &:hover {
+            color: $secondaryColor;
+        }
+    }
+
+    .body {
+        border : 1px solid #B43620;
+        padding: 4rem 2rem;
+
+        .upper {
+            display       : flex;
+            flex-direction: column;
+            align-items   : center;
+
+            .status {
+                font-size    : 1.2rem;
+                color        : $grayColor;
+                margin-top   : 2rem;
+                margin-bottom: 1rem;
+            }
+
+            .amount {
+                font-weight  : 600;
+                font-size    : 1.8rem;
+                margin-bottom: 3rem;
+            }
+        }
+
+        .label {
+            font-size  : 1.1rem;
+            color      : #888;
+            font-weight: 300;
+        }
+
+        .info {
+            flex-direction: column;
+            font-weight   : 500;
+            font-size     : 1.1rem;
+            text-align    : right;
+        }
+
+        .bottom {
+            display        : flex;
+            align-items    : center;
+            justify-content: center;
+            gap            : 10px;
+            font-size      : 1.1rem;
+            margin-top     : 5rem;
+            cursor         : pointer;
+
+            &:hover {
+                color: $secondaryColor;
+            }
+        }
+
+        .error {
+            justify-content: space-between;
+            align-items    : center;
+            border         : 1px solid #B43620;
+            padding        : 1rem;
+            box-shadow     : 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            cursor         : pointer;
+            margin         : 2rem 0;
+
+            .left {
+                display    : flex;
+                align-items: center;
+                gap        : 15px;
+
+                .iconContainer {
+                    border-radius  : 50%;
+                    border         : 1px solid #B43620;
+                    width          : 45px;
+                    height         : 45px;
+                    display        : flex;
+                    align-items    : center;
+                    justify-content: center;
+                }
+
+                .upperText {
+                    font-weight  : 600;
+                    margin-bottom: 0.3rem;
+                }
+
+                .lowerText {
+                    font-size: 0.8rem;
+                    color    : $grayColor;
+                }
+            }
+        }
+    }
+}
