@@ -226,4 +226,14 @@ declare global {
       sideDiamondsCount: number;
     };
   }
+
+  interface IPulseIconProps {
+    icon: React.ReactNode;
+
+    backgroundColor: string;
+  }
+
+  interface IContractFileProps {
+    signature: string;
+  }
 }
