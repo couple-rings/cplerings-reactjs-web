@@ -226,4 +226,9 @@ declare global {
       sideDiamondsCount: number;
     };
   }
+
+  interface IImageProcessProps {
+    imageSrcs: string[];
+    setImageSrcs: (newImageSrcs: string[]) => void;
+  }
 }

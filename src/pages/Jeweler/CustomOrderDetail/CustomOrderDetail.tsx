@@ -10,6 +10,7 @@ import styles from "./CustomOrderDetail.module.scss";
 
 function CustomOrderDetail() {
   return (
+    <div className={styles.all}>
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.title}>Bản thiết kế chi tiết</div>
@@ -261,6 +262,7 @@ function CustomOrderDetail() {
       <Grid container justifyContent={"center"}>
         <Button>Nhận làm bản thiết kế này</Button>
       </Grid>
+    </div>
     </div>
   );
 }

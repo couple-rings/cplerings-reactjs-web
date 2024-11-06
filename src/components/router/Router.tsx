@@ -45,6 +45,7 @@ import CraftingRequestDetail from "src/pages/Staff/CraftingRequestDetail/Craftin
 import WeddingRingsDetail from "src/pages/Common/WeddingRingsDetail/WeddingRingsDetail";
 import CustomOrder from "src/pages/Jeweler/CustomOrder/CustomOrder";
 import CustomOrderDetail from "src/pages/Jeweler/CustomOrderDetail/CustomOrderDetail";
+import CraftingProcess from "src/pages/Jeweler/CraftingProcess/CraftingProcess";
 
 const router = createBrowserRouter([
   {
@@ -230,6 +231,10 @@ const router = createBrowserRouter([
       {
         path: "custom-order/detail/:id",
         element: <CustomOrderDetail/>
+      },
+      {
+        path: "custom-process",
+        element: <CraftingProcess/>
       }
     ],
   },
