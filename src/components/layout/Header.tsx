@@ -4,8 +4,8 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "./AppBar";
 import { Box, Menu, MenuItem, Tooltip } from "@mui/material";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 import { logout } from "src/redux/slice/auth.slice";
 import { removeRoute } from "src/redux/slice/route.slice";
@@ -16,11 +16,11 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 const settings = [
   {
     text: "Trang Chủ",
-    path: "/staff",
+    path: "/",
   },
   {
     text: "Thông Tin Cá Nhân",
-    path: "/staff",
+    path: "/profile",
   },
   {
     text: "Đăng Xuất",
@@ -34,8 +34,9 @@ export default function Header(props: IHeaderProps) {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const location = useLocation();
 
-  const { username } = useAppSelector((state) => state.auth.userInfo);
+  const { username, role } = useAppSelector((state) => state.auth.userInfo);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -52,6 +53,10 @@ export default function Header(props: IHeaderProps) {
     dispatch(removeConversations());
     navigate("/login");
   };
+
+  useEffect(() => {
+    setAnchorElUser(null);
+  }, [location.pathname]);
 
   return (
     <AppBar
@@ -104,7 +109,10 @@ export default function Header(props: IHeaderProps) {
               <MenuItem
                 key={index}
                 onClick={() => {
-                  if (setting.path) navigate(setting.path);
+                  if (setting.path)
+                    navigate(
+                      `/${(role as string).toLowerCase()}${setting.path}`
+                    );
                   else handleLogout();
                 }}
               >
