@@ -20,7 +20,7 @@ import { passwordPattern } from "src/utils/constants";
 import { postLogin } from "src/services/auth.service";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { useAppDispatch, useAppSelector } from "src/utils/hooks";
+import { useAppDispatch, useAppSelector, useScrollTop } from "src/utils/hooks";
 import { login } from "src/redux/slice/auth.slice";
 import { jwtDecode } from "jwt-decode";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -79,6 +79,8 @@ const Login = () => {
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     mutation.mutate(data);
   };
+
+  useScrollTop();
 
   return (
     <div className={styles.container}>
