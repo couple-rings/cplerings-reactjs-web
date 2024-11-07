@@ -4,6 +4,7 @@ import districtReducer from "./slice/district.slice";
 import routeReducer from "./slice/route.slice";
 import conversationReducer from "./slice/conversation.slice";
 import messageReducer from "./slice/message.slice";
+import designReducer from "./slice/design.slice";
 
 export const rootReducer = combineReducers({
   auth: authReducer,
@@ -11,4 +12,5 @@ export const rootReducer = combineReducers({
   route: routeReducer,
   conversation: conversationReducer,
   message: messageReducer,
+  design: designReducer,
 });

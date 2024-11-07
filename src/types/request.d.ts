@@ -77,4 +77,9 @@ declare global {
     minPrice?: number;
     maxPrice?: number;
   }
+
+  interface ICreateCRRequest {
+    customerId: number;
+    designIds: number[];
+  }
 }
