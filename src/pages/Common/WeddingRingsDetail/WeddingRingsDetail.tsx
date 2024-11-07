@@ -34,6 +34,11 @@ import Advertisement from "src/components/advertisement/Advertisement";
 import brandIntro from "src/assets/brand-intro.png";
 import FeedbackSection from "src/components/feedback/FeedbackSection";
 import { metalWeightUnit, profitRatio } from "src/utils/constants";
+import { useAppDispatch, useAppSelector, useScrollTop } from "src/utils/hooks";
+import { saveRequestedDesigns } from "src/redux/slice/design.slice";
+import { useMutation } from "@tanstack/react-query";
+import { postCreateSession } from "src/services/designSession.service";
+import { toast } from "react-toastify";
 
 const sizeMenuPaperStyle: SxProps = {
   ...menuPaperStyle,
@@ -76,14 +81,49 @@ function WeddingRingsDetail() {
   const [price, setPrice] = useState(0);
 
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   const location: Location<{
     data: ICoupleDesign;
   }> = useLocation();
 
-  const { data } = location.state;
-  const { designs, name: coupleName, description: coupleDescription } = data;
-  const { name: collectionName } = designs[0].designCollection;
+  const { data } = location.state || {};
+  const {
+    designs,
+    name: coupleName,
+    description: coupleDescription,
+  } = data || {};
+  const collectionName = designs ? designs[0]?.designCollection?.name : "";
+
+  const mutation = useMutation({
+    mutationFn: () => {
+      return postCreateSession();
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        const { paymentLink } = response.data;
+        window.open(paymentLink, "_self");
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
+  const handlePayDesignFee = () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    const requestedDesigns = designs.map((design) => design.id);
+
+    dispatch(saveRequestedDesigns(requestedDesigns));
+    mutation.mutate();
+  };
 
   useEffect(() => {
     if (!data) navigate("/wedding-rings");
@@ -159,9 +199,7 @@ function WeddingRingsDetail() {
     }
   }, [designs, firstDiamond, firstMetal, secondMetal, secondDiamond]);
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+  useScrollTop();
 
   return (
     <div className={styles.container}>
@@ -219,7 +257,8 @@ function WeddingRingsDetail() {
             {/* First design start */}
             <Box>
               <Button variant="contained" sx={{ ...primaryBtn, px: 5, py: 1 }}>
-                {designs[0].characteristic === DesignCharacteristic.Male
+                {designs &&
+                designs[0].characteristic === DesignCharacteristic.Male
                   ? "Nhẫn Nam"
                   : "Nhẫn Nữ"}
               </Button>
@@ -233,18 +272,19 @@ function WeddingRingsDetail() {
                   </AccordionSummary>
                   <AccordionDetails>
                     <div className={styles.metal}>
-                      {designs[0].designMetalSpecifications.map((item) => {
-                        const selected =
-                          firstMetal.id === item.id ? styles.selected : "";
-                        return (
-                          <img
-                            key={item.id}
-                            src={mapGoldColor(item.metalSpecification)}
-                            onClick={() => setFirstMetal(item)}
-                            className={selected}
-                          />
-                        );
-                      })}
+                      {designs &&
+                        designs[0].designMetalSpecifications.map((item) => {
+                          const selected =
+                            firstMetal.id === item.id ? styles.selected : "";
+                          return (
+                            <img
+                              key={item.id}
+                              src={mapGoldColor(item.metalSpecification)}
+                              onClick={() => setFirstMetal(item)}
+                              className={selected}
+                            />
+                          );
+                        })}
                     </div>
                   </AccordionDetails>
                 </Accordion>
@@ -257,27 +297,28 @@ function WeddingRingsDetail() {
                   </AccordionSummary>
                   <AccordionDetails>
                     <Grid container className={styles.diamond}>
-                      {designs[0].designDiamondSpecifications.map((item) => {
-                        const selected =
-                          firstDiamond.id === item.diamondSpecification.id
-                            ? styles.selected
-                            : "";
-                        return (
-                          <Grid
-                            key={item.id}
-                            item
-                            xl={2.8}
-                            sm={5}
-                            xs={12}
-                            onClick={() =>
-                              setFirstDiamond(item.diamondSpecification)
-                            }
-                            className={`${styles.spec} ${selected}`}
-                          >
-                            {getDiamondSpec(item.diamondSpecification)}
-                          </Grid>
-                        );
-                      })}
+                      {designs &&
+                        designs[0].designDiamondSpecifications.map((item) => {
+                          const selected =
+                            firstDiamond.id === item.diamondSpecification.id
+                              ? styles.selected
+                              : "";
+                          return (
+                            <Grid
+                              key={item.id}
+                              item
+                              xl={2.8}
+                              sm={5}
+                              xs={12}
+                              onClick={() =>
+                                setFirstDiamond(item.diamondSpecification)
+                              }
+                              className={`${styles.spec} ${selected}`}
+                            >
+                              {getDiamondSpec(item.diamondSpecification)}
+                            </Grid>
+                          );
+                        })}
                     </Grid>
                   </AccordionDetails>
                 </Accordion>
@@ -328,7 +369,8 @@ function WeddingRingsDetail() {
             {/* Female design start */}
             <Box>
               <Button variant="contained" sx={{ ...primaryBtn, px: 5, py: 1 }}>
-                {designs[1].characteristic === DesignCharacteristic.Male
+                {designs &&
+                designs[1].characteristic === DesignCharacteristic.Male
                   ? "Nhẫn Nam"
                   : "Nhẫn Nữ"}
               </Button>
@@ -342,18 +384,19 @@ function WeddingRingsDetail() {
                   </AccordionSummary>
                   <AccordionDetails>
                     <div className={styles.metal}>
-                      {designs[1].designMetalSpecifications.map((item) => {
-                        const selected =
-                          secondMetal.id === item.id ? styles.selected : "";
-                        return (
-                          <img
-                            key={item.id}
-                            src={mapGoldColor(item.metalSpecification)}
-                            onClick={() => setSecondMetal(item)}
-                            className={selected}
-                          />
-                        );
-                      })}
+                      {designs &&
+                        designs[1].designMetalSpecifications.map((item) => {
+                          const selected =
+                            secondMetal.id === item.id ? styles.selected : "";
+                          return (
+                            <img
+                              key={item.id}
+                              src={mapGoldColor(item.metalSpecification)}
+                              onClick={() => setSecondMetal(item)}
+                              className={selected}
+                            />
+                          );
+                        })}
                     </div>
                   </AccordionDetails>
                 </Accordion>
@@ -366,29 +409,30 @@ function WeddingRingsDetail() {
                   </AccordionSummary>
                   <AccordionDetails>
                     <Grid container className={styles.diamond}>
-                      {designs[1].designDiamondSpecifications.map(
-                        (item, index) => {
-                          const selected =
-                            secondDiamond.id === item.diamondSpecification.id
-                              ? styles.selected
-                              : "";
-                          return (
-                            <Grid
-                              key={index}
-                              item
-                              xl={2.8}
-                              sm={5}
-                              xs={12}
-                              onClick={() =>
-                                setSecondDiamond(item.diamondSpecification)
-                              }
-                              className={`${styles.spec} ${selected}`}
-                            >
-                              {getDiamondSpec(item.diamondSpecification)}
-                            </Grid>
-                          );
-                        }
-                      )}
+                      {designs &&
+                        designs[1].designDiamondSpecifications.map(
+                          (item, index) => {
+                            const selected =
+                              secondDiamond.id === item.diamondSpecification.id
+                                ? styles.selected
+                                : "";
+                            return (
+                              <Grid
+                                key={index}
+                                item
+                                xl={2.8}
+                                sm={5}
+                                xs={12}
+                                onClick={() =>
+                                  setSecondDiamond(item.diamondSpecification)
+                                }
+                                className={`${styles.spec} ${selected}`}
+                              >
+                                {getDiamondSpec(item.diamondSpecification)}
+                              </Grid>
+                            );
+                          }
+                        )}
                     </Grid>
                   </AccordionDetails>
                 </Accordion>
@@ -441,7 +485,12 @@ function WeddingRingsDetail() {
                 Bắt Đầu Gia Công
               </Button>
               <div className={styles.text}>Hoặc</div>
-              <Button variant="contained" sx={primaryBtn} fullWidth>
+              <Button
+                variant="contained"
+                sx={primaryBtn}
+                fullWidth
+                onClick={handlePayDesignFee}
+              >
                 Yêu Cầu Thiết Kế
               </Button>
             </div>
@@ -464,31 +513,41 @@ function WeddingRingsDetail() {
             <Divider sx={{ backgroundColor: "#ccc", mt: 3 }} />
 
             <ProductDetailAccordion
-              collectionName={designs[0].designCollection.name}
+              collectionName={designs && designs[0].designCollection.name}
               maleDetail={
+                designs &&
                 designs[0].characteristic === DesignCharacteristic.Male
                   ? {
                       metalSpec: firstMetal.metalSpecification,
                       diamondSpec: firstDiamond,
-                      sideDiamondsCount: designs[0].sideDiamondsCount,
+                      sideDiamondsCount: designs
+                        ? designs[0].sideDiamondsCount
+                        : 0,
                     }
                   : {
                       metalSpec: secondMetal.metalSpecification,
                       diamondSpec: secondDiamond,
-                      sideDiamondsCount: designs[1].sideDiamondsCount,
+                      sideDiamondsCount: designs
+                        ? designs[1].sideDiamondsCount
+                        : 0,
                     }
               }
               femaleDetail={
+                designs &&
                 designs[0].characteristic === DesignCharacteristic.Female
                   ? {
                       metalSpec: firstMetal.metalSpecification,
                       diamondSpec: firstDiamond,
-                      sideDiamondsCount: designs[0].sideDiamondsCount,
+                      sideDiamondsCount: designs
+                        ? designs[0].sideDiamondsCount
+                        : 0,
                     }
                   : {
                       metalSpec: secondMetal.metalSpecification,
                       diamondSpec: secondDiamond,
-                      sideDiamondsCount: designs[1].sideDiamondsCount,
+                      sideDiamondsCount: designs
+                        ? designs[1].sideDiamondsCount
+                        : 0,
                     }
               }
             />
