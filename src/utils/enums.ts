@@ -65,7 +65,13 @@ export enum CraftingRequestStatus {
   InProgress = "IN PROGRESS",
   Done = "DONE",
   Completed = "COMPLETED",
-  Delivering = "DELIVERING"
+  Delivering = "DELIVERING",
+}
+
+export enum AccountStatus {
+  Active = "ACTIVE",
+  Inactive = "INACTIVE",
+  Verifying = "VERIFYING",
 }
 
 export enum FaceMatchResponseCode {

@@ -175,4 +175,10 @@ declare global {
 
     designs: IDesign[];
   }
+
+  interface IJewelryCategory {
+    id: number;
+    name: string;
+    description: string;
+  }
 }
