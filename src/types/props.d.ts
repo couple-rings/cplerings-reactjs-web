@@ -1,4 +1,5 @@
 import { SxProps } from "@mui/material";
+import { AccountStatus } from "src/utils/enums";
 
 export {};
 
@@ -239,5 +240,17 @@ declare global {
 
   interface IContractFileProps {
     signature: string;
+  }
+
+  interface IAccountModalProps
+    extends IModalProps,
+      Omit<IUser, "hasSpouse" | "avatar"> {
+    status: AccountStatus;
+
+    resetSelected?: () => void;
+  }
+
+  interface IJewelryCategoryModalProps extends IModalProps, IJewelryCategory {
+    resetSelected?: () => void;
   }
 }

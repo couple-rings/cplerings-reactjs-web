@@ -48,7 +48,7 @@ export const validAttachments = [
 
 export const messageCardBg = "#e5efff";
 
-export const drawerWidth = 240;
+export const drawerWidth = 260;
 
 export const pageSize = 8;
 
@@ -57,3 +57,59 @@ export const metalWeightUnit = 3.75; // 1 chỉ vàng = 3.75 gram
 export const meleeDiamondCarat = 0.008;
 
 export const profitRatio = 1.3;
+
+export const diamondColors = [
+  "D",
+  "E",
+  "F",
+  "G",
+  "H",
+  "I",
+  "J",
+  "K",
+  "L",
+  "M",
+  "N",
+  "O",
+  "P",
+  "Q",
+  "R",
+  "S",
+  "T",
+  "U",
+  "V",
+  "W",
+  "X",
+  "Y",
+  "Z",
+];
+
+export const diamondClarity = [
+  "FL",
+  "IF",
+  "VVS1",
+  "VVS2",
+  "VS1",
+  "VS2",
+  "SI1",
+  "SI2",
+  "I1",
+  "I2",
+  "I3",
+];
+
+export const diamondShapes = [
+  "Round",
+  "Princess",
+  "Oval",
+  "Marquise",
+  "Pear",
+  "Cushion",
+  "Emerald",
+  "Asscher",
+  "Radiant",
+  "Heart",
+  "Trillion",
+];
+
+export const goldK = ["14K", "18K"];
