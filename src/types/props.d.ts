@@ -226,4 +226,18 @@ declare global {
       sideDiamondsCount: number;
     };
   }
+
+  interface IImageProcessProps {
+    imageSrcs: string[];
+    setImageSrcs: (newImageSrcs: string[]) => void;
+  }
+  interface IPulseIconProps {
+    icon: React.ReactNode;
+
+    backgroundColor: string;
+  }
+
+  interface IContractFileProps {
+    signature: string;
+  }
 }
