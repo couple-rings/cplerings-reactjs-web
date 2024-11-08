@@ -1,4 +1,4 @@
-import styles from "./ManageJewelryCategory.module.scss";
+import styles from "./ManageCampaign.module.scss";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -10,40 +10,74 @@ import {
 import { useMemo, useState } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
-import ViewModal from "src/components/modal/jewelryCategory/View.modal";
-import UpdateModal from "src/components/modal/jewelryCategory/Update.modal";
 import { Button, Grid, Switch } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
-import AddModal from "src/components/modal/jewelryCategory/Add.modal";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import DeleteModal from "src/components/modal/jewelryCategory/Delete.modal";
+import ViewModal from "src/components/modal/discountCampaign/View.modal";
+import DeleteModal from "src/components/modal/discountCampaign/Delete.modal";
+import AddModal from "src/components/modal/discountCampaign/Add.modal";
+import UpdateModal from "src/components/modal/discountCampaign/Update.modal";
 
 interface Row {
   id: number;
   name: string;
   description: string;
+  discountPercentage: number;
   isActive: boolean;
+  collections: ICollection[];
 }
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
   ["contains" /* add more over time */].includes(value)
 );
 
-const rows = [
+const rows: Row[] = [
   {
     id: 1,
-    name: "Necklace",
+    name: "Anniversary Sale",
     description:
-      "Necklaces are versatile jewelry pieces worn around the neck, ranging from simple chains to statement designs with gemstones or pendants. Crafted in materials like gold, silver, and beads, they suit various styles and occasions. From elegant chokers to long chains, necklaces can add sophistication, sentiment, or bold flair, making them essential in any jewelry collection.",
+      "Mark our store’s anniversary with special savings on all items.",
+    discountPercentage: 5,
     isActive: true,
-  },
+    collections: [
+      {
+        id: 1,
+        name: "Eternal Bond",
+        description: "",
+      },
 
+      {
+        id: 2,
+        name: "Timeless Elegance",
+        description: "",
+      },
+    ],
+  },
   {
     id: 2,
-    name: "Bracelet",
+    name: "Summer Sparkle Event",
+    description: "Get your perfect summer jewelry at discounted prices.",
+    discountPercentage: 5,
+    isActive: true,
+    collections: [],
+  },
+  {
+    id: 3,
+    name: "Black Friday Extravaganza",
     description:
-      "Bracelets are versatile jewelry worn around the wrist, available in styles from simple bands to intricate, embellished pieces. Made from materials like gold, silver, leather, or beads, they suit both casual and formal wear. Whether as delicate chains, bangles, or charm bracelets, they add elegance, personality, or a touch of flair, making them a staple in any jewelry collection.",
+      "Don’t miss out on our biggest sale of the year during Black Friday.",
+    discountPercentage: 10,
+    isActive: true,
+    collections: [],
+  },
+  {
+    id: 4,
+    name: "New Year Celebration",
+    description:
+      "Ring in the new year with special offers on select collections.",
+    discountPercentage: 10,
     isActive: false,
+    collections: [],
   },
 ];
 
@@ -51,10 +85,12 @@ const initSelected = {
   id: 0,
   name: "",
   description: "",
+  discountPercentage: 0,
   isActive: true,
+  collections: [],
 };
 
-function ManageJewelryCategory() {
+function ManageCampaign() {
   const [openAdd, setOpenAdd] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
@@ -82,16 +118,24 @@ function ManageJewelryCategory() {
       {
         field: "name",
         headerName: "Name",
-        width: 300,
+        width: 200,
         headerAlign: "center",
         align: "center",
         filterOperators,
         sortable: false,
       },
       {
+        field: "discountPercentage",
+        headerName: "Discount Percentage",
+        width: 200,
+        headerAlign: "center",
+        align: "center",
+        filterable: false,
+      },
+      {
         field: "isActive",
         headerName: "Status",
-        width: 250,
+        width: 200,
         headerAlign: "center",
         align: "center",
         filterable: false,
@@ -107,7 +151,7 @@ function ManageJewelryCategory() {
         field: "actions",
         headerName: "Action",
         type: "actions",
-        width: 300,
+        width: 250,
         headerAlign: "center",
         align: "center",
         getActions: ({ row }) => [
@@ -159,7 +203,7 @@ function ManageJewelryCategory() {
   return (
     <div className={styles.container}>
       <Grid container justifyContent={"space-between"} alignItems={"center"}>
-        <div className={styles.title}>Jewelry Category</div>
+        <div className={styles.title}>Discount Campaign</div>
 
         <Button
           variant="contained"
@@ -195,4 +239,4 @@ function ManageJewelryCategory() {
   );
 }
 
-export default ManageJewelryCategory;
+export default ManageCampaign;

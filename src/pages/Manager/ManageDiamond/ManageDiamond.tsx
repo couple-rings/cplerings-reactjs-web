@@ -1,4 +1,4 @@
-import styles from "./ManageJewelryCategory.module.scss";
+import styles from "./ManageDiamond.module.scss";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -8,118 +8,156 @@ import {
   getGridStringOperators,
 } from "@mui/x-data-grid";
 import { useMemo, useState } from "react";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
-import ViewModal from "src/components/modal/jewelryCategory/View.modal";
-import UpdateModal from "src/components/modal/jewelryCategory/Update.modal";
-import { Button, Grid, Switch } from "@mui/material";
+import { Button, Grid, Link } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
-import AddModal from "src/components/modal/jewelryCategory/Add.modal";
+import samplePdf from "src/assets/sampledata/blueprint.pdf";
+import FileDownloadSharpIcon from "@mui/icons-material/FileDownloadSharp";
+import UpdateModal from "src/components/modal/diamond/Update.modal";
+import AddModal from "src/components/modal/diamond/Add.modal";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import DeleteModal from "src/components/modal/jewelryCategory/Delete.modal";
+import DeleteModal from "src/components/modal/diamond/Delete.modal";
 
 interface Row {
   id: number;
-  name: string;
-  description: string;
-  isActive: boolean;
+  giaReportNumber: string;
+  giaDocument: string;
+  diamondSpecId: number;
+  weight: number;
+  color: string;
+  clarity: string;
+  shape: string;
 }
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
-  ["contains" /* add more over time */].includes(value)
+  ["contains", "equals" /* add more over time */].includes(value)
 );
 
 const rows = [
   {
     id: 1,
-    name: "Necklace",
-    description:
-      "Necklaces are versatile jewelry pieces worn around the neck, ranging from simple chains to statement designs with gemstones or pendants. Crafted in materials like gold, silver, and beads, they suit various styles and occasions. From elegant chokers to long chains, necklaces can add sophistication, sentiment, or bold flair, making them essential in any jewelry collection.",
-    isActive: true,
+    giaReportNumber: "2326328623",
+    giaDocument: samplePdf,
+    diamondSpecId: 1,
+    weight: 0.05,
+    color: "D",
+    clarity: "VS2",
+    shape: "HEART",
   },
-
   {
     id: 2,
-    name: "Bracelet",
-    description:
-      "Bracelets are versatile jewelry worn around the wrist, available in styles from simple bands to intricate, embellished pieces. Made from materials like gold, silver, leather, or beads, they suit both casual and formal wear. Whether as delicate chains, bangles, or charm bracelets, they add elegance, personality, or a touch of flair, making them a staple in any jewelry collection.",
-    isActive: false,
+    giaReportNumber: "2326328624",
+    giaDocument: samplePdf,
+    diamondSpecId: 2,
+    weight: 0.05,
+    color: "G",
+    clarity: "SI1",
+    shape: "OVAL",
+  },
+  {
+    id: 3,
+    giaReportNumber: "2326328625",
+    giaDocument: samplePdf,
+    diamondSpecId: 3,
+    weight: 0.15,
+    color: "G",
+    clarity: "VS2",
+    shape: "HEART",
   },
 ];
 
 const initSelected = {
   id: 0,
-  name: "",
-  description: "",
-  isActive: true,
+  giaReportNumber: "",
+  giaDocument: "",
+  diamondSpecId: 0,
+  weight: 0.15,
+  color: "",
+  clarity: "",
+  shape: "",
 };
 
-function ManageJewelryCategory() {
-  const [openAdd, setOpenAdd] = useState(false);
-  const [openDetail, setOpenDetail] = useState(false);
+function ManageDiamond() {
   const [openUpdate, setOpenUpdate] = useState(false);
+  const [openAdd, setOpenAdd] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [selected, setSelected] = useState<Row>(initSelected);
-
-  const onChangeStatus = (id: number) => {
-    console.log(id);
-  };
+  const [selected, setSelected] = useState(initSelected);
 
   const columns: GridColDef<Row>[] = useMemo(
     () => [
       {
-        field: "index",
-        headerName: "No",
-        width: 200,
-        headerAlign: "center",
-        align: "center",
-        sortable: false,
-        filterable: false,
-        disableColumnMenu: true,
-        renderCell: (index) =>
-          index.api.getRowIndexRelativeToVisibleRows(index.row.id) + 1,
-      },
-      {
-        field: "name",
-        headerName: "Name",
-        width: 300,
+        field: "giaReportNumber",
+        headerName: "GIA Report No",
+        width: 250,
         headerAlign: "center",
         align: "center",
         filterOperators,
         sortable: false,
       },
       {
-        field: "isActive",
-        headerName: "Status",
-        width: 250,
+        field: "shape",
+        headerName: "Shape",
+        width: 150,
+        headerAlign: "center",
+        align: "center",
+        filterOperators,
+        sortable: false,
+      },
+      {
+        field: "weight",
+        headerName: "Carat Weight",
+        width: 120,
+        headerAlign: "center",
+        align: "center",
+        filterable: false,
+      },
+      {
+        field: "color",
+        headerName: "Color",
+        width: 120,
+        headerAlign: "center",
+        align: "center",
+        filterOperators,
+        sortable: false,
+      },
+      {
+        field: "clarity",
+        headerName: "Clarity",
+        width: 120,
+        headerAlign: "center",
+        align: "center",
+        filterOperators,
+        sortable: false,
+      },
+      {
+        field: "giaDocument",
+        headerName: "GIA Document",
+        width: 150,
         headerAlign: "center",
         align: "center",
         filterable: false,
         sortable: false,
         renderCell: ({ row }) => (
-          <Switch
-            defaultChecked={row.isActive}
-            onChange={() => onChangeStatus(row.id)}
-          />
+          <Link
+            href={row.giaDocument}
+            py={3}
+            alignItems={"center"}
+            display={"flex"}
+            gap={1}
+            sx={{ textDecoration: "none" }}
+          >
+            <FileDownloadSharpIcon fontSize="small" /> <span>Download</span>
+          </Link>
         ),
       },
       {
         field: "actions",
         headerName: "Action",
         type: "actions",
-        width: 300,
+        width: 200,
         headerAlign: "center",
         align: "center",
         getActions: ({ row }) => [
-          <GridActionsCellItem
-            sx={{ py: 2 }}
-            icon={<VisibilityIcon color="action" />}
-            label="Detail"
-            onClick={() => {
-              setOpenDetail(true);
-              setSelected(row);
-            }}
-          />,
           <GridActionsCellItem
             icon={<DeleteRoundedIcon color="action" />}
             label="Delete"
@@ -127,7 +165,6 @@ function ManageJewelryCategory() {
               setOpenDelete(true);
               setSelected(row);
             }}
-            showInMenu
           />,
           <GridActionsCellItem
             icon={<BorderColorSharpIcon color="action" />}
@@ -136,7 +173,6 @@ function ManageJewelryCategory() {
               setOpenUpdate(true);
               setSelected(row);
             }}
-            showInMenu
           />,
         ],
       },
@@ -159,7 +195,7 @@ function ManageJewelryCategory() {
   return (
     <div className={styles.container}>
       <Grid container justifyContent={"space-between"} alignItems={"center"}>
-        <div className={styles.title}>Jewelry Category</div>
+        <div className={styles.title}>Diamonds</div>
 
         <Button
           variant="contained"
@@ -183,7 +219,6 @@ function ManageJewelryCategory() {
       />
 
       <AddModal open={openAdd} setOpen={setOpenAdd} />
-      <ViewModal open={openDetail} setOpen={setOpenDetail} {...selected} />
       <UpdateModal
         open={openUpdate}
         setOpen={setOpenUpdate}
@@ -195,4 +230,4 @@ function ManageJewelryCategory() {
   );
 }
 
-export default ManageJewelryCategory;
+export default ManageDiamond;

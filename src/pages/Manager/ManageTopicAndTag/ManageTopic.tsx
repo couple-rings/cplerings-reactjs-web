@@ -1,22 +1,21 @@
-import styles from "./ManageJewelryCategory.module.scss";
+import styles from "./Index.module.scss";
 import {
   DataGrid,
   GridActionsCellItem,
   GridColDef,
   GridFilterModel,
-  GridSortModel,
   getGridStringOperators,
 } from "@mui/x-data-grid";
 import { useMemo, useState } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
-import ViewModal from "src/components/modal/jewelryCategory/View.modal";
-import UpdateModal from "src/components/modal/jewelryCategory/Update.modal";
 import { Button, Grid, Switch } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
-import AddModal from "src/components/modal/jewelryCategory/Add.modal";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import DeleteModal from "src/components/modal/jewelryCategory/Delete.modal";
+import ViewModal from "src/components/modal/topic/View.modal";
+import UpdateModal from "src/components/modal/topic/Update.modal";
+import AddModal from "src/components/modal/topic/Add.modal";
+import DeleteModal from "src/components/modal/topic/Delete.modal";
 
 interface Row {
   id: number;
@@ -32,18 +31,34 @@ const filterOperators = getGridStringOperators().filter(({ value }) =>
 const rows = [
   {
     id: 1,
-    name: "Necklace",
-    description:
-      "Necklaces are versatile jewelry pieces worn around the neck, ranging from simple chains to statement designs with gemstones or pendants. Crafted in materials like gold, silver, and beads, they suit various styles and occasions. From elegant chokers to long chains, necklaces can add sophistication, sentiment, or bold flair, making them essential in any jewelry collection.",
+    name: "Proposal Ideas",
+    description: "Creative and memorable ways to propose to your loved one.",
     isActive: true,
   },
-
   {
     id: 2,
-    name: "Bracelet",
-    description:
-      "Bracelets are versatile jewelry worn around the wrist, available in styles from simple bands to intricate, embellished pieces. Made from materials like gold, silver, leather, or beads, they suit both casual and formal wear. Whether as delicate chains, bangles, or charm bracelets, they add elegance, personality, or a touch of flair, making them a staple in any jewelry collection.",
+    name: "Engagement Ring Guide",
+    description: "Tips and insights on choosing the perfect engagement ring.",
     isActive: false,
+  },
+  {
+    id: 3,
+    name: "Love Stories",
+    description: "Heartwarming stories from real couples about their journeys.",
+    isActive: false,
+  },
+  {
+    id: 4,
+    name: "Diamond Education",
+    description:
+      "A comprehensive guide on diamond characteristics and how to choose the right one.",
+    isActive: true,
+  },
+  {
+    id: 5,
+    name: "Wedding Planning Tips",
+    description: "Helpful advice for organizing a stress-free wedding.",
+    isActive: true,
   },
 ];
 
@@ -54,7 +69,7 @@ const initSelected = {
   isActive: true,
 };
 
-function ManageJewelryCategory() {
+function ManageTopic() {
   const [openAdd, setOpenAdd] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
@@ -152,14 +167,10 @@ function ManageJewelryCategory() {
     console.log(model);
   };
 
-  const handleSort = (model: GridSortModel) => {
-    console.log(model);
-  };
-
   return (
     <div className={styles.container}>
       <Grid container justifyContent={"space-between"} alignItems={"center"}>
-        <div className={styles.title}>Jewelry Category</div>
+        <div className={styles.title}>Topic</div>
 
         <Button
           variant="contained"
@@ -175,7 +186,6 @@ function ManageJewelryCategory() {
         rows={rows}
         columns={columns}
         onFilterModelChange={handleFilter}
-        onSortModelChange={handleSort}
         pageSizeOptions={[100]}
         disableColumnSelector
         disableRowSelectionOnClick
@@ -195,4 +205,4 @@ function ManageJewelryCategory() {
   );
 }
 
-export default ManageJewelryCategory;
+export default ManageTopic;

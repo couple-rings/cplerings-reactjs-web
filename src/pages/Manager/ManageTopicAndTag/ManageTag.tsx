@@ -1,4 +1,4 @@
-import styles from "./ManageDiamondSpecification.module.scss";
+import styles from "./Index.module.scss";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -9,80 +9,72 @@ import {
   GridRowId,
   GridRowModes,
   GridRowModesModel,
-  GridSortModel,
   getGridStringOperators,
 } from "@mui/x-data-grid";
 import { useCallback, useMemo, useState } from "react";
 import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
-import { currencyFormatter } from "src/utils/functions";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
-import AddModal from "src/components/modal/diamondSpecification/Add.modal";
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, Switch } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
-import DeleteModal from "src/components/modal/diamondSpecification/Delete.modal";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import AddModal from "src/components/modal/tag/Add.modal";
+import DeleteModal from "src/components/modal/tag/Delete.modal";
 
 interface Row {
   id: number;
   name: string;
-  weight: number;
-  color: string;
-  clarity: string;
-  shape: string;
-  price: number;
+  isActive: boolean;
 }
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
-  ["contains", "equals" /* add more over time */].includes(value)
+  ["contains" /* add more over time */].includes(value)
 );
 
 const rows = [
   {
     id: 1,
-    name: "Pure Heart",
-    weight: 0.05,
-    color: "D",
-    clarity: "VS2",
-    shape: "HEART",
-    price: 3600000,
+    name: "Engagement",
+    isActive: true,
   },
   {
     id: 2,
-    name: "Graceful Oval",
-    weight: 0.05,
-    color: "G",
-    clarity: "SI1",
-    shape: "OVAL",
-    price: 3120000,
+    name: "Proposal",
+    isActive: true,
   },
   {
     id: 3,
-    name: "Dazzling Round",
-    weight: 0.15,
-    color: "G",
-    clarity: "VS2",
-    shape: "HEART",
-    price: 3600000,
+    name: "Love Story",
+    isActive: true,
+  },
+  {
+    id: 4,
+    name: "Wedding",
+    isActive: false,
+  },
+  {
+    id: 5,
+    name: "Ring Care",
+    isActive: false,
   },
 ];
 
 const initSelected = {
   id: 0,
   name: "",
-  weight: 0,
-  color: "",
-  clarity: "",
-  shape: "",
-  price: 0,
+  isActive: true,
 };
 
-function ManageDiamondSpecification() {
+function ManageTag() {
   const [openAdd, setOpenAdd] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selected, setSelected] = useState<Row>(initSelected);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+
+  const onChangeStatus = (id: number) => {
+    console.log(id);
+  };
 
   const handleEditClick = useCallback(
     (id: GridRowId) => () => {
@@ -115,9 +107,21 @@ function ManageDiamondSpecification() {
   const columns: GridColDef<Row>[] = useMemo(
     () => [
       {
+        field: "index",
+        headerName: "No",
+        width: 200,
+        headerAlign: "center",
+        align: "center",
+        sortable: false,
+        filterable: false,
+        disableColumnMenu: true,
+        renderCell: (index) =>
+          index.api.getRowIndexRelativeToVisibleRows(index.row.id) + 1,
+      },
+      {
         field: "name",
         headerName: "Name",
-        width: 200,
+        width: 300,
         headerAlign: "center",
         align: "center",
         filterOperators,
@@ -125,51 +129,19 @@ function ManageDiamondSpecification() {
         editable: true,
       },
       {
-        field: "weight",
-        headerName: "Carat Weight",
-        width: 120,
+        field: "isActive",
+        headerName: "Status",
+        width: 250,
         headerAlign: "center",
         align: "center",
         filterable: false,
-      },
-      {
-        field: "color",
-        headerName: "Color",
-        width: 100,
-        headerAlign: "center",
-        align: "center",
         sortable: false,
-        filterOperators,
-      },
-      {
-        field: "clarity",
-        headerName: "Clarity",
-        width: 100,
-        headerAlign: "center",
-        align: "center",
-        sortable: false,
-        filterOperators,
-      },
-      {
-        field: "shape",
-        headerName: "Shape",
-        width: 150,
-        headerAlign: "center",
-        align: "center",
-        sortable: false,
-        filterOperators,
-      },
-      {
-        field: "price",
-        headerName: "Price",
-        width: 200,
-        headerAlign: "center",
-        align: "center",
-        filterable: false,
-        renderCell: ({ row }) => {
-          return <div>{currencyFormatter(row.price)}</div>;
-        },
-        editable: true,
+        renderCell: ({ row }) => (
+          <Switch
+            defaultChecked={row.isActive}
+            onChange={() => onChangeStatus(row.id)}
+          />
+        ),
       },
       {
         field: "actions",
@@ -251,14 +223,10 @@ function ManageDiamondSpecification() {
     console.log(model);
   };
 
-  const handleSort = (model: GridSortModel) => {
-    console.log(model);
-  };
-
   return (
-    <div className={styles.container}>
+    <div className={styles.container} style={{ paddingBottom: "5rem" }}>
       <Grid container justifyContent={"space-between"} alignItems={"center"}>
-        <div className={styles.title}>Diamond Specification</div>
+        <div className={styles.title}>Tag</div>
 
         <Button
           variant="contained"
@@ -275,7 +243,6 @@ function ManageDiamondSpecification() {
         columns={columns}
         editMode="row"
         onFilterModelChange={handleFilter}
-        onSortModelChange={handleSort}
         pageSizeOptions={[100]}
         disableColumnSelector
         disableRowSelectionOnClick
@@ -291,4 +258,4 @@ function ManageDiamondSpecification() {
   );
 }
 
-export default ManageDiamondSpecification;
+export default ManageTag;

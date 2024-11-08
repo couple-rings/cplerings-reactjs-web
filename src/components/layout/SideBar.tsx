@@ -12,12 +12,17 @@ import { useTheme } from "@mui/material/styles";
 import DrawerHeader from "./DrawerHeader";
 import { drawerWidth } from "src/utils/constants";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "src/utils/hooks";
+import { capitalizeFirstLetter } from "src/utils/functions";
+import { Box } from "@mui/material";
 
 function SideBar(props: ISideBarProps) {
   const { open, setOpen, itemsList } = props;
 
   const theme = useTheme();
   const navigate = useNavigate();
+
+  const { role } = useAppSelector((state) => state.auth.userInfo);
 
   return (
     <Drawer
@@ -35,6 +40,9 @@ function SideBar(props: ISideBarProps) {
       open={open}
     >
       <DrawerHeader>
+        <Box sx={{ fontWeight: 600, fontSize: "1.2rem" }}>
+          {capitalizeFirstLetter((role as string).toLowerCase())}
+        </Box>
         <IconButton onClick={() => setOpen(false)}>
           {theme.direction === "ltr" ? (
             <ChevronLeftIcon />

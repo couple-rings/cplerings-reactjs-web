@@ -253,4 +253,24 @@ declare global {
   interface IJewelryCategoryModalProps extends IModalProps, IJewelryCategory {
     resetSelected?: () => void;
   }
+
+  interface IDiamondModalProps extends IModalProps {
+    resetSelected?: () => void;
+
+    giaReportNumber: string;
+
+    diamondSpecId: number;
+  }
+
+  interface ICollectionModalProps extends IModalProps, ICollection {
+    resetSelected?: () => void;
+  }
+
+  interface ITopicModalProps extends IModalProps, ITopic {
+    resetSelected?: () => void;
+  }
+
+  interface IDiscountCampaignModalProps extends IModalProps, IDiscountCampaign {
+    resetSelected?: () => void;
+  }
 }

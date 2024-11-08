@@ -7,16 +7,16 @@ import Main from "src/components/layout/Main";
 import Header from "src/components/layout/Header";
 import { Outlet } from "react-router-dom";
 import ManageAccountsRoundedIcon from "@mui/icons-material/ManageAccountsRounded";
-import GridViewRoundedIcon from "@mui/icons-material/GridViewRounded";
 import CategoryIcon from "@mui/icons-material/Category";
 import DiamondRoundedIcon from "@mui/icons-material/DiamondRounded";
 import HexagonRoundedIcon from "@mui/icons-material/HexagonRounded";
 import PanToolAltSharpIcon from "@mui/icons-material/PanToolAltSharp";
+import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 
 const sidebarList = [
   {
     text: "Dashboard",
-    icon: <GridViewRoundedIcon />,
+    icon: <DashboardRoundedIcon />,
     path: "/admin",
   },
   {

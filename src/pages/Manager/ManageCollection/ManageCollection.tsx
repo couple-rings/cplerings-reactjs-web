@@ -1,22 +1,21 @@
-import styles from "./ManageJewelryCategory.module.scss";
+import styles from "./ManageCollection.module.scss";
 import {
   DataGrid,
   GridActionsCellItem,
   GridColDef,
   GridFilterModel,
-  GridSortModel,
   getGridStringOperators,
 } from "@mui/x-data-grid";
 import { useMemo, useState } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
-import ViewModal from "src/components/modal/jewelryCategory/View.modal";
-import UpdateModal from "src/components/modal/jewelryCategory/Update.modal";
 import { Button, Grid, Switch } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
-import AddModal from "src/components/modal/jewelryCategory/Add.modal";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import DeleteModal from "src/components/modal/jewelryCategory/Delete.modal";
+import ViewModal from "src/components/modal/collection/View.modal";
+import UpdateModal from "src/components/modal/collection/Update.modal";
+import AddModal from "src/components/modal/collection/Add.modal";
+import DeleteModal from "src/components/modal/collection/Delete.modal";
 
 interface Row {
   id: number;
@@ -32,17 +31,24 @@ const filterOperators = getGridStringOperators().filter(({ value }) =>
 const rows = [
   {
     id: 1,
-    name: "Necklace",
+    name: "Eternal Bond",
     description:
-      "Necklaces are versatile jewelry pieces worn around the neck, ranging from simple chains to statement designs with gemstones or pendants. Crafted in materials like gold, silver, and beads, they suit various styles and occasions. From elegant chokers to long chains, necklaces can add sophistication, sentiment, or bold flair, making them essential in any jewelry collection.",
+      "'Eternal Bond' symbolizes the lasting connection between two souls. With designs that reflect harmony and unity, these rings are crafted to honor the beauty of commitment. Each couple is carefully paired to complement each other, representing the perfect balance of love and partnership, making these rings a timeless choice for couples who value tradition and elegance.",
     isActive: true,
   },
 
   {
     id: 2,
-    name: "Bracelet",
+    name: "Timeless Elegance",
     description:
-      "Bracelets are versatile jewelry worn around the wrist, available in styles from simple bands to intricate, embellished pieces. Made from materials like gold, silver, leather, or beads, they suit both casual and formal wear. Whether as delicate chains, bangles, or charm bracelets, they add elegance, personality, or a touch of flair, making them a staple in any jewelry collection.",
+      "'Timeless Elegance' is inspired by the stars and celestial beauty, offering designs that capture the infinite nature of love. These rings feature graceful, refined details, perfect for couples who want a touch of sophistication. Each design pair is a unique representation of the bond that stands the test of time, bringing both style and meaning to your special day.",
+    isActive: false,
+  },
+  {
+    id: 3,
+    name: "Infinity Love",
+    description:
+      "'Infinity Love' celebrates the boundless nature of love. With each design couple symbolizing the everlasting devotion between two partners, these rings are crafted to convey both grace and strength. Perfect for modern couples, the collection combines contemporary aesthetics with timeless sentiments, making it a beautiful testament to love that knows no limits.",
     isActive: false,
   },
 ];
@@ -54,7 +60,7 @@ const initSelected = {
   isActive: true,
 };
 
-function ManageJewelryCategory() {
+function ManageCollection() {
   const [openAdd, setOpenAdd] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
@@ -152,14 +158,10 @@ function ManageJewelryCategory() {
     console.log(model);
   };
 
-  const handleSort = (model: GridSortModel) => {
-    console.log(model);
-  };
-
   return (
     <div className={styles.container}>
       <Grid container justifyContent={"space-between"} alignItems={"center"}>
-        <div className={styles.title}>Jewelry Category</div>
+        <div className={styles.title}>Collection</div>
 
         <Button
           variant="contained"
@@ -175,7 +177,6 @@ function ManageJewelryCategory() {
         rows={rows}
         columns={columns}
         onFilterModelChange={handleFilter}
-        onSortModelChange={handleSort}
         pageSizeOptions={[100]}
         disableColumnSelector
         disableRowSelectionOnClick
@@ -195,4 +196,4 @@ function ManageJewelryCategory() {
   );
 }
 
-export default ManageJewelryCategory;
+export default ManageCollection;
