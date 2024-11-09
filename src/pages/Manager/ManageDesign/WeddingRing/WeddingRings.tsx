@@ -3,15 +3,18 @@ import {
   GridActionsCellItem,
   GridColDef,
   GridFilterModel,
+  GridPaginationModel,
   getGridStringOperators,
 } from "@mui/x-data-grid";
 import { useEffect, useMemo, useState } from "react";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
 import { Box, Button, Grid, Switch } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
-import UpdateModal from "src/components/modal/weddingRing/Update.modal";
 import AddModal from "src/components/modal/weddingRing/Add.modal";
+import UpdateCoupleModal from "src/components/modal/weddingRing/UpdateCouple.modal";
+import UpdateDesignModal from "src/components/modal/weddingRing/UpdateDesign.modal";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getCoupleDesigns } from "src/services/design.service";
+import { pageSize } from "src/utils/constants";
 
 interface Row {
   id: number;
@@ -21,48 +24,12 @@ interface Row {
     url: string;
   };
   designs: IDesign[];
-  isActive: boolean;
+  // isActive: boolean;
 }
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
   ["contains" /* add more over time */].includes(value)
 );
-
-const rows = [
-  {
-    id: 1,
-    name: "Unity",
-    description:
-      "'Unity' represents the harmonious balance between two souls, perfectly complementing each other. Their intricate design embodies the strength and unity found in lasting partnerships, making them the ideal symbol for a love that stands the test of time.",
-    previewImage: {
-      url: "  https://cplerings-bucket.s3.ap-southeast-1.amazonaws.com/static/static_design-couple-unity_1729022054942.jpg",
-    },
-    designs: [],
-    isActive: true,
-  },
-  {
-    id: 2,
-    name: "Luminous",
-    description:
-      "'Luminous' captures the dazzling glow of love with its sparkling details and timeless elegance. This design couple is for those who seek to celebrate the light and brilliance that love brings into their lives, reflecting the clarity and beauty of a deep connection.",
-    previewImage: {
-      url: "  https://cplerings-bucket.s3.ap-southeast-1.amazonaws.com/static/static_design-couple-unity_1729022054942.jpg",
-    },
-    designs: [],
-    isActive: true,
-  },
-  {
-    id: 3,
-    name: "Tranquility",
-    description:
-      "'Tranquility' reflects the peaceful bond between two partners who bring each other comfort. Simple yet elegant, these rings are designed for couples who value serenity and stability, creating a calming presence in each other's lives.",
-    previewImage: {
-      url: "  https://cplerings-bucket.s3.ap-southeast-1.amazonaws.com/static/static_design-couple-unity_1729022054942.jpg",
-    },
-    designs: [],
-    isActive: true,
-  },
-];
 
 const initSelected = {
   id: 0,
@@ -75,11 +42,34 @@ const initSelected = {
   isActive: true,
 };
 
+const initFilter = {
+  page: 0,
+  pageSize: pageSize,
+};
+
+const initMetaData = {
+  ...initFilter,
+  totalPages: 0,
+  count: 0,
+};
+
 function WeddingRings() {
   const [openAdd, setOpenAdd] = useState(false);
-  // const [openDetail, setOpenDetail] = useState(false);
-  const [openUpdate, setOpenUpdate] = useState(false);
+  const [openUpdateDesign, setOpenUpdateDesign] = useState(false);
+  const [openUpdateCouple, setOpenUpdateCouple] = useState(false);
   const [selected, setSelected] = useState<Row>(initSelected);
+
+  const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
+  const [filterObj, setFilterObj] = useState<ICoupleDesignFilter>(initFilter);
+
+  const queryClient = useQueryClient();
+
+  const { data: response, isLoading } = useQuery({
+    queryKey: ["fetchCoupleDesigns", filterObj],
+    queryFn: () => {
+      return getCoupleDesigns(filterObj);
+    },
+  });
 
   const onChangeStatus = (id: number) => {
     console.log(id);
@@ -123,7 +113,7 @@ function WeddingRings() {
         sortable: false,
         renderCell: ({ row }) => (
           <Switch
-            defaultChecked={row.isActive}
+            defaultChecked={true}
             onChange={() => onChangeStatus(row.id)}
           />
         ),
@@ -138,20 +128,20 @@ function WeddingRings() {
         getActions: ({ row }) => [
           <GridActionsCellItem
             sx={{ py: 2 }}
-            icon={<VisibilityIcon color="action" />}
-            label="Detail"
+            label="Update Design Info"
             onClick={() => {
-              //   setOpenDetail(true);
-              //   setSelected(row);
-            }}
-          />,
-          <GridActionsCellItem
-            icon={<BorderColorSharpIcon color="action" />}
-            label="Update"
-            onClick={() => {
-              setOpenUpdate(true);
+              setOpenUpdateDesign(true);
               setSelected(row);
             }}
+            showInMenu
+          />,
+          <GridActionsCellItem
+            label="Update Couple Info"
+            onClick={() => {
+              setOpenUpdateCouple(true);
+              setSelected(row);
+            }}
+            showInMenu
           />,
         ],
       },
@@ -167,6 +157,21 @@ function WeddingRings() {
     console.log(model);
   };
 
+  const handleChangePage = (model: GridPaginationModel) => {
+    // model.page is the page to fetch and starts at 0
+    setFilterObj({
+      ...filterObj,
+      page: model.page,
+    });
+  };
+
+  // const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+  //   setFilterObj({
+  //     ...filterObj,
+  //     page: value - 1,
+  //   });
+  // };
+
   useEffect(() => {
     const root = document.documentElement;
     if (root) {
@@ -177,6 +182,22 @@ function WeddingRings() {
 
     return () => {};
   }, [openAdd]);
+
+  useEffect(() => {
+    if (response && response.data) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { items, ...rest } = response.data;
+      setMetaData(rest);
+    }
+  }, [response]);
+
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: ["fetchCoupleDesigns", filterObj],
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterObj]);
 
   return (
     <Box sx={{ py: 3 }}>
@@ -191,21 +212,33 @@ function WeddingRings() {
       </Grid>
 
       <DataGrid
+        loading={isLoading}
         getRowHeight={() => "auto"}
-        rows={rows}
+        rows={response?.data?.items ? response.data.items : []}
         columns={columns}
         onFilterModelChange={handleFilter}
-        pageSizeOptions={[100]}
+        pageSizeOptions={[pageSize]}
         disableColumnSelector
         disableRowSelectionOnClick
         autoHeight
+        paginationMode="server"
+        paginationModel={{
+          page: filterObj.page,
+          pageSize: filterObj.pageSize,
+        }}
+        onPaginationModelChange={handleChangePage}
+        rowCount={metaData.count}
       />
 
       <AddModal open={openAdd} setOpen={setOpenAdd} />
-      {/* <ViewModal open={openDetail} setOpen={setOpenDetail} {...selected} /> */}
-      <UpdateModal
-        open={openUpdate}
-        setOpen={setOpenUpdate}
+      <UpdateDesignModal
+        open={openUpdateDesign}
+        setOpen={setOpenUpdateDesign}
+        {...selected}
+      />
+      <UpdateCoupleModal
+        open={openUpdateCouple}
+        setOpen={setOpenUpdateCouple}
         {...selected}
         resetSelected={resetSelected}
       />

@@ -12,6 +12,7 @@ import {
   Grid,
   IconButton,
   InputLabel,
+  Link,
   List,
   ListItem,
   ListItemIcon,
@@ -24,8 +25,7 @@ import {
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import Transition from "src/components/layout/Transistion";
 import CloseIcon from "@mui/icons-material/Close";
-import { useRef, useState } from "react";
-import placeholder from "src/assets/default.jpg";
+import { useEffect, useMemo, useState } from "react";
 import { toBase64 } from "src/utils/functions";
 import male from "src/assets/male-icon.png";
 import female from "src/assets/female-icon.png";
@@ -35,12 +35,10 @@ import LabelImportantRoundedIcon from "@mui/icons-material/LabelImportantRounded
 import RemoveSharpIcon from "@mui/icons-material/RemoveSharp";
 import _ from "lodash";
 import ImageModal from "../image/Image.modal";
-import ViewImgChip from "src/components/chip/ViewImgChip";
 import UploadImgChip from "src/components/chip/UploadImgChip";
+import ViewImgChip from "src/components/chip/ViewImgChip";
 
 interface IFormInput {
-  name: string;
-  description: string;
   collectionId: number;
   male: {
     blueprint: File;
@@ -66,12 +64,12 @@ const collections = [
   },
 
   {
-    id: 2,
+    id: 11,
     name: "Timeless Elegance",
     description: "",
   },
   {
-    id: 3,
+    id: 21,
     name: "Infinity Love",
     description: "",
   },
@@ -88,38 +86,86 @@ const diamondSpecs = [
     price: 3600000,
   },
   {
-    id: 2,
+    id: 11,
+    name: "Delicate Heart",
+    weight: 0.1,
+    color: "H",
+    clarity: "SI1",
+    shape: "HEART",
+    price: 6000000,
+  },
+  {
+    id: 21,
+    name: "Radiant Heart",
+    weight: 0.15,
+    color: "H",
+    clarity: "VS2",
+    shape: "HEART",
+    price: 9000000,
+  },
+  {
+    id: 31,
     name: "Graceful Oval",
-    weight: 0.05,
+    weight: 0.1,
     color: "G",
     clarity: "SI1",
     shape: "OVAL",
     price: 3120000,
   },
   {
-    id: 3,
-    name: "Dazzling Round",
+    id: 41,
+    name: "Radiant Oval",
     weight: 0.15,
     color: "G",
     clarity: "VS2",
+    shape: "OVAL",
+    price: 5320000,
+  },
+  {
+    id: 51,
+    name: "Brilliant Oval",
+    weight: 0.15,
+    color: "G",
+    clarity: "VS2",
+    shape: "OVAL",
+    price: 9120000,
+  },
+  {
+    id: 61,
+    name: "Elegant Round",
+    weight: 0.05,
+    color: "E",
+    clarity: "VS1",
     shape: "ROUND",
-    price: 3600000,
+    price: 3360000,
+  },
+  {
+    id: 71,
+    name: "Luminous Round",
+    weight: 0.1,
+    color: "E",
+    clarity: "VS1",
+    shape: "ROUND",
+    price: 6720000,
+  },
+  {
+    id: 81,
+    name: "Dazzling Round",
+    weight: 0.15,
+    color: "G",
+    clarity: "VS1",
+    shape: "ROUND",
+    price: 10080000,
   },
 ];
 
 const metalsSpecs = [
-  {
-    id: 1,
-    name: "Gold 18K - Yellow",
-  },
-  {
-    id: 2,
-    name: "Gold 18K - White",
-  },
-  {
-    id: 3,
-    name: "Gold 18K - Rose",
-  },
+  { id: 1, name: "Gold 14k - Yellow" },
+  { id: 11, name: "Gold 18k - Yellow" },
+  { id: 21, name: "Gold 14k - White" },
+  { id: 31, name: "Gold 18k - White" },
+  { id: 41, name: "Gold 14k - Rose" },
+  { id: 51, name: "Gold 18k - Rose" },
 ];
 
 const initError = {
@@ -127,14 +173,11 @@ const initError = {
   notSelectedMetal: false,
 };
 
-function AddModal(props: IModalProps) {
-  const { open, setOpen } = props;
-
-  const ref = useRef<HTMLInputElement>(null);
+function UpdateDesignModal(props: ICoupleDesignModalProps) {
+  const { open, setOpen, designs, resetSelected } = props;
 
   const [openImg, setOpenImg] = useState(false);
 
-  const [image, setImage] = useState("");
   const [previewImg, setPreviewImg] = useState("");
 
   const [maleSelectedDiamond, setMaleSelectedDiamond] = useState(0);
@@ -159,18 +202,36 @@ function AddModal(props: IModalProps) {
     formState: { errors },
     handleSubmit,
     control,
-  } = useForm<IFormInput>();
+  } = useForm<IFormInput>({
+    defaultValues: useMemo(() => {
+      const maleDesign = designs.find(
+        (item) => item.characteristic === DesignCharacteristic.Male
+      );
+      const femaleDesign = designs.find(
+        (item) => item.characteristic === DesignCharacteristic.Female
+      );
+
+      return {
+        collectionId: maleDesign?.designCollection.id,
+        male: {
+          name: maleDesign?.name,
+          description: maleDesign?.description,
+          metalWeight: maleDesign?.metalWeight,
+          sideDiamondsCount: maleDesign?.sideDiamondsCount,
+        },
+        female: {
+          name: femaleDesign?.name,
+          description: femaleDesign?.description,
+          metalWeight: femaleDesign?.metalWeight,
+          sideDiamondsCount: femaleDesign?.sideDiamondsCount,
+        },
+      };
+    }, [designs]),
+  });
+
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     console.log(data);
     console.log(await toBase64(data.male.blueprint));
-    console.log(image);
-  };
-
-  const handleChooseImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const image = await toBase64(e.target.files[0]);
-      setImage(image);
-    }
   };
 
   const handleSelectDiamond = (id: number, gender: DesignCharacteristic) => {
@@ -296,22 +357,73 @@ function AddModal(props: IModalProps) {
   ) => {
     if (reason && reason === "backdropClick") return;
     setOpen(false);
-    setImage("");
 
     setMaleSelectedDiamond(0);
-    setMaleAddedDiamonds([]);
     setMaleSelectedMetal(0);
-    setMaleAddedMetals([]);
     setMaleError(initError);
 
     setFemaleSelectedDiamond(0);
-    setFemaleAddedDiamonds([]);
     setFemaleSelectedMetal(0);
-    setFemaleAddedMetals([]);
     setFemaleError(initError);
 
+    resetSelected && resetSelected();
     reset();
   };
+
+  useEffect(() => {
+    const maleDesign = designs.find(
+      (item) => item.characteristic === DesignCharacteristic.Male
+    );
+    const femaleDesign = designs.find(
+      (item) => item.characteristic === DesignCharacteristic.Female
+    );
+
+    reset({
+      collectionId: maleDesign?.designCollection.id,
+      male: {
+        name: maleDesign?.name,
+        description: maleDesign?.description,
+        metalWeight: maleDesign?.metalWeight,
+        sideDiamondsCount: maleDesign?.sideDiamondsCount,
+      },
+      female: {
+        name: femaleDesign?.name,
+        description: femaleDesign?.description,
+        metalWeight: femaleDesign?.metalWeight,
+        sideDiamondsCount: femaleDesign?.sideDiamondsCount,
+      },
+    });
+
+    if (maleDesign) {
+      const maleAddedDiamonds = maleDesign?.designDiamondSpecifications.map(
+        (item) => item.diamondSpecification.id
+      );
+      const maleAddedMetals = maleDesign.designMetalSpecifications.map(
+        (item) => {
+          return { id: item.metalSpecification.id, image: item.image.url };
+        }
+      );
+
+      setMaleAddedDiamonds(maleAddedDiamonds);
+      setMaleAddedMetals(maleAddedMetals);
+    }
+
+    if (femaleDesign) {
+      const femaleAddedDiamonds = femaleDesign?.designDiamondSpecifications.map(
+        (item) => item.diamondSpecification.id
+      );
+      const femaleAddedMetals = femaleDesign.designMetalSpecifications.map(
+        (item) => {
+          return { id: item.metalSpecification.id, image: item.image.url };
+        }
+      );
+
+      setFemaleAddedDiamonds(femaleAddedDiamonds);
+      setFemaleAddedMetals(femaleAddedMetals);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [designs]);
 
   return (
     <Dialog
@@ -327,7 +439,7 @@ function AddModal(props: IModalProps) {
       <AppBar sx={{ position: "relative", backgroundColor: "#313131" }}>
         <Toolbar>
           <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-            Create Couple Design
+            Update Design
           </Typography>
           <IconButton
             edge="start"
@@ -339,79 +451,7 @@ function AddModal(props: IModalProps) {
           </IconButton>
         </Toolbar>
       </AppBar>
-      <Container sx={{ mt: 3 }}>
-        {/* Couple design start */}
-        <Box sx={{ fontSize: "1.2rem" }}>Couple Design</Box>
-        <Grid container justifyContent={"space-between"} mt={3} mb={5}>
-          <Grid item sm={6} md={4}>
-            <label>
-              <img
-                src={image ? image : placeholder}
-                width={"100%"}
-                style={{
-                  objectFit: "cover",
-                  border: "1px solid #ccc",
-                  cursor: "pointer",
-                }}
-              />
-              <input
-                type="file"
-                hidden
-                ref={ref}
-                onChange={(e) => handleChooseImage(e)}
-              />
-            </label>
-            <Button
-              variant="outlined"
-              sx={{ width: "50%", textTransform: "capitalize", mt: 2 }}
-              onClick={() => ref.current?.click()}
-            >
-              Choose image
-            </Button>
-          </Grid>
-
-          <Grid item xs={12} md={7}>
-            <TextField
-              autoFocus
-              label="Name"
-              type="text"
-              fullWidth
-              variant="standard"
-              error={!!errors.name}
-              {...register("name", {
-                required: "* Name must not be empty",
-              })}
-            />
-            {errors.name && (
-              <FormHelperText error sx={{ mt: 1 }}>
-                {errors.name.message}
-              </FormHelperText>
-            )}
-
-            <TextField
-              error={!!errors.description}
-              autoFocus
-              label="Description"
-              type="text"
-              fullWidth
-              multiline
-              rows={7}
-              sx={{ mt: 3 }}
-              variant="standard"
-              {...register("description", {
-                required: "* Description must not be empty",
-              })}
-            />
-            {errors.description && (
-              <FormHelperText error>
-                {errors.description.message}
-              </FormHelperText>
-            )}
-          </Grid>
-        </Grid>
-        {/* Couple design end */}
-
-        <Box sx={{ fontSize: "1.2rem" }}>Add Design</Box>
+      <Container sx={{ mt: 5 }}>
         <Grid container item xs={12} sm={4} mt={2} mb={5}>
           <InputLabel error={!!errors.collectionId} sx={{ mb: 1 }}>
             Collection
@@ -461,6 +501,16 @@ function AddModal(props: IModalProps) {
               <FormLabel error={!!errors.male?.blueprint}>
                 Design Blueprint
               </FormLabel>
+              <Link
+                href={
+                  designs.find(
+                    (item) => item.characteristic === DesignCharacteristic.Male
+                  )?.blueprint.url
+                }
+                sx={{ textDecoration: "none", ml: 3 }}
+              >
+                View PDF File
+              </Link>
               <Controller
                 name="male.blueprint"
                 rules={{ required: "* Must provide blueprint file" }}
@@ -761,7 +811,7 @@ function AddModal(props: IModalProps) {
                               )}
                               <UploadImgChip
                                 metalId={metal.id}
-                                gender={DesignCharacteristic.Female}
+                                gender={DesignCharacteristic.Male}
                                 handleUploadMetalImg={handleUploadMetalImg}
                               />
                             </Box>
@@ -795,6 +845,17 @@ function AddModal(props: IModalProps) {
               <FormLabel error={!!errors.female?.blueprint}>
                 Design Blueprint
               </FormLabel>
+              <Link
+                href={
+                  designs.find(
+                    (item) =>
+                      item.characteristic === DesignCharacteristic.Female
+                  )?.blueprint.url
+                }
+                sx={{ textDecoration: "none", ml: 3 }}
+              >
+                View PDF File
+              </Link>
               <Controller
                 name="female.blueprint"
                 rules={{ required: "* Must provide blueprint file" }}
@@ -1138,4 +1199,4 @@ function AddModal(props: IModalProps) {
   );
 }
 
-export default AddModal;
+export default UpdateDesignModal;

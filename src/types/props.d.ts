@@ -282,11 +282,14 @@ declare global {
     img: string;
   }
 
-  interface IImgChipProps {
-    metalId: number;
+  interface IViewImgChipProps {
     image: string;
-    gender: DesignCharacteristic;
     handleViewImage: (v: string) => void;
+  }
+
+  interface IUploadImgChipProps {
+    metalId: number;
+    gender: DesignCharacteristic;
     handleUploadMetalImg: (
       e: React.ChangeEvent<HTMLInputElement>,
       id: number,

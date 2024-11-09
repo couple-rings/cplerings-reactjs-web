@@ -13,14 +13,14 @@ interface IFormInput {
   description: string;
 }
 
-function UpdateModal(props: ICoupleDesignModalProps) {
+function UpdateCoupleModal(props: ICoupleDesignModalProps) {
   const { open, setOpen, description, name, resetSelected, previewImage } =
     props;
   const { url } = previewImage;
 
   const ref = useRef<HTMLInputElement>(null);
 
-  const [image, setImage] = useState(url);
+  const [image, setImage] = useState("");
 
   const {
     reset,
@@ -63,8 +63,9 @@ function UpdateModal(props: ICoupleDesignModalProps) {
       description,
     });
 
+    setImage(url);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [name, description]);
+  }, [name, description, url]);
 
   return (
     <Dialog
@@ -167,4 +168,4 @@ function UpdateModal(props: ICoupleDesignModalProps) {
   );
 }
 
-export default UpdateModal;
+export default UpdateCoupleModal;

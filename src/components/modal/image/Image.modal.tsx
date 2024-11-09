@@ -1,4 +1,3 @@
-import { Box } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 
 function ImageModal(props: IImageModalProps) {
@@ -6,9 +5,11 @@ function ImageModal(props: IImageModalProps) {
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)} fullWidth>
-      <Box>
-        <img src={img} width={"100%"} />
-      </Box>
+      <img
+        src={img}
+        width={"100%"}
+        style={{ objectFit: "contain", maxHeight: 600 }}
+      />
     </Dialog>
   );
 }
