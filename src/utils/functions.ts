@@ -91,3 +91,7 @@ export const mapGoldColor = (item: IMetalSpec) => {
 export const getDiamondSpec = (item: IDiamondSpec) => {
   return `${item.weight * 100}PT ,${item.color} ,${item.clarity}`;
 };
+
+export const capitalizeFirstLetter = (val: string) => {
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+};

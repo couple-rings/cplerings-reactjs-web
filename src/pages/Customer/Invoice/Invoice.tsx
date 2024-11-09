@@ -1,7 +1,7 @@
 import { Divider, Grid, SxProps } from "@mui/material";
 import styles from "./Invoice.module.scss";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import PulseIcon from "src/components/icon/PulseIcon";
 import DoneIcon from "@mui/icons-material/Done";
 import { currencyFormatter } from "src/utils/functions";
@@ -9,6 +9,13 @@ import moment from "moment";
 import DownloadForOfflineRoundedIcon from "@mui/icons-material/DownloadForOfflineRounded";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
+import { useEffect, useRef } from "react";
+import CloseIcon from "@mui/icons-material/Close";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import { useAppSelector } from "src/utils/hooks";
+import { useMutation } from "@tanstack/react-query";
+import { postCreateCustomRequest } from "src/services/customRequest.service";
 
 const iconStyle: SxProps = {
   color: "white",
@@ -16,7 +23,53 @@ const iconStyle: SxProps = {
 };
 
 function Invoice() {
+  const { requestedDesigns } = useAppSelector((state) => state.design);
+  const { id } = useAppSelector((state) => state.auth.userInfo);
+
+  const [searchParams] = useSearchParams();
+
+  const status = searchParams.get("vnp_TransactionStatus");
+  const amount = searchParams.get("vnp_Amount");
+  const customer = searchParams.get("vnp_OrderInfo");
+  const date = searchParams.get("vnp_PayDate");
+
   const navigate = useNavigate();
+  const ref = useRef<HTMLDivElement>(null);
+
+  const mutation = useMutation({
+    mutationFn: (data: ICreateCRRequest) => {
+      return postCreateCustomRequest(data);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        console.log(response.data);
+      }
+
+      if (response.errors) {
+        console.log(response.errors);
+      }
+    },
+  });
+
+  const print = () => {
+    html2canvas(ref.current as HTMLDivElement).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF();
+      pdf.addImage(imgData, "PNG", -30, 3, 270, 200);
+      pdf.save("invoice.pdf");
+    });
+  };
+
+  useEffect(() => {
+    if (!status || !amount || !customer || !date) navigate("/");
+    else
+      mutation.mutate({
+        customerId: id,
+        designIds: requestedDesigns,
+      });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [amount, status, customer, date]);
 
   return (
     <div className={styles.container}>
@@ -26,36 +79,61 @@ function Invoice() {
           <span>Trang Chủ</span>
         </Grid>
 
-        <Grid container item justifyContent={"center"}>
+        <Grid container item justifyContent={"center"} ref={ref}>
           <Grid container item sm={8} lg={6} className={styles.body}>
             <Grid item xs={12} className={styles.upper}>
               <PulseIcon
-                backgroundColor="#23A26D"
-                icon={<DoneIcon sx={iconStyle} />}
+                backgroundColor={status === "00" ? "#23A26D" : "#B43620"}
+                icon={
+                  status === "00" ? (
+                    <DoneIcon sx={iconStyle} />
+                  ) : (
+                    <CloseIcon sx={iconStyle} />
+                  )
+                }
               />
               <div className={styles.status}>
-                {
-                  // eslint-disable-next-line no-constant-condition
-                  true
-                    ? "Thanh Toán Thành Công!"
-                    : "Thanh Toán Không Thành Công!"
-                }
+                {status === "00"
+                  ? "Thanh Toán Thành Công!"
+                  : "Thanh Toán Không Thành Công!"}
               </div>
-              <div className={styles.amount}>{currencyFormatter(350000)}</div>
+              <div className={styles.amount}>
+                {status === "00"
+                  ? currencyFormatter(amount ? +amount / 100 : 0)
+                  : currencyFormatter(0)}
+              </div>
 
               <Divider sx={{ width: "80%", mb: 5 }} />
             </Grid>
 
             <Grid container item xs={12} justifyContent={"space-between"}>
-              <Grid container item xs={6} gap={3} className={styles.label}>
-                <div>Ngày Giao Dịch</div>
-                <div>Phương Thức Thanh Toán</div>
-                <div>Người Thực Hiện</div>
+              <Grid container item xs={12} mb={3}>
+                <Grid item xs={6} className={styles.label}>
+                  Ngày Giao Dịch
+                </Grid>
+                <Grid item xs={6} className={styles.info}>
+                  {moment(date, "YYYYMMDDHHmmss").format(
+                    "DD-MM-YYYY, HH:mm:ss"
+                  )}
+                </Grid>
               </Grid>
-              <Grid container item xs={6} gap={3} className={styles.info}>
-                <div>{moment().format("DD-MM-YYYY, HH:mm:ss")}</div>
-                <div>VNPAY</div>
-                <div>Nguyễn Văn A</div>
+
+              <Grid container item xs={12} mb={3}>
+                <Grid item xs={6} className={styles.label}>
+                  Phương Thức Thanh Toán
+                </Grid>
+                <Grid item xs={6} className={styles.info}>
+                  VNPAY
+                </Grid>
+              </Grid>
+
+              <Grid container item xs={12}>
+                <Grid item xs={6} className={styles.label}>
+                  Nội Dung
+                </Grid>
+                <Grid item xs={6} className={styles.info}>
+                  {customer}
+                </Grid>
               </Grid>
 
               <Grid container item justifyContent={"center"}>
@@ -69,21 +147,31 @@ function Invoice() {
                   </Grid>
 
                   <Grid container item xs={6} gap={3} className={styles.info}>
-                    <div>{currencyFormatter(350000)}</div>
+                    <div>
+                      {status === "00"
+                        ? currencyFormatter(amount ? +amount / 100 : 0)
+                        : currencyFormatter(0)}
+                    </div>
                   </Grid>
                 </>
               )}
             </Grid>
 
-            {true && (
-              <Grid item xs={12} className={styles.bottom}>
+            {status === "00" && (
+              <Grid item xs={12} className={styles.bottom} onClick={print}>
                 <DownloadForOfflineRoundedIcon fontSize="large" />
                 <span>Tải File PDF</span>
               </Grid>
             )}
 
-            {false && (
-              <Grid container item xs={12} className={styles.error}>
+            {status !== "00" && (
+              <Grid
+                container
+                item
+                xs={12}
+                className={styles.error}
+                onClick={() => navigate("/customer/support")}
+              >
                 <Grid item className={styles.left}>
                   <div className={styles.iconContainer}>
                     <HelpOutlineOutlinedIcon sx={{ color: "#B43620" }} />

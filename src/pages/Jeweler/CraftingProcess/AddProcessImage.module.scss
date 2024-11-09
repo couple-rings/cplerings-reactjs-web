@@ -1,0 +1,45 @@
+@use 'src/index.scss'as *;
+
+
+.imageBox {
+    background-color: #d9d9d9;
+    border-radius: 10px;
+    height: 230px;
+    width: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+
+    .content {
+        font-size: 16px;
+        font-weight: 400;
+        color: #6f6a6a;
+    }
+
+    .pdf {
+        position        : absolute;
+        background-color: #ccc;
+        color           : $primaryColor;
+        opacity         : 0.5;
+        font-size       : 2rem;
+        border-radius   : 15px;
+        top             : 0;
+        width           : 100%;
+        height          : 100%;
+        display         : none;
+        cursor          : pointer;
+    }
+
+    &:hover {
+        .pdf {
+            display        : flex;
+            align-items    : center;
+            justify-content: center;
+            gap            : 0.5rem;
+        }
+    }
+}
+

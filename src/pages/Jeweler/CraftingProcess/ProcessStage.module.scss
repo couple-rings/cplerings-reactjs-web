@@ -1,0 +1,64 @@
+.container {
+    display: flex;
+    align-items: center;
+}
+
+.iconBackground {
+    // border: 1px solid black;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 35px;
+    background-color: #f5f5f5;
+}
+
+.iconBackgroundDone {
+    border: 1px solid black;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 35px;
+    background-color: black;
+}
+
+.iconBackgroundDoing {
+    border: 1px solid black;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 35px;
+    background-color: #f5f5f5;
+}
+
+.icon {
+    font-size: 25px;
+    padding: 0;
+    color: white;
+}
+
+.iconDone {
+    font-size: 25px;
+    padding: 0;
+    color: white;
+}
+
+.iconDoing {
+    font-size: 25px;
+    padding: 0;
+    color: black;
+}
+
+.line {
+    height: 10px;
+    width: 90px;
+    background-color: #f5f5f5;
+}
+
+.lineDoing {
+    height: 10px;
+    width: 90px;
+    background-color: black;
+}

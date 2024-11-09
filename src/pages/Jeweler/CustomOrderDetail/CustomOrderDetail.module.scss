@@ -1,7 +1,14 @@
 @use "src/index.scss" as *;
 
+
+.all {
+    background-color: #fafafa;
+    padding: 1rem;
+}
 .container {
     padding: 3rem;
+    background-color: #ffff;
+    border-radius: 10px;
     .divider {
         background-color: rgb(255, 0, 0)!important;
         height: 2px;

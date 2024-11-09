@@ -43,11 +43,17 @@ import DesignVersions from "src/pages/Staff/DesignVersions/DesignVersions";
 import CustomDesign from "src/pages/Staff/CustomDesign/CustomDesign";
 import CraftingRequestDetail from "src/pages/Staff/CraftingRequestDetail/CraftingRequestDetail";
 import WeddingRingsDetail from "src/pages/Common/WeddingRingsDetail/WeddingRingsDetail";
+import CraftingProcess from "src/pages/Jeweler/CraftingProcess/CraftingProcess";
 import DesignFee from "src/pages/Customer/DesignFee/DesignFee";
 import CustomOrder from "src/pages/Jeweler/CustomOrder/CustomOrder";
 import CustomOrderDetail from "src/pages/Jeweler/CustomOrderDetail/CustomOrderDetail";
 import Invoice from "src/pages/Customer/Invoice/Invoice";
 import Contract from "src/pages/Customer/Contract/Contract";
+import ManageAccount from "src/pages/Admin/ManageAccount/ManageAccount";
+import ManageJewelryCategory from "src/pages/Admin/ManageJewelryCategory/ManageJewelryCategory";
+import ManageDiamondSpecification from "src/pages/Admin/ManageDiamondSpecification/ManageDiamondSpecification";
+import ManageMetalSpec from "src/pages/Admin/ManageMetalSpec/ManageMetalSpec";
+import ManageFingerSize from "src/pages/Admin/ManageFingerSize/ManageFingerSize";
 
 const router = createBrowserRouter([
   {
@@ -246,6 +252,10 @@ const router = createBrowserRouter([
         path: "custom-order/detail/:id",
         element: <CustomOrderDetail />,
       },
+      {
+        path: "custom-process",
+        element: <CraftingProcess />,
+      },
     ],
   },
   {
@@ -273,6 +283,26 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <AdminHome />,
+      },
+      {
+        path: "account",
+        element: <ManageAccount />,
+      },
+      {
+        path: "jewelry-category",
+        element: <ManageJewelryCategory />,
+      },
+      {
+        path: "diamond-spec",
+        element: <ManageDiamondSpecification />,
+      },
+      {
+        path: "metal-spec",
+        element: <ManageMetalSpec />,
+      },
+      {
+        path: "finger-size",
+        element: <ManageFingerSize />,
       },
     ],
   },
