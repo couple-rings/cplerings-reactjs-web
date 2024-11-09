@@ -1,5 +1,5 @@
 import { SxProps } from "@mui/material";
-import { AccountStatus } from "src/utils/enums";
+import { AccountStatus, DesignCharacteristic } from "src/utils/enums";
 
 export {};
 
@@ -272,5 +272,25 @@ declare global {
 
   interface IDiscountCampaignModalProps extends IModalProps, IDiscountCampaign {
     resetSelected?: () => void;
+  }
+
+  interface ICoupleDesignModalProps extends IModalProps, ICoupleDesign {
+    resetSelected?: () => void;
+  }
+
+  interface IImageModalProps extends IModalProps {
+    img: string;
+  }
+
+  interface IImgChipProps {
+    metalId: number;
+    image: string;
+    gender: DesignCharacteristic;
+    handleViewImage: (v: string) => void;
+    handleUploadMetalImg: (
+      e: React.ChangeEvent<HTMLInputElement>,
+      id: number,
+      gender: DesignCharacteristic
+    ) => Promise<void>;
   }
 }

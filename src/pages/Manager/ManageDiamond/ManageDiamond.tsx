@@ -62,7 +62,7 @@ const rows = [
     weight: 0.15,
     color: "G",
     clarity: "VS2",
-    shape: "HEART",
+    shape: "ROUND",
   },
 ];
 

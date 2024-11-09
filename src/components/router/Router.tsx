@@ -59,6 +59,7 @@ import ManageBranchInfo from "src/pages/Manager/ManageBranchInfo/ManageBranchInf
 import ManageCollection from "src/pages/Manager/ManageCollection/ManageCollection";
 import ManageTopicAndTag from "src/pages/Manager/ManageTopicAndTag/Index";
 import ManageCampaign from "src/pages/Manager/ManageCampaign/ManageCampaign";
+import ManageDesign from "src/pages/Manager/ManageDesign/Index";
 
 const router = createBrowserRouter([
   {
@@ -286,6 +287,10 @@ const router = createBrowserRouter([
       {
         path: "collection",
         element: <ManageCollection />,
+      },
+      {
+        path: "design",
+        element: <ManageDesign />,
       },
       {
         path: "topic&tag",

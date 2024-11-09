@@ -48,7 +48,7 @@ const diamondSpecs = [
     weight: 0.15,
     color: "G",
     clarity: "VS2",
-    shape: "HEART",
+    shape: "ROUND",
     price: 3600000,
   },
 ];

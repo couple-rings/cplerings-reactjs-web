@@ -46,7 +46,7 @@ const diamondSpecs = [
     weight: 0.15,
     color: "G",
     clarity: "VS2",
-    shape: "HEART",
+    shape: "ROUND",
     price: 3600000,
   },
 ];
@@ -146,20 +146,30 @@ function AddModal(props: IModalProps) {
         </Grid>
 
         <Grid item xs={12} mt={5}>
-          <FormLabel>GIA Document</FormLabel>
+          <FormLabel error={!!errors.giaDocument}>GIA Document</FormLabel>
           <Controller
             name="giaDocument"
             control={control}
+            rules={{ required: "* Must provide GIA document file" }}
             render={({ field: { onChange } }) => (
               <TextField
                 type="file"
                 fullWidth
+                inputProps={{
+                  accept: ".pdf",
+                }}
+                error={!!errors.giaDocument}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   onChange(e.target.files && e.target.files[0]);
                 }}
               />
             )}
           />
+          {errors.giaDocument && (
+            <FormHelperText error sx={{ mt: 1 }}>
+              {errors.giaDocument.message}
+            </FormHelperText>
+          )}
         </Grid>
       </DialogContent>
       <DialogActions sx={{ mt: 3 }}>

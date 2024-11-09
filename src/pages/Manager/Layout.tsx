@@ -12,6 +12,7 @@ import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import CollectionsBookmarkRoundedIcon from "@mui/icons-material/CollectionsBookmarkRounded";
 import TopicRoundedIcon from "@mui/icons-material/TopicRounded";
 import LocalOfferRoundedIcon from "@mui/icons-material/LocalOfferRounded";
+import DesignServicesRoundedIcon from "@mui/icons-material/DesignServicesRounded";
 
 const sidebarList = [
   {
@@ -33,6 +34,11 @@ const sidebarList = [
     text: "Manage Collection",
     icon: <CollectionsBookmarkRoundedIcon />,
     path: "/manager/collection",
+  },
+  {
+    text: "Manage Design",
+    icon: <DesignServicesRoundedIcon />,
+    path: "/manager/design",
   },
   {
     text: "Topic & Tag",
