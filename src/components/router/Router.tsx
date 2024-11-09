@@ -55,6 +55,7 @@ import ManageDiamondSpecification from "src/pages/Admin/ManageDiamondSpecificati
 import ManageMetalSpec from "src/pages/Admin/ManageMetalSpec/ManageMetalSpec";
 import ManageFingerSize from "src/pages/Admin/ManageFingerSize/ManageFingerSize";
 import MaintenanceOrder from "src/pages/Staff/MaintenanceOrder/MaintenanceOrder";
+import MaintenanceCreateForm from "src/pages/Staff/MaintenanceCreateForm/MaintenanceCreateForm";
 
 const router = createBrowserRouter([
   {
@@ -235,6 +236,10 @@ const router = createBrowserRouter([
         path: "maintenance-order",
         element: <MaintenanceOrder />,
       },
+      {
+        path: "maintenance-create-form",
+        element: <MaintenanceCreateForm/>
+      }
       
     ],
   },

@@ -1,0 +1,38 @@
+.container {
+    margin-top: 50px;
+    .title {
+        text-align: center;
+        font-size: 30px;
+        font-weight: 500;
+    }
+
+    .infoCustomer {
+        padding: 5rem;
+
+        .titleSection {
+            font-size: 25px;
+            font-weight: 500;
+            margin-bottom: 25px;
+        }
+
+        .inputInfoContainer {
+            font-size: large;
+            margin-bottom: 15px;
+            .inputBoxTitle {
+                color: #A8A7A7;
+                font-size: 16px;
+            }
+
+            .inputBoxField {
+                width: 100%;
+                height: 45px;
+                padding: 10px;
+                font-size: 16px;
+                border-radius: 10px;
+                border: none;
+                background-color: #F5F5F5;
+            }
+
+        }
+    }
+}
