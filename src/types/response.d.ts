@@ -127,12 +127,4 @@ declare global {
 
     errorMessage: string;
   }
-
-  interface ICreateCRResponse {
-    id: number;
-    comment: string;
-    status: string;
-    customer: Omit<IUser, "hasSpouse">;
-    designs: IDesign[];
-  }
 }

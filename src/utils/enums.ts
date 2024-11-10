@@ -54,10 +54,10 @@ export enum DeliveryMethod {
 }
 
 export enum CustomRequestStatus {
-  Waiting = "WAITING",
-  OnGoing = "ON GOING",
+  Waiting = "PENDING",
+  OnGoing = "APPROVED",
   Completed = "COMPLETED",
-  Canceled = "CANCELED",
+  Canceled = "REJECTED",
 }
 
 export enum CraftingRequestStatus {
@@ -73,7 +73,7 @@ export enum MaintenanceOrderStatus {
   Completed = "COMPLETED",
   Delivering = "DELIVERING",
   Handling = "HANDLING",
-  Paid = "PAID"
+  Paid = "PAID",
 }
 
 export enum AccountStatus {

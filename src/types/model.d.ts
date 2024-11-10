@@ -1,4 +1,9 @@
-import { DesignCharacteristic, DivisionType, GoldColor } from "src/utils/enums";
+import {
+  CustomRequestStatus,
+  DesignCharacteristic,
+  DivisionType,
+  GoldColor,
+} from "src/utils/enums";
 
 export {};
 
@@ -205,5 +210,13 @@ declare global {
     description: string;
     discountPercentage: number;
     collections: ICollection[];
+  }
+
+  interface ICustomRequest {
+    id: number;
+    comment: string;
+    status: CustomRequestStatus;
+    customer: Omit<IUser, "hasSpouse">;
+    designs: IDesign[];
   }
 }
