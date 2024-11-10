@@ -68,6 +68,14 @@ export enum CraftingRequestStatus {
   Delivering = "DELIVERING",
 }
 
+export enum MaintenanceOrderStatus {
+  Done = "DONE",
+  Completed = "COMPLETED",
+  Delivering = "DELIVERING",
+  Handling = "HANDLING",
+  Paid = "PAID"
+}
+
 export enum AccountStatus {
   Active = "ACTIVE",
   Inactive = "INACTIVE",

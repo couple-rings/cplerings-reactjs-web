@@ -60,6 +60,7 @@ import ManageCollection from "src/pages/Manager/ManageCollection/ManageCollectio
 import ManageTopicAndTag from "src/pages/Manager/ManageTopicAndTag/Index";
 import ManageCampaign from "src/pages/Manager/ManageCampaign/ManageCampaign";
 import ManageDesign from "src/pages/Manager/ManageDesign/Index";
+import MaintenanceOrder from "src/pages/Staff/MaintenanceOrder/MaintenanceOrder";
 
 const router = createBrowserRouter([
   {
@@ -235,6 +236,10 @@ const router = createBrowserRouter([
       {
         path: "crafting-request/detail",
         element: <CraftingRequestDetail />,
+      },
+      {
+        path: "maintenance-order",
+        element: <MaintenanceOrder />,
       },
     ],
   },
