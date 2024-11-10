@@ -1,5 +1,9 @@
 import { SxProps } from "@mui/material";
-import { AccountStatus, DesignCharacteristic } from "src/utils/enums";
+import {
+  AccountStatus,
+  CustomRequestStatus,
+  DesignCharacteristic,
+} from "src/utils/enums";
 
 export {};
 
@@ -300,5 +304,11 @@ declare global {
       id: number,
       gender: DesignCharacteristic
     ) => Promise<void>;
+  }
+
+  interface ICustomRequestCardProps {
+    designs: IDesign[];
+
+    status: CustomRequestStatus;
   }
 }

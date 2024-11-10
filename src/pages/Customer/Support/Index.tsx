@@ -10,6 +10,7 @@ import { putUpdateMessage } from "src/services/message.service";
 import { Button, Grid } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 import { socket } from "src/config/socket";
+import { fetchConversations } from "src/utils/querykey";
 
 function Index() {
   const [receiveMessage, setReceiveMessage] = useState<null | IMessage>(null);
@@ -35,7 +36,7 @@ function Index() {
     socket.emit("send_message", message, async (response: any) => {
       if (response) {
         queryClient.invalidateQueries({
-          queryKey: ["fetchConversations", userId],
+          queryKey: [fetchConversations, userId],
         });
       }
     });
@@ -62,7 +63,7 @@ function Index() {
         }
 
         queryClient.invalidateQueries({
-          queryKey: ["fetchConversations", userId],
+          queryKey: [fetchConversations, userId],
         });
       }
     };

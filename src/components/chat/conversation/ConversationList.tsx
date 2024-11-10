@@ -10,6 +10,7 @@ import {
   saveNotifications,
   selectConversation,
 } from "src/redux/slice/conversation.slice";
+import { fetchConversations } from "src/utils/querykey";
 
 function ConversationList(props: IConversationListProps) {
   const { joinRooms } = props;
@@ -22,7 +23,7 @@ function ConversationList(props: IConversationListProps) {
   const { conversationsList } = useAppSelector((state) => state.conversation);
 
   const { data: response } = useQuery({
-    queryKey: ["fetchConversations", userId],
+    queryKey: [fetchConversations, userId],
     queryFn: () => {
       return getConversations({ userId });
     },
