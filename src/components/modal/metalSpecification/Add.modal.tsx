@@ -73,7 +73,7 @@ function AddModal(props: IModalProps) {
                 control={control}
                 render={({ field }) => (
                   <Select {...field}>
-                    <MenuItem value={""}>
+                    <MenuItem value={""} disabled>
                       <em>Select color</em>
                     </MenuItem>
                     {[GoldColor.Yellow, GoldColor.White, GoldColor.Rose].map(
@@ -106,7 +106,7 @@ function AddModal(props: IModalProps) {
                 control={control}
                 render={({ field }) => (
                   <Select {...field}>
-                    <MenuItem value={""}>
+                    <MenuItem value={""} disabled>
                       <em>Select type</em>
                     </MenuItem>
                     {goldK.map((color) => {
