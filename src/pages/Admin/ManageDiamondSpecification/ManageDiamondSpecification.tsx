@@ -20,6 +20,8 @@ import CancelIcon from "@mui/icons-material/Close";
 import AddModal from "src/components/modal/diamondSpecification/Add.modal";
 import { Button, Grid } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
+import DeleteModal from "src/components/modal/diamondSpecification/Delete.modal";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 
 interface Row {
   id: number;
@@ -65,8 +67,21 @@ const rows = [
   },
 ];
 
+const initSelected = {
+  id: 0,
+  name: "",
+  weight: 0,
+  color: "",
+  clarity: "",
+  shape: "",
+  price: 0,
+};
+
 function ManageDiamondSpecification() {
   const [openAdd, setOpenAdd] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [selected, setSelected] = useState<Row>(initSelected);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
   const handleEditClick = useCallback(
@@ -107,6 +122,7 @@ function ManageDiamondSpecification() {
         align: "center",
         filterOperators,
         sortable: false,
+        editable: true,
       },
       {
         field: "weight",
@@ -162,7 +178,7 @@ function ManageDiamondSpecification() {
         width: 200,
         headerAlign: "center",
         align: "center",
-        getActions: ({ id }) => {
+        getActions: ({ row, id }) => {
           const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
           if (isInEditMode) {
@@ -182,6 +198,15 @@ function ManageDiamondSpecification() {
           }
 
           return [
+            <GridActionsCellItem
+              sx={{ py: 3 }}
+              icon={<DeleteRoundedIcon color="action" />}
+              label="Delete"
+              onClick={() => {
+                setOpenDelete(true);
+                setSelected(row);
+              }}
+            />,
             <GridActionsCellItem
               sx={{ py: 3 }}
               icon={<BorderColorSharpIcon color="action" />}
@@ -261,6 +286,7 @@ function ManageDiamondSpecification() {
       />
 
       <AddModal open={openAdd} setOpen={setOpenAdd} />
+      <DeleteModal open={openDelete} setOpen={setOpenDelete} />
     </div>
   );
 }

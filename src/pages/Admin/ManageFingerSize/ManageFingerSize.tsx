@@ -17,6 +17,8 @@ import { primaryBtn } from "src/utils/styles";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import AddModal from "src/components/modal/fingerSize/Add.modal";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import DeleteModal from "src/components/modal/fingerSize/Delete.modal";
 
 interface Row {
   id: number;
@@ -52,8 +54,17 @@ const rows = [
   },
 ];
 
+const initSelected = {
+  id: 0,
+  size: 0,
+  diameter: 0,
+};
+
 function ManageFingerSize() {
   const [openAdd, setOpenAdd] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [selected, setSelected] = useState<Row>(initSelected);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
   const handleEditClick = useCallback(
@@ -109,7 +120,7 @@ function ManageFingerSize() {
       },
       {
         field: "diameter",
-        headerName: "Diameter (Mm)",
+        headerName: "Diameter (mm)",
         width: 200,
         headerAlign: "center",
         align: "center",
@@ -123,7 +134,7 @@ function ManageFingerSize() {
         width: 300,
         headerAlign: "center",
         align: "center",
-        getActions: ({ id }) => {
+        getActions: ({ id, row }) => {
           const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
           if (isInEditMode) {
@@ -143,6 +154,15 @@ function ManageFingerSize() {
           }
 
           return [
+            <GridActionsCellItem
+              sx={{ py: 3 }}
+              icon={<DeleteRoundedIcon color="action" />}
+              label="Delete"
+              onClick={() => {
+                setOpenDelete(true);
+                setSelected(row);
+              }}
+            />,
             <GridActionsCellItem
               sx={{ py: 3 }}
               icon={<BorderColorSharpIcon color="action" />}
@@ -217,6 +237,7 @@ function ManageFingerSize() {
       />
 
       <AddModal open={openAdd} setOpen={setOpenAdd} />
+      <DeleteModal open={openDelete} setOpen={setOpenDelete} />
     </div>
   );
 }

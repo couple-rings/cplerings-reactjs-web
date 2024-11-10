@@ -181,4 +181,29 @@ declare global {
     name: string;
     description: string;
   }
+
+  interface ICollection {
+    id: number;
+    name: string;
+    description: string;
+  }
+
+  interface ITopic {
+    id: number;
+    name: string;
+    description: string;
+  }
+
+  interface ITag {
+    id: number;
+    name: string;
+  }
+
+  interface IDiscountCampaign {
+    id: number;
+    name: string;
+    description: string;
+    discountPercentage: number;
+    collections: ICollection[];
+  }
 }

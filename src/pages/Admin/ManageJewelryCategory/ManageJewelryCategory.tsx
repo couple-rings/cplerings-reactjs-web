@@ -12,14 +12,17 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
 import ViewModal from "src/components/modal/jewelryCategory/View.modal";
 import UpdateModal from "src/components/modal/jewelryCategory/Update.modal";
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, Switch } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 import AddModal from "src/components/modal/jewelryCategory/Add.modal";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import DeleteModal from "src/components/modal/jewelryCategory/Delete.modal";
 
 interface Row {
   id: number;
   name: string;
   description: string;
+  isActive: boolean;
 }
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
@@ -32,12 +35,15 @@ const rows = [
     name: "Necklace",
     description:
       "Necklaces are versatile jewelry pieces worn around the neck, ranging from simple chains to statement designs with gemstones or pendants. Crafted in materials like gold, silver, and beads, they suit various styles and occasions. From elegant chokers to long chains, necklaces can add sophistication, sentiment, or bold flair, making them essential in any jewelry collection.",
+    isActive: true,
   },
+
   {
     id: 2,
     name: "Bracelet",
     description:
       "Bracelets are versatile jewelry worn around the wrist, available in styles from simple bands to intricate, embellished pieces. Made from materials like gold, silver, leather, or beads, they suit both casual and formal wear. Whether as delicate chains, bangles, or charm bracelets, they add elegance, personality, or a touch of flair, making them a staple in any jewelry collection.",
+    isActive: false,
   },
 ];
 
@@ -45,13 +51,19 @@ const initSelected = {
   id: 0,
   name: "",
   description: "",
+  isActive: true,
 };
 
 function ManageJewelryCategory() {
   const [openAdd, setOpenAdd] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const [selected, setSelected] = useState<Row>(initSelected);
+
+  const onChangeStatus = (id: number) => {
+    console.log(id);
+  };
 
   const columns: GridColDef<Row>[] = useMemo(
     () => [
@@ -77,6 +89,21 @@ function ManageJewelryCategory() {
         sortable: false,
       },
       {
+        field: "isActive",
+        headerName: "Status",
+        width: 250,
+        headerAlign: "center",
+        align: "center",
+        filterable: false,
+        sortable: false,
+        renderCell: ({ row }) => (
+          <Switch
+            defaultChecked={row.isActive}
+            onChange={() => onChangeStatus(row.id)}
+          />
+        ),
+      },
+      {
         field: "actions",
         headerName: "Action",
         type: "actions",
@@ -94,12 +121,22 @@ function ManageJewelryCategory() {
             }}
           />,
           <GridActionsCellItem
+            icon={<DeleteRoundedIcon color="action" />}
+            label="Delete"
+            onClick={() => {
+              setOpenDelete(true);
+              setSelected(row);
+            }}
+            showInMenu
+          />,
+          <GridActionsCellItem
             icon={<BorderColorSharpIcon color="action" />}
             label="Update"
             onClick={() => {
               setOpenUpdate(true);
               setSelected(row);
             }}
+            showInMenu
           />,
         ],
       },
@@ -153,6 +190,7 @@ function ManageJewelryCategory() {
         {...selected}
         resetSelected={resetSelected}
       />
+      <DeleteModal open={openDelete} setOpen={setOpenDelete} />
     </div>
   );
 }
