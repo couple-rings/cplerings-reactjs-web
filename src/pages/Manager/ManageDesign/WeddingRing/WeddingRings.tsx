@@ -15,6 +15,7 @@ import UpdateDesignModal from "src/components/modal/weddingRing/UpdateDesign.mod
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCoupleDesigns } from "src/services/design.service";
 import { pageSize } from "src/utils/constants";
+import { fetchCoupleDesigns } from "src/utils/querykey";
 
 interface Row {
   id: number;
@@ -65,7 +66,8 @@ function WeddingRings() {
   const queryClient = useQueryClient();
 
   const { data: response, isLoading } = useQuery({
-    queryKey: ["fetchCoupleDesigns", filterObj],
+    queryKey: [fetchCoupleDesigns, filterObj],
+
     queryFn: () => {
       return getCoupleDesigns(filterObj);
     },
@@ -194,7 +196,7 @@ function WeddingRings() {
 
   useEffect(() => {
     queryClient.invalidateQueries({
-      queryKey: ["fetchCoupleDesigns", filterObj],
+      queryKey: [fetchCoupleDesigns, filterObj],
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

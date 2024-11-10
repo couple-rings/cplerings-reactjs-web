@@ -6,6 +6,7 @@ import { saveRoute } from "src/redux/slice/route.slice";
 import { getAccountProfile } from "src/services/account.service";
 import { UserRole } from "src/utils/enums";
 import { useAppDispatch, useAppSelector } from "src/utils/hooks";
+import { fetchCustomerProfile } from "src/utils/querykey";
 
 const paths = [
   "/login",
@@ -27,7 +28,7 @@ function CommonRoute(props: IProtectedRouteProps) {
   const { role, username } = userInfo;
 
   const { data: response } = useQuery({
-    queryKey: ["fetchCustomerProfile"],
+    queryKey: [fetchCustomerProfile],
     queryFn: () => {
       return getAccountProfile();
     },

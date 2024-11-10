@@ -8,6 +8,7 @@ import { saveNotifications } from "src/redux/slice/conversation.slice";
 import { putUpdateConversation } from "src/services/conversation.service";
 import Chatbox from "src/components/chat/chatbox/Chatbox";
 import { socket } from "src/config/socket";
+import { fetchConversations } from "src/utils/querykey";
 
 function Index() {
   const [receiveMessage, setReceiveMessage] = useState<null | IMessage>(null);
@@ -33,7 +34,7 @@ function Index() {
     socket.emit("send_message", message, async (response: any) => {
       if (response) {
         queryClient.invalidateQueries({
-          queryKey: ["fetchConversations", userId],
+          queryKey: [fetchConversations, userId],
         });
       }
     });
@@ -72,7 +73,7 @@ function Index() {
         }
 
         queryClient.invalidateQueries({
-          queryKey: ["fetchConversations", userId],
+          queryKey: [fetchConversations, userId],
         });
       }
     };

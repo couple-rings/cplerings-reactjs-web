@@ -61,6 +61,7 @@ import ManageTopicAndTag from "src/pages/Manager/ManageTopicAndTag/Index";
 import ManageCampaign from "src/pages/Manager/ManageCampaign/ManageCampaign";
 import ManageDesign from "src/pages/Manager/ManageDesign/Index";
 import MaintenanceOrder from "src/pages/Staff/MaintenanceOrder/MaintenanceOrder";
+import CustomRequestCustomer from "src/pages/Customer/Support/CustomRequests/CustomRequest";
 
 const router = createBrowserRouter([
   {
@@ -180,6 +181,10 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <SupportDefault />,
+          },
+          {
+            path: "custom-request",
+            element: <CustomRequestCustomer />,
           },
         ],
       },
