@@ -278,6 +278,11 @@ declare global {
     resetSelected?: () => void;
   }
 
+  interface IDesignModalProps extends IModalProps {
+    resetSelected?: () => void;
+    design: IDesign;
+  }
+
   interface IImageModalProps extends IModalProps {
     img: string;
   }

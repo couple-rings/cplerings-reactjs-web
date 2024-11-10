@@ -171,6 +171,7 @@ const metalsSpecs = [
 const initError = {
   notSelectedDiamond: false,
   notSelectedMetal: false,
+  imageMissing: false,
 };
 
 function UpdateDesignModal(props: ICoupleDesignModalProps) {
@@ -229,7 +230,21 @@ function UpdateDesignModal(props: ICoupleDesignModalProps) {
     }, [designs]),
   });
 
+  const onError = () => {
+    const maleImageMissing = maleAddedMetals.find((metal) => !metal.image);
+    const femaleImageMissing = femaleAddedMetals.find((metal) => !metal.image);
+
+    if (maleImageMissing) setMaleError({ ...maleError, imageMissing: true });
+    if (femaleImageMissing)
+      setFemaleError({ ...femaleError, imageMissing: true });
+
+    if (maleImageMissing || femaleImageMissing) return true;
+    else return false;
+  };
+
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    if (onError()) return;
+
     console.log(data);
     console.log(await toBase64(data.male.blueprint));
   };
@@ -291,11 +306,22 @@ function UpdateDesignModal(props: ICoupleDesignModalProps) {
   };
 
   const handleRemoveMetal = (id: number, gender: DesignCharacteristic) => {
-    if (gender === DesignCharacteristic.Male)
-      setMaleAddedMetals(maleAddedMetals.filter((item) => item.id !== id));
+    if (gender === DesignCharacteristic.Male) {
+      const list = maleAddedMetals.filter((item) => item.id !== id);
+      setMaleAddedMetals(list);
 
-    if (gender === DesignCharacteristic.Female)
-      setFemaleAddedMetals(femaleAddedMetals.filter((item) => item.id !== id));
+      const imageMissing = list.find((metal) => !metal.image);
+      if (!imageMissing) setMaleError({ ...maleError, imageMissing: false });
+    }
+
+    if (gender === DesignCharacteristic.Female) {
+      const list = femaleAddedMetals.filter((item) => item.id !== id);
+      setFemaleAddedMetals(list);
+
+      const imageMissing = list.find((metal) => !metal.image);
+      if (!imageMissing)
+        setFemaleError({ ...femaleError, imageMissing: false });
+    }
   };
 
   const handleAddMetal = (id: number, gender: DesignCharacteristic) => {
@@ -332,6 +358,8 @@ function UpdateDesignModal(props: ICoupleDesignModalProps) {
           if (metal.id === id) metal.image = image;
         });
 
+        const imageMissing = cloneList.find((item) => !item.image);
+        if (!imageMissing) setMaleError({ ...maleError, imageMissing: false });
         setMaleAddedMetals(cloneList);
       }
 
@@ -341,6 +369,9 @@ function UpdateDesignModal(props: ICoupleDesignModalProps) {
           if (metal.id === id) metal.image = image;
         });
 
+        const imageMissing = cloneList.find((item) => !item.image);
+        if (!imageMissing)
+          setFemaleError({ ...femaleError, imageMissing: false });
         setFemaleAddedMetals(cloneList);
       }
     }
@@ -434,7 +465,7 @@ function UpdateDesignModal(props: ICoupleDesignModalProps) {
       }}
       TransitionComponent={Transition}
       fullScreen
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, onError)}
     >
       <AppBar sx={{ position: "relative", backgroundColor: "#313131" }}>
         <Toolbar>
@@ -451,6 +482,7 @@ function UpdateDesignModal(props: ICoupleDesignModalProps) {
           </IconButton>
         </Toolbar>
       </AppBar>
+
       <Container sx={{ mt: 5 }}>
         <Grid container item xs={12} sm={4} mt={2} mb={5}>
           <InputLabel error={!!errors.collectionId} sx={{ mb: 1 }}>
@@ -513,7 +545,6 @@ function UpdateDesignModal(props: ICoupleDesignModalProps) {
               </Link>
               <Controller
                 name="male.blueprint"
-                rules={{ required: "* Must provide blueprint file" }}
                 control={control}
                 render={({ field: { onChange } }) => (
                   <TextField
@@ -523,7 +554,6 @@ function UpdateDesignModal(props: ICoupleDesignModalProps) {
                     inputProps={{
                       accept: ".pdf",
                     }}
-                    error={!!errors.male?.blueprint}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       onChange(e.target.files && e.target.files[0]);
                     }}
@@ -688,13 +718,18 @@ function UpdateDesignModal(props: ICoupleDesignModalProps) {
                       <ListItem
                         key={id}
                         secondaryAction={
-                          <IconButton
-                            onClick={() =>
-                              handleRemoveDiamond(id, DesignCharacteristic.Male)
-                            }
-                          >
-                            <RemoveSharpIcon />
-                          </IconButton>
+                          maleAddedDiamonds.length > 1 && (
+                            <IconButton
+                              onClick={() =>
+                                handleRemoveDiamond(
+                                  id,
+                                  DesignCharacteristic.Male
+                                )
+                              }
+                            >
+                              <RemoveSharpIcon />
+                            </IconButton>
+                          )
                         }
                       >
                         <ListItemIcon>
@@ -781,16 +816,18 @@ function UpdateDesignModal(props: ICoupleDesignModalProps) {
                       <ListItem
                         key={metal.id}
                         secondaryAction={
-                          <IconButton
-                            onClick={() =>
-                              handleRemoveMetal(
-                                metal.id,
-                                DesignCharacteristic.Male
-                              )
-                            }
-                          >
-                            <RemoveSharpIcon />
-                          </IconButton>
+                          maleAddedMetals.length > 1 && (
+                            <IconButton
+                              onClick={() =>
+                                handleRemoveMetal(
+                                  metal.id,
+                                  DesignCharacteristic.Male
+                                )
+                              }
+                            >
+                              <RemoveSharpIcon />
+                            </IconButton>
+                          )
                         }
                       >
                         <ListItemIcon>
@@ -826,6 +863,9 @@ function UpdateDesignModal(props: ICoupleDesignModalProps) {
                     </ListItem>
                   )}
                 </List>
+                {maleError.imageMissing && (
+                  <FormHelperText error>* Must upload image</FormHelperText>
+                )}
               </Grid>
             </Grid>
             {/* Male metal spec end */}
@@ -858,7 +898,6 @@ function UpdateDesignModal(props: ICoupleDesignModalProps) {
               </Link>
               <Controller
                 name="female.blueprint"
-                rules={{ required: "* Must provide blueprint file" }}
                 control={control}
                 render={({ field: { onChange } }) => (
                   <TextField
@@ -868,7 +907,6 @@ function UpdateDesignModal(props: ICoupleDesignModalProps) {
                     inputProps={{
                       accept: ".pdf",
                     }}
-                    error={!!errors.female?.blueprint}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       onChange(e.target.files && e.target.files[0]);
                     }}
@@ -1033,16 +1071,18 @@ function UpdateDesignModal(props: ICoupleDesignModalProps) {
                       <ListItem
                         key={id}
                         secondaryAction={
-                          <IconButton
-                            onClick={() =>
-                              handleRemoveDiamond(
-                                id,
-                                DesignCharacteristic.Female
-                              )
-                            }
-                          >
-                            <RemoveSharpIcon />
-                          </IconButton>
+                          femaleAddedDiamonds.length > 1 && (
+                            <IconButton
+                              onClick={() =>
+                                handleRemoveDiamond(
+                                  id,
+                                  DesignCharacteristic.Female
+                                )
+                              }
+                            >
+                              <RemoveSharpIcon />
+                            </IconButton>
+                          )
                         }
                       >
                         <ListItemIcon>
@@ -1133,16 +1173,18 @@ function UpdateDesignModal(props: ICoupleDesignModalProps) {
                       <ListItem
                         key={metal.id}
                         secondaryAction={
-                          <IconButton
-                            onClick={() =>
-                              handleRemoveMetal(
-                                metal.id,
-                                DesignCharacteristic.Female
-                              )
-                            }
-                          >
-                            <RemoveSharpIcon />
-                          </IconButton>
+                          femaleAddedMetals.length > 1 && (
+                            <IconButton
+                              onClick={() =>
+                                handleRemoveMetal(
+                                  metal.id,
+                                  DesignCharacteristic.Female
+                                )
+                              }
+                            >
+                              <RemoveSharpIcon />
+                            </IconButton>
+                          )
                         }
                       >
                         <ListItemIcon>
@@ -1178,6 +1220,9 @@ function UpdateDesignModal(props: ICoupleDesignModalProps) {
                     </ListItem>
                   )}
                 </List>
+                {femaleError.imageMissing && (
+                  <FormHelperText error>* Must upload image</FormHelperText>
+                )}
               </Grid>
             </Grid>
             {/* Female metal spec end */}

@@ -125,6 +125,9 @@ const metalsSpecs = [
 const initError = {
   notSelectedDiamond: false,
   notSelectedMetal: false,
+  noDiamondsAdded: false,
+  noMetalsAdded: false,
+  imageMissing: false,
 };
 
 function AddModal(props: IModalProps) {
@@ -160,7 +163,41 @@ function AddModal(props: IModalProps) {
     handleSubmit,
     control,
   } = useForm<IFormInput>();
+
+  const onError = () => {
+    const maleClone = _.cloneDeep(initError);
+    const femaleClone = _.cloneDeep(initError);
+
+    if (maleAddedDiamonds.length === 0) maleClone.noDiamondsAdded = true;
+    if (maleAddedMetals.length === 0) maleClone.noMetalsAdded = true;
+    maleAddedMetals.forEach((metal) => {
+      if (!metal.image) maleClone.imageMissing = true;
+    });
+
+    if (femaleAddedDiamonds.length === 0) femaleClone.noDiamondsAdded = true;
+    if (femaleAddedMetals.length === 0) femaleClone.noMetalsAdded = true;
+    femaleAddedMetals.forEach((metal) => {
+      if (!metal.image) femaleClone.imageMissing = true;
+    });
+
+    setMaleError(maleClone);
+    setFemaleError(femaleClone);
+
+    if (
+      maleClone.noDiamondsAdded ||
+      maleClone.noMetalsAdded ||
+      maleClone.imageMissing ||
+      femaleClone.noDiamondsAdded ||
+      femaleClone.noMetalsAdded ||
+      femaleClone.imageMissing
+    )
+      return true;
+    else return false;
+  };
+
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    if (onError()) return;
+
     console.log(data);
     console.log(await toBase64(data.male.blueprint));
     console.log(image);
@@ -195,6 +232,7 @@ function AddModal(props: IModalProps) {
       }
       setMaleAddedDiamonds([...maleAddedDiamonds, id]);
       setMaleSelectedDiamond(0);
+      setMaleError({ ...maleError, noDiamondsAdded: false });
     }
 
     if (gender === DesignCharacteristic.Female) {
@@ -204,15 +242,24 @@ function AddModal(props: IModalProps) {
       }
       setFemaleAddedDiamonds([...femaleAddedDiamonds, id]);
       setFemaleSelectedDiamond(0);
+      setFemaleError({ ...femaleError, noDiamondsAdded: false });
     }
   };
 
   const handleRemoveDiamond = (id: number, gender: DesignCharacteristic) => {
-    if (gender === DesignCharacteristic.Male)
-      setMaleAddedDiamonds(maleAddedDiamonds.filter((item) => item !== id));
+    if (gender === DesignCharacteristic.Male) {
+      const list = maleAddedDiamonds.filter((item) => item !== id);
+      setMaleAddedDiamonds(list);
+      if (list.length === 0)
+        setMaleError({ ...maleError, noDiamondsAdded: true });
+    }
 
-    if (gender === DesignCharacteristic.Female)
-      setFemaleAddedDiamonds(femaleAddedDiamonds.filter((item) => item !== id));
+    if (gender === DesignCharacteristic.Female) {
+      const list = femaleAddedDiamonds.filter((item) => item !== id);
+      setFemaleAddedDiamonds(list);
+      if (list.length === 0)
+        setFemaleError({ ...femaleError, noDiamondsAdded: true });
+    }
   };
 
   const handleSelectMetal = (id: number, gender: DesignCharacteristic) => {
@@ -230,30 +277,67 @@ function AddModal(props: IModalProps) {
   };
 
   const handleRemoveMetal = (id: number, gender: DesignCharacteristic) => {
-    if (gender === DesignCharacteristic.Male)
-      setMaleAddedMetals(maleAddedMetals.filter((item) => item.id !== id));
+    if (gender === DesignCharacteristic.Male) {
+      const list = maleAddedMetals.filter((item) => item.id !== id);
+      setMaleAddedMetals(list);
 
-    if (gender === DesignCharacteristic.Female)
-      setFemaleAddedMetals(femaleAddedMetals.filter((item) => item.id !== id));
+      if (list.length === 0) {
+        setMaleError({
+          ...maleError,
+          imageMissing: false,
+          noMetalsAdded: true,
+        });
+      } else {
+        const imageMissing = list.find((metal) => !metal.image);
+        if (!imageMissing) setMaleError({ ...maleError, imageMissing: false });
+      }
+    }
+
+    if (gender === DesignCharacteristic.Female) {
+      const list = femaleAddedMetals.filter((item) => item.id !== id);
+      setFemaleAddedMetals(list);
+
+      if (list.length === 0) {
+        setFemaleError({
+          ...femaleError,
+          imageMissing: false,
+          noMetalsAdded: true,
+        });
+      } else {
+        const imageMissing = list.find((metal) => !metal.image);
+        if (!imageMissing)
+          setFemaleError({ ...femaleError, imageMissing: false });
+      }
+    }
   };
 
   const handleAddMetal = (id: number, gender: DesignCharacteristic) => {
     if (gender === DesignCharacteristic.Male) {
       if (id === 0) {
-        setMaleError({ ...maleError, notSelectedMetal: true });
+        setMaleError({
+          ...maleError,
+          noMetalsAdded: false,
+          notSelectedMetal: true,
+        });
         return;
       }
       setMaleAddedMetals([...maleAddedMetals, { id, image: "" }]);
       setMaleSelectedMetal(0);
+      setMaleError({ ...maleError, noMetalsAdded: false });
     }
 
     if (gender === DesignCharacteristic.Female) {
       if (id === 0) {
-        setFemaleError({ ...femaleError, notSelectedMetal: true });
+        setFemaleError({
+          ...femaleError,
+          noMetalsAdded: false,
+          notSelectedMetal: true,
+        });
         return;
       }
       setFemaleAddedMetals([...femaleAddedMetals, { id, image: "" }]);
       setFemaleSelectedMetal(0);
+      setFemaleError({ ...femaleError, noMetalsAdded: false });
     }
   };
 
@@ -271,6 +355,8 @@ function AddModal(props: IModalProps) {
           if (metal.id === id) metal.image = image;
         });
 
+        const imageMissing = cloneList.find((item) => !item.image);
+        if (!imageMissing) setMaleError({ ...maleError, imageMissing: false });
         setMaleAddedMetals(cloneList);
       }
 
@@ -280,6 +366,9 @@ function AddModal(props: IModalProps) {
           if (metal.id === id) metal.image = image;
         });
 
+        const imageMissing = cloneList.find((item) => !item.image);
+        if (!imageMissing)
+          setFemaleError({ ...femaleError, imageMissing: false });
         setFemaleAddedMetals(cloneList);
       }
     }
@@ -322,7 +411,7 @@ function AddModal(props: IModalProps) {
       }}
       TransitionComponent={Transition}
       fullScreen
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, onError)}
     >
       <AppBar sx={{ position: "relative", backgroundColor: "#313131" }}>
         <Toolbar>
@@ -585,8 +674,17 @@ function AddModal(props: IModalProps) {
                 mb={1}
               >
                 <FormControl>
-                  <FormLabel>Diamond Specification</FormLabel>
+                  <FormLabel
+                    error={
+                      maleError.notSelectedDiamond || maleError.noDiamondsAdded
+                    }
+                  >
+                    Diamond Specification
+                  </FormLabel>
                   <Select
+                    error={
+                      maleError.notSelectedDiamond || maleError.noDiamondsAdded
+                    }
                     fullWidth
                     variant="standard"
                     value={maleSelectedDiamond}
@@ -627,6 +725,11 @@ function AddModal(props: IModalProps) {
               {maleError.notSelectedDiamond && (
                 <FormHelperText error>
                   * Must select diamond specification
+                </FormHelperText>
+              )}
+              {maleError.noDiamondsAdded && (
+                <FormHelperText error>
+                  * Must add diamond specification
                 </FormHelperText>
               )}
 
@@ -678,8 +781,17 @@ function AddModal(props: IModalProps) {
                 mb={1}
               >
                 <FormControl>
-                  <FormLabel>Metal Specification</FormLabel>
+                  <FormLabel
+                    error={
+                      maleError.notSelectedMetal || maleError.noMetalsAdded
+                    }
+                  >
+                    Metal Specification
+                  </FormLabel>
                   <Select
+                    error={
+                      maleError.notSelectedMetal || maleError.noMetalsAdded
+                    }
                     autoWidth
                     variant="standard"
                     value={maleSelectedMetal}
@@ -718,6 +830,11 @@ function AddModal(props: IModalProps) {
               {maleError.notSelectedMetal && (
                 <FormHelperText error>
                   * Must select metal specification
+                </FormHelperText>
+              )}
+              {maleError.noMetalsAdded && (
+                <FormHelperText error>
+                  * Must add metal specification
                 </FormHelperText>
               )}
 
@@ -761,7 +878,7 @@ function AddModal(props: IModalProps) {
                               )}
                               <UploadImgChip
                                 metalId={metal.id}
-                                gender={DesignCharacteristic.Female}
+                                gender={DesignCharacteristic.Male}
                                 handleUploadMetalImg={handleUploadMetalImg}
                               />
                             </Box>
@@ -776,6 +893,9 @@ function AddModal(props: IModalProps) {
                     </ListItem>
                   )}
                 </List>
+                {maleError.imageMissing && (
+                  <FormHelperText error>* Must upload image</FormHelperText>
+                )}
               </Grid>
             </Grid>
             {/* Male metal spec end */}
@@ -919,8 +1039,19 @@ function AddModal(props: IModalProps) {
                 mb={1}
               >
                 <FormControl>
-                  <FormLabel>Diamond Specification</FormLabel>
+                  <FormLabel
+                    error={
+                      femaleError.notSelectedDiamond ||
+                      femaleError.noDiamondsAdded
+                    }
+                  >
+                    Diamond Specification
+                  </FormLabel>
                   <Select
+                    error={
+                      femaleError.notSelectedDiamond ||
+                      femaleError.noDiamondsAdded
+                    }
                     fullWidth
                     variant="standard"
                     value={femaleSelectedDiamond}
@@ -961,6 +1092,11 @@ function AddModal(props: IModalProps) {
               {femaleError.notSelectedDiamond && (
                 <FormHelperText error>
                   * Must select diamond specification
+                </FormHelperText>
+              )}
+              {femaleError.noDiamondsAdded && (
+                <FormHelperText error>
+                  * Must add diamond specification
                 </FormHelperText>
               )}
 
@@ -1015,8 +1151,17 @@ function AddModal(props: IModalProps) {
                 mb={1}
               >
                 <FormControl>
-                  <FormLabel>Metal Specification</FormLabel>
+                  <FormLabel
+                    error={
+                      femaleError.notSelectedMetal || femaleError.noMetalsAdded
+                    }
+                  >
+                    Metal Specification
+                  </FormLabel>
                   <Select
+                    error={
+                      femaleError.notSelectedMetal || femaleError.noMetalsAdded
+                    }
                     autoWidth
                     variant="standard"
                     value={femaleSelectedMetal}
@@ -1059,6 +1204,11 @@ function AddModal(props: IModalProps) {
               {femaleError.notSelectedMetal && (
                 <FormHelperText error>
                   * Must select metal specification
+                </FormHelperText>
+              )}
+              {femaleError.noMetalsAdded && (
+                <FormHelperText error>
+                  * Must add metal specification
                 </FormHelperText>
               )}
 
@@ -1117,6 +1267,9 @@ function AddModal(props: IModalProps) {
                     </ListItem>
                   )}
                 </List>
+                {femaleError.imageMissing && (
+                  <FormHelperText error>* Must upload image</FormHelperText>
+                )}
               </Grid>
             </Grid>
             {/* Female metal spec end */}

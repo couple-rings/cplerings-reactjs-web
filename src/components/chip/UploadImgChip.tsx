@@ -7,7 +7,7 @@ const UploadImgChip = (props: IUploadImgChipProps) => {
   return (
     <label style={{ cursor: "pointer" }}>
       <Chip
-        icon={<ImageSharpIcon />}
+        icon={<ImageSharpIcon sx={{ fontSize: "1.3rem" }} />}
         label={"Upload"}
         color="info"
         sx={{ px: 1 }}

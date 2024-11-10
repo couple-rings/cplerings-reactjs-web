@@ -111,6 +111,7 @@ function WeddingRings() {
         align: "center",
         filterable: false,
         sortable: false,
+        disableColumnMenu: true,
         renderCell: ({ row }) => (
           <Switch
             defaultChecked={true}
@@ -235,6 +236,7 @@ function WeddingRings() {
         open={openUpdateDesign}
         setOpen={setOpenUpdateDesign}
         {...selected}
+        resetSelected={resetSelected}
       />
       <UpdateCoupleModal
         open={openUpdateCouple}

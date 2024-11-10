@@ -6,7 +6,7 @@ const ViewImgChip = (props: IViewImgChipProps) => {
 
   return (
     <Chip
-      icon={<ImageSharpIcon />}
+      icon={<ImageSharpIcon sx={{ fontSize: "1.3rem" }} />}
       label={"View"}
       color="info"
       sx={{ px: 1, mr: 3, cursor: "pointer" }}

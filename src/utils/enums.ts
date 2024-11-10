@@ -88,6 +88,7 @@ export enum IdReadingResponseCode {
 }
 
 export enum DesignCharacteristic {
+  Default = "",
   Male = "MASCULINE",
   Female = "FEMININE",
 }
