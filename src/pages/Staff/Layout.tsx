@@ -8,6 +8,7 @@ import Header from "src/components/layout/Header";
 import { Outlet } from "react-router-dom";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import PaletteIcon from "@mui/icons-material/Palette";
+import HandymanIcon from '@mui/icons-material/Handyman';
 
 const sidebarList = [
   {
@@ -19,6 +20,11 @@ const sidebarList = [
     text: "Yêu Cầu Thiết Kế",
     icon: <PaletteIcon />,
     path: "/staff/custom-request",
+  },
+  {
+    text: "Yêu Cầu Bảo Trì",
+    icon: <HandymanIcon />,
+    path: "/staff/maintenance-order",
   },
 ];
 

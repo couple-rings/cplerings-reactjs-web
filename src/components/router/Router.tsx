@@ -54,6 +54,7 @@ import ManageJewelryCategory from "src/pages/Admin/ManageJewelryCategory/ManageJ
 import ManageDiamondSpecification from "src/pages/Admin/ManageDiamondSpecification/ManageDiamondSpecification";
 import ManageMetalSpec from "src/pages/Admin/ManageMetalSpec/ManageMetalSpec";
 import ManageFingerSize from "src/pages/Admin/ManageFingerSize/ManageFingerSize";
+import MaintenanceOrder from "src/pages/Staff/MaintenanceOrder/MaintenanceOrder";
 
 const router = createBrowserRouter([
   {
@@ -230,6 +231,11 @@ const router = createBrowserRouter([
         path: "crafting-request/detail",
         element: <CraftingRequestDetail />,
       },
+      {
+        path: "maintenance-order",
+        element: <MaintenanceOrder />,
+      },
+      
     ],
   },
   {
