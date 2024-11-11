@@ -20,6 +20,7 @@ import { getCoupleDesigns } from "src/services/design.service";
 import { pageSize } from "src/utils/constants";
 import { calculateDefaultPrice } from "src/utils/functions";
 import LoadingProduct from "src/components/product/LoadingProduct";
+import { fetchCoupleDesigns } from "src/utils/querykey";
 
 const collections = [
   "DR Heart",
@@ -59,10 +60,7 @@ const initMetaData = {
 
 function WeddingRings() {
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
-  const [filterObj, setFilterObj] = useState<ICoupleDesignFilter>({
-    page: 0,
-    pageSize,
-  });
+  const [filterObj, setFilterObj] = useState<ICoupleDesignFilter>(initFilter);
 
   const navigate = useNavigate();
 
@@ -70,7 +68,7 @@ function WeddingRings() {
   const queryClient = useQueryClient();
 
   const { data: response, isLoading } = useQuery({
-    queryKey: ["fetchCoupleDesigns", filterObj],
+    queryKey: [fetchCoupleDesigns, filterObj],
     queryFn: () => {
       return getCoupleDesigns(filterObj);
     },
@@ -99,7 +97,7 @@ function WeddingRings() {
 
   useEffect(() => {
     queryClient.invalidateQueries({
-      queryKey: ["fetchCoupleDesigns", filterObj],
+      queryKey: [fetchCoupleDesigns, filterObj],
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

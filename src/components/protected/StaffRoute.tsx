@@ -5,6 +5,7 @@ import { saveProfile } from "src/redux/slice/auth.slice";
 import { getAccountProfile } from "src/services/account.service";
 import { UserRole } from "src/utils/enums";
 import { useAppDispatch, useAppSelector } from "src/utils/hooks";
+import { fetchStaffProfile } from "src/utils/querykey";
 
 function StaffRoute(props: IProtectedRouteProps) {
   const { children } = props;
@@ -14,7 +15,7 @@ function StaffRoute(props: IProtectedRouteProps) {
   const { role, username } = userInfo;
 
   const { data: response } = useQuery({
-    queryKey: ["fetchStaffProfile"],
+    queryKey: [fetchStaffProfile],
     queryFn: () => {
       return getAccountProfile();
     },

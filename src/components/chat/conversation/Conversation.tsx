@@ -18,6 +18,7 @@ import {
 } from "src/redux/slice/conversation.slice";
 import { putUpdateConversation } from "src/services/conversation.service";
 import { putUpdateMessage } from "src/services/message.service";
+import { fetchConversations } from "src/utils/querykey";
 
 function Conversation(props: IConversationProps) {
   const { conversation } = props;
@@ -97,7 +98,7 @@ function Conversation(props: IConversationProps) {
         putUpdateMessage(latestMessage._id, { read: true });
 
       queryClient.invalidateQueries({
-        queryKey: ["fetchConversations", userId],
+        queryKey: [fetchConversations, userId],
       });
     }
   };

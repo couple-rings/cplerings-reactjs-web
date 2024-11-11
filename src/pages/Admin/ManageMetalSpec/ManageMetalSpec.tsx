@@ -21,6 +21,8 @@ import { GoldColor } from "src/utils/enums";
 import { Button, Grid } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 import AddModal from "src/components/modal/metalSpecification/Add.modal";
+import DeleteModal from "src/components/modal/metalSpecification/Delete.modal";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 
 interface Row {
   id: number;
@@ -54,8 +56,18 @@ const rows = [
   },
 ];
 
+const initSelected = {
+  id: 0,
+  name: "",
+  color: GoldColor.Yellow,
+  pricePerUnit: 0,
+};
+
 function ManageMetalSpec() {
   const [openAdd, setOpenAdd] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [selected, setSelected] = useState<Row>(initSelected);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
   const handleEditClick = useCallback(
@@ -134,7 +146,7 @@ function ManageMetalSpec() {
         width: 200,
         headerAlign: "center",
         align: "center",
-        getActions: ({ id }) => {
+        getActions: ({ row, id }) => {
           const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
           if (isInEditMode) {
@@ -154,6 +166,15 @@ function ManageMetalSpec() {
           }
 
           return [
+            <GridActionsCellItem
+              sx={{ py: 3 }}
+              icon={<DeleteRoundedIcon color="action" />}
+              label="Delete"
+              onClick={() => {
+                setOpenDelete(true);
+                setSelected(row);
+              }}
+            />,
             <GridActionsCellItem
               sx={{ py: 3 }}
               icon={<BorderColorSharpIcon color="action" />}
@@ -205,7 +226,7 @@ function ManageMetalSpec() {
   return (
     <div className={styles.container}>
       <Grid container justifyContent={"space-between"} alignItems={"center"}>
-        <div className={styles.title}>Diamond Specification</div>
+        <div className={styles.title}>Metal Specification</div>
 
         <Button
           variant="contained"
@@ -233,6 +254,7 @@ function ManageMetalSpec() {
       />
 
       <AddModal open={openAdd} setOpen={setOpenAdd} />
+      <DeleteModal open={openDelete} setOpen={setOpenDelete} />
     </div>
   );
 }
