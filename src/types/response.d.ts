@@ -127,4 +127,9 @@ declare global {
 
     errorMessage: string;
   }
+
+  interface ICustomRequestDetailResponse {
+    status: CustomRequestStatus;
+    designs: IDesign[];
+  }
 }

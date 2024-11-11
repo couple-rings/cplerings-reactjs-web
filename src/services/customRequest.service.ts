@@ -15,3 +15,16 @@ export const getCustomRequests = (queryObj: ICustomRequestFilter) => {
     `custom-requests?${queryUrl}`
   );
 };
+
+export const getCustomRequestDetail = (id: number) => {
+  return axios.get<unknown, IResponse<ICustomRequestDetailResponse>>(
+    `custom-requests/${id}`
+  );
+};
+
+export const putUpdateCustomRequest = (data: IUpdateCRRequest, id: number) => {
+  return axios.put<unknown, IResponse<ICustomRequest>>(
+    `custom-requests/determination/${id}`,
+    data
+  );
+};
