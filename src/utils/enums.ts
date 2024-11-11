@@ -73,7 +73,7 @@ export enum MaintenanceOrderStatus {
   Completed = "COMPLETED",
   Delivering = "DELIVERING",
   Handling = "HANDLING",
-  Paid = "PAID",
+  Paid = "PAID"
 }
 
 export enum AccountStatus {

@@ -162,7 +162,7 @@ function MaintenanceOrder() {
     <div className={styles.container}>
       <div className={styles.title}>
         Đơn Bảo Trì và Bảo Dưỡng
-        <Button className={styles.buttonCreate}>
+        <Button className={styles.buttonCreate} onClick={() => navigate("/staff/maintenance-create-form")}>
           <AddCircleOutlineIcon /> <div>Tạo Đơn</div>
         </Button>
       </div>
