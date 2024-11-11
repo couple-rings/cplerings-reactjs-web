@@ -12,7 +12,7 @@ export const primaryBtn: SxProps = {
 
 export const roundedPrimaryBtn: SxProps = {
   ...primaryBtn,
-  borderRadius: 2,
+  borderRadius: 1,
 };
 
 export const secondaryBtn: SxProps = {

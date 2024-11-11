@@ -9,6 +9,7 @@ import { putUpdateConversation } from "src/services/conversation.service";
 import Chatbox from "src/components/chat/chatbox/Chatbox";
 import { socket } from "src/config/socket";
 import { fetchConversations } from "src/utils/querykey";
+import { Box } from "@mui/material";
 
 function Index() {
   const [receiveMessage, setReceiveMessage] = useState<null | IMessage>(null);
@@ -17,9 +18,8 @@ function Index() {
   const dispatch = useAppDispatch();
 
   const { id: userId } = useAppSelector((state) => state.auth.userInfo);
-  const { currentConversation, notificationList } = useAppSelector(
-    (state) => state.conversation
-  );
+  const { currentConversation, notificationList, conversationsList } =
+    useAppSelector((state) => state.conversation);
 
   const { _id } = currentConversation;
 
@@ -92,6 +92,12 @@ function Index() {
 
       {_id && (
         <Chatbox handleSend={handleSend} receiveMessage={receiveMessage} />
+      )}
+
+      {conversationsList.length === 0 && (
+        <Box sx={{ mt: 10, textAlign: "center", width: "100%", color: "#555" }}>
+          Bạn chưa có cuộc hội thoại nào
+        </Box>
       )}
     </div>
   );

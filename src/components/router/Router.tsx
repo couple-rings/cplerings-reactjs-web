@@ -232,7 +232,7 @@ const router = createBrowserRouter([
         element: <CustomRequestDetail />,
       },
       {
-        path: "custom-request/design-version",
+        path: "custom-request/:id/design-version",
         element: <DesignVersions />,
       },
       {
@@ -249,9 +249,8 @@ const router = createBrowserRouter([
       },
       {
         path: "maintenance-create-form",
-        element: <MaintenanceCreateForm/>
-      }
-      
+        element: <MaintenanceCreateForm />,
+      },
     ],
   },
   {
