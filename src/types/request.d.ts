@@ -41,6 +41,10 @@ declare global {
     userId: number;
   }
 
+  interface ICreateConversationRequest {
+    participants: number[];
+  }
+
   interface IUpdateMessageRequest {
     read: boolean;
   }
@@ -90,5 +94,16 @@ declare global {
   interface ICreateCRRequest {
     customerId: number;
     designIds: number[];
+  }
+
+  interface IUpdateCRRequest {
+    staffId: number;
+    customRequestStatus: CustomRequestStatus;
+  }
+
+  interface IDesignVersionFilter {
+    page: number;
+    pageSize: number;
+    designId: number;
   }
 }

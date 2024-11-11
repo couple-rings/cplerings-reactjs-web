@@ -10,7 +10,6 @@
         font-size    : 2rem;
         color        : $primaryColor;
         margin-bottom: 3rem;
-        text-align   : center;
 
         @media screen and (max-width: 800px) {
             font-size: 1.5rem;
@@ -50,6 +49,8 @@
             .item {
                 margin-bottom: 0.5rem;
                 color        : $grayColor;
+                display      : flex;
+                align-items  : center;
             }
         }
     }
