@@ -161,7 +161,7 @@ function AddModal(props: IModalProps) {
                       handleSelectDistrict(e.target.value);
                     }}
                   >
-                    <MenuItem value={0}>
+                    <MenuItem value={0} disabled>
                       <em>None</em>
                     </MenuItem>
                     {districts.map((district) => {
@@ -190,7 +190,7 @@ function AddModal(props: IModalProps) {
                 rules={{ required: "Vui lòng chọn xã, phường" }}
                 render={({ field }) => (
                   <Select {...field}>
-                    <MenuItem value={0}>
+                    <MenuItem value={0} disabled>
                       <em>None</em>
                     </MenuItem>
                     {wards.map((ward) => {

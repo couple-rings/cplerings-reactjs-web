@@ -1,3 +1,5 @@
+import { CustomRequestStatus } from "src/utils/enums";
+
 export {};
 
 declare global {
@@ -76,6 +78,13 @@ declare global {
     metalSpecificationId?: number;
     minPrice?: number;
     maxPrice?: number;
+  }
+
+  interface ICustomRequestFilter {
+    page: number;
+    pageSize: number;
+    status?: CustomRequestStatus;
+    customerId?: number;
   }
 
   interface ICreateCRRequest {

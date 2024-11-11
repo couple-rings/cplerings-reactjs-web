@@ -54,6 +54,14 @@ import ManageJewelryCategory from "src/pages/Admin/ManageJewelryCategory/ManageJ
 import ManageDiamondSpecification from "src/pages/Admin/ManageDiamondSpecification/ManageDiamondSpecification";
 import ManageMetalSpec from "src/pages/Admin/ManageMetalSpec/ManageMetalSpec";
 import ManageFingerSize from "src/pages/Admin/ManageFingerSize/ManageFingerSize";
+import ManageDiamond from "src/pages/Manager/ManageDiamond/ManageDiamond";
+import ManageBranchInfo from "src/pages/Manager/ManageBranchInfo/ManageBranchInfo";
+import ManageCollection from "src/pages/Manager/ManageCollection/ManageCollection";
+import ManageTopicAndTag from "src/pages/Manager/ManageTopicAndTag/Index";
+import ManageCampaign from "src/pages/Manager/ManageCampaign/ManageCampaign";
+import ManageDesign from "src/pages/Manager/ManageDesign/Index";
+import MaintenanceOrder from "src/pages/Staff/MaintenanceOrder/MaintenanceOrder";
+import CustomRequestCustomer from "src/pages/Customer/Support/CustomRequests/CustomRequest";
 
 const router = createBrowserRouter([
   {
@@ -174,6 +182,10 @@ const router = createBrowserRouter([
             index: true,
             element: <SupportDefault />,
           },
+          {
+            path: "custom-request",
+            element: <CustomRequestCustomer />,
+          },
         ],
       },
       {
@@ -230,6 +242,10 @@ const router = createBrowserRouter([
         path: "crafting-request/detail",
         element: <CraftingRequestDetail />,
       },
+      {
+        path: "maintenance-order",
+        element: <MaintenanceOrder />,
+      },
     ],
   },
   {
@@ -269,6 +285,30 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <ManagerHome />,
+      },
+      {
+        path: "branch",
+        element: <ManageBranchInfo />,
+      },
+      {
+        path: "diamond",
+        element: <ManageDiamond />,
+      },
+      {
+        path: "collection",
+        element: <ManageCollection />,
+      },
+      {
+        path: "design",
+        element: <ManageDesign />,
+      },
+      {
+        path: "topic&tag",
+        element: <ManageTopicAndTag />,
+      },
+      {
+        path: "campaign",
+        element: <ManageCampaign />,
       },
     ],
   },

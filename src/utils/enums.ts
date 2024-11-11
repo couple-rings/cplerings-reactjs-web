@@ -54,10 +54,10 @@ export enum DeliveryMethod {
 }
 
 export enum CustomRequestStatus {
-  Waiting = "WAITING",
-  OnGoing = "ON GOING",
+  Waiting = "PENDING",
+  OnGoing = "APPROVED",
   Completed = "COMPLETED",
-  Canceled = "CANCELED",
+  Canceled = "REJECTED",
 }
 
 export enum CraftingRequestStatus {
@@ -66,6 +66,14 @@ export enum CraftingRequestStatus {
   Done = "DONE",
   Completed = "COMPLETED",
   Delivering = "DELIVERING",
+}
+
+export enum MaintenanceOrderStatus {
+  Done = "DONE",
+  Completed = "COMPLETED",
+  Delivering = "DELIVERING",
+  Handling = "HANDLING",
+  Paid = "PAID",
 }
 
 export enum AccountStatus {
@@ -88,6 +96,7 @@ export enum IdReadingResponseCode {
 }
 
 export enum DesignCharacteristic {
+  Default = "",
   Male = "MASCULINE",
   Female = "FEMININE",
 }

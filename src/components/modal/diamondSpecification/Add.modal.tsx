@@ -138,7 +138,7 @@ function AddModal(props: IModalProps) {
                 control={control}
                 render={({ field }) => (
                   <Select {...field}>
-                    <MenuItem value={""}>
+                    <MenuItem value={""} disabled>
                       <em>Select color</em>
                     </MenuItem>
                     {diamondColors.map((color) => {
@@ -169,7 +169,7 @@ function AddModal(props: IModalProps) {
                 control={control}
                 render={({ field }) => (
                   <Select {...field}>
-                    <MenuItem value={""}>
+                    <MenuItem value={""} disabled>
                       <em>Select clarity</em>
                     </MenuItem>
                     {diamondClarity.map((clarity) => {
@@ -201,7 +201,7 @@ function AddModal(props: IModalProps) {
               control={control}
               render={({ field }) => (
                 <Select {...field}>
-                  <MenuItem value={""}>
+                  <MenuItem value={""} disabled>
                     <em>Select shape</em>
                   </MenuItem>
                   {diamondShapes.map((shape) => {

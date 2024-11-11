@@ -1,0 +1,27 @@
+@use 'src/index.scss'as *;
+
+.container {
+    color        : $primaryColor;
+    border       : 1px solid $secondaryColor;
+    margin-bottom: 3rem;
+
+    .name {
+        color        : $secondaryColor;
+        font-size    : 1.5rem;
+        font-weight  : 500;
+        margin-bottom: 1rem;
+    }
+
+    .gender {
+        color        : #555;
+        margin-bottom: 0.5rem;
+
+        img {
+            margin-right: 10px;
+        }
+    }
+
+    .description {
+        line-height: 1.5rem;
+    }
+}

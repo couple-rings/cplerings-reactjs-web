@@ -320,6 +320,7 @@ function Contract() {
                     penColor="black"
                     canvasProps={{
                       height: 150,
+                      width: 260,
                       className: "sigCanvas",
                     }}
                   />

@@ -124,7 +124,7 @@ function AddModal(props: IModalProps) {
               control={control}
               render={({ field }) => (
                 <Select {...field} error={!!errors.role}>
-                  <MenuItem value={""}>
+                  <MenuItem value={""} disabled>
                     <em>Select role</em>
                   </MenuItem>
                   {[

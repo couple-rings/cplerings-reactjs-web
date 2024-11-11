@@ -1,5 +1,9 @@
 import { SxProps } from "@mui/material";
-import { AccountStatus } from "src/utils/enums";
+import {
+  AccountStatus,
+  CustomRequestStatus,
+  DesignCharacteristic,
+} from "src/utils/enums";
 
 export {};
 
@@ -252,5 +256,59 @@ declare global {
 
   interface IJewelryCategoryModalProps extends IModalProps, IJewelryCategory {
     resetSelected?: () => void;
+  }
+
+  interface IDiamondModalProps extends IModalProps {
+    resetSelected?: () => void;
+
+    giaReportNumber: string;
+
+    diamondSpecId: number;
+  }
+
+  interface ICollectionModalProps extends IModalProps, ICollection {
+    resetSelected?: () => void;
+  }
+
+  interface ITopicModalProps extends IModalProps, ITopic {
+    resetSelected?: () => void;
+  }
+
+  interface IDiscountCampaignModalProps extends IModalProps, IDiscountCampaign {
+    resetSelected?: () => void;
+  }
+
+  interface ICoupleDesignModalProps extends IModalProps, ICoupleDesign {
+    resetSelected?: () => void;
+  }
+
+  interface IDesignModalProps extends IModalProps {
+    resetSelected?: () => void;
+    design: IDesign;
+  }
+
+  interface IImageModalProps extends IModalProps {
+    img: string;
+  }
+
+  interface IViewImgChipProps {
+    image: string;
+    handleViewImage: (v: string) => void;
+  }
+
+  interface IUploadImgChipProps {
+    metalId: number;
+    gender: DesignCharacteristic;
+    handleUploadMetalImg: (
+      e: React.ChangeEvent<HTMLInputElement>,
+      id: number,
+      gender: DesignCharacteristic
+    ) => Promise<void>;
+  }
+
+  interface ICustomRequestCardProps {
+    designs: IDesign[];
+
+    status: CustomRequestStatus;
   }
 }

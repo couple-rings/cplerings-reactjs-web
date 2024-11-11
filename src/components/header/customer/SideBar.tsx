@@ -10,20 +10,19 @@ import {
   SxProps,
 } from "@mui/material";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
-import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import { useState } from "react";
 import logo from "src/assets/logowhite.png";
 import { useNavigate } from "react-router-dom";
 import WidgetsOutlinedIcon from "@mui/icons-material/WidgetsOutlined";
+import ColorLensRoundedIcon from "@mui/icons-material/ColorLensRounded";
 
 const bottomMobileMenu = [
   {
-    icon: <PermIdentityIcon />,
-    text: "Tài Khoản Của Tôi",
-    path: "",
+    icon: <ColorLensRoundedIcon />,
+    text: "Yêu Cầu Thiết Kế",
+    path: "/customer/support/custom-request",
   },
   {
     icon: <FavoriteBorderOutlinedIcon />,
@@ -39,10 +38,6 @@ const bottomMobileMenu = [
     icon: <PhoneOutlinedIcon />,
     text: "Liên Hệ",
     path: "",
-  },
-  {
-    icon: <LogoutOutlinedIcon />,
-    text: "Đăng Xuất",
   },
 ];
 
@@ -74,7 +69,13 @@ function SideBar() {
 
       <Drawer open={open} onClose={toggleDrawer(false)}>
         <ListItem disablePadding>
-          <ListItemButton sx={logoStyle} onClick={() => navigate("/")}>
+          <ListItemButton
+            sx={logoStyle}
+            onClick={() => {
+              navigate("/");
+              setOpen(false);
+            }}
+          >
             <img src={logo} style={{ width: "18%" }} />
 
             <Box
@@ -91,7 +92,7 @@ function SideBar() {
         <List>
           {bottomMobileMenu.map((item, index) => (
             <ListItem key={index} disablePadding>
-              <ListItemButton>
+              <ListItemButton onClick={() => navigate(item.path)}>
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.text} />
               </ListItemButton>
