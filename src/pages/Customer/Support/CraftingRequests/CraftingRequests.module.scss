@@ -1,0 +1,51 @@
+@use 'src/index.scss'as *;
+
+.container {
+    color  : $primaryColor;
+    padding: 3rem 0;
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .subtitle {
+        font-size    : 1.2rem;
+        margin-bottom: 2rem;
+        margin-left  : 10px;
+    }
+
+    .download {
+        display        : flex;
+        align-items    : center;
+        cursor         : pointer;
+        gap            : 5px;
+        text-decoration: none;
+        color          : $primaryColor;
+
+        &:hover {
+            color: $secondaryColor;
+        }
+    }
+
+    .request {
+        box-shadow      : $boxShadow;
+        padding         : 1rem;
+        background-color: $secondaryColor;
+        color           : white;
+        cursor          : pointer;
+
+        &:hover {
+            opacity: 0.8;
+        }
+
+        .status {
+            margin-bottom: 1rem;
+        }
+
+        .label {
+            display    : flex;
+            align-items: center;
+            font-weight: 600;
+        }
+    }
+}

@@ -278,7 +278,7 @@ function CustomRequestDetail() {
                     disabled={chatMutation.isPending}
                     variant="contained"
                     fullWidth
-                    sx={roundedPrimaryBtn}
+                    sx={{ ...roundedPrimaryBtn, px: 3 }}
                     onClick={() =>
                       navigate(`/staff/custom-request/${id}/design-version`)
                     }
@@ -305,7 +305,7 @@ function CustomRequestDetail() {
                 loading={statusMutation.isPending}
                 variant="contained"
                 fullWidth
-                sx={roundedPrimaryBtn}
+                sx={{ ...roundedPrimaryBtn, px: 3 }}
                 onClick={handleAccept}
               >
                 Nhận Yêu Cầu

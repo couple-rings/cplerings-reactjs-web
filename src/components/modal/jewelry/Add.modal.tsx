@@ -173,7 +173,7 @@ function AddModal(props: IModalProps) {
 
   const handleAddDiamond = (id: number) => {
     if (id === 0) {
-      setError({ ...error, notSelectedDiamond: true });
+      setError({ ...error, noDiamondsAdded: false, notSelectedDiamond: true });
       return;
     }
     setAddedDiamonds([...addedDiamonds, id]);
@@ -184,7 +184,8 @@ function AddModal(props: IModalProps) {
   const handleRemoveDiamond = (id: number) => {
     const list = addedDiamonds.filter((item) => item !== id);
     setAddedDiamonds(addedDiamonds.filter((item) => item !== id));
-    if (list.length === 0) setError({ ...error, noDiamondsAdded: true });
+    if (list.length === 0)
+      setError({ ...error, noDiamondsAdded: true, notSelectedDiamond: false });
   };
 
   const handleSelectMetal = (id: number) => {
@@ -203,6 +204,7 @@ function AddModal(props: IModalProps) {
         ...error,
         imageMissing: false,
         noMetalsAdded: true,
+        notSelectedMetal: false,
       });
     } else {
       const imageMissing = list.find((metal) => !metal.image);
