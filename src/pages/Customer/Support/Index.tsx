@@ -95,7 +95,7 @@ function Index() {
       {_id ? (
         <Chatbox handleSend={handleSend} receiveMessage={receiveMessage} />
       ) : (
-        <Grid container justifyContent={"center"}>
+        <Grid container justifyContent={"center"} sx={{ height: "50vh" }}>
           <Grid item xs={12} md={8}>
             <div className={styles.intro}>
               Chào mừng bạn đến với Trung Tâm Chăm Sóc Khách Hàng!

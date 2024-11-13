@@ -234,4 +234,10 @@ declare global {
     isAccepted: boolean;
     isOld: boolean;
   }
+
+  interface ICoordinate {
+    latitude: number;
+    longitude: number;
+    orderId: number;
+  }
 }

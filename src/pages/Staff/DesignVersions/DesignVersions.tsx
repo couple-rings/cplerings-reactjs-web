@@ -7,8 +7,6 @@ import {
   Skeleton,
 } from "@mui/material";
 import styles from "./DesignVersions.module.scss";
-import menring from "src/assets/sampledata/menring.png";
-import blueprint from "src/assets/sampledata/blueprint.pdf";
 import HoverCard from "src/components/product/HoverCard";
 import male from "src/assets/male-icon.png";
 import female from "src/assets/female-icon.png";
@@ -37,6 +35,10 @@ const initMetaData = {
 
 function DesignVersions() {
   const [open, setOpen] = useState(false);
+  const [createGender, setCreateGender] = useState(
+    DesignCharacteristic.Default
+  );
+
   const [maleDesign, setMaleDesign] = useState<IDesign | null>(null);
   const [femaleDesign, setFemaleDesign] = useState<IDesign | null>(null);
 
@@ -101,6 +103,13 @@ function DesignVersions() {
         ...femaleFilterObj,
         page: value - 1,
       });
+  };
+
+  const handleCreateVersion = (image: string, designFile: string) => {
+    console.log(image, designFile);
+    if (createGender === DesignCharacteristic.Male) console.log(maleDesign?.id);
+    if (createGender === DesignCharacteristic.Female)
+      console.log(femaleDesign?.id);
   };
 
   useEffect(() => {
@@ -231,17 +240,37 @@ function DesignVersions() {
             <span>Nhẫn Nam</span>
           </Grid>
 
-          {[1, 2, 3].map((item) => {
+          {maleVersionResponse?.data?.items?.map((item) => {
             return (
-              <Grid item md={3} key={item}>
+              <Grid item md={3} key={item.id}>
                 <Card className={styles.version}>
-                  <HoverCard image={menring} file={blueprint} />
-                  <div className={styles.versionNo}>Version {item}</div>
-                  {item === 1 && <CheckCircleIcon color="success" />}
+                  <HoverCard
+                    image={item.image.url}
+                    file={item.designFile.url}
+                  />
+                  <div className={styles.versionNo}>
+                    Version {item.versionNumber}
+                  </div>
+                  {item.isAccepted && <CheckCircleIcon color="success" />}
                 </Card>
               </Grid>
             );
           })}
+
+          <Grid
+            item
+            xs={12}
+            md={3}
+            onClick={() => {
+              setOpen(true);
+              setCreateGender(DesignCharacteristic.Male);
+            }}
+          >
+            <Card className={`${styles.version} ${styles.addVersion}`}>
+              <AddBoxOutlinedIcon className={styles.addIcon} />
+              <div className={styles.addText}>Tạo Bản Mới</div>
+            </Card>
+          </Grid>
 
           <Grid container justifyContent={"center"}>
             <Pagination
@@ -269,18 +298,31 @@ function DesignVersions() {
             <span>Nhẫn Nữ</span>
           </Grid>
 
-          {[1, 2].map((item) => {
+          {femaleVersionResponse?.data?.items?.map((item) => {
             return (
-              <Grid item md={3} key={item}>
+              <Grid item md={3} key={item.id}>
                 <Card className={styles.version}>
-                  <HoverCard image={menring} file={blueprint} />
-                  <div className={styles.versionNo}>Version {item}</div>
+                  <HoverCard
+                    image={item.image.url}
+                    file={item.designFile.url}
+                  />
+                  <div className={styles.versionNo}>
+                    Version {item.versionNumber}
+                  </div>
                 </Card>
               </Grid>
             );
           })}
 
-          <Grid item xs={12} md={3} onClick={() => setOpen(true)}>
+          <Grid
+            item
+            xs={12}
+            md={3}
+            onClick={() => {
+              setOpen(true);
+              setCreateGender(DesignCharacteristic.Female);
+            }}
+          >
             <Card className={`${styles.version} ${styles.addVersion}`}>
               <AddBoxOutlinedIcon className={styles.addIcon} />
               <div className={styles.addText}>Tạo Bản Mới</div>
@@ -305,7 +347,11 @@ function DesignVersions() {
         </Grid>
       </Grid>
 
-      <AddModal open={open} setOpen={setOpen} />
+      <AddModal
+        open={open}
+        setOpen={setOpen}
+        handleCreateVersion={handleCreateVersion}
+      />
     </div>
   );
 }
