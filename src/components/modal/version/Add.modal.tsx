@@ -73,8 +73,8 @@ const initError = {
   },
 };
 
-function AddModal(props: IModalProps) {
-  const { open, setOpen } = props;
+function AddModal(props: IAddVersionModal) {
+  const { open, setOpen, handleCreateVersion } = props;
 
   const [img, setImg] = useState<File | null>(null);
   const [pdf, setPdf] = useState<File | null>(null);
@@ -108,6 +108,9 @@ function AddModal(props: IModalProps) {
   ) => {
     if (reason && reason === "backdropClick") return;
     setOpen(false);
+    setError(initError);
+    setImg(null);
+    setPdf(null);
   };
 
   const handleAdd = () => {
@@ -117,6 +120,10 @@ function AddModal(props: IModalProps) {
     if (!pdf) cloneState.emptyPdf.value = true;
 
     setError(cloneState);
+
+    if (!img || !pdf) return;
+
+    handleCreateVersion("image", "designfile");
   };
 
   return (

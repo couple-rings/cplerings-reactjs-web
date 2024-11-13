@@ -310,5 +310,11 @@ declare global {
     designs: IDesign[];
 
     status: CustomRequestStatus;
+
+    id: number;
+  }
+
+  interface IAddVersionModal extends IModalProps {
+    handleCreateVersion: (v1: string, v2: string) => void;
   }
 }

@@ -1,0 +1,6 @@
+@use 'src/index.scss'as *;
+
+.container {
+    color  : $primaryColor;
+    padding: 3rem 0;
+}

@@ -106,4 +106,11 @@ declare global {
     pageSize: number;
     designId: number;
   }
+
+  interface ICreateDesignVersionRequest {
+    designId: number;
+    customerId: number;
+    previewImage: string;
+    designFile: string;
+  }
 }
