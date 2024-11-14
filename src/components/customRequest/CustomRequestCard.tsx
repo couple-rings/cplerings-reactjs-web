@@ -4,9 +4,12 @@ import male from "src/assets/male-icon.png";
 import female from "src/assets/female-icon.png";
 import { secondaryBtn } from "src/utils/styles";
 import { CustomRequestStatus, DesignCharacteristic } from "src/utils/enums";
+import { useNavigate } from "react-router-dom";
 
 function CustomRequestCard(props: ICustomRequestCardProps) {
-  const { designs, status } = props;
+  const { designs, status, id } = props;
+
+  const navigate = useNavigate();
 
   const maleDesign = designs.find(
     (item) => item.characteristic === DesignCharacteristic.Male
@@ -91,15 +94,27 @@ function CustomRequestCard(props: ICustomRequestCardProps) {
             Nhẫn nữ
           </div>
           <div className={styles.description}>{femaleDesign?.description}</div>
-          <Box sx={{ textAlign: "right" }}>
-            <Button
-              sx={{ ...secondaryBtn, px: 2, mt: 2 }}
-              disabled={status !== CustomRequestStatus.OnGoing}
-              variant="contained"
-            >
-              Chat với nhân viên
-            </Button>
-          </Box>
+          {status === CustomRequestStatus.OnGoing && (
+            <Box sx={{ textAlign: "right" }}>
+              <Button
+                sx={{ ...secondaryBtn, px: 2, mt: 2 }}
+                disabled={status !== CustomRequestStatus.OnGoing}
+                variant="contained"
+              >
+                Chat với nhân viên
+              </Button>
+              <Button
+                sx={{ ...secondaryBtn, px: 2, mt: 2, ml: 2 }}
+                disabled={status !== CustomRequestStatus.OnGoing}
+                variant="contained"
+                onClick={() =>
+                  navigate(`/customer/support/custom-request/detail/${id}`)
+                }
+              >
+                Xem Chi Tiết
+              </Button>
+            </Box>
+          )}
         </Grid>
       </Grid>
     </Card>

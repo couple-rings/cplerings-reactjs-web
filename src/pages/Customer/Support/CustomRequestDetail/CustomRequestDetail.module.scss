@@ -1,0 +1,97 @@
+@use 'src/index.scss'as *;
+
+.container {
+    color  : $primaryColor;
+    padding: 3rem 0;
+
+    .title {
+        font-size    : 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .subtitle {
+        font-size    : 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .designCard {
+        color        : $primaryColor;
+        border       : 1px solid $secondaryColor;
+        margin-bottom: 2rem;
+
+        .name {
+            color        : $secondaryColor;
+            font-size    : 1.5rem;
+            font-weight  : 500;
+            margin-bottom: 1rem;
+        }
+
+        .gender {
+            color        : #555;
+            margin-bottom: 0.5rem;
+
+            img {
+                margin-right: 10px;
+            }
+        }
+
+        .description {
+            line-height: 1.5rem;
+        }
+    }
+
+    .version {
+        border         : 1px solid #ccc;
+        box-shadow     : $boxShadow;
+        border-radius  : 5px;
+        padding        : 1rem;
+        align-items    : center;
+        justify-content: space-between;
+        margin-bottom  : 1rem;
+        cursor         : pointer;
+
+        &.selected {
+            background-color: $secondaryColor;
+
+            .download {
+                color: white;
+            }
+
+            .versionNo {
+                color: white;
+            }
+        }
+
+
+        .download {
+            display        : flex;
+            align-items    : center;
+            gap            : 10px;
+            cursor         : pointer;
+            text-decoration: none;
+            color          : black;
+            width          : 50%;
+
+            &:hover {
+                font-weight: 600;
+            }
+        }
+
+        .versionNo {
+            display      : flex;
+            align-items  : center;
+            gap          : 10px;
+            margin-bottom: 1rem;
+        }
+    }
+
+    .viewMore {
+        margin-top: 3rem;
+        cursor    : pointer;
+        text-align: center;
+
+        &:hover {
+            color: $secondaryColor
+        }
+    }
+}

@@ -168,13 +168,7 @@ function WeddingRings() {
     });
   };
 
-  // const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-  //   setFilterObj({
-  //     ...filterObj,
-  //     page: value - 1,
-  //   });
-  // };
-
+  // hide root scrollbar when open fullscreen modal
   useEffect(() => {
     const root = document.documentElement;
     if (root) {

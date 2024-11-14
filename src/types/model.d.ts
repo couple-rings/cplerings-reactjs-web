@@ -219,4 +219,25 @@ declare global {
     customer: Omit<IUser, "hasSpouse">;
     designs: IDesign[];
   }
+
+  interface IDesignVersion {
+    id: number;
+    customer: Omit<IUser, "hasSpouse">;
+    design: IDesign;
+    image: {
+      url: string;
+    };
+    designFile: {
+      url: string;
+    };
+    versionNumber: 0;
+    isAccepted: boolean;
+    isOld: boolean;
+  }
+
+  interface ICoordinate {
+    latitude: number;
+    longitude: number;
+    orderId: number;
+  }
 }
