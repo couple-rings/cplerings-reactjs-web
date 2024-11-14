@@ -63,6 +63,7 @@ import ManageTopicAndTag from "src/pages/Manager/ManageTopicAndTag/Index";
 import ManageCampaign from "src/pages/Manager/ManageCampaign/ManageCampaign";
 import ManageDesign from "src/pages/Manager/ManageDesign/Index";
 import CustomRequestCustomer from "src/pages/Customer/Support/CustomRequests/CustomRequest";
+import MaintenancePayment from "src/pages/Staff/MaintenancePayment/MaintenancePayment";
 
 const router = createBrowserRouter([
   {
@@ -250,6 +251,10 @@ const router = createBrowserRouter([
       {
         path: "maintenance-create-form",
         element: <MaintenanceCreateForm/>
+      },
+      {
+        path: "maintenance-payment",
+        element: <MaintenancePayment/>
       }
       
     ],
