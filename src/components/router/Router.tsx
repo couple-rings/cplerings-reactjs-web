@@ -63,6 +63,7 @@ import ManageTopicAndTag from "src/pages/Manager/ManageTopicAndTag/Index";
 import ManageCampaign from "src/pages/Manager/ManageCampaign/ManageCampaign";
 import ManageDesign from "src/pages/Manager/ManageDesign/Index";
 import CustomRequestCustomer from "src/pages/Customer/Support/CustomRequests/CustomRequest";
+import MaintenancePayment from "src/pages/Staff/MaintenancePayment/MaintenancePayment";
 import Map from "src/pages/Customer/Map/Map";
 import CustomerCustomRequestDetail from "src/pages/Customer/Support/CustomRequestDetail/CustomRequestDetail";
 import CraftingRequests from "src/pages/Customer/Support/CraftingRequests/CraftingRequests";
@@ -274,8 +275,13 @@ const router = createBrowserRouter([
       },
       {
         path: "maintenance-create-form",
-        element: <MaintenanceCreateForm />,
+        element: <MaintenanceCreateForm/>
       },
+      {
+        path: "maintenance-payment",
+        element: <MaintenancePayment/>
+      }
+      
     ],
   },
   {
