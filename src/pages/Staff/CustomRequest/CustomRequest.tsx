@@ -82,8 +82,8 @@ function CustomRequest() {
         headerAlign: "center",
         align: "center",
         filterable: false,
-        renderCell: () => {
-          return <div>{moment().format("DD/MM/YYYY")}</div>;
+        renderCell: ({ row }) => {
+          return <div>{moment(row.createdAt).format("DD/MM/YYYY")}</div>;
         },
       },
       {

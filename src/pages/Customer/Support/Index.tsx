@@ -11,9 +11,13 @@ import { Button, Grid } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 import { socket } from "src/config/socket";
 import { fetchConversations } from "src/utils/querykey";
+import { Location, useLocation } from "react-router-dom";
 
 function Index() {
   const [receiveMessage, setReceiveMessage] = useState<null | IMessage>(null);
+
+  const location: Location<{ conversation: IConversation }> = useLocation();
+  const { conversation } = location.state || {};
 
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
@@ -90,7 +94,7 @@ function Index() {
 
   return (
     <div className={styles.container}>
-      <ConversationList joinRooms={joinRooms} />
+      <ConversationList joinRooms={joinRooms} conversation={conversation} />
 
       {_id ? (
         <Chatbox handleSend={handleSend} receiveMessage={receiveMessage} />

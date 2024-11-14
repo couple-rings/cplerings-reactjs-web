@@ -6,7 +6,7 @@ function HoverCard(props: IHoverCardProps) {
 
   return (
     <div className={styles.container}>
-      <a href={file}>
+      <a download={""} href={file}>
         <img src={image} className={shadow ? styles.boxShadow : ""} />
         <div className={styles.pdf}>
           <DownloadIcon fontSize="large" />
