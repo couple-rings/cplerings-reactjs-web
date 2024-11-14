@@ -110,7 +110,17 @@ declare global {
   interface ICreateDesignVersionRequest {
     designId: number;
     customerId: number;
-    previewImage: string;
-    designFile: string;
+    previewImageId: number;
+    designFileId: number;
+  }
+
+  interface IDiamondSpecFilter {
+    page: number;
+    pageSize: number;
+  }
+
+  interface IMetalSpecFilter {
+    page: number;
+    pageSize: number;
   }
 }

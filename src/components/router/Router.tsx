@@ -261,7 +261,7 @@ const router = createBrowserRouter([
         element: <DesignVersions />,
       },
       {
-        path: "custom-request/custom-design",
+        path: "custom-request/custom-design/:maleDesignId/:femaleDesignId",
         element: <CustomDesign />,
       },
       {
