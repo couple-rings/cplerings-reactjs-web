@@ -2,6 +2,7 @@ import {
   CustomRequestStatus,
   DesignCharacteristic,
   DivisionType,
+  FileType,
   GoldColor,
 } from "src/utils/enums";
 
@@ -77,6 +78,14 @@ declare global {
     size?: number;
 
     originalName: string;
+  }
+
+  interface IMainFile {
+    id: number;
+
+    url: string;
+
+    type: FileType;
   }
 
   interface IUser {
@@ -217,7 +226,9 @@ declare global {
     comment: string;
     status: CustomRequestStatus;
     customer: Omit<IUser, "hasSpouse">;
+    staff: Omit<IUser, "hasSpouse">;
     designs: IDesign[];
+    createdAt: string;
   }
 
   interface IDesignVersion {
@@ -228,6 +239,7 @@ declare global {
       url: string;
     };
     designFile: {
+      id: number;
       url: string;
     };
     versionNumber: 0;

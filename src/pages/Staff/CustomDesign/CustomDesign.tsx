@@ -12,67 +12,30 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
+  Skeleton,
 } from "@mui/material";
 import styles from "./CustomDesign.module.scss";
-import menring from "src/assets/sampledata/menring.png";
-import womenring from "src/assets/sampledata/womenring.png";
 import female from "src/assets/female-icon.png";
 import male from "src/assets/male-icon.png";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { primaryBtn } from "src/utils/styles";
 import HoverCard from "src/components/product/HoverCard";
-import blueprint from "src/assets/sampledata/blueprint.pdf";
 import ArrowRightRoundedIcon from "@mui/icons-material/ArrowRightRounded";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DesignCharacteristic } from "src/utils/enums";
 import { SubmitHandler, useForm } from "react-hook-form";
 import _ from "lodash";
-
-const metalsSpecs = [
-  {
-    id: 1,
-    name: "Gold 18K - Yellow",
-  },
-  {
-    id: 2,
-    name: "Gold 18K - White",
-  },
-  {
-    id: 3,
-    name: "Gold 18K - Rose",
-  },
-];
-
-const diamondSpecs = [
-  {
-    id: 1,
-    name: "Pure Heart",
-    weight: 0.05,
-    color: "D",
-    clarity: "VS2",
-    shape: "HEART",
-    price: 3600000,
-  },
-  {
-    id: 2,
-    name: "Graceful Oval",
-    weight: 0.05,
-    color: "G",
-    clarity: "SI1",
-    shape: "OVAL",
-    price: 3120000,
-  },
-  {
-    id: 3,
-    name: "Dazzling Round",
-    weight: 0.15,
-    color: "G",
-    clarity: "VS2",
-    shape: "ROUND",
-    price: 3600000,
-  },
-];
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getDesignVersionDetail } from "src/services/designVersion.service";
+import {
+  fetchDesignVersionDetail,
+  fetchDiamondSpecs,
+  fetchMetalSpecs,
+} from "src/utils/querykey";
+import { getDiamondSpecs } from "src/services/diamondSpec.service";
+import { getMetalSpecs } from "src/services/metalSpec.service";
 
 interface IFormInput {
   male: {
@@ -85,6 +48,11 @@ interface IFormInput {
   };
 }
 
+const specFilter = {
+  page: 0,
+  pageSize: 100,
+};
+
 const initError = {
   notSelectedDiamond: false,
   notSelectedMetal: false,
@@ -93,6 +61,11 @@ const initError = {
 };
 
 function CustomDesign() {
+  const [maleVersion, setMaleVersion] = useState<IDesignVersion | null>(null);
+  const [femaleVersion, setFemaleVersion] = useState<IDesignVersion | null>(
+    null
+  );
+
   const [maleSelectedMetal, setMaleSelectedMetal] = useState(0);
   const [maleAddedMetals, setMaleAddedMetals] = useState<number[]>([]);
   const [maleSelectedDiamond, setMaleSelectedDiamond] = useState(0);
@@ -104,6 +77,47 @@ function CustomDesign() {
   const [femaleSelectedMetal, setFemaleSelectedMetal] = useState(0);
   const [femaleAddedMetals, setFemaleAddedMetals] = useState<number[]>([]);
   const [femaleError, setFemaleError] = useState(initError);
+
+  const { maleDesignId, femaleDesignId } = useParams<{
+    maleDesignId: string;
+    femaleDesignId: string;
+  }>();
+
+  const { data: maleVersionResponse } = useQuery({
+    queryKey: [fetchDesignVersionDetail, maleDesignId],
+
+    queryFn: () => {
+      if (maleDesignId) return getDesignVersionDetail(+maleDesignId);
+    },
+
+    enabled: !!maleDesignId,
+  });
+
+  const { data: femaleVersionResponse } = useQuery({
+    queryKey: [fetchDesignVersionDetail, femaleDesignId],
+
+    queryFn: () => {
+      if (femaleDesignId) return getDesignVersionDetail(+femaleDesignId);
+    },
+
+    enabled: !!femaleDesignId,
+  });
+
+  const { data: diamondSpecResponse } = useQuery({
+    queryKey: [fetchDiamondSpecs, specFilter],
+
+    queryFn: () => {
+      return getDiamondSpecs(specFilter);
+    },
+  });
+
+  const { data: metalSpecResponse } = useQuery({
+    queryKey: [fetchMetalSpecs, specFilter],
+
+    queryFn: () => {
+      return getMetalSpecs(specFilter);
+    },
+  });
 
   const {
     register,
@@ -280,6 +294,36 @@ function CustomDesign() {
     }
   };
 
+  useEffect(() => {
+    if (maleVersionResponse?.data) {
+      setMaleVersion(maleVersionResponse.data.designVersion);
+    }
+  }, [maleVersionResponse]);
+
+  useEffect(() => {
+    if (femaleVersionResponse?.data) {
+      setFemaleVersion(femaleVersionResponse.data.designVersion);
+    }
+  }, [femaleVersionResponse]);
+
+  if (
+    !maleVersionResponse ||
+    !femaleVersionResponse ||
+    !diamondSpecResponse ||
+    !metalSpecResponse
+  )
+    return (
+      <Grid container justifyContent={"center"}>
+        <Grid item lg={11}>
+          <Skeleton width={"100%"} height={400} />
+
+          <Skeleton width={"100%"} height={100} />
+
+          <Skeleton width={"100%"} height={400} />
+        </Grid>
+      </Grid>
+    );
+
   return (
     <div className={styles.container}>
       <div className={styles.title}>Tạo Thiết Kế</div>
@@ -293,7 +337,11 @@ function CustomDesign() {
           alignItems={"center"}
         >
           <Grid item md={4} className={styles.left}>
-            <HoverCard file={blueprint} image={menring} shadow={true} />
+            <HoverCard
+              file={maleVersion?.designFile.url ?? ""}
+              image={maleVersion?.image.url ?? ""}
+              shadow={true}
+            />
             <div className={styles.label}>
               <img src={male} />
               <span>Nhẫn Nam</span>
@@ -377,7 +425,7 @@ function CustomDesign() {
                   <MenuItem disabled value={0}>
                     Chọn chất liệu
                   </MenuItem>
-                  {metalsSpecs
+                  {metalSpecResponse?.data?.items
                     .filter((item) => !maleAddedMetals.includes(item.id))
                     .map((item) => {
                       return (
@@ -406,7 +454,9 @@ function CustomDesign() {
             <Grid container>
               <List>
                 {maleAddedMetals.map((id) => {
-                  const spec = metalsSpecs.find((item) => item.id === id);
+                  const spec = metalSpecResponse?.data?.items.find(
+                    (item) => item.id === id
+                  );
                   return (
                     <ListItem
                       key={id}
@@ -465,7 +515,7 @@ function CustomDesign() {
                   <MenuItem disabled value={0}>
                     Chọn kim cương
                   </MenuItem>
-                  {diamondSpecs
+                  {diamondSpecResponse?.data?.items
                     .filter((item) => !maleAddedDiamonds.includes(item.id))
                     .map((item) => {
                       return (
@@ -498,7 +548,9 @@ function CustomDesign() {
             <Grid container>
               <List>
                 {maleAddedDiamonds.map((id) => {
-                  const spec = diamondSpecs.find((item) => item.id === id);
+                  const spec = diamondSpecResponse?.data?.items.find(
+                    (item) => item.id === id
+                  );
                   return (
                     <ListItem
                       key={id}
@@ -543,7 +595,11 @@ function CustomDesign() {
           alignItems={"center"}
         >
           <Grid item md={4} className={styles.left}>
-            <HoverCard file={blueprint} image={womenring} shadow={true} />
+            <HoverCard
+              file={femaleVersion?.designFile.url ?? ""}
+              image={femaleVersion?.image.url ?? ""}
+              shadow={true}
+            />
             <div className={styles.label}>
               <img src={female} />
               <span>Nhẫn Nữ</span>
@@ -629,7 +685,7 @@ function CustomDesign() {
                   <MenuItem hidden value={0}>
                     Chọn chất liệu
                   </MenuItem>
-                  {metalsSpecs
+                  {metalSpecResponse?.data?.items
                     .filter((item) => !femaleAddedMetals.includes(item.id))
                     .map((item) => {
                       return (
@@ -661,7 +717,9 @@ function CustomDesign() {
             <Grid container>
               <List>
                 {femaleAddedMetals.map((id) => {
-                  const spec = metalsSpecs.find((item) => item.id === id);
+                  const spec = metalSpecResponse?.data?.items.find(
+                    (item) => item.id === id
+                  );
                   return (
                     <ListItem
                       key={id}
@@ -723,7 +781,7 @@ function CustomDesign() {
                   <MenuItem disabled value={0}>
                     Chọn kim cương
                   </MenuItem>
-                  {diamondSpecs
+                  {diamondSpecResponse?.data?.items
                     .filter((item) => !femaleAddedDiamonds.includes(item.id))
                     .map((item) => {
                       return (
@@ -756,7 +814,9 @@ function CustomDesign() {
             <Grid container>
               <List>
                 {femaleAddedDiamonds.map((id) => {
-                  const spec = diamondSpecs.find((item) => item.id === id);
+                  const spec = diamondSpecResponse?.data?.items.find(
+                    (item) => item.id === id
+                  );
                   return (
                     <ListItem
                       key={id}

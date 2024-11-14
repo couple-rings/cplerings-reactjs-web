@@ -1,8 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./CustomRequestDetail.module.scss";
-import { Box, Button, Card, Grid, Skeleton } from "@mui/material";
+import { Box, Card, Grid, Skeleton } from "@mui/material";
 import { getCustomRequestDetail } from "src/services/customRequest.service";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   fetchCustomRequestDetail,
   fetchFemaleDesignVersions,
@@ -14,38 +14,39 @@ import male from "src/assets/male-icon.png";
 import female from "src/assets/female-icon.png";
 import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
 import ArticleRoundedIcon from "@mui/icons-material/ArticleRounded";
-import { getDesignVersions } from "src/services/designVersion.service";
+import {
+  getDesignVersions,
+  putUpdateDesignVersion,
+} from "src/services/designVersion.service";
 import { secondaryBtn } from "src/utils/styles";
-
-const initMetaData = {
-  page: 0,
-  pageSize: 3,
-  totalPages: 0,
-  count: 0,
-};
+import { toast } from "react-toastify";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 function CustomRequestDetail() {
   const [maleDesign, setMaleDesign] = useState<IDesign | null>(null);
   const [femaleDesign, setFemaleDesign] = useState<IDesign | null>(null);
+
   const [selected, setSelected] = useState({
+    male: 0,
+    female: 0,
+  });
+  const [accepted, setAccepted] = useState({
     male: 0,
     female: 0,
   });
 
   const [maleVersions, setMaleVersions] = useState<IDesignVersion[]>([]);
-  const [maleMetaData, setMaleMetaData] = useState<IListMetaData>(initMetaData);
   const [maleFilterObj, setMaleFilterObj] =
     useState<IDesignVersionFilter | null>(null);
 
   const [femaleVersions, setFemaleVersions] = useState<IDesignVersion[]>([]);
-  const [femaleMetaData, setFemaleMetaData] =
-    useState<IListMetaData>(initMetaData);
   const [femaleFilterObj, setFemaleFilterObj] =
     useState<IDesignVersionFilter | null>(null);
 
   const { id } = useParams<{ id: string }>();
 
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data: response } = useQuery({
     queryKey: [fetchCustomRequestDetail, id],
@@ -76,20 +77,44 @@ function CustomRequestDetail() {
     enabled: !!femaleFilterObj,
   });
 
-  const handleMaleViewMore = () => {
-    if (maleFilterObj)
-      setMaleFilterObj({
-        ...maleFilterObj,
-        page: maleMetaData.page + 1,
-      });
+  const updateMutation = useMutation({
+    mutationFn: (id: number) => {
+      return putUpdateDesignVersion(id);
+    },
+    onSuccess: (response) => {
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
+  const handleChooseVersion = (gender: DesignCharacteristic, id: number) => {
+    if (accepted.male !== 0 || accepted.female !== 0) return;
+
+    if (gender === DesignCharacteristic.Male)
+      setSelected({ ...selected, male: id });
+
+    if (gender === DesignCharacteristic.Female)
+      setSelected({ ...selected, female: id });
   };
 
-  const handleFemaleViewMore = () => {
-    if (femaleFilterObj)
-      setFemaleFilterObj({
-        ...femaleFilterObj,
-        page: femaleMetaData.page + 1,
+  const handleConfirmVersion = async () => {
+    const maleResponse = await updateMutation.mutateAsync(selected.male);
+    const femaleResponse = await updateMutation.mutateAsync(selected.female);
+
+    if (maleResponse.data && femaleResponse.data) {
+      queryClient.invalidateQueries({
+        queryKey: [fetchMaleDesignVersions, maleFilterObj],
       });
+
+      queryClient.invalidateQueries({
+        queryKey: [fetchFemaleDesignVersions, femaleFilterObj],
+      });
+
+      setSelected({ ...selected, male: 0, female: 0 });
+
+      toast.success("Đã xác nhận bản thiết kế. Vui lòng chờ phản hồi");
+    }
   };
 
   useEffect(() => {
@@ -118,7 +143,7 @@ function CustomRequestDetail() {
     if (maleDesign)
       setMaleFilterObj({
         page: 0,
-        pageSize: 3,
+        pageSize: 100,
         designId: maleDesign.id,
       });
   }, [maleDesign]);
@@ -127,36 +152,45 @@ function CustomRequestDetail() {
     if (femaleDesign)
       setFemaleFilterObj({
         page: 0,
-        pageSize: 3,
+        pageSize: 100,
         designId: femaleDesign.id,
       });
   }, [femaleDesign]);
 
   useEffect(() => {
     if (maleVersionResponse && maleVersionResponse.data) {
-      const { items, ...rest } = maleVersionResponse.data;
-      if (rest.page === 0) setMaleVersions(items);
-      else setMaleVersions((current) => [...current, ...items]);
-      if (items.length === 0) {
-        const { count, pageSize, totalPages } = rest;
-        setMaleMetaData((current) => ({
-          ...current,
-          count,
-          pageSize,
-          totalPages,
-        }));
-      } else setMaleMetaData(rest);
+      const { items } = maleVersionResponse.data;
+
+      setMaleVersions(items);
     }
   }, [maleVersionResponse]);
 
   useEffect(() => {
     if (femaleVersionResponse && femaleVersionResponse.data) {
-      const { items, ...rest } = femaleVersionResponse.data;
-      if (rest.page === 0) setFemaleVersions(items);
-      else setFemaleVersions((current) => [...current, ...items]);
-      setFemaleMetaData(rest);
+      const { items } = femaleVersionResponse.data;
+
+      setFemaleVersions(items);
     }
   }, [femaleVersionResponse]);
+
+  useEffect(() => {
+    if (maleVersions.length > 0 && femaleVersions.length > 0) {
+      const accepted = {
+        male: 0,
+        female: 0,
+      };
+
+      maleVersions.forEach((version) => {
+        if (version.isAccepted) accepted.male = version.id;
+      });
+
+      femaleVersions.forEach((version) => {
+        if (version.isAccepted) accepted.female = version.id;
+      });
+
+      setAccepted(accepted);
+    }
+  }, [maleVersions, femaleVersions]);
 
   if (!maleDesign || !femaleDesign)
     return (
@@ -241,20 +275,44 @@ function CustomRequestDetail() {
           </Grid>
         </Card>
 
-        <div className={styles.subtitle}>Các Phiên Bản</div>
-        <Grid container justifyContent={"space-between"} mb={3}>
+        <div className={styles.subtitle}>
+          Các Phiên Bản{" "}
+          {selected.male !== 0 ||
+            (accepted.male !== 0 && (
+              <span style={{ marginLeft: 10 }}>
+                (Chọn bản{" "}
+                {
+                  maleVersions.find(
+                    (item) =>
+                      item.id === selected.male || item.id === accepted.male
+                  )?.versionNumber
+                }
+                )
+              </span>
+            ))}
+        </div>
+        <Grid
+          container
+          columnGap={{ xs: 0, md: 5 }}
+          justifyContent={{ xs: "space-between", md: "flex-start" }}
+          mb={3}
+        >
           {maleVersions.map((item) => {
             const selectedVer =
-              selected.male === item.id ? styles.selected : "";
+              selected.male === item.id || accepted.male === item.id
+                ? styles.selected
+                : "";
             return (
               <Grid
                 key={item.id}
                 container
                 item
                 sm={5.8}
-                md={3.7}
+                md
                 className={`${styles.version} ${selectedVer}`}
-                onClick={() => setSelected({ ...selected, male: item.id })}
+                onClick={() =>
+                  handleChooseVersion(DesignCharacteristic.Male, item.id)
+                }
               >
                 <Grid item xs={3}>
                   <img src={item.image.url} width={"100%"} />
@@ -276,11 +334,6 @@ function CustomRequestDetail() {
             <Box sx={{ mt: 3 }}>Chưa có phiên bản nào</Box>
           )}
         </Grid>
-        {maleMetaData.totalPages > 1 && (
-          <div className={styles.viewMore} onClick={handleMaleViewMore}>
-            Xem Thêm
-          </div>
-        )}
 
         <Box sx={{ mt: 15 }}></Box>
 
@@ -309,20 +362,43 @@ function CustomRequestDetail() {
           </Grid>
         </Card>
 
-        <div className={styles.subtitle}>Các Phiên Bản</div>
-        <Grid container justifyContent={"space-between"} mb={10}>
+        <div className={styles.subtitle}>
+          Các Phiên Bản
+          {(selected.female !== 0 || accepted.female !== 0) && (
+            <span style={{ marginLeft: 10 }}>
+              (Chọn bản{" "}
+              {
+                femaleVersions.find(
+                  (item) =>
+                    item.id === selected.female || item.id === accepted.female
+                )?.versionNumber
+              }
+              )
+            </span>
+          )}
+        </div>
+        <Grid
+          container
+          columnGap={{ xs: 0, md: 5 }}
+          justifyContent={{ xs: "space-between", md: "flex-start" }}
+          mb={10}
+        >
           {femaleVersions.map((item) => {
             const selectedVer =
-              selected.female === item.id ? styles.selected : "";
+              selected.female === item.id || accepted.female === item.id
+                ? styles.selected
+                : "";
             return (
               <Grid
                 key={item.id}
                 container
                 item
                 sm={5.8}
-                md={3.7}
+                md
                 className={`${styles.version} ${selectedVer}`}
-                onClick={() => setSelected({ ...selected, female: item.id })}
+                onClick={() =>
+                  handleChooseVersion(DesignCharacteristic.Female, item.id)
+                }
               >
                 <Grid item xs={3}>
                   <img src={item.image.url} width={"100%"} />
@@ -344,17 +420,30 @@ function CustomRequestDetail() {
             <Box sx={{ mt: 3 }}>Chưa có phiên bản nào</Box>
           )}
         </Grid>
-        {femaleMetaData.totalPages > 1 && (
-          <div className={styles.viewMore} onClick={handleFemaleViewMore}>
-            Xem Thêm
-          </div>
-        )}
 
-        {selected.male !== 0 && selected.female !== 0 && (
-          <Box sx={{ textAlign: "center" }}>
-            <Button variant={"contained"} sx={{ ...secondaryBtn, py: 2 }}>
-              Xác Nhận Bản Thiết Kế
-            </Button>
+        {selected.male !== 0 &&
+          selected.female !== 0 &&
+          accepted.male === 0 &&
+          accepted.female === 0 && (
+            <Box sx={{ textAlign: "center" }}>
+              <LoadingButton
+                loading={updateMutation.isPending}
+                variant={"contained"}
+                sx={{ ...secondaryBtn, py: 2 }}
+                onClick={handleConfirmVersion}
+              >
+                Xác Nhận Bản Thiết Kế
+              </LoadingButton>
+            </Box>
+          )}
+        {accepted.male !== 0 && accepted.female !== 0 && (
+          <Box
+            sx={{
+              textAlign: "center",
+              fontSize: "1.2rem",
+            }}
+          >
+            Đang Chờ Duyệt...
           </Box>
         )}
       </Grid>

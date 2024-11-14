@@ -126,6 +126,8 @@ declare global {
 
   interface IConversationListProps {
     joinRooms: (v: string[]) => void;
+
+    conversation?: IConversation;
   }
 
   interface IAttachmentMessageProps {
@@ -310,6 +312,8 @@ declare global {
     designs: IDesign[];
 
     status: CustomRequestStatus;
+
+    staffId: number;
 
     id: number;
   }

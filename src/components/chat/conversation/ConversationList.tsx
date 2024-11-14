@@ -6,6 +6,7 @@ import Conversation from "./Conversation";
 import { getConversations } from "src/services/conversation.service";
 import { useEffect, useState } from "react";
 import {
+  removeConversations,
   saveConversations,
   saveNotifications,
   selectConversation,
@@ -13,7 +14,7 @@ import {
 import { fetchConversations } from "src/utils/querykey";
 
 function ConversationList(props: IConversationListProps) {
-  const { joinRooms } = props;
+  const { joinRooms, conversation } = props;
 
   const [firstRender, setFirstRender] = useState(true);
 
@@ -46,15 +47,20 @@ function ConversationList(props: IConversationListProps) {
         });
 
         dispatch(saveNotifications(notificationList));
-        if (response.data.length > 0)
-          dispatch(selectConversation(response.data[0]));
+
+        if (response.data.length > 0) {
+          if (conversation) dispatch(selectConversation(conversation));
+          else dispatch(selectConversation(response.data[0]));
+        }
+        if (response.data.length === 0) dispatch(removeConversations());
 
         setFirstRender(false);
       }
       dispatch(saveConversations(response.data));
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [response]);
+  }, [conversation, response]);
 
   if (conversationsList.length > 0)
     return (
