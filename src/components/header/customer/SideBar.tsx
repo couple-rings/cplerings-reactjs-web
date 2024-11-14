@@ -9,35 +9,35 @@ import {
   ListItemText,
   SxProps,
 } from "@mui/material";
-import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
-import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import { useState } from "react";
 import logo from "src/assets/logowhite.png";
 import { useNavigate } from "react-router-dom";
 import WidgetsOutlinedIcon from "@mui/icons-material/WidgetsOutlined";
 import ColorLensRoundedIcon from "@mui/icons-material/ColorLensRounded";
+import ChatBubbleRoundedIcon from "@mui/icons-material/ChatBubbleRounded";
+import HandymanRoundedIcon from "@mui/icons-material/HandymanRounded";
+import ArticleRoundedIcon from "@mui/icons-material/ArticleRounded";
 
 const bottomMobileMenu = [
+  {
+    icon: <ChatBubbleRoundedIcon />,
+    text: "Chat Với Nhân Viên",
+    path: "/customer/support",
+  },
   {
     icon: <ColorLensRoundedIcon />,
     text: "Yêu Cầu Thiết Kế",
     path: "/customer/support/custom-request",
   },
   {
-    icon: <FavoriteBorderOutlinedIcon />,
-    text: "Danh Sách Yêu Thích",
-    path: "",
+    icon: <HandymanRoundedIcon />,
+    text: "Yêu Cầu Gia Công",
+    path: "/customer/support/crafting-request",
   },
   {
-    icon: <ShoppingBagOutlinedIcon />,
-    text: "Giỏ Hàng Của Tôi",
-    path: "",
-  },
-  {
-    icon: <PhoneOutlinedIcon />,
-    text: "Liên Hệ",
-    path: "",
+    icon: <ArticleRoundedIcon />,
+    text: "Đơn Hàng Gia Công",
+    path: "/customer/support/custom-order",
   },
 ];
 
@@ -92,7 +92,12 @@ function SideBar() {
         <List>
           {bottomMobileMenu.map((item, index) => (
             <ListItem key={index} disablePadding>
-              <ListItemButton onClick={() => navigate(item.path)}>
+              <ListItemButton
+                onClick={() => {
+                  navigate(item.path);
+                  setOpen(false);
+                }}
+              >
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.text} />
               </ListItemButton>

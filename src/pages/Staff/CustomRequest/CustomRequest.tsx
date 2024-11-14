@@ -2,56 +2,52 @@ import {
   DataGrid,
   GridColDef,
   GridFilterModel,
+  GridPaginationModel,
   GridSortModel,
   getGridStringOperators,
 } from "@mui/x-data-grid";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styles from "./CustomRequest.module.scss";
 import { Button } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 import { CustomRequestStatus } from "src/utils/enums";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchCustomRequests } from "src/utils/querykey";
+import { getCustomRequests } from "src/services/customRequest.service";
+import { pageSize } from "src/utils/constants";
+import moment from "moment";
 
-interface Row {
-  id: number;
-  username: string;
-  createdAt: string;
-  status: string;
-}
+interface Row extends ICustomRequest {}
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
   ["contains" /* add more over time */].includes(value)
 );
 
-const rows = [
-  {
-    id: 1,
-    username: "Nguyễn Văn A",
-    createdAt: "01/01/2000",
-    status: "WAITING",
-  },
-  {
-    id: 2,
-    username: "Nguyễn Văn B",
-    createdAt: "01/01/2000",
-    status: "ON GOING",
-  },
-  {
-    id: 3,
-    username: "Nguyễn Văn C",
-    createdAt: "01/01/2000",
-    status: "CANCELED",
-  },
-  {
-    id: 4,
-    username: "Nguyễn Văn D",
-    createdAt: "01/01/2000",
-    status: "COMPLETED",
-  },
-];
+const initMetaData = {
+  page: 0,
+  pageSize,
+  totalPages: 0,
+  count: 0,
+};
 
 function CustomRequest() {
+  const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
+  const [filterObj, setFilterObj] = useState<ICustomRequestFilter>({
+    page: 0,
+    pageSize,
+  });
+
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const { data: response, isLoading } = useQuery({
+    queryKey: [fetchCustomRequests, filterObj],
+
+    queryFn: () => {
+      if (filterObj) return getCustomRequests(filterObj);
+    },
+  });
 
   const columns: GridColDef<Row>[] = useMemo(
     () => [
@@ -68,13 +64,16 @@ function CustomRequest() {
           index.api.getRowIndexRelativeToVisibleRows(index.row.id) + 1,
       },
       {
-        field: "username",
+        field: "customer",
         headerName: "Khách Hàng",
         width: 300,
         headerAlign: "center",
         align: "center",
         filterOperators,
         sortable: false,
+        valueGetter: (value: Omit<IUser, "hasSpouse">) => {
+          return value.username;
+        },
       },
       {
         field: "createdAt",
@@ -83,6 +82,9 @@ function CustomRequest() {
         headerAlign: "center",
         align: "center",
         filterable: false,
+        renderCell: () => {
+          return <div>{moment().format("DD/MM/YYYY")}</div>;
+        },
       },
       {
         field: "status",
@@ -94,18 +96,28 @@ function CustomRequest() {
         sortable: false,
         renderCell: ({ row }) => {
           let classname = "";
+          let status = "";
 
-          if (row.status === CustomRequestStatus.Completed)
+          if (row.status === CustomRequestStatus.Completed) {
             classname = styles.completed;
-          if (row.status === CustomRequestStatus.Canceled)
-            classname = styles.canceled;
-          if (
-            row.status === CustomRequestStatus.OnGoing ||
-            row.status === CustomRequestStatus.Waiting
-          )
-            classname = styles.ongoing;
+            status = "Completed";
+          }
 
-          return <div className={classname}>{row.status.toLowerCase()}</div>;
+          if (row.status === CustomRequestStatus.Canceled) {
+            classname = styles.canceled;
+            status = "Canceled";
+          }
+
+          if (row.status === CustomRequestStatus.OnGoing) {
+            classname = styles.ongoing;
+            status = "On Going";
+          }
+
+          if (row.status === CustomRequestStatus.Waiting) {
+            classname = styles.ongoing;
+            status = "Waiting";
+          }
+          return <div className={classname}>{status}</div>;
         },
       },
       {
@@ -129,6 +141,14 @@ function CustomRequest() {
     [navigate]
   );
 
+  const handleChangePage = (model: GridPaginationModel) => {
+    // model.page is the page to fetch and starts at 0
+    setFilterObj({
+      ...filterObj,
+      page: model.page,
+    });
+  };
+
   const handleFilter = (model: GridFilterModel) => {
     console.log(model);
   };
@@ -137,20 +157,44 @@ function CustomRequest() {
     console.log(model);
   };
 
+  useEffect(() => {
+    if (response && response.data) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { items, ...rest } = response.data;
+      setMetaData(rest);
+    }
+  }, [response]);
+
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: [fetchCustomRequests, filterObj],
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterObj]);
+
   return (
     <div className={styles.container}>
       <div className={styles.title}>Yêu Cầu Thiết Kế</div>
 
       <DataGrid
+        loading={isLoading}
         getRowHeight={() => "auto"}
-        rows={rows}
+        rows={response?.data?.items ? response.data.items : []}
         columns={columns}
         onFilterModelChange={handleFilter}
         onSortModelChange={handleSort}
-        pageSizeOptions={[100]}
+        pageSizeOptions={[pageSize]}
         disableColumnSelector
         disableRowSelectionOnClick
         autoHeight
+        paginationMode="server"
+        paginationModel={{
+          page: filterObj.page,
+          pageSize: filterObj.pageSize,
+        }}
+        onPaginationModelChange={handleChangePage}
+        rowCount={metaData.count}
       />
     </div>
   );

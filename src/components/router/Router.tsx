@@ -56,6 +56,8 @@ import ManageMetalSpec from "src/pages/Admin/ManageMetalSpec/ManageMetalSpec";
 import ManageFingerSize from "src/pages/Admin/ManageFingerSize/ManageFingerSize";
 import MaintenanceOrder from "src/pages/Staff/MaintenanceOrder/MaintenanceOrder";
 import MaintenanceCreateForm from "src/pages/Staff/MaintenanceCreateForm/MaintenanceCreateForm";
+import MaintenanceOrder from "src/pages/Staff/MaintenanceOrder/MaintenanceOrder";
+import MaintenanceCreateForm from "src/pages/Staff/MaintenanceCreateForm/MaintenanceCreateForm";
 import ManageDiamond from "src/pages/Manager/ManageDiamond/ManageDiamond";
 import ManageBranchInfo from "src/pages/Manager/ManageBranchInfo/ManageBranchInfo";
 import ManageCollection from "src/pages/Manager/ManageCollection/ManageCollection";
@@ -64,6 +66,11 @@ import ManageCampaign from "src/pages/Manager/ManageCampaign/ManageCampaign";
 import ManageDesign from "src/pages/Manager/ManageDesign/Index";
 import CustomRequestCustomer from "src/pages/Customer/Support/CustomRequests/CustomRequest";
 import MaintenancePayment from "src/pages/Staff/MaintenancePayment/MaintenancePayment";
+import Map from "src/pages/Customer/Map/Map";
+import CustomerCustomRequestDetail from "src/pages/Customer/Support/CustomRequestDetail/CustomRequestDetail";
+import CraftingRequests from "src/pages/Customer/Support/CraftingRequests/CraftingRequests";
+import CreateCraftingRequest from "src/pages/Customer/Support/CreateCraftingRequest/CreateCraftingRequest";
+import CustomerCustomOrder from "src/pages/Customer/Support/CustomOrder/CustomOrder";
 
 const router = createBrowserRouter([
   {
@@ -177,6 +184,10 @@ const router = createBrowserRouter([
         element: <OrderDetail />,
       },
       {
+        path: "transport",
+        element: <Map />,
+      },
+      {
         path: "support",
         element: <Support />,
         children: [
@@ -187,6 +198,22 @@ const router = createBrowserRouter([
           {
             path: "custom-request",
             element: <CustomRequestCustomer />,
+          },
+          {
+            path: "custom-request/detail/:id",
+            element: <CustomerCustomRequestDetail />,
+          },
+          {
+            path: "crafting-request",
+            element: <CraftingRequests />,
+          },
+          {
+            path: "crafting-request/create",
+            element: <CreateCraftingRequest />,
+          },
+          {
+            path: "custom-order",
+            element: <CustomerCustomOrder />,
           },
         ],
       },
@@ -233,7 +260,7 @@ const router = createBrowserRouter([
         element: <CustomRequestDetail />,
       },
       {
-        path: "custom-request/design-version",
+        path: "custom-request/:id/design-version",
         element: <DesignVersions />,
       },
       {

@@ -79,6 +79,7 @@ function CustomRequest() {
               return (
                 <CustomRequestCard
                   key={item.id}
+                  id={item.id}
                   status={item.status}
                   designs={item.designs}
                 />

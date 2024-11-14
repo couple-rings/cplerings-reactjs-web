@@ -227,7 +227,11 @@ function AddModal(props: IModalProps) {
   const handleAddDiamond = (id: number, gender: DesignCharacteristic) => {
     if (gender === DesignCharacteristic.Male) {
       if (id === 0) {
-        setMaleError({ ...maleError, notSelectedDiamond: true });
+        setMaleError({
+          ...maleError,
+          noDiamondsAdded: false,
+          notSelectedDiamond: true,
+        });
         return;
       }
       setMaleAddedDiamonds([...maleAddedDiamonds, id]);
@@ -237,7 +241,11 @@ function AddModal(props: IModalProps) {
 
     if (gender === DesignCharacteristic.Female) {
       if (id === 0) {
-        setFemaleError({ ...femaleError, notSelectedDiamond: true });
+        setFemaleError({
+          ...femaleError,
+          noDiamondsAdded: false,
+          notSelectedDiamond: true,
+        });
         return;
       }
       setFemaleAddedDiamonds([...femaleAddedDiamonds, id]);
@@ -251,14 +259,22 @@ function AddModal(props: IModalProps) {
       const list = maleAddedDiamonds.filter((item) => item !== id);
       setMaleAddedDiamonds(list);
       if (list.length === 0)
-        setMaleError({ ...maleError, noDiamondsAdded: true });
+        setMaleError({
+          ...maleError,
+          notSelectedDiamond: false,
+          noDiamondsAdded: true,
+        });
     }
 
     if (gender === DesignCharacteristic.Female) {
       const list = femaleAddedDiamonds.filter((item) => item !== id);
       setFemaleAddedDiamonds(list);
       if (list.length === 0)
-        setFemaleError({ ...femaleError, noDiamondsAdded: true });
+        setFemaleError({
+          ...femaleError,
+          notSelectedDiamond: false,
+          noDiamondsAdded: true,
+        });
     }
   };
 
@@ -285,6 +301,7 @@ function AddModal(props: IModalProps) {
         setMaleError({
           ...maleError,
           imageMissing: false,
+          notSelectedMetal: false,
           noMetalsAdded: true,
         });
       } else {
@@ -301,6 +318,7 @@ function AddModal(props: IModalProps) {
         setFemaleError({
           ...femaleError,
           imageMissing: false,
+          notSelectedMetal: false,
           noMetalsAdded: true,
         });
       } else {
