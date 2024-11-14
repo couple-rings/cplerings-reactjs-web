@@ -136,11 +136,11 @@ function MaintenanceOrder() {
         width: 200,
         headerAlign: "center",
         align: "center",
-        renderCell: ({ row }) => (
+        renderCell: () => (
           <Button
             variant="contained"
             sx={{ ...primaryBtn, py: 1, m: 2, borderRadius: 5 }}
-            onClick={() => navigate(`/jeweler/custom-order/detail/${row.id}`)}
+            onClick={() => navigate(`/staff/maintenance-create-form`)}
           >
             Chi Tiết
           </Button>
