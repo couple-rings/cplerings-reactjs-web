@@ -3,6 +3,7 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import styles from "./MaintenanceCreateForm.module.scss";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const maintainService = [
   {
@@ -66,6 +67,8 @@ function MaintenanceCreateForm() {
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [selectedOption, setSelectedOption] = useState('');
+
+  const navigate = useNavigate();
 
   const handleCheckboxClick = (itemId: number, itemPrice: number) => {
     setSelectedItems((prevSelectedItems) => {
@@ -237,7 +240,7 @@ function MaintenanceCreateForm() {
       </Grid>
 
       <Grid container justifyContent={"center"}>
-        <Button className={styles.btnPay}>Thanh Toán</Button>
+        <Button className={styles.btnPay} onClick={() => navigate('/staff/maintenance-payment')}>Thanh Toán</Button>
       </Grid>
     </div>
   );
