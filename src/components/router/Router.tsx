@@ -56,8 +56,6 @@ import ManageMetalSpec from "src/pages/Admin/ManageMetalSpec/ManageMetalSpec";
 import ManageFingerSize from "src/pages/Admin/ManageFingerSize/ManageFingerSize";
 import MaintenanceOrder from "src/pages/Staff/MaintenanceOrder/MaintenanceOrder";
 import MaintenanceCreateForm from "src/pages/Staff/MaintenanceCreateForm/MaintenanceCreateForm";
-import MaintenanceOrder from "src/pages/Staff/MaintenanceOrder/MaintenanceOrder";
-import MaintenanceCreateForm from "src/pages/Staff/MaintenanceCreateForm/MaintenanceCreateForm";
 import ManageDiamond from "src/pages/Manager/ManageDiamond/ManageDiamond";
 import ManageBranchInfo from "src/pages/Manager/ManageBranchInfo/ManageBranchInfo";
 import ManageCollection from "src/pages/Manager/ManageCollection/ManageCollection";
