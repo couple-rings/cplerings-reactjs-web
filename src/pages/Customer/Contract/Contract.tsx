@@ -23,6 +23,9 @@ import SignatureCanvas from "react-signature-canvas";
 import { primaryBtn } from "src/utils/styles";
 import { useRef, useState } from "react";
 import ReactSignatureCanvas from "react-signature-canvas";
+import { useScrollTop } from "src/utils/hooks";
+import KeyboardBackspaceRoundedIcon from "@mui/icons-material/KeyboardBackspaceRounded";
+import { useNavigate } from "react-router-dom";
 
 function Contract() {
   const [error, setError] = useState(false);
@@ -30,6 +33,7 @@ function Contract() {
   const [open, setOpen] = useState(false);
 
   const ref = useRef<ReactSignatureCanvas>(null);
+  const navigate = useNavigate();
 
   const verifySignature = () => {
     if (ref.current?.isEmpty()) {
@@ -51,6 +55,8 @@ function Contract() {
     if (reason && reason === "backdropClick") return;
     setOpen(false);
   };
+
+  useScrollTop();
 
   return (
     <div className={styles.container}>
@@ -400,6 +406,18 @@ function Contract() {
               <DownloadForOfflineRoundedIcon fontSize="large" />
               <span>Tải File PDF</span>
             </PDFDownloadLink>
+
+            <Grid
+              container
+              alignItems={"center"}
+              justifyContent={"center"}
+              gap={1}
+              mt={5}
+              className={styles.back}
+              onClick={() => navigate(`/customer/support/custom-order`)}
+            >
+              <KeyboardBackspaceRoundedIcon /> Quay Về Đơn Gia Công
+            </Grid>
           </Grid>
         )}
       </Grid>

@@ -8,4 +8,23 @@
         font-size    : 1.5rem;
         margin-bottom: 3rem;
     }
+
+    .order {
+        border: 1px solid $secondaryColor;
+
+        .orderNo {
+            color: #888
+        }
+
+        .section {
+            justify-content: space-between;
+            align-items    : center;
+
+            .ringImg {
+                border: 1px solid #ccc;
+                width : 100%;
+            }
+        }
+    }
+
 }

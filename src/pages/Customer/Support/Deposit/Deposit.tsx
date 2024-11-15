@@ -1,5 +1,5 @@
 import { Button, Divider, Grid, Radio } from "@mui/material";
-import styles from "./DesignFee.module.scss";
+import styles from "./Deposit.module.scss";
 import vnpay from "src/assets/vnpay.png";
 import momo from "src/assets/momo.png";
 import paypal from "src/assets/paypal.png";
@@ -9,61 +9,13 @@ import womenring from "src/assets/sampledata/womenring.png";
 import female from "src/assets/female-icon.png";
 import { currencyFormatter } from "src/utils/functions";
 import { secondaryBtn } from "src/utils/styles";
-import { useNavigate, useParams } from "react-router-dom";
-import { useEffect } from "react";
-import { useAppDispatch } from "src/utils/hooks";
-import {
-  removeRequestedDesigns,
-  saveRequestedDesigns,
-} from "src/redux/slice/design.slice";
-import { useMutation } from "@tanstack/react-query";
-import { postCreateSession } from "src/services/designSession.service";
-import { toast } from "react-toastify";
 
-function DesignFee() {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-
-  const { maleDesignId, femaleDesignId } = useParams<{
-    maleDesignId: string;
-    femaleDesignId: string;
-  }>();
-
-  const mutation = useMutation({
-    mutationFn: () => {
-      return postCreateSession();
-    },
-    onSuccess: (response) => {
-      if (response.data) {
-        const { paymentLink } = response.data;
-        window.open(paymentLink, "_self");
-      }
-
-      if (response.errors) {
-        dispatch(removeRequestedDesigns());
-        response.errors.forEach((err) => toast.error(err.description));
-      }
-    },
-  });
-
-  const handlePayment = () => {
-    if (maleDesignId && femaleDesignId) {
-      dispatch(saveRequestedDesigns([+maleDesignId, +femaleDesignId]));
-      mutation.mutate();
-    }
-  };
-
-  useEffect(() => {
-    if (!maleDesignId || !femaleDesignId) navigate("/wedding-rings");
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [femaleDesignId, maleDesignId]);
-
+function Deposit() {
   return (
     <div className={styles.container}>
       <Grid container item lg={10} justifyContent={"space-between"}>
         <Grid item xs={12} className={styles.title}>
-          Phí Thiết Kế
+          Thanh Toán Tiền Đặt Cọc
         </Grid>
 
         <Divider sx={{ backgroundColor: "#ccc", width: "100%", my: 4 }} />
@@ -88,12 +40,7 @@ function DesignFee() {
             <div className={styles.notAvailable}>Paypal (Sắp ra mắt)</div>
           </div>
 
-          <Button
-            variant="contained"
-            sx={{ ...secondaryBtn, my: 3 }}
-            fullWidth
-            onClick={handlePayment}
-          >
+          <Button variant="contained" sx={{ ...secondaryBtn, my: 3 }} fullWidth>
             Thanh Toán
           </Button>
         </Grid>
@@ -104,16 +51,24 @@ function DesignFee() {
           <Divider sx={{ backgroundColor: "#ccc", my: 3 }} />
 
           <div className={styles.body}>
-            <div className={styles.title}>Thiết Kế Gốc</div>
+            <div className={styles.title}>Thông Tin Nhẫn</div>
             <Grid container className={styles.design} gap={3}>
               <Grid item sm={3} className={styles.left}>
                 <img src={menring} />
               </Grid>
-              <Grid item sm={8}>
-                <div className={styles.name}>
-                  CR Two-row Diamond Pavé Wedding Rings
-                </div>
-                <div className={styles.collection}>Bộ sưu tập Forever</div>
+              <Grid container item sm={8} gap={2}>
+                <Grid container>
+                  <Grid item xs={4}>
+                    Chất liệu:
+                  </Grid>
+                  <Grid item>Vàng Trắng 18K</Grid>
+                </Grid>
+                <Grid container>
+                  <Grid item xs={4}>
+                    Kim cương:
+                  </Grid>
+                  <Grid item>15PT ,G ,VS1</Grid>
+                </Grid>
                 <div className={styles.gender}>
                   <img src={male} />
                   Nhẫn nam
@@ -125,23 +80,43 @@ function DesignFee() {
               <Grid item sm={3} className={styles.left}>
                 <img src={womenring} />
               </Grid>
-              <Grid item sm={8}>
-                <div className={styles.name}>
-                  CR Two-row Diamond Pavé Wedding Rings
-                </div>
-                <div className={styles.collection}>Bộ sưu tập Forever</div>
+              <Grid container item sm={8} gap={2}>
+                <Grid container>
+                  <Grid item xs={4}>
+                    Chất liệu:
+                  </Grid>
+                  <Grid item>Vàng Trắng 18K</Grid>
+                </Grid>
+                <Grid container>
+                  <Grid item xs={4}>
+                    Kim cương:
+                  </Grid>
+                  <Grid item>15PT ,G ,VS1</Grid>
+                </Grid>
                 <div className={styles.gender}>
                   <img src={female} />
-                  Nhẫn nữ
+                  Nhẫn nam
                 </div>
               </Grid>
             </Grid>
 
-            <div className={styles.noteTitle}>Dịch vụ bao gồm khi mua</div>
-            <div className={styles.note}>
-              3 phiên bản thiết kế cho mỗi bản gốc
-            </div>
+            <div className={styles.noteTitle}>Thanh Toán Cho Giai Đoạn 1</div>
+            <div className={styles.note}>Hoàn Thành 50% - Đúc Khuôn Nhẫn</div>
           </div>
+
+          <Divider sx={{ backgroundColor: "#ccc", my: 3 }} />
+
+          <Grid
+            container
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <Grid item>Tỷ Lệ Cọc</Grid>
+
+            <Grid item fontSize={"1.2rem"}>
+              50% Giá Trị
+            </Grid>
+          </Grid>
 
           <Divider sx={{ backgroundColor: "#ccc", my: 3 }} />
 
@@ -153,7 +128,7 @@ function DesignFee() {
             <Grid item>Thành Tiền</Grid>
 
             <Grid item fontWeight={600} fontSize={"1.3rem"}>
-              {currencyFormatter(350000)}
+              {currencyFormatter(5000000)}
             </Grid>
           </Grid>
         </Grid>
@@ -162,4 +137,4 @@ function DesignFee() {
   );
 }
 
-export default DesignFee;
+export default Deposit;

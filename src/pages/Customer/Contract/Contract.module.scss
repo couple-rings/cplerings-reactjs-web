@@ -143,4 +143,12 @@
         width      : 100%;
         margin-top : 2rem;
     }
+
+    .back {
+        cursor: pointer;
+
+        &:hover {
+            color: $secondaryColor;
+        }
+    }
 }
