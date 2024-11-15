@@ -34,11 +34,7 @@ import Advertisement from "src/components/advertisement/Advertisement";
 import brandIntro from "src/assets/brand-intro.png";
 import FeedbackSection from "src/components/feedback/FeedbackSection";
 import { metalWeightUnit, profitRatio } from "src/utils/constants";
-import { useAppDispatch, useAppSelector, useScrollTop } from "src/utils/hooks";
-import { saveRequestedDesigns } from "src/redux/slice/design.slice";
-import { useMutation } from "@tanstack/react-query";
-import { postCreateSession } from "src/services/designSession.service";
-import { toast } from "react-toastify";
+import { useAppSelector, useScrollTop } from "src/utils/hooks";
 
 const sizeMenuPaperStyle: SxProps = {
   ...menuPaperStyle,
@@ -81,7 +77,6 @@ function WeddingRingsDetail() {
   const [price, setPrice] = useState(0);
 
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
 
   const { isAuthenticated } = useAppSelector((state) => state.auth);
 
@@ -97,32 +92,20 @@ function WeddingRingsDetail() {
   } = data || {};
   const collectionName = designs ? designs[0]?.designCollection?.name : "";
 
-  const mutation = useMutation({
-    mutationFn: () => {
-      return postCreateSession();
-    },
-    onSuccess: (response) => {
-      if (response.data) {
-        const { paymentLink } = response.data;
-        window.open(paymentLink, "_self");
-      }
-
-      if (response.errors) {
-        response.errors.forEach((err) => toast.error(err.description));
-      }
-    },
-  });
-
   const handlePayDesignFee = () => {
     if (!isAuthenticated) {
       navigate("/login");
       return;
     }
 
-    const requestedDesigns = designs.map((design) => design.id);
+    const maleDesign = designs.find(
+      (item) => item.characteristic === DesignCharacteristic.Male
+    );
+    const femaleDesign = designs.find(
+      (item) => item.characteristic === DesignCharacteristic.Female
+    );
 
-    dispatch(saveRequestedDesigns(requestedDesigns));
-    mutation.mutate();
+    navigate(`/customer/design-fee/${maleDesign?.id}/${femaleDesign?.id}`);
   };
 
   useEffect(() => {

@@ -5,6 +5,8 @@ import { postRefreshToken } from "src/services/auth.service";
 import { ErrorCode } from "src/utils/enums";
 // import { store } from "../redux/store";
 
+const publicRoute = ["auth/refresh", "designs/couple"];
+
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const instance = axios.create({
@@ -15,9 +17,12 @@ const instance = axios.create({
 instance.interceptors.request.use(
   function (config) {
     // Do something before request is sent
-    if (config.url && config.url !== "auth/refresh") {
-      const access_token = store.getState().auth.accessToken;
-      config.headers["Authorization"] = "Bearer " + access_token;
+    if (config.url) {
+      const path = config.url.split("?")[0];
+      if (!publicRoute.includes(path)) {
+        const access_token = store.getState().auth.accessToken;
+        config.headers["Authorization"] = "Bearer " + access_token;
+      }
     }
 
     return config;
