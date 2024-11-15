@@ -6,6 +6,7 @@ import female from "src/assets/female-icon.png";
 import ArrowRightRoundedIcon from "@mui/icons-material/ArrowRightRounded";
 import { secondaryBtn } from "src/utils/styles";
 import { useNavigate } from "react-router-dom";
+import menring from "src/assets/sampledata/menring.png";
 
 function CraftingRequests() {
   const navigate = useNavigate();
@@ -33,32 +34,43 @@ function CraftingRequests() {
         </Button>
       </Grid>
 
-      <Grid container item xs={11} lg={10} alignItems={"center"}>
-        <Grid item md={4} mb={2}>
-          <div>
-            <Box sx={{ marginBottom: "1.5rem" }}>
-              <img src={male} width={18} />
-              <span className={styles.subtitle}>Thiết Kế Của Nam</span>
-            </Box>
+      <Grid container item xs={11} lg={10}>
+        <Box sx={{ marginBottom: "2.5rem" }}>
+          <img src={male} width={18} />
+          <span className={styles.subtitle}>Thiết Kế Của Nam</span>
+        </Box>
+      </Grid>
 
-            <Grid container gap={11} mb={2}>
-              <div>File thiết kế:</div>
-              <a href="#" className={styles.download}>
-                <DownloadRoundedIcon />
-                Tải Về
-              </a>
-            </Grid>
+      <Grid
+        container
+        item
+        xs={11}
+        lg={10}
+        alignItems={"flex-start"}
+        justifyContent={"space-between"}
+      >
+        <Grid container item md={3.9} mb={3}>
+          <Grid container item md={10} mb={5}>
+            <img src={menring} className={styles.ringImg} />
+          </Grid>
 
-            <Grid container gap={10.6} mb={2}>
-              <div>Trọng lượng:</div>
-              <div>3 Chỉ</div>
-            </Grid>
+          <Grid container md={10} mb={2} justifyContent={"space-between"}>
+            <Grid item>File thiết kế:</Grid>
+            <a href="#" className={styles.download}>
+              <DownloadRoundedIcon />
+              Tải Về
+            </a>
+          </Grid>
 
-            <Grid container gap={5} mb={2}>
-              <div>Số kim cương phụ:</div>
-              <div>8 Viên</div>
-            </Grid>
-          </div>
+          <Grid container md={10} mb={2} justifyContent={"space-between"}>
+            <Grid item>Trọng lượng:</Grid>
+            <div>3 Chỉ</div>
+          </Grid>
+
+          <Grid container md={10} mb={2} justifyContent={"space-between"}>
+            <Grid item>Số kim cương phụ:</Grid>
+            <div>8 Viên</div>
+          </Grid>
         </Grid>
 
         <Grid container item md={8}>
@@ -108,35 +120,46 @@ function CraftingRequests() {
         <Divider sx={{ width: "100%", mt: 8, mb: 10 }} />
       </Grid>
 
-      <Grid container item xs={11} lg={10} alignItems={"center"}>
-        <Grid item xs={12} md={4} mb={2}>
-          <div>
-            <Box sx={{ marginBottom: "1.5rem" }}>
-              <img src={female} width={18} />
-              <span className={styles.subtitle}>Thiết Kế Của Nữ</span>
-            </Box>
+      <Grid container item xs={11} lg={10}>
+        <Box sx={{ marginBottom: "2.5rem" }}>
+          <img src={female} width={18} />
+          <span className={styles.subtitle}>Thiết Kế Của Nữ</span>
+        </Box>
+      </Grid>
 
-            <Grid container gap={11} mb={2}>
-              <div>File thiết kế:</div>
-              <a href="#" className={styles.download}>
-                <DownloadRoundedIcon />
-                Tải Về
-              </a>
-            </Grid>
+      <Grid
+        container
+        item
+        xs={11}
+        lg={10}
+        alignItems={"flex-start"}
+        justifyContent={"space-between"}
+      >
+        <Grid container item md={3.9} mb={3}>
+          <Grid container item md={10} mb={5}>
+            <img src={menring} className={styles.ringImg} />
+          </Grid>
 
-            <Grid container gap={10.6} mb={2}>
-              <div>Trọng lượng:</div>
-              <div>3 Chỉ</div>
-            </Grid>
+          <Grid container md={10} mb={2} justifyContent={"space-between"}>
+            <Grid item>File thiết kế:</Grid>
+            <a href="#" className={styles.download}>
+              <DownloadRoundedIcon />
+              Tải Về
+            </a>
+          </Grid>
 
-            <Grid container gap={5} mb={2}>
-              <div>Số kim cương phụ:</div>
-              <div>8 Viên</div>
-            </Grid>
-          </div>
+          <Grid container md={10} mb={2} justifyContent={"space-between"}>
+            <Grid item>Trọng lượng:</Grid>
+            <div>3 Chỉ</div>
+          </Grid>
+
+          <Grid container md={10} mb={2} justifyContent={"space-between"}>
+            <Grid item>Số kim cương phụ:</Grid>
+            <div>8 Viên</div>
+          </Grid>
         </Grid>
 
-        <Grid container item xs={12} md={8}>
+        <Grid container item md={8}>
           <Grid item xs={12} lg={5.8} className={styles.request}>
             <Chip
               label={"Đang chờ duyệt"}

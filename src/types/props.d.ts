@@ -321,4 +321,14 @@ declare global {
   interface IAddVersionModal extends IModalProps {
     handleCreateVersion: (v1: string, v2: string) => void;
   }
+
+  interface ICraftingStageProps {
+    name: string;
+
+    steps: string[];
+
+    image: string;
+
+    isPaid: boolean;
+  }
 }

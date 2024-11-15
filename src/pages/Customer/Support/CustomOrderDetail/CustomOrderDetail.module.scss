@@ -1,0 +1,53 @@
+@use 'src/index.scss'as *;
+
+.container {
+    color  : $primaryColor;
+    padding: 3rem 0;
+
+    .title {
+        font-size    : 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .info {
+        color      : #888;
+        font-weight: 300;
+    }
+
+    .total {
+        color      : $secondaryColor;
+        font-size  : 1.3rem;
+        font-weight: 600;
+    }
+
+    .card {
+        box-shadow   : $boxShadow;
+        border-radius: 10px;
+        border       : 1px solid $secondaryColor;
+
+        .ringImage {
+            width        : 100%;
+            box-shadow   : $boxShadow;
+            border-radius: 15px;
+        }
+
+        .label {
+            font-weight: 600;
+        }
+    }
+
+    .download {
+        display        : flex;
+        justify-content: center;
+        align-items    : center;
+        gap            : 5px;
+        text-decoration: none;
+        color          : $primaryColor;
+        font-size      : 1.2rem;
+        cursor         : pointer;
+
+        &:hover {
+            color: $secondaryColor;
+        }
+    }
+}

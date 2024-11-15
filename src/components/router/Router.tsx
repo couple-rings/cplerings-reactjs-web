@@ -69,6 +69,9 @@ import CustomerCustomRequestDetail from "src/pages/Customer/Support/CustomReques
 import CraftingRequests from "src/pages/Customer/Support/CraftingRequests/CraftingRequests";
 import CreateCraftingRequest from "src/pages/Customer/Support/CreateCraftingRequest/CreateCraftingRequest";
 import CustomerCustomOrder from "src/pages/Customer/Support/CustomOrder/CustomOrder";
+import CustomerCustomOrderDetail from "src/pages/Customer/Support/CustomOrderDetail/CustomOrderDetail";
+import CustomerCraftingProcess from "src/pages/Customer/Support/CraftingProcess/CraftingProcess";
+import Deposit from "src/pages/Customer/Support/Deposit/Deposit";
 
 const router = createBrowserRouter([
   {
@@ -213,6 +216,18 @@ const router = createBrowserRouter([
             path: "custom-order",
             element: <CustomerCustomOrder />,
           },
+          {
+            path: "custom-order/detail/:id",
+            element: <CustomerCustomOrderDetail />,
+          },
+          {
+            path: "custom-order/crafting-process",
+            element: <CustomerCraftingProcess />,
+          },
+          {
+            path: "deposit",
+            element: <Deposit />,
+          },
         ],
       },
       {
@@ -224,7 +239,7 @@ const router = createBrowserRouter([
         element: <Checkout />,
       },
       {
-        path: "design-fee",
+        path: "design-fee/:maleDesignId/:femaleDesignId",
         element: <DesignFee />,
       },
       {
@@ -275,13 +290,12 @@ const router = createBrowserRouter([
       },
       {
         path: "maintenance-create-form",
-        element: <MaintenanceCreateForm/>
+        element: <MaintenanceCreateForm />,
       },
       {
         path: "maintenance-payment",
-        element: <MaintenancePayment/>
-      }
-      
+        element: <MaintenancePayment />,
+      },
     ],
   },
   {

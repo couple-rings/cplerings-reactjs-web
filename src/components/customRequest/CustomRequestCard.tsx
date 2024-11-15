@@ -123,11 +123,11 @@ function CustomRequestCard(props: ICustomRequestCardProps) {
             Nhẫn nữ
           </div>
           <div className={styles.description}>{femaleDesign?.description}</div>
-          {status === CustomRequestStatus.OnGoing && (
+          {(status === CustomRequestStatus.OnGoing ||
+            status === CustomRequestStatus.Completed) && (
             <Box sx={{ textAlign: "right" }}>
               <Button
                 sx={{ ...secondaryBtn, px: 2, mt: 2 }}
-                disabled={status !== CustomRequestStatus.OnGoing}
                 variant="contained"
                 onClick={handleChat}
               >
@@ -135,7 +135,6 @@ function CustomRequestCard(props: ICustomRequestCardProps) {
               </Button>
               <Button
                 sx={{ ...secondaryBtn, px: 2, mt: 2, ml: 2 }}
-                disabled={status !== CustomRequestStatus.OnGoing}
                 variant="contained"
                 onClick={() =>
                   navigate(`/customer/support/custom-request/detail/${id}`)
