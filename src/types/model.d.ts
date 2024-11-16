@@ -252,4 +252,29 @@ declare global {
     longitude: number;
     orderId: number;
   }
+
+  interface ITopic {
+    id: number;
+
+    name: string;
+
+    description: string;
+  }
+
+  interface ITag {
+    id: number;
+
+    name: string;
+  }
+
+  interface IBlog {
+    id: number;
+    title: string;
+    summary: string;
+    content: string;
+    coverImage: string;
+    topic: ITopic;
+    tag: ITag;
+    createdAt: string;
+  }
 }

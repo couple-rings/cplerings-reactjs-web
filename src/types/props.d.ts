@@ -331,4 +331,15 @@ declare global {
 
     isPaid: boolean;
   }
+
+  interface IBlogRowProps {
+    blog: IBlog;
+
+    handleClick: (v: IBlog) => void;
+  }
+
+  interface IBlogModalProps extends IModalProps {
+    resetSelected?: () => void;
+    blog: IBlog;
+  }
 }

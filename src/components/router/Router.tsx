@@ -72,6 +72,7 @@ import CustomerCustomOrder from "src/pages/Customer/Support/CustomOrder/CustomOr
 import CustomerCustomOrderDetail from "src/pages/Customer/Support/CustomOrderDetail/CustomOrderDetail";
 import CustomerCraftingProcess from "src/pages/Customer/Support/CraftingProcess/CraftingProcess";
 import Deposit from "src/pages/Customer/Support/Deposit/Deposit";
+import ManageBlog from "src/pages/Staff/ManageBlog/ManageBlog";
 
 const router = createBrowserRouter([
   {
@@ -295,6 +296,10 @@ const router = createBrowserRouter([
       {
         path: "maintenance-payment",
         element: <MaintenancePayment />,
+      },
+      {
+        path: "blog",
+        element: <ManageBlog />,
       },
     ],
   },

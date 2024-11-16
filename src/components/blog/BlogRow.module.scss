@@ -1,0 +1,41 @@
+@use 'src/index.scss'as *;
+
+.container {
+    color        : $primaryColor;
+    box-shadow   : $boxShadow;
+    padding      : 1rem;
+    margin-bottom: 2rem;
+    cursor       : pointer;
+
+    &:hover {
+        background-color: #f7f7f7;
+    }
+
+    .coverImg {
+        border-radius: 5px;
+        width        : 100%;
+    }
+
+    .title {
+        font-size  : 1.2rem;
+        font-weight: 600;
+    }
+
+    .date {
+        color    : #555;
+        font-size: 0.9rem;
+        margin   : 0.5rem 0;
+    }
+
+    .summary {
+        text-align        : justify;
+        color             : #555;
+        overflow          : hidden;
+        display           : -webkit-box;
+        -webkit-line-clamp: 3;
+        /* number of lines to show */
+        line-clamp        : 3;
+        -webkit-box-orient: vertical;
+
+    }
+}
