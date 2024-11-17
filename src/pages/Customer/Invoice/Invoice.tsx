@@ -13,9 +13,10 @@ import { useEffect, useRef } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import { useAppSelector } from "src/utils/hooks";
+import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 import { useMutation } from "@tanstack/react-query";
 import { postCreateCustomRequest } from "src/services/customRequest.service";
+import { removeRequestedDesigns } from "src/redux/slice/design.slice";
 
 const iconStyle: SxProps = {
   color: "white",
@@ -34,6 +35,7 @@ function Invoice() {
   const date = searchParams.get("vnp_PayDate");
 
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
 
   const mutation = useMutation({
@@ -62,11 +64,13 @@ function Invoice() {
 
   useEffect(() => {
     if (!status || !amount || !customer || !date) navigate("/");
-    else
+    else {
       mutation.mutate({
         customerId: id,
         designIds: requestedDesigns,
       });
+      dispatch(removeRequestedDesigns());
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [amount, status, customer, date]);

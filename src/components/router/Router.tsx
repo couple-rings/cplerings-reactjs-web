@@ -63,11 +63,15 @@ import ManageTopicAndTag from "src/pages/Manager/ManageTopicAndTag/Index";
 import ManageCampaign from "src/pages/Manager/ManageCampaign/ManageCampaign";
 import ManageDesign from "src/pages/Manager/ManageDesign/Index";
 import CustomRequestCustomer from "src/pages/Customer/Support/CustomRequests/CustomRequest";
+import MaintenancePayment from "src/pages/Staff/MaintenancePayment/MaintenancePayment";
 import Map from "src/pages/Customer/Map/Map";
 import CustomerCustomRequestDetail from "src/pages/Customer/Support/CustomRequestDetail/CustomRequestDetail";
 import CraftingRequests from "src/pages/Customer/Support/CraftingRequests/CraftingRequests";
 import CreateCraftingRequest from "src/pages/Customer/Support/CreateCraftingRequest/CreateCraftingRequest";
 import CustomerCustomOrder from "src/pages/Customer/Support/CustomOrder/CustomOrder";
+import CustomerCustomOrderDetail from "src/pages/Customer/Support/CustomOrderDetail/CustomOrderDetail";
+import CustomerCraftingProcess from "src/pages/Customer/Support/CraftingProcess/CraftingProcess";
+import Deposit from "src/pages/Customer/Support/Deposit/Deposit";
 
 const router = createBrowserRouter([
   {
@@ -212,6 +216,18 @@ const router = createBrowserRouter([
             path: "custom-order",
             element: <CustomerCustomOrder />,
           },
+          {
+            path: "custom-order/detail/:id",
+            element: <CustomerCustomOrderDetail />,
+          },
+          {
+            path: "custom-order/crafting-process",
+            element: <CustomerCraftingProcess />,
+          },
+          {
+            path: "deposit",
+            element: <Deposit />,
+          },
         ],
       },
       {
@@ -223,7 +239,7 @@ const router = createBrowserRouter([
         element: <Checkout />,
       },
       {
-        path: "design-fee",
+        path: "design-fee/:maleDesignId/:femaleDesignId",
         element: <DesignFee />,
       },
       {
@@ -261,7 +277,7 @@ const router = createBrowserRouter([
         element: <DesignVersions />,
       },
       {
-        path: "custom-request/custom-design",
+        path: "custom-request/custom-design/:maleDesignId/:femaleDesignId",
         element: <CustomDesign />,
       },
       {
@@ -275,6 +291,10 @@ const router = createBrowserRouter([
       {
         path: "maintenance-create-form",
         element: <MaintenanceCreateForm />,
+      },
+      {
+        path: "maintenance-payment",
+        element: <MaintenancePayment />,
       },
     ],
   },

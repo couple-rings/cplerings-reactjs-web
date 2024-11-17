@@ -64,15 +64,10 @@ function CustomRequestDetail() {
     },
     onSuccess: (response) => {
       if (response.data) {
-        navigate("/staff");
+        navigate("/staff", { state: { conversation: response.data } });
       }
 
-      // chat conversation already exist
-      if (response.statusCode === 409) {
-        navigate("/staff");
-      }
-
-      if (response.error && response.statusCode !== 409) {
+      if (response.error) {
         toast.error(response.error);
       }
     },
@@ -86,9 +81,10 @@ function CustomRequestDetail() {
   };
 
   const handleChat = () => {
-    chatMutation.mutate({
-      participants: [staffId],
-    });
+    if (response?.data?.customer)
+      chatMutation.mutate({
+        participants: [staffId, response.data.customer.id],
+      });
   };
 
   useEffect(() => {
@@ -258,11 +254,11 @@ function CustomRequestDetail() {
 
         <Grid container justifyContent={"center"}>
           <Grid container item xs={8} md={4} gap={3}>
-            {response?.data?.status === CustomRequestStatus.OnGoing && (
+            {(response?.data?.status === CustomRequestStatus.OnGoing ||
+              response?.data?.status === CustomRequestStatus.Completed) && (
               <>
                 <Grid item>
                   <LoadingButton
-                    disabled
                     loading={chatMutation.isPending}
                     variant="contained"
                     fullWidth

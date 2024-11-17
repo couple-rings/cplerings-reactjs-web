@@ -15,6 +15,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { primaryBtn } from "src/utils/styles";
 import { useRef, useState } from "react";
 import _ from "lodash";
+import { toBase64 } from "src/utils/functions";
 
 const cardStyle: SxProps = {
   backgroundColor: "#F5F5F5",
@@ -113,7 +114,7 @@ function AddModal(props: IAddVersionModal) {
     setPdf(null);
   };
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     const cloneState = _.cloneDeep(error);
 
     if (!img) cloneState.emptyImg.value = true;
@@ -123,7 +124,13 @@ function AddModal(props: IAddVersionModal) {
 
     if (!img || !pdf) return;
 
-    handleCreateVersion("image", "designfile");
+    const image = await toBase64(img);
+    const designfile = await toBase64(pdf);
+
+    handleCreateVersion(image, designfile);
+    setImg(null);
+    setPdf(null);
+    setOpen(false);
   };
 
   return (

@@ -73,7 +73,7 @@ export enum MaintenanceOrderStatus {
   Completed = "COMPLETED",
   Delivering = "DELIVERING",
   Handling = "HANDLING",
-  Paid = "PAID"
+  Paid = "PAID",
 }
 
 export enum AccountStatus {
@@ -104,4 +104,14 @@ export enum DesignCharacteristic {
 export enum ProductType {
   Ring = "RING",
   Jewelry = "JEWELRY",
+}
+
+export enum Status {
+  Active = "ACTIVE",
+  InActive = "INACTIVE",
+}
+
+export enum FileType {
+  Image = "IMAGE",
+  Document = "DOCUMENT",
 }

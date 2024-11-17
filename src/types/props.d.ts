@@ -126,6 +126,8 @@ declare global {
 
   interface IConversationListProps {
     joinRooms: (v: string[]) => void;
+
+    conversation?: IConversation;
   }
 
   interface IAttachmentMessageProps {
@@ -311,10 +313,22 @@ declare global {
 
     status: CustomRequestStatus;
 
+    staffId: number;
+
     id: number;
   }
 
   interface IAddVersionModal extends IModalProps {
     handleCreateVersion: (v1: string, v2: string) => void;
+  }
+
+  interface ICraftingStageProps {
+    name: string;
+
+    steps: string[];
+
+    image: string;
+
+    isPaid: boolean;
   }
 }

@@ -17,9 +17,7 @@ export const getCustomRequests = (queryObj: ICustomRequestFilter) => {
 };
 
 export const getCustomRequestDetail = (id: number) => {
-  return axios.get<unknown, IResponse<ICustomRequestDetailResponse>>(
-    `custom-requests/${id}`
-  );
+  return axios.get<unknown, IResponse<ICustomRequest>>(`custom-requests/${id}`);
 };
 
 export const putUpdateCustomRequest = (data: IUpdateCRRequest, id: number) => {

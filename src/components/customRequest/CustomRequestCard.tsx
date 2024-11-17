@@ -5,11 +5,17 @@ import female from "src/assets/female-icon.png";
 import { secondaryBtn } from "src/utils/styles";
 import { CustomRequestStatus, DesignCharacteristic } from "src/utils/enums";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { postCreateConversation } from "src/services/conversation.service";
+import { toast } from "react-toastify";
+import { useAppSelector } from "src/utils/hooks";
 
 function CustomRequestCard(props: ICustomRequestCardProps) {
-  const { designs, status, id } = props;
+  const { designs, status, id, staffId } = props;
 
   const navigate = useNavigate();
+
+  const { id: userId } = useAppSelector((state) => state.auth.userInfo);
 
   const maleDesign = designs.find(
     (item) => item.characteristic === DesignCharacteristic.Male
@@ -44,6 +50,29 @@ function CustomRequestCard(props: ICustomRequestCardProps) {
     statusLabel = "Đã hủy";
     chipColor = "error";
   }
+
+  const chatMutation = useMutation({
+    mutationFn: (data: ICreateConversationRequest) => {
+      return postCreateConversation(data);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        navigate("/customer/support", {
+          state: { conversation: response.data },
+        });
+      }
+
+      if (response.error) {
+        toast.error(response.error);
+      }
+    },
+  });
+
+  const handleChat = () => {
+    chatMutation.mutate({
+      participants: [userId, staffId],
+    });
+  };
 
   return (
     <Card className={styles.container}>
@@ -94,18 +123,18 @@ function CustomRequestCard(props: ICustomRequestCardProps) {
             Nhẫn nữ
           </div>
           <div className={styles.description}>{femaleDesign?.description}</div>
-          {status === CustomRequestStatus.OnGoing && (
+          {(status === CustomRequestStatus.OnGoing ||
+            status === CustomRequestStatus.Completed) && (
             <Box sx={{ textAlign: "right" }}>
               <Button
                 sx={{ ...secondaryBtn, px: 2, mt: 2 }}
-                disabled={status !== CustomRequestStatus.OnGoing}
                 variant="contained"
+                onClick={handleChat}
               >
                 Chat với nhân viên
               </Button>
               <Button
                 sx={{ ...secondaryBtn, px: 2, mt: 2, ml: 2 }}
-                disabled={status !== CustomRequestStatus.OnGoing}
                 variant="contained"
                 onClick={() =>
                   navigate(`/customer/support/custom-request/detail/${id}`)
