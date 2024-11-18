@@ -1,6 +1,7 @@
 import { Divider, Grid } from "@mui/material";
 import styles from "./LoveAgreement.module.scss";
 import BoxLoveAgreement from "./BoxLoveAgreement";
+import { useNavigate } from "react-router-dom";
 
 const agreement = [
   {
@@ -36,6 +37,7 @@ const agreement = [
 ];
 
 function LoveAgreement() {
+  const navigate = useNavigate();
 
   return (
     <div className={styles.container}>
@@ -78,7 +80,7 @@ function LoveAgreement() {
           className={styles.agreementBox}
         >
           <Grid item xs={12} md={3.75} lg={3.75} className={styles.second}>
-            <div className={styles.abc}>
+            <div className={styles.abc} onClick={() => navigate(`/love-agreement/2`)}>
               <BoxLoveAgreement  spouseName="Bean & Bean" date="28 tháng 1, 2003"/>
             </div>
 
@@ -87,7 +89,7 @@ function LoveAgreement() {
             </div>
           </Grid>
           <Grid item xs={12} md={5.25} lg={5.25} className={styles.second}>
-          <div className={styles.abc}>
+          <div className={styles.abc} onClick={() => navigate(`/love-agreement/3`)}>
               <BoxLoveAgreement spouseName="Bean & Bean" date="28 tháng 1, 2003"/>
             </div>
             <div className={styles.boxContainer}>
@@ -95,7 +97,7 @@ function LoveAgreement() {
             </div>
           </Grid>
           <Grid item xs={12} md={3} lg={3} className="third">
-            <div className={styles.abc}>
+            <div className={styles.abc} onClick={() => navigate(`/love-agreement/7`)}>
               <BoxLoveAgreement spouseName="Bean & Bean" date="28 tháng 1, 2003"/>
             </div>
             <div className={styles.boxContainer}>
@@ -115,8 +117,8 @@ function LoveAgreement() {
         </Grid>
         <Grid item container >
           {agreement.map((item) => (
-            <Grid item md={3} lg={3}>
-              <div className={styles.abc} key={item.id}>
+            <Grid item md={3} lg={3} onClick={() => navigate(`/love-agreement/${item.id}`)}>
+              <div className={styles.abc} key={item.id} >
                 <BoxLoveAgreement spouseName={item.spouse} date={item.date} />
               </div>
             </Grid>
