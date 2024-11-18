@@ -60,7 +60,7 @@ export enum CustomRequestStatus {
   Canceled = "REJECTED",
 }
 
-export enum CraftingRequestStatus {
+export enum CustomOrderStatus {
   Waiting = "WAITING",
   InProgress = "IN PROGRESS",
   Done = "DONE",
@@ -114,4 +114,15 @@ export enum Status {
 export enum FileType {
   Image = "IMAGE",
   Document = "DOCUMENT",
+}
+
+export enum VersionOwner {
+  Self = "SELF",
+  Partner = "PARTNER",
+}
+
+export enum CraftingRequestStatus {
+  Pending = "PENDING",
+  Accepted = "ACCEPTED",
+  Rejected = "REJECTED",
 }

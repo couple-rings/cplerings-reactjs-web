@@ -313,7 +313,7 @@ declare global {
 
     status: CustomRequestStatus;
 
-    staffId: number;
+    staffId?: number;
 
     id: number;
   }

@@ -85,15 +85,7 @@ declare global {
   }
 
   interface IProfileResponse {
-    id: number;
-
-    email: string;
-
-    username: string;
-
-    phone: string | null;
-
-    avatar: string | null;
+    account: IUser;
 
     hasSpouse: boolean;
   }
@@ -126,5 +118,21 @@ declare global {
     data: T;
 
     errorMessage: string;
+  }
+
+  interface ICustomerSessionCountResponse {
+    numOfSessions: number;
+  }
+
+  interface IUpdateDesignVersionResponse {
+    femaleDesignVersion: IDesignVersion;
+
+    maleDesignVersion: IDesignVersion;
+  }
+
+  interface ICreateDesignVersionResponse {
+    firstDesignVersion: IDesignVersion;
+
+    secondDesignVersion: IDesignVersion;
   }
 }

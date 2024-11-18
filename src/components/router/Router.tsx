@@ -73,6 +73,7 @@ import CustomerCustomOrderDetail from "src/pages/Customer/Support/CustomOrderDet
 import CustomerCraftingProcess from "src/pages/Customer/Support/CraftingProcess/CraftingProcess";
 import Deposit from "src/pages/Customer/Support/Deposit/Deposit";
 import ManageBlog from "src/pages/Staff/ManageBlog/ManageBlog";
+import CraftingRequest from "src/pages/Staff/CraftingRequest/CraftingRequest";
 
 const router = createBrowserRouter([
   {
@@ -278,11 +279,15 @@ const router = createBrowserRouter([
         element: <DesignVersions />,
       },
       {
-        path: "custom-request/custom-design/:maleDesignId/:femaleDesignId",
+        path: "custom-request/:id/custom-design/:maleDesignId/:femaleDesignId",
         element: <CustomDesign />,
       },
       {
-        path: "crafting-request/detail",
+        path: "crafting-request",
+        element: <CraftingRequest />,
+      },
+      {
+        path: "crafting-request/detail/:customerId",
         element: <CraftingRequestDetail />,
       },
       {

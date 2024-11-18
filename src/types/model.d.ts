@@ -1,9 +1,11 @@
 import {
+  CraftingRequestStatus,
   CustomRequestStatus,
   DesignCharacteristic,
   DivisionType,
   FileType,
   GoldColor,
+  VersionOwner,
 } from "src/utils/enums";
 
 export {};
@@ -95,13 +97,13 @@ declare global {
 
     username: string;
 
-    phone: string;
+    phone: string | null;
 
-    avatar: string;
-
-    hasSpouse: boolean;
+    avatar: string | null;
 
     role: UserRole;
+
+    branch: IBranch | null;
   }
 
   interface IMetalSpec {
@@ -245,6 +247,7 @@ declare global {
     versionNumber: 0;
     isAccepted: boolean;
     isOld: boolean;
+    owner: VersionOwner;
   }
 
   interface ICoordinate {
@@ -276,5 +279,55 @@ declare global {
     topic: ITopic;
     tag: ITag;
     createdAt: string;
+  }
+
+  interface ISpouse {
+    id: number;
+    customerId?: number;
+  }
+
+  interface ICustomDesign {
+    id: number;
+    designVersion: IDesignVersion;
+    spouse: ISpouse;
+    account: Omit<IUser, "hasSpouse">;
+    metalWeight: number;
+    blueprint: {
+      id: number;
+      url: string;
+    };
+    diamondSpecifications: IDiamondSpec[];
+    metalSpecifications: IMetalSpec[];
+    sideDiamondsCount: number;
+  }
+
+  interface IBranch {
+    id: number;
+    address: string;
+    storeName: string;
+    phone: string;
+    coverImage: {
+      id: number;
+      url: string;
+    };
+  }
+
+  interface ICraftingRequest {
+    id: number;
+    customer: IUser;
+    metalSpecification: IMetalSpec;
+    diamondSpecification: IDiamondSpec;
+    reviewer: IUser;
+    engraving: string;
+    fingerSize: number;
+    comment: string;
+    craftingRequestStatus: CraftingRequestStatus;
+    createdAt: string;
+    branch: IBranch;
+  }
+
+  interface ICraftingRequestGroup {
+    customer: IUser;
+    craftingRequests: ICraftingRequest[];
   }
 }

@@ -15,3 +15,12 @@ export const fetchCoupleDesigns = "fetchCoupleDesigns";
 export const fetchDiamondSpecs = "fetchDiamondSpecs";
 
 export const fetchMetalSpecs = "fetchMetalSpecs";
+
+export const fetchCustomerSessionCount = "fetchCustomerSessionCount";
+
+export const fetchCustomerSpouse = "fetchCustomerSpouse";
+
+export const fetchCustomDesigns = "fetchCustomDesigns";
+
+export const fetchCraftingRequests = "fetchCraftingRequests";
+export const fetchCraftingRequestGroups = "fetchCraftingRequestGroups";

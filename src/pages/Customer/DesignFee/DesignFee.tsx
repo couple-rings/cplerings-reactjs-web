@@ -10,8 +10,8 @@ import female from "src/assets/female-icon.png";
 import { currencyFormatter } from "src/utils/functions";
 import { secondaryBtn } from "src/utils/styles";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect } from "react";
-import { useAppDispatch } from "src/utils/hooks";
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 import {
   removeRequestedDesigns,
   saveRequestedDesigns,
@@ -19,10 +19,15 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { postCreateSession } from "src/services/designSession.service";
 import { toast } from "react-toastify";
+import SpouseModal from "src/components/modal/redirect/Spouse.modal";
 
 function DesignFee() {
+  const [open, setOpen] = useState(false);
+
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  const { hasSpouse } = useAppSelector((state) => state.auth.userInfo);
 
   const { maleDesignId, femaleDesignId } = useParams<{
     maleDesignId: string;
@@ -47,6 +52,11 @@ function DesignFee() {
   });
 
   const handlePayment = () => {
+    if (!hasSpouse) {
+      setOpen(true);
+      return;
+    }
+
     if (maleDesignId && femaleDesignId) {
       dispatch(saveRequestedDesigns([+maleDesignId, +femaleDesignId]));
       mutation.mutate();
@@ -158,6 +168,8 @@ function DesignFee() {
           </Grid>
         </Grid>
       </Grid>
+
+      <SpouseModal open={open} setOpen={setOpen} />
     </div>
   );
 }

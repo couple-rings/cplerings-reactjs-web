@@ -1,5 +1,4 @@
 import {
-  Button,
   Divider,
   FormHelperText,
   FormLabel,
@@ -23,19 +22,30 @@ import { primaryBtn } from "src/utils/styles";
 import HoverCard from "src/components/product/HoverCard";
 import ArrowRightRoundedIcon from "@mui/icons-material/ArrowRightRounded";
 import { useEffect, useState } from "react";
-import { DesignCharacteristic } from "src/utils/enums";
+import {
+  CustomRequestStatus,
+  DesignCharacteristic,
+  VersionOwner,
+} from "src/utils/enums";
 import { SubmitHandler, useForm } from "react-hook-form";
 import _ from "lodash";
-import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router-dom";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getDesignVersionDetail } from "src/services/designVersion.service";
 import {
+  fetchCustomerSpouse,
+  fetchCustomRequestDetail,
   fetchDesignVersionDetail,
   fetchDiamondSpecs,
   fetchMetalSpecs,
 } from "src/utils/querykey";
 import { getDiamondSpecs } from "src/services/diamondSpec.service";
 import { getMetalSpecs } from "src/services/metalSpec.service";
+import { getCustomRequestDetail } from "src/services/customRequest.service";
+import { getCustomerSpouse } from "src/services/spouse.service";
+import { postCreateCustomDesign } from "src/services/customDesign.service";
+import { toast } from "react-toastify";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 interface IFormInput {
   male: {
@@ -78,10 +88,32 @@ function CustomDesign() {
   const [femaleAddedMetals, setFemaleAddedMetals] = useState<number[]>([]);
   const [femaleError, setFemaleError] = useState(initError);
 
-  const { maleDesignId, femaleDesignId } = useParams<{
+  const { maleDesignId, femaleDesignId, id } = useParams<{
     maleDesignId: string;
     femaleDesignId: string;
+    id: string;
   }>();
+
+  const navigate = useNavigate();
+
+  const { data: response } = useQuery({
+    queryKey: [fetchCustomRequestDetail, id],
+
+    queryFn: () => {
+      if (id) return getCustomRequestDetail(+id);
+    },
+    enabled: !!id,
+  });
+
+  const { data: spouseResponse } = useQuery({
+    queryKey: [fetchCustomerSpouse, response?.data?.customer.id],
+
+    queryFn: () => {
+      if (response?.data?.customer.id)
+        return getCustomerSpouse(response?.data?.customer.id);
+    },
+    enabled: !!response?.data?.customer.id,
+  });
 
   const { data: maleVersionResponse } = useQuery({
     queryKey: [fetchDesignVersionDetail, maleDesignId],
@@ -119,6 +151,17 @@ function CustomDesign() {
     },
   });
 
+  const mutation = useMutation({
+    mutationFn: (data: ICreateCustomDesignRequest) => {
+      return postCreateCustomDesign(data);
+    },
+    onSuccess: (response) => {
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
   const {
     register,
     formState: { errors },
@@ -151,7 +194,55 @@ function CustomDesign() {
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     if (onError()) return;
 
-    console.log(data);
+    if (
+      spouseResponse?.data &&
+      response?.data &&
+      maleVersion &&
+      femaleVersion
+    ) {
+      const ownerSpouse = spouseResponse.data.spouses.find(
+        (item) => !!item.customerId
+      );
+      const partnerSpouse = spouseResponse.data.spouses.find(
+        (item) => !item.customerId
+      );
+
+      if (ownerSpouse && partnerSpouse) {
+        const { female, male } = data;
+
+        const maleResponse = await mutation.mutateAsync({
+          customerId: response.data.customer.id,
+          spouseId:
+            maleVersion.owner === VersionOwner.Self
+              ? ownerSpouse.id
+              : partnerSpouse.id,
+          designVersionId: maleVersion.id,
+          blueprintId: maleVersion.designFile.id,
+          metalWeight: male.metalWeight,
+          sideDiamondAmount: male.sideDiamondsCount,
+          metalSpecIds: maleAddedMetals,
+          diamondSpecIds: maleAddedDiamonds,
+        });
+
+        const femaleResponse = await mutation.mutateAsync({
+          customerId: response.data.customer.id,
+          spouseId:
+            femaleVersion.owner === VersionOwner.Self
+              ? ownerSpouse.id
+              : partnerSpouse.id,
+          designVersionId: femaleVersion.id,
+          blueprintId: femaleVersion.designFile.id,
+          metalWeight: female.metalWeight,
+          sideDiamondAmount: female.sideDiamondsCount,
+          metalSpecIds: femaleAddedMetals,
+          diamondSpecIds: femaleAddedDiamonds,
+        });
+
+        if (maleResponse.data && femaleResponse.data) {
+          toast.success("Bản thiết kế đã được tạo thành công");
+        }
+      }
+    }
   };
 
   const handleSelectMetal = (id: number, gender: DesignCharacteristic) => {
@@ -295,6 +386,22 @@ function CustomDesign() {
   };
 
   useEffect(() => {
+    if (response && response.data) {
+      if (
+        response.data.status === CustomRequestStatus.Waiting ||
+        response.data.status === CustomRequestStatus.Canceled
+      )
+        navigate("not-found");
+    }
+
+    if (response && response.errors) {
+      navigate("not-found");
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response]);
+
+  useEffect(() => {
     if (maleVersionResponse?.data) {
       setMaleVersion(maleVersionResponse.data.designVersion);
     }
@@ -387,7 +494,7 @@ function CustomDesign() {
                   placeholder="Nhập số lượng"
                   {...register("male.sideDiamondsCount", {
                     required: "* Không được bỏ trống",
-                    min: { value: 0, message: "* Lớn hơn hoặc bằng 0" },
+                    min: { value: 1, message: "* Lớn hơn hoặc bằng 1" },
                   })}
                 />
                 {errors.male?.sideDiamondsCount && (
@@ -645,7 +752,7 @@ function CustomDesign() {
                   placeholder="Nhập số lượng"
                   {...register("female.sideDiamondsCount", {
                     required: "* Không được bỏ trống",
-                    min: { value: 0, message: "* Lớn hơn hoặc bằng 0" },
+                    min: { value: 1, message: "* Lớn hơn hoặc bằng 1" },
                   })}
                 />
                 {errors.female?.sideDiamondsCount && (
@@ -852,14 +959,15 @@ function CustomDesign() {
         </Grid>
 
         <Grid item xs={6} mt={5}>
-          <Button
+          <LoadingButton
+            loading={mutation.isPending}
             variant="contained"
             sx={{ ...primaryBtn, borderRadius: 2 }}
             fullWidth
             onClick={handleSubmit(onSubmit, onError)}
           >
             Tạo Thiết Kế
-          </Button>
+          </LoadingButton>
         </Grid>
       </Grid>
     </div>

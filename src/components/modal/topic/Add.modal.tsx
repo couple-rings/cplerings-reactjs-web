@@ -21,6 +21,7 @@ function AddModal(props: IModalProps) {
     formState: { errors },
     handleSubmit,
   } = useForm<IFormInput>();
+
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     console.log(data);
   };

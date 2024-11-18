@@ -7,6 +7,7 @@ import {
   Grid,
   MenuItem,
   Select,
+  Skeleton,
   SxProps,
   TextField,
 } from "@mui/material";
@@ -18,49 +19,55 @@ import SizeMenu from "src/components/menu/SizeMenu";
 import { menuPaperStyle, secondaryBtn, sizeMenuStyle } from "src/utils/styles";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import _ from "lodash";
+import { useAppSelector } from "src/utils/hooks";
+import { useQuery } from "@tanstack/react-query";
+import {
+  fetchCraftingRequests,
+  fetchCustomDesigns,
+  fetchDiamondSpecs,
+  fetchMetalSpecs,
+} from "src/utils/querykey";
+import { getCustomDesigns } from "src/services/customDesign.service";
+import { getCraftingRequests } from "src/services/craftingRequest.service";
+import {
+  CraftingRequestStatus,
+  DesignCharacteristic,
+  Status,
+} from "src/utils/enums";
+import { useNavigate } from "react-router-dom";
+import { getDiamondSpecs } from "src/services/diamondSpec.service";
+import { getMetalSpecs } from "src/services/metalSpec.service";
 
-const metalsSpecs = [
+const branches: IBranch[] = [
   {
     id: 1,
-    name: "Gold 18K - Yellow",
+    storeName: "Cửa hàng Nhẫn Cưới Quận 1",
+    address: "123 Đường Lê Lợi, Quận 1, TP. Hồ Chí Minh",
+    phone: "0901234567",
+    coverImage: {
+      id: 1,
+      url: "",
+    },
   },
   {
     id: 2,
-    name: "Gold 18K - White",
+    storeName: "Cửa hàng Nhẫn Cưới Quận 3",
+    address: "456 Đường Nguyễn Đình Chiểu, Quận 3, TP. Hồ Chí Minh",
+    phone: "0912345678",
+    coverImage: {
+      id: 2,
+      url: "",
+    },
   },
   {
     id: 3,
-    name: "Gold 18K - Rose",
-  },
-];
-
-const diamondSpecs = [
-  {
-    id: 1,
-    name: "Pure Heart",
-    weight: 0.05,
-    color: "D",
-    clarity: "VS2",
-    shape: "HEART",
-    price: 3600000,
-  },
-  {
-    id: 2,
-    name: "Graceful Oval",
-    weight: 0.05,
-    color: "G",
-    clarity: "SI1",
-    shape: "OVAL",
-    price: 3120000,
-  },
-  {
-    id: 3,
-    name: "Dazzling Round",
-    weight: 0.15,
-    color: "G",
-    clarity: "VS2",
-    shape: "ROUND",
-    price: 3600000,
+    storeName: "Cửa hàng Nhẫn Cưới Quận 5",
+    address: "789 Đường Trần Hưng Đạo, Quận 5, TP. Hồ Chí Minh",
+    phone: "0923456789",
+    coverImage: {
+      id: 3,
+      url: "",
+    },
   },
 ];
 
@@ -72,6 +79,7 @@ const sizeMenuPaperStyle: SxProps = {
 };
 
 interface IFormInput {
+  branchId: number;
   male: {
     metalSpecId: number;
     diamondSpecId: number;
@@ -86,12 +94,79 @@ interface IFormInput {
   };
 }
 
+const specFilter = {
+  page: 0,
+  pageSize: 100,
+};
+
 function CreateCraftingRequest() {
+  const [maleDesign, setMaleDesign] = useState<ICustomDesign | null>(null);
+  const [femaleDesign, setFemaleDesign] = useState<ICustomDesign | null>(null);
+
+  const [designFilterObj, setDesignFilterObj] =
+    useState<ICustomDesignFilter | null>(null);
+  const [maleRequestFilterObj, setMaleRequestFilterObj] =
+    useState<ICraftingRequestFilter | null>(null);
+  const [femaleRequestFilterObj, setFemaleRequestFilterObj] =
+    useState<ICraftingRequestFilter | null>(null);
+
   const [maleSize, setMaleSize] = useState(0);
   const [femaleSize, setFemaleSize] = useState(0);
   const [error, setError] = useState({
     maleSizeNotSelected: false,
     femaleSizeNotSelected: false,
+  });
+
+  const { id } = useAppSelector((state) => state.auth.userInfo);
+
+  const navigate = useNavigate();
+
+  const { data: designResponse, isLoading: designLoading } = useQuery({
+    queryKey: [fetchCustomDesigns, designFilterObj],
+
+    queryFn: () => {
+      if (designFilterObj) return getCustomDesigns(designFilterObj);
+    },
+    enabled: !!designFilterObj,
+  });
+
+  const { data: maleRequestResponse, isLoading: maleRequestLoading } = useQuery(
+    {
+      queryKey: [fetchCraftingRequests, maleRequestFilterObj],
+
+      queryFn: () => {
+        if (maleRequestFilterObj)
+          return getCraftingRequests(maleRequestFilterObj);
+      },
+      enabled: !!maleRequestFilterObj,
+    }
+  );
+
+  const { data: femaleRequestResponse, isLoading: femaleRequestLoading } =
+    useQuery({
+      queryKey: [fetchCraftingRequests, femaleRequestFilterObj],
+
+      queryFn: () => {
+        if (femaleRequestFilterObj)
+          return getCraftingRequests(femaleRequestFilterObj);
+      },
+      enabled: !!femaleRequestFilterObj,
+    });
+
+  const { data: diamondSpecResponse } = useQuery({
+    queryKey: [fetchDiamondSpecs, specFilter],
+
+    queryFn: () => {
+      return getDiamondSpecs(specFilter);
+    },
+  });
+
+  const { data: metalSpecResponse } = useQuery({
+    queryKey: [fetchMetalSpecs, specFilter],
+
+    queryFn: () => {
+      return getMetalSpecs(specFilter);
+    },
   });
 
   const {
@@ -125,6 +200,79 @@ function CreateCraftingRequest() {
   };
 
   useEffect(() => {
+    setDesignFilterObj({
+      page: 0,
+      pageSize: 100,
+      state: Status.Active,
+      customerId: id,
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (designResponse?.data) {
+      if (designResponse.data.items.length === 0)
+        navigate("/customer/support/crafting-request");
+
+      const maleDesign = designResponse.data.items.find(
+        (item) =>
+          item.designVersion.design.characteristic === DesignCharacteristic.Male
+      );
+
+      const femaleDesign = designResponse.data.items.find(
+        (item) =>
+          item.designVersion.design.characteristic ===
+          DesignCharacteristic.Female
+      );
+
+      if (maleDesign && femaleDesign) {
+        setMaleDesign(maleDesign);
+        setFemaleDesign(femaleDesign);
+      }
+    }
+
+    if (designResponse?.errors) navigate("not-found");
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [designResponse]);
+
+  useEffect(() => {
+    if (maleDesign)
+      setMaleRequestFilterObj({
+        page: 0,
+        pageSize: 100,
+        customDesignId: maleDesign.id,
+      });
+  }, [maleDesign]);
+
+  useEffect(() => {
+    if (femaleDesign)
+      setFemaleRequestFilterObj({
+        page: 0,
+        pageSize: 100,
+        customDesignId: femaleDesign.id,
+      });
+  }, [femaleDesign]);
+
+  useEffect(() => {
+    if (maleRequestResponse?.data && femaleRequestResponse?.data) {
+      const malePending = maleRequestResponse.data.items.find(
+        (item) => item.craftingRequestStatus === CraftingRequestStatus.Pending
+      );
+
+      const femalePending = femaleRequestResponse.data.items.find(
+        (item) => item.craftingRequestStatus === CraftingRequestStatus.Pending
+      );
+
+      if (malePending || femalePending)
+        navigate("/customer/support/crafting-request");
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [femaleRequestResponse, maleRequestResponse]);
+
+  useEffect(() => {
     if (maleSize > 0)
       setError((current) => ({ ...current, maleSizeNotSelected: false }));
 
@@ -132,26 +280,63 @@ function CreateCraftingRequest() {
       setError((current) => ({ ...current, femaleSizeNotSelected: false }));
   }, [femaleSize, maleSize]);
 
+  if (
+    designLoading ||
+    maleRequestLoading ||
+    femaleRequestLoading ||
+    !diamondSpecResponse ||
+    !metalSpecResponse
+  )
+    return (
+      <Grid container justifyContent={"center"} my={5}>
+        <Grid container item xs={8} justifyContent={"space-between"}>
+          <Grid container item xs={5.8} gap={1}>
+            <Skeleton variant="rectangular" width={"100%"} height={200} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+          </Grid>
+
+          <Grid container item xs={5.8} gap={1}>
+            <Skeleton variant="rectangular" width={"100%"} height={200} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+          </Grid>
+        </Grid>
+      </Grid>
+    );
+
   return (
     <Grid container className={styles.container} justifyContent={"center"}>
-      <Grid item xs={8}>
+      <Grid item xs={10} lg={8}>
         <div className={styles.title}>Tạo Yêu Cầu Gia Công</div>
         <Card className={styles.body}>
           <Grid container>
-            <Grid item xs={6} p={5}>
+            <Grid item md={6} p={{ xs: 1, sm: 5 }}>
               <div className={styles.design}>
                 <Box sx={{ marginBottom: "1.5rem", textAlign: "center" }}>
                   <img src={male} width={18} />
                   <span className={styles.subtitle}>Thiết Kế Của Nam</span>
                 </Box>
+
+                <Grid container justifyContent={"center"} mb={3}>
+                  <Grid item xs={8}>
+                    <img
+                      src={maleDesign?.designVersion.image.url}
+                      className={styles.designImg}
+                    />
+                  </Grid>
+                </Grid>
+
                 <Grid container justifyContent={"center"} gap={11.9} mb={2}>
                   <div>Trọng lượng:</div>
-                  <div>3 Chỉ</div>
+                  <div>{maleDesign?.metalWeight} Chỉ</div>
                 </Grid>
 
                 <Grid container justifyContent={"center"} gap={5}>
                   <div>Số kim cương phụ:</div>
-                  <div>8 Viên</div>
+                  <div>{maleDesign?.sideDiamondsCount} Viên</div>
                 </Grid>
               </div>
 
@@ -182,7 +367,7 @@ function CreateCraftingRequest() {
                         <MenuItem value={0} disabled>
                           <em>Chọn chất liệu</em>
                         </MenuItem>
-                        {metalsSpecs.map((item) => {
+                        {metalSpecResponse.data?.items.map((item) => {
                           return (
                             <MenuItem value={item.id} key={item.id}>
                               {item.name}
@@ -227,7 +412,7 @@ function CreateCraftingRequest() {
                         <MenuItem value={0} disabled>
                           <em>Chọn kim cương</em>
                         </MenuItem>
-                        {diamondSpecs.map((spec) => {
+                        {diamondSpecResponse.data?.items.map((spec) => {
                           return (
                             <MenuItem value={spec.id} key={spec.id}>
                               {spec.shape} {spec.weight} - {spec.color} -{" "}
@@ -296,20 +481,30 @@ function CreateCraftingRequest() {
               </Grid>
             </Grid>
 
-            <Grid item xs={6} p={5}>
+            <Grid item md={6} p={{ xs: 1, sm: 5 }}>
               <div className={styles.design}>
                 <Box sx={{ marginBottom: "1.5rem", textAlign: "center" }}>
                   <img src={female} width={18} />
                   <span className={styles.subtitle}>Thiết Kế Của Nữ</span>
                 </Box>
+
+                <Grid container justifyContent={"center"} mb={3}>
+                  <Grid item xs={8}>
+                    <img
+                      src={femaleDesign?.designVersion.image.url}
+                      className={styles.designImg}
+                    />
+                  </Grid>
+                </Grid>
+
                 <Grid container justifyContent={"center"} gap={11.9} mb={2}>
                   <div>Trọng lượng:</div>
-                  <div>3 Chỉ</div>
+                  <div>{femaleDesign?.metalWeight} Chỉ</div>
                 </Grid>
 
                 <Grid container justifyContent={"center"} gap={5}>
                   <div>Số kim cương phụ:</div>
-                  <div>8 Viên</div>
+                  <div>{femaleDesign?.sideDiamondsCount} Viên</div>
                 </Grid>
               </div>
 
@@ -340,7 +535,7 @@ function CreateCraftingRequest() {
                         <MenuItem value={0} disabled>
                           <em>Chọn chất liệu</em>
                         </MenuItem>
-                        {metalsSpecs.map((item) => {
+                        {metalSpecResponse.data?.items.map((item) => {
                           return (
                             <MenuItem value={item.id} key={item.id}>
                               {item.name}
@@ -385,7 +580,7 @@ function CreateCraftingRequest() {
                         <MenuItem value={0} disabled>
                           <em>Chọn kim cương</em>
                         </MenuItem>
-                        {diamondSpecs.map((spec) => {
+                        {diamondSpecResponse.data?.items.map((spec) => {
                           return (
                             <MenuItem value={spec.id} key={spec.id}>
                               {spec.shape} {spec.weight} - {spec.color} -{" "}
@@ -451,6 +646,46 @@ function CreateCraftingRequest() {
                     </FormHelperText>
                   )}
                 </Grid>
+              </Grid>
+            </Grid>
+
+            <Grid container justifyContent={"center"} my={5}>
+              <Grid item xs={6}>
+                <FormLabel error={!!errors.branchId}>Cửa Hàng</FormLabel>
+                <Controller
+                  defaultValue={0}
+                  name="branchId"
+                  rules={{
+                    required: "* Vui lòng chọn cửa hàng",
+                    min: { value: 1, message: "* Vui lòng chọn cửa hàng" },
+                  }}
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      error={!!errors.branchId}
+                      fullWidth
+                      variant="standard"
+                      defaultValue={0}
+                    >
+                      <MenuItem value={0} disabled>
+                        <em>Chọn cửa hàng gần bạn</em>
+                      </MenuItem>
+                      {branches.map((item) => {
+                        return (
+                          <MenuItem value={item.id} key={item.id}>
+                            {item.storeName} - {item.address}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  )}
+                />
+                {errors.branchId && (
+                  <FormHelperText error sx={{ mt: 1 }}>
+                    {errors.branchId.message}
+                  </FormHelperText>
+                )}
               </Grid>
             </Grid>
 

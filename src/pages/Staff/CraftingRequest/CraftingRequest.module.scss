@@ -9,7 +9,7 @@
         margin-bottom: 2rem;
     }
 
-    .completed {
+    .accepted {
         background-color: #07bc0c;
         color           : #ffffff;
         border-radius   : 15px;
@@ -18,7 +18,7 @@
         width           : 100px;
     }
 
-    .canceled {
+    .rejected {
         background-color: #e74c3c;
         color           : #ffffff;
         border-radius   : 15px;
@@ -27,12 +27,11 @@
         width           : 100px;
     }
 
-    .ongoing {
-        background-color   : #f1c40f;
-        color              : #ffffff;
-        border-radius      : 15px;
-        padding            : 5px 10px;
-        text-transform     : capitalize;
-        // width           : 120px;
+    .pending {
+        background-color: #f1c40f;
+        color           : #ffffff;
+        border-radius   : 15px;
+        padding         : 5px 10px;
+        text-transform  : capitalize;
     }
 }
