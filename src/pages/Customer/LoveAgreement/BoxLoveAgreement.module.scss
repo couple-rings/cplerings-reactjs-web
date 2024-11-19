@@ -1,0 +1,25 @@
+.container {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    // box-shadow: #fbe6a8 0px 7px 29px 0px;
+    
+    width: 70%;
+    img {
+        width: 100%;
+    }
+    
+    .boxContent {
+        text-align: center;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+
+        .ownName {
+            font-weight: 300;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        .signDate {
+            color: #6F6A6A;
+            padding: 5px;
+        }
+    }
+}

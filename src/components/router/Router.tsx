@@ -74,6 +74,8 @@ import CustomerCraftingProcess from "src/pages/Customer/Support/CraftingProcess/
 import Deposit from "src/pages/Customer/Support/Deposit/Deposit";
 import ManageBlog from "src/pages/Staff/ManageBlog/ManageBlog";
 import CraftingRequest from "src/pages/Staff/CraftingRequest/CraftingRequest";
+import LoveAgreement from "src/pages/Customer/LoveAgreement/LoveAgreement";
+import LoveAgreeMentDetail from "src/pages/Customer/LoveAgreement/LoveAgreementDetail";
 
 const router = createBrowserRouter([
   {
@@ -147,6 +149,14 @@ const router = createBrowserRouter([
       {
         path: "stores",
         element: <StoresBranches />,
+      },
+      {
+        path: "love-agreement",
+        element: <LoveAgreement />,
+      },
+      {
+        path: "love-agreement/:id",
+        element: <LoveAgreeMentDetail />,
       },
     ],
   },

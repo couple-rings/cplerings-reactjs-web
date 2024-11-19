@@ -238,6 +238,11 @@ declare global {
     imageSrcs: string[];
     setImageSrcs: (newImageSrcs: string[]) => void;
   }
+
+  interface ILoveAgreement {
+    spouseName: string;
+    date: string;
+  }
   interface IPulseIconProps {
     icon: React.ReactNode;
 
