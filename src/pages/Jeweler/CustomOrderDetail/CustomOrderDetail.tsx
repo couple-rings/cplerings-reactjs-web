@@ -1,23 +1,91 @@
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, Skeleton } from "@mui/material";
 import Divider from "@mui/material/Divider";
 
 import blueprint from "src/assets/sampledata/blueprint.pdf";
 import menring from "src/assets/sampledata/menring.png";
 import HoverCard from "src/components/product/HoverCard";
 import MaleIcon from "@mui/icons-material/Male";
-import FemaleIcon from '@mui/icons-material/Female';
+import FemaleIcon from "@mui/icons-material/Female";
 import styles from "./CustomOrderDetail.module.scss";
+import { useNavigate, useParams } from "react-router-dom";
+import { primaryBtn } from "src/utils/styles";
+import { fetchCustomOrderDetail } from "src/utils/querykey";
+import { useQuery } from "@tanstack/react-query";
+import { getCustomOrderDetail } from "src/services/customOrder.service";
+import { useEffect, useState } from "react";
+import { CustomOrderStatus, DesignCharacteristic } from "src/utils/enums";
 
 function CustomOrderDetail() {
+  const [order, setOrder] = useState<ICustomOrder | null>(null);
+  const [maleRing, setMaleRing] = useState<IRing | null>(null);
+  const [femaleRing, setFemaleRing] = useState<IRing | null>(null);
+
+  const { id } = useParams<{ id: string }>();
+
+  const navigate = useNavigate();
+
+  const { data: response } = useQuery({
+    queryKey: [fetchCustomOrderDetail, id],
+
+    queryFn: () => {
+      if (id) return getCustomOrderDetail(+id);
+    },
+    enabled: !!id,
+  });
+
+  useEffect(() => {
+    if (response && response.data) {
+      const { firstRing, secondRing } = response.data.customOrder;
+
+      if (
+        firstRing.customDesign.designVersion.design.characteristic ===
+        DesignCharacteristic.Male
+      )
+        setMaleRing(firstRing);
+      else setFemaleRing(firstRing);
+
+      if (
+        secondRing.customDesign.designVersion.design.characteristic ===
+        DesignCharacteristic.Female
+      )
+        setFemaleRing(secondRing);
+      else setMaleRing(secondRing);
+
+      setOrder(response.data.customOrder);
+    }
+
+    if (response && response.errors) {
+      navigate("/jeweler/custom-order");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response]);
+
+  if (!maleRing || !femaleRing || !order)
+    return (
+      <Grid container justifyContent={"center"} mt={5}>
+        <Grid container item xs={8} mb={3} justifyContent={"space-between"}>
+          <Grid container item xs={5.8} gap={3}>
+            <Skeleton variant="rectangular" width={"100%"} height={300} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+          </Grid>
+          <Grid container item xs={5.8} gap={3}>
+            <Skeleton variant="rectangular" width={"100%"} height={300} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+          </Grid>
+        </Grid>
+      </Grid>
+    );
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div className={styles.title}>Bản thiết kế chi tiết</div>
-        <div className={styles.title}>#Customer_ID</div>
-      </div>
-
-      <div className={styles.customName}>
-        DR FOREVER Two-row Diamond Pavé Wedding Rings
+        <div className={styles.title}>Chi Tiết Đơn</div>
       </div>
 
       <Grid
@@ -112,32 +180,6 @@ function CustomOrderDetail() {
                 5 chỉ
               </Grid>
             </Grid>
-
-            <Grid item xs={12}>
-              <Divider />
-            </Grid>
-
-            <Grid container className={styles.infoDetail}>
-              <Grid item className="info-detail-label">
-                Ghi chú
-              </Grid>
-              <Grid item className="info-detail-content">
-                Hong có gì hết chơn
-              </Grid>
-            </Grid>
-
-            <Grid item xs={12}>
-              <Divider />
-            </Grid>
-
-            <Grid container className={styles.infoDetail}>
-              <Grid item className="info-detail-label">
-                Giá
-              </Grid>
-              <Grid item className="info-detail-content">
-                1,000,000VND
-              </Grid>
-            </Grid>
           </Grid>
         </Grid>
 
@@ -228,39 +270,20 @@ function CustomOrderDetail() {
                 5 chỉ
               </Grid>
             </Grid>
-
-            <Grid item xs={12}>
-              <Divider />
-            </Grid>
-
-            <Grid container className={styles.infoDetail}>
-              <Grid item className="info-detail-label">
-                Ghi chú
-              </Grid>
-              <Grid item className="info-detail-content">
-                Hong có gì hết chơn
-              </Grid>
-            </Grid>
-
-            <Grid item xs={12}>
-              <Divider />
-            </Grid>
-
-            <Grid container className={styles.infoDetail}>
-              <Grid item className="info-detail-label">
-                Giá
-              </Grid>
-              <Grid item className="info-detail-content">
-                1,000,000VND
-              </Grid>
-            </Grid>
           </Grid>
         </Grid>
       </Grid>
 
-      <Grid container justifyContent={"center"}>
-        <Button>Nhận làm bản thiết kế này</Button>
-      </Grid>
+      {order.status === CustomOrderStatus.Waiting && (
+        <Grid container justifyContent={"center"}>
+          <Button
+            variant="contained"
+            sx={{ ...primaryBtn, borderRadius: 2, px: 5 }}
+          >
+            Nhận đơn này
+          </Button>
+        </Grid>
+      )}
     </div>
   );
 }

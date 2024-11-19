@@ -76,6 +76,7 @@ import ManageBlog from "src/pages/Staff/ManageBlog/ManageBlog";
 import CraftingRequest from "src/pages/Staff/CraftingRequest/CraftingRequest";
 import LoveAgreement from "src/pages/Customer/LoveAgreement/LoveAgreement";
 import LoveAgreeMentDetail from "src/pages/Customer/LoveAgreement/LoveAgreementDetail";
+import ArrangeTransport from "src/pages/Staff/ArrangeTransport/ArrangeTransport";
 
 const router = createBrowserRouter([
   {
@@ -313,6 +314,10 @@ const router = createBrowserRouter([
         element: <MaintenancePayment />,
       },
       {
+        path: "arrange-transport",
+        element: <ArrangeTransport />,
+      },
+      {
         path: "blog",
         element: <ManageBlog />,
       },
@@ -339,7 +344,7 @@ const router = createBrowserRouter([
         element: <CustomOrderDetail />,
       },
       {
-        path: "custom-process",
+        path: "custom-order/:orderId/crafting-process",
         element: <CraftingProcess />,
       },
     ],

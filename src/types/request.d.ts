@@ -219,4 +219,46 @@ declare global {
     pageSize: number;
     customOrderId: number;
   }
+
+  interface IUpdateCraftingStageRequest {
+    imageId: number;
+    ringMaintenances?: {
+      ringId: number;
+      maintenanceDocumentId: number;
+    }[];
+  }
+
+  interface IDepositCraftingStageRequest {
+    craftingStageId: number;
+    transportationAddressId?: number;
+  }
+
+  interface ITransporterFilter {
+    page: number;
+    pageSize: number;
+    branchId: number;
+  }
+
+  interface ITransportOrderFilter {
+    page: number;
+    pageSize: number;
+    transporterId?: number;
+    branchId?: number;
+    // need status and branch id
+  }
+
+  interface IAgreementFilter {
+    page: number;
+    pageSize: number;
+  }
+
+  interface IFingerSizeFilter {
+    page: number;
+    pageSize: number;
+  }
+
+  interface IBranchFilter {
+    page: number;
+    pageSize: number;
+  }
 }

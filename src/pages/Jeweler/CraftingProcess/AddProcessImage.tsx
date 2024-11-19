@@ -4,22 +4,22 @@ import { Box, Grid, Modal } from "@mui/material";
 import styles from "./AddProcessImage.module.scss";
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: "80vw",
   height: "80vh",
-  bgcolor: 'background.paper',
+  bgcolor: "background.paper",
   // border: '2px solid #000',
   display: "grid",
-  gap:"10px",
+  gap: "10px",
   gridTemplateColumns: "repeat(4, 1fr)",
   borderRadius: "10px",
   boxShadow: 24,
   p: 4,
 
-  overflow: "scroll"
+  overflow: "scroll",
 };
 
 function AddProcessImage(props: IImageProcessProps) {
@@ -50,24 +50,32 @@ function AddProcessImage(props: IImageProcessProps) {
 
   return (
     <div>
-      <Grid container md={12} justifyContent="center">
-        <Grid item  className={styles.imageBox}>
+      <Grid container justifyContent="center">
+        <Grid item className={styles.imageBox}>
           {imageSrcs.length > 0 ? (
             <>
-            <img src={imageSrcs[0]}
-            alt="Uploaded preview"
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              borderRadius: "10px"
-            }}
-            />
+              <img
+                src={imageSrcs[0]}
+                alt="Uploaded preview"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  borderRadius: "10px",
+                }}
+              />
 
-            <div onClick={handleOpen} className={styles.pdf}>Xem Hình</div>
+              <div onClick={handleOpen} className={styles.pdf}>
+                Xem Hình
+              </div>
             </>
           ) : (
-            <Grid container justifyContent={"center"} direction={"column"} alignItems={"center"}>
+            <Grid
+              container
+              justifyContent={"center"}
+              direction={"column"}
+              alignItems={"center"}
+            >
               <Grid item>
                 <AddIcon
                   sx={{ fontSize: "80px", color: "gray", margin: "0" }}
@@ -104,20 +112,20 @@ function AddProcessImage(props: IImageProcessProps) {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-      <Box sx={style}>
+        <Box sx={style}>
           {imageSrcs.map((src, index) => (
             <img
-            key={index}
-            src={src}
-            alt="Pictures"
-            style={{
-              width: "100%",
-              height: "300px",
-              objectFit:"cover",
-              borderRadius: "10px",
-              marginBottom: "10px",
-            }}
-          />
+              key={index}
+              src={src}
+              alt="Pictures"
+              style={{
+                width: "100%",
+                height: "300px",
+                objectFit: "cover",
+                borderRadius: "10px",
+                marginBottom: "10px",
+              }}
+            />
           ))}
         </Box>
       </Modal>

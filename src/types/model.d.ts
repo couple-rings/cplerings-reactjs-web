@@ -8,6 +8,7 @@ import {
   FileType,
   GoldColor,
   RingStatus,
+  TransportOrderStatus,
   VersionOwner,
 } from "src/utils/enums";
 
@@ -327,6 +328,7 @@ declare global {
     craftingRequestStatus: CraftingRequestStatus;
     createdAt: string;
     branch: IBranch;
+    customDesign: ICustomDesign;
   }
 
   interface ICraftingRequestGroup {
@@ -389,5 +391,42 @@ declare global {
       url: string;
     };
     status: CraftingStageStatus;
+  }
+
+  interface ITransportOrder {
+    id: number;
+    status: TransportOrderStatus;
+    receiverName: string;
+    receiverPhone: string;
+    deliveryAddress: string;
+    customOrder: ICustomOrder;
+    transporter: IUser;
+    transportationNotes: {
+      id: number;
+      date: string;
+      note: string;
+    }[];
+  }
+
+  interface IAgreement {
+    id: number;
+    customer: IUser;
+    mainName: string;
+    mainSignature: {
+      id: number;
+      url: string;
+    };
+    partnerName: string;
+    partnerSignature: {
+      id: number;
+      url: string;
+    };
+    signedDate: string;
+  }
+
+  interface IFingerSize {
+    id: number;
+    size: number;
+    diameter: number;
   }
 }

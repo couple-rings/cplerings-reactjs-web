@@ -5,20 +5,25 @@ import DrawerHeader from "src/components/layout/DrawerHeader";
 import Header from "src/components/layout/Header";
 import Main from "src/components/layout/Main";
 import SideBar from "src/components/layout/SideBar";
-import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
-import PaletteIcon from "@mui/icons-material/Palette";
-
+import ConstructionRoundedIcon from "@mui/icons-material/ConstructionRounded";
+import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
+import HardwareRoundedIcon from "@mui/icons-material/HardwareRounded";
 
 const sidebarList = [
   {
-    text: "Chat",
-    icon: <QuestionAnswerIcon />,
-    path: "/staff",
+    text: "Dashboard",
+    icon: <DashboardRoundedIcon />,
+    path: "/jeweler",
   },
   {
-    text: "Yêu Cầu Gia Công",
-    icon: <PaletteIcon />,
+    text: "Đơn Gia Công",
+    icon: <HardwareRoundedIcon />,
     path: "/jeweler/custom-order",
+  },
+  {
+    text: "Đơn Bảo Trì",
+    icon: <ConstructionRoundedIcon />,
+    path: "/jeweler/maintain-order",
   },
 ];
 

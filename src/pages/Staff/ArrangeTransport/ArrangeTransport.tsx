@@ -6,19 +6,19 @@ import {
   GridPaginationModel,
   GridSortModel,
 } from "@mui/x-data-grid";
-import styles from "./CraftingRequest.module.scss";
+import styles from "./ArrangeTransport.module.scss";
 import { pageSize } from "src/utils/constants";
 import { useEffect, useMemo, useState } from "react";
-import moment from "moment";
-import { CraftingRequestStatus } from "src/utils/enums";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getTransportOrders } from "src/services/transportOrder.service";
+import { fetchTransporters, fetchTransportOrders } from "src/utils/querykey";
+import { TransportOrderStatus } from "src/utils/enums";
 import { Button } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
-import { useNavigate } from "react-router-dom";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getCraftingRequestGroups } from "src/services/craftingRequest.service";
-import { fetchCraftingRequestGroups } from "src/utils/querykey";
+import { useAppSelector } from "src/utils/hooks";
+import { getTransporters } from "src/services/account.service";
 
-interface Row extends ICraftingRequestGroup {}
+interface Row extends ITransportOrder {}
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
   ["contains" /* add more over time */].includes(value)
@@ -31,23 +31,39 @@ const initMetaData = {
   count: 0,
 };
 
-function CraftingRequest() {
+function ArrangeTransport() {
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
-  const [filterObj, setFilterObj] = useState<ICraftingRequestGroupFilter>({
-    page: 0,
-    pageSize,
-  });
+  const [filterObj, setFilterObj] = useState<ITransportOrderFilter | null>(
+    null
+  );
+  const [transporterFilterObj, setTransporterFilterObj] =
+    useState<ITransporterFilter | null>(null);
 
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  const { branchId } = useAppSelector((state) => state.auth.userInfo);
+
   const { data: response, isLoading } = useQuery({
-    queryKey: [fetchCraftingRequestGroups, filterObj],
+    queryKey: [fetchTransportOrders, filterObj],
 
     queryFn: () => {
-      if (filterObj) return getCraftingRequestGroups(filterObj);
+      if (filterObj) return getTransportOrders(filterObj);
     },
+    enabled: !!filterObj,
   });
+
+  const { data: transporterResponse, isLoading: transporterLoading } = useQuery(
+    {
+      queryKey: [fetchTransporters, transporterFilterObj],
+
+      queryFn: () => {
+        if (transporterFilterObj) return getTransporters(transporterFilterObj);
+      },
+      enabled: !!transporterFilterObj,
+    }
+  );
+
+  console.log(transporterResponse);
 
   const columns: GridColDef<Row>[] = useMemo(
     () => [
@@ -61,11 +77,23 @@ function CraftingRequest() {
         filterable: false,
         disableColumnMenu: true,
         renderCell: (index) =>
-          index.api.getRowIndexRelativeToVisibleRows(index.id) + 1,
+          index.api.getRowIndexRelativeToVisibleRows(index.row.id) + 1,
       },
       {
-        field: "customer",
+        field: "customOrder",
         headerName: "Khách Hàng",
+        width: 300,
+        headerAlign: "center",
+        align: "center",
+        filterOperators,
+        sortable: false,
+        valueGetter: (value: ICustomOrder) => {
+          return value.customer.username;
+        },
+      },
+      {
+        field: "transporter",
+        headerName: "Người Giao",
         width: 300,
         headerAlign: "center",
         align: "center",
@@ -73,21 +101,6 @@ function CraftingRequest() {
         sortable: false,
         valueGetter: (value: Omit<IUser, "hasSpouse">) => {
           return value.username;
-        },
-      },
-      {
-        field: "createdAt",
-        headerName: "Ngày Tạo",
-        width: 200,
-        headerAlign: "center",
-        align: "center",
-        filterable: false,
-        renderCell: ({ row }) => {
-          return (
-            <div>
-              {moment(row.craftingRequests[0].createdAt).format("DD/MM/YYYY")}
-            </div>
-          );
         },
       },
       {
@@ -99,32 +112,38 @@ function CraftingRequest() {
         filterOperators,
         sortable: false,
         renderCell: ({ row }) => {
-          const requestStatus = row.craftingRequests[0].craftingRequestStatus;
-
           let classname = "";
-          let status = "";
 
-          if (requestStatus === CraftingRequestStatus.Accepted) {
-            classname = styles.accepted;
-            status = "Đã Duyệt";
-          }
-
-          if (requestStatus === CraftingRequestStatus.Rejected) {
-            classname = styles.rejected;
-            status = "Đã Hủy";
-          }
-
-          if (requestStatus === CraftingRequestStatus.Pending) {
+          if (row.status === TransportOrderStatus.Pending) {
             classname = styles.pending;
-            status = "Đang Chờ Duyệt";
           }
 
-          return <div className={classname}>{status}</div>;
+          if (row.status === TransportOrderStatus.Completed) {
+            classname = styles.completed;
+          }
+
+          if (row.status === TransportOrderStatus.Rejected) {
+            classname = styles.rejected;
+          }
+
+          if (row.status === TransportOrderStatus.OnGoing) {
+            classname = styles.ongoing;
+          }
+
+          if (row.status === TransportOrderStatus.Waiting) {
+            classname = styles.waiting;
+          }
+
+          if (row.status === TransportOrderStatus.Delivering) {
+            classname = styles.delivering;
+          }
+
+          return <div className={classname}>{row.status}</div>;
         },
       },
       {
         field: "actions",
-        headerName: "",
+        headerName: "Thao Tác",
         type: "actions",
         width: 200,
         headerAlign: "center",
@@ -133,24 +152,23 @@ function CraftingRequest() {
           <Button
             variant="contained"
             sx={{ ...primaryBtn, py: 1, m: 2, borderRadius: 5 }}
-            onClick={() =>
-              navigate(`/staff/crafting-request/detail/${row.customer.id}`)
-            }
+            onClick={() => console.log(row)}
           >
             Chi Tiết
           </Button>
         ),
       },
     ],
-    [navigate]
+    []
   );
 
   const handleChangePage = (model: GridPaginationModel) => {
     // model.page is the page to fetch and starts at 0
-    setFilterObj({
-      ...filterObj,
-      page: model.page,
-    });
+    if (filterObj)
+      setFilterObj({
+        ...filterObj,
+        page: model.page,
+      });
   };
 
   const handleFilter = (model: GridFilterModel) => {
@@ -171,18 +189,34 @@ function CraftingRequest() {
 
   useEffect(() => {
     queryClient.invalidateQueries({
-      queryKey: [fetchCraftingRequestGroups, filterObj],
+      queryKey: [fetchTransportOrders, filterObj],
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterObj]);
 
+  useEffect(() => {
+    if (branchId !== 0) {
+      setFilterObj({
+        page: 0,
+        pageSize,
+        branchId,
+      });
+
+      setTransporterFilterObj({
+        page: 0,
+        pageSize: 100,
+        branchId,
+      });
+    }
+  }, [branchId]);
+
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Yêu Cầu Gia Công</div>
+      <div className={styles.title}>Sắp Xếp Vận Chuyển</div>
 
       <DataGrid
-        loading={isLoading}
+        loading={isLoading || transporterLoading}
         getRowHeight={() => "auto"}
         rows={response?.data?.items ? response.data.items : []}
         columns={columns}
@@ -194,15 +228,14 @@ function CraftingRequest() {
         autoHeight
         paginationMode="server"
         paginationModel={{
-          page: filterObj.page,
-          pageSize: filterObj.pageSize,
+          page: filterObj?.page ? filterObj.page : 0,
+          pageSize: filterObj?.pageSize ? filterObj.pageSize : pageSize,
         }}
         onPaginationModelChange={handleChangePage}
         rowCount={metaData.count}
-        getRowId={(row) => row.customer.id}
       />
     </div>
   );
 }
 
-export default CraftingRequest;
+export default ArrangeTransport;

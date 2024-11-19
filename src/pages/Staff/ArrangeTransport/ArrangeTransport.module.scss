@@ -1,12 +1,7 @@
-@use "src/index.scss"as *;
+@use 'src/index.scss'as *;
 
 .container {
     padding: 3rem;
-
-    .customHeader {
-        background-color: #1976d2 !important;
-        color           : #ffffff !important;
-    }
 
     .title {
         color        : $primaryColor;
@@ -14,19 +9,19 @@
         margin-bottom: 2rem;
     }
 
-    .waiting,
-    .ongoing {
-        background-color: #f1c40f;
-        color           : white;
+    .pending {
+        background-color: #ccc;
+        color           : #ffffff;
         border-radius   : 15px;
         padding         : 5px 10px;
         text-transform  : capitalize;
         width           : 100px;
     }
 
-    .done {
-        background-color: #FFA500;
-        color           : white;
+    .ongoing,
+    .waiting {
+        background-color: #f1c40f;
+        color           : #ffffff;
         border-radius   : 15px;
         padding         : 5px 10px;
         text-transform  : capitalize;
@@ -34,8 +29,8 @@
     }
 
     .delivering {
-        background-color: #C0EAEC;
-        color           : #355A71;
+        background-color: #3498db;
+        color           : #ffffff;
         border-radius   : 15px;
         padding         : 5px 10px;
         text-transform  : capitalize;
@@ -43,15 +38,15 @@
     }
 
     .completed {
-        background-color: #D9ECC0;
-        color           : #35714E;
+        background-color: #07bc0c;
+        color           : #ffffff;
         border-radius   : 15px;
         padding         : 5px 10px;
         text-transform  : capitalize;
         width           : 100px;
     }
 
-    .canceled {
+    .rejected {
         background-color: #e74c3c;
         color           : #ffffff;
         border-radius   : 15px;

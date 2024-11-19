@@ -328,13 +328,9 @@ declare global {
   }
 
   interface ICraftingStageProps {
-    name: string;
-
     steps: string[];
 
-    image: string;
-
-    isPaid: boolean;
+    data: ICraftingStage;
   }
 
   interface IBlogRowProps {
@@ -346,5 +342,12 @@ declare global {
   interface IBlogModalProps extends IModalProps {
     resetSelected?: () => void;
     blog: IBlog;
+  }
+
+  interface IViewCustomDesignProps {
+    customRequestId: number;
+    maleVersion: IDesignVersion;
+    femaleVersion: IDesignVersion;
+    designs: ICustomDesign[];
   }
 }

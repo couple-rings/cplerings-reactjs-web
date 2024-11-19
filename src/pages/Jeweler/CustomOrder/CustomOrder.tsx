@@ -1,68 +1,72 @@
-import { Button } from "@mui/material";
+import { Button, Divider } from "@mui/material";
 import {
   DataGrid,
   getGridStringOperators,
   GridColDef,
   GridFilterModel,
+  GridPaginationModel,
   GridSortModel,
 } from "@mui/x-data-grid";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CustomOrderStatus } from "src/utils/enums";
 import { primaryBtn } from "src/utils/styles";
 import styles from "./CustomOrder.module.scss";
+import { pageSize } from "src/utils/constants";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getCustomOrders } from "src/services/customOrder.service";
+import { fetchCustomOrders } from "src/utils/querykey";
+import { useAppSelector } from "src/utils/hooks";
+import moment from "moment";
 
-interface Row {
-  id: number;
-  username: string;
-  createdAt: string;
-  status: string;
-}
+interface Row extends ICustomOrder {}
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
   ["contains" /* add more over time */].includes(value)
 );
 
-const rows = [
-  {
-    id: 1,
-    username: "Nguyễn Văn A",
-    createdAt: "01/01/2000",
-    jeweler: "Hùng Nguyễn",
-    status: "IN PROGRESS",
-  },
-  {
-    id: 2,
-    username: "Nguyễn Văn B",
-    createdAt: "01/01/2000",
-    jeweler: "Hùng Nguyễn",
-    status: "DONE",
-  },
-  {
-    id: 3,
-    username: "Nguyễn Văn C",
-    createdAt: "01/01/2000",
-    jeweler: "Hùng Nguyễn",
-    status: "DELIVERING",
-  },
-  {
-    id: 4,
-    username: "Nguyễn Văn D",
-    createdAt: "01/01/2000",
-    jeweler: "Hùng Nguyễn",
-    status: "COMPLETED",
-  },
-  {
-    id: 5,
-    username: "Nguyễn Văn e",
-    createdAt: "01/01/2000",
-    jeweler: "Hùng Nguyễn",
-    status: "WAITING",
-  },
-];
+const initMetaData = {
+  page: 0,
+  pageSize,
+  totalPages: 0,
+  count: 0,
+};
 
 function CustomOrder() {
+  const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
+  const [filterObj, setFilterObj] = useState<ICustomOrderFilter | null>(null);
+
+  const [ownMetaData, setOwnMetaData] = useState<IListMetaData>(initMetaData);
+  const [ownFilterObj, setOwnFilterObj] = useState<ICustomOrderFilter | null>(
+    null
+  );
+
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const { branchId, id: userId } = useAppSelector(
+    (state) => state.auth.userInfo
+  );
+
+  const { data: response, isLoading } = useQuery({
+    queryKey: [fetchCustomOrders, filterObj],
+
+    queryFn: () => {
+      if (filterObj) return getCustomOrders(filterObj);
+    },
+
+    enabled: !!filterObj,
+  });
+
+  const { data: ownResponse, isLoading: ownLoading } = useQuery({
+    queryKey: [fetchCustomOrders, ownFilterObj],
+
+    queryFn: () => {
+      if (ownFilterObj) return getCustomOrders(ownFilterObj);
+    },
+
+    enabled: !!ownFilterObj,
+  });
 
   const columns: GridColDef<Row>[] = useMemo(
     () => [
@@ -86,6 +90,9 @@ function CustomOrder() {
         align: "center",
         filterOperators,
         sortable: false,
+        valueGetter: (value: Omit<IUser, "hasSpouse">) => {
+          return value.username;
+        },
       },
       {
         field: "createdAt",
@@ -94,14 +101,9 @@ function CustomOrder() {
         headerAlign: "center",
         align: "center",
         filterable: false,
-      },
-      {
-        field: "jeweler",
-        headerName: "Thợ làm",
-        width: 200,
-        headerAlign: "center",
-        align: "center",
-        filterable: false,
+        renderCell: ({ row }) => {
+          return <div>{moment(row.createdAt).format("DD/MM/YYYY")}</div>;
+        },
       },
       {
         field: "status",
@@ -114,7 +116,7 @@ function CustomOrder() {
         renderCell: ({ row }) => {
           let classname = "";
           if (row.status === CustomOrderStatus.Waiting)
-            classname = styles.ongoing;
+            classname = styles.waiting;
           if (row.status === CustomOrderStatus.InProgress)
             classname = styles.ongoing;
           if (row.status === CustomOrderStatus.Done) classname = styles.done;
@@ -122,8 +124,11 @@ function CustomOrder() {
             classname = styles.delivering;
           if (row.status === CustomOrderStatus.Completed)
             classname = styles.completed;
+          if (row.status === CustomOrderStatus.Canceled)
+            classname = styles.canceled;
+
           return (
-            <div className={classname}> {row.status.toLocaleLowerCase()}</div>
+            <div className={classname}>{row.status.toLocaleLowerCase()}</div>
           );
         },
       },
@@ -148,6 +153,15 @@ function CustomOrder() {
     [navigate]
   );
 
+  const handleChangePage = (model: GridPaginationModel) => {
+    // model.page is the page to fetch and starts at 0
+    if (filterObj)
+      setFilterObj({
+        ...filterObj,
+        page: model.page,
+      });
+  };
+
   const handleFilter = (model: GridFilterModel) => {
     console.log(model);
   };
@@ -156,20 +170,121 @@ function CustomOrder() {
     console.log(model);
   };
 
+  const handleOwnChangePage = (model: GridPaginationModel) => {
+    // model.page is the page to fetch and starts at 0
+    if (ownFilterObj)
+      setOwnFilterObj({
+        ...ownFilterObj,
+        page: model.page,
+      });
+  };
+
+  const handleOwnFilter = (model: GridFilterModel) => {
+    console.log(model);
+  };
+
+  const handleOwnSort = (model: GridSortModel) => {
+    console.log(model);
+  };
+
+  useEffect(() => {
+    if (response && response.data) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { items, ...rest } = response.data;
+      setMetaData(rest);
+    }
+  }, [response]);
+
+  useEffect(() => {
+    if (filterObj)
+      queryClient.invalidateQueries({
+        queryKey: [fetchCustomOrders, filterObj],
+      });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterObj]);
+
+  useEffect(() => {
+    if (branchId !== 0)
+      setFilterObj({
+        page: 0,
+        pageSize,
+        branchId,
+        status: CustomOrderStatus.Waiting,
+      });
+  }, [branchId]);
+
+  useEffect(() => {
+    if (ownResponse && ownResponse.data) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { items, ...rest } = ownResponse.data;
+      setOwnMetaData(rest);
+    }
+  }, [ownResponse]);
+
+  useEffect(() => {
+    if (ownFilterObj)
+      queryClient.invalidateQueries({
+        queryKey: [fetchCustomOrders, ownFilterObj],
+      });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ownFilterObj]);
+
+  useEffect(() => {
+    setOwnFilterObj({
+      page: 0,
+      pageSize,
+      jewelerId: userId,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Yêu cầu gia công</div>
+      <div className={styles.title}>Đơn Hiện Tại</div>
 
       <DataGrid
+        loading={isLoading}
         getRowHeight={() => "auto"}
-        rows={rows}
+        rows={response?.data?.items ? response.data.items : []}
         columns={columns}
         onFilterModelChange={handleFilter}
         onSortModelChange={handleSort}
-        pageSizeOptions={[100]}
+        pageSizeOptions={[pageSize]}
         disableColumnSelector
         disableRowSelectionOnClick
         autoHeight
+        paginationMode="server"
+        paginationModel={{
+          page: filterObj?.page ? filterObj.page : 0,
+          pageSize: filterObj?.pageSize ? filterObj.pageSize : pageSize,
+        }}
+        onPaginationModelChange={handleChangePage}
+        rowCount={metaData.count}
+      />
+
+      <Divider sx={{ my: 10 }} />
+      <div className={styles.title}>Đơn Của Tôi</div>
+
+      <DataGrid
+        loading={ownLoading}
+        getRowHeight={() => "auto"}
+        rows={ownResponse?.data?.items ? ownResponse.data.items : []}
+        columns={columns}
+        onFilterModelChange={handleOwnFilter}
+        onSortModelChange={handleOwnSort}
+        pageSizeOptions={[pageSize]}
+        disableColumnSelector
+        disableRowSelectionOnClick
+        autoHeight
+        paginationMode="server"
+        paginationModel={{
+          page: ownFilterObj?.page ? ownFilterObj.page : 0,
+          pageSize: ownFilterObj?.pageSize ? ownFilterObj.pageSize : pageSize,
+        }}
+        onPaginationModelChange={handleOwnChangePage}
+        rowCount={ownMetaData.count}
       />
     </div>
   );
