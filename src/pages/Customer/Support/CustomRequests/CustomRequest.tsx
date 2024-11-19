@@ -94,16 +94,14 @@ function CustomRequest() {
               <CustomRequestCard
                 key={item.id}
                 id={item.id}
-                staffId={item.staff.id}
+                staffId={item.staff?.id ?? undefined}
                 status={item.status}
                 designs={item.designs}
               />
             );
           })}
-          {items.length === 0 && (
-            <Box sx={{ mt: 3, textAlign: "center" }}>Chưa tạo yêu cầu nào</Box>
-          )}
         </div>
+        {items.length === 0 && <Grid container>Chưa tạo yêu cầu nào</Grid>}
 
         <Grid container item justifyContent={"center"}>
           {metaData.totalPages > 1 && (

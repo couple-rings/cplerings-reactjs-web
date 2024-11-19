@@ -21,7 +21,7 @@ export const getCustomRequestDetail = (id: number) => {
 };
 
 export const putUpdateCustomRequest = (data: IUpdateCRRequest, id: number) => {
-  return axios.put<unknown, IResponse<ICustomRequest>>(
+  return axios.put<unknown, IResponse<{ customRequest: ICustomRequest }>>(
     `custom-requests/determination/${id}`,
     data
   );

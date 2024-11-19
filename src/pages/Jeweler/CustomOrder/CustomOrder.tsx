@@ -8,7 +8,7 @@ import {
 } from "@mui/x-data-grid";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { CraftingRequestStatus } from "src/utils/enums";
+import { CustomOrderStatus } from "src/utils/enums";
 import { primaryBtn } from "src/utils/styles";
 import styles from "./CustomOrder.module.scss";
 
@@ -28,35 +28,35 @@ const rows = [
     id: 1,
     username: "Nguyễn Văn A",
     createdAt: "01/01/2000",
-    jeweler : "Hùng Nguyễn",
+    jeweler: "Hùng Nguyễn",
     status: "IN PROGRESS",
   },
   {
     id: 2,
     username: "Nguyễn Văn B",
     createdAt: "01/01/2000",
-    jeweler : "Hùng Nguyễn",
+    jeweler: "Hùng Nguyễn",
     status: "DONE",
   },
   {
     id: 3,
     username: "Nguyễn Văn C",
     createdAt: "01/01/2000",
-    jeweler : "Hùng Nguyễn",
+    jeweler: "Hùng Nguyễn",
     status: "DELIVERING",
   },
   {
     id: 4,
     username: "Nguyễn Văn D",
     createdAt: "01/01/2000",
-    jeweler : "Hùng Nguyễn",
+    jeweler: "Hùng Nguyễn",
     status: "COMPLETED",
   },
   {
     id: 5,
     username: "Nguyễn Văn e",
     createdAt: "01/01/2000",
-    jeweler : "Hùng Nguyễn",
+    jeweler: "Hùng Nguyễn",
     status: "WAITING",
   },
 ];
@@ -113,15 +113,14 @@ function CustomOrder() {
         sortable: false,
         renderCell: ({ row }) => {
           let classname = "";
-          if (row.status === CraftingRequestStatus.Waiting)
+          if (row.status === CustomOrderStatus.Waiting)
             classname = styles.ongoing;
-          if (row.status === CraftingRequestStatus.InProgress)
+          if (row.status === CustomOrderStatus.InProgress)
             classname = styles.ongoing;
-          if (row.status === CraftingRequestStatus.Done)
-            classname = styles.done;
-          if (row.status === CraftingRequestStatus.Delivering)
+          if (row.status === CustomOrderStatus.Done) classname = styles.done;
+          if (row.status === CustomOrderStatus.Delivering)
             classname = styles.delivering;
-          if (row.status === CraftingRequestStatus.Completed)
+          if (row.status === CustomOrderStatus.Completed)
             classname = styles.completed;
           return (
             <div className={classname}> {row.status.toLocaleLowerCase()}</div>
@@ -171,7 +170,6 @@ function CustomOrder() {
         disableColumnSelector
         disableRowSelectionOnClick
         autoHeight
-        
       />
     </div>
   );

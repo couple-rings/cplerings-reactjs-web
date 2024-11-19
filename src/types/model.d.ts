@@ -1,9 +1,14 @@
 import {
+  CraftingRequestStatus,
+  CraftingStageStatus,
+  CustomOrderStatus,
   CustomRequestStatus,
   DesignCharacteristic,
   DivisionType,
   FileType,
   GoldColor,
+  RingStatus,
+  VersionOwner,
 } from "src/utils/enums";
 
 export {};
@@ -95,13 +100,13 @@ declare global {
 
     username: string;
 
-    phone: string;
+    phone: string | null;
 
-    avatar: string;
-
-    hasSpouse: boolean;
+    avatar: string | null;
 
     role: UserRole;
+
+    branch: IBranch | null;
   }
 
   interface IMetalSpec {
@@ -226,7 +231,7 @@ declare global {
     comment: string;
     status: CustomRequestStatus;
     customer: Omit<IUser, "hasSpouse">;
-    staff: Omit<IUser, "hasSpouse">;
+    staff?: Omit<IUser, "hasSpouse">;
     designs: IDesign[];
     createdAt: string;
   }
@@ -245,11 +250,144 @@ declare global {
     versionNumber: 0;
     isAccepted: boolean;
     isOld: boolean;
+    owner?: VersionOwner;
   }
 
   interface ICoordinate {
     latitude: number;
     longitude: number;
     orderId: number;
+  }
+
+  interface ITopic {
+    id: number;
+
+    name: string;
+
+    description: string;
+  }
+
+  interface ITag {
+    id: number;
+
+    name: string;
+  }
+
+  interface IBlog {
+    id: number;
+    title: string;
+    summary: string;
+    content: string;
+    coverImage: string;
+    topic: ITopic;
+    tag: ITag;
+    createdAt: string;
+  }
+
+  interface ISpouse {
+    id: number;
+    customerId?: number;
+  }
+
+  interface ICustomDesign {
+    id: number;
+    designVersion: IDesignVersion;
+    spouse: ISpouse;
+    account: Omit<IUser, "hasSpouse">;
+    metalWeight: number;
+    blueprint: {
+      id: number;
+      url: string;
+    };
+    diamondSpecifications: IDiamondSpec[];
+    metalSpecifications: IMetalSpec[];
+    sideDiamondsCount: number;
+  }
+
+  interface IBranch {
+    id: number;
+    address: string;
+    storeName: string;
+    phone: string;
+    coverImage?: {
+      id: number;
+      url: string;
+    };
+  }
+
+  interface ICraftingRequest {
+    id: number;
+    customer: IUser;
+    metalSpecification: IMetalSpec;
+    diamondSpecification: IDiamondSpec;
+    reviewer?: IUser;
+    engraving: string;
+    fingerSize: number;
+    comment: string;
+    craftingRequestStatus: CraftingRequestStatus;
+    createdAt: string;
+    branch: IBranch;
+  }
+
+  interface ICraftingRequestGroup {
+    customer: IUser;
+    craftingRequests: ICraftingRequest[];
+  }
+
+  interface IRing {
+    id: number;
+    purchaseDate: string;
+    status: RingStatus;
+    maintenanceExpiredDate: string;
+    maintenanceDocument?: {
+      id: number;
+      url: string;
+      createdAt: string;
+    };
+    spouse: ISpouse;
+    customDesign: ICustomDesign;
+    //needs engraving, finger size, metal spec, diamond
+  }
+
+  interface IContract {
+    id: number;
+    signature?: {
+      id: number;
+      url: string;
+      createdAt: string;
+    };
+    signedDate?: string;
+    document?: {
+      id: number;
+      url: string;
+    };
+    createdAt: string;
+  }
+
+  interface ICustomOrder {
+    id: number;
+    firstRing: IRing;
+    secondRing: IRing;
+    customer: IUser;
+    jeweler?: IUser;
+    contract: IContract;
+    totalPrice: {
+      amount: number;
+    };
+    status: CustomOrderStatus;
+    createdAt: string;
+  }
+
+  interface ICraftingStage {
+    id: number;
+    name: string;
+    customOrderId: number;
+    progress: number;
+    completionDate?: string;
+    image?: {
+      id: number;
+      url: string;
+    };
+    status: CraftingStageStatus;
   }
 }

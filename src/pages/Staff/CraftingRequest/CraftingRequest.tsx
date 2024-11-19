@@ -1,24 +1,24 @@
 import {
   DataGrid,
+  getGridStringOperators,
   GridColDef,
   GridFilterModel,
   GridPaginationModel,
   GridSortModel,
-  getGridStringOperators,
 } from "@mui/x-data-grid";
+import styles from "./CraftingRequest.module.scss";
+import { pageSize } from "src/utils/constants";
 import { useEffect, useMemo, useState } from "react";
-import styles from "./CustomRequest.module.scss";
+import moment from "moment";
+import { CraftingRequestStatus } from "src/utils/enums";
 import { Button } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
-import { CustomRequestStatus } from "src/utils/enums";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchCustomRequests } from "src/utils/querykey";
-import { getCustomRequests } from "src/services/customRequest.service";
-import { pageSize } from "src/utils/constants";
-import moment from "moment";
+import { getCraftingRequestGroups } from "src/services/craftingRequest.service";
+import { fetchCraftingRequestGroups } from "src/utils/querykey";
 
-interface Row extends ICustomRequest {}
+interface Row extends ICraftingRequestGroup {}
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
   ["contains" /* add more over time */].includes(value)
@@ -31,9 +31,9 @@ const initMetaData = {
   count: 0,
 };
 
-function CustomRequest() {
+function CraftingRequest() {
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
-  const [filterObj, setFilterObj] = useState<ICustomRequestFilter>({
+  const [filterObj, setFilterObj] = useState<ICraftingRequestGroupFilter>({
     page: 0,
     pageSize,
   });
@@ -42,10 +42,10 @@ function CustomRequest() {
   const queryClient = useQueryClient();
 
   const { data: response, isLoading } = useQuery({
-    queryKey: [fetchCustomRequests, filterObj],
+    queryKey: [fetchCraftingRequestGroups, filterObj],
 
     queryFn: () => {
-      if (filterObj) return getCustomRequests(filterObj);
+      if (filterObj) return getCraftingRequestGroups(filterObj);
     },
   });
 
@@ -61,7 +61,7 @@ function CustomRequest() {
         filterable: false,
         disableColumnMenu: true,
         renderCell: (index) =>
-          index.api.getRowIndexRelativeToVisibleRows(index.row.id) + 1,
+          index.api.getRowIndexRelativeToVisibleRows(index.id) + 1,
       },
       {
         field: "customer",
@@ -83,7 +83,11 @@ function CustomRequest() {
         align: "center",
         filterable: false,
         renderCell: ({ row }) => {
-          return <div>{moment(row.createdAt).format("DD/MM/YYYY")}</div>;
+          return (
+            <div>
+              {moment(row.craftingRequests[0].createdAt).format("DD/MM/YYYY")}
+            </div>
+          );
         },
       },
       {
@@ -95,28 +99,26 @@ function CustomRequest() {
         filterOperators,
         sortable: false,
         renderCell: ({ row }) => {
+          const requestStatus = row.craftingRequests[0].craftingRequestStatus;
+
           let classname = "";
           let status = "";
 
-          if (row.status === CustomRequestStatus.Completed) {
-            classname = styles.completed;
-            status = "Hoàn Thành";
+          if (requestStatus === CraftingRequestStatus.Accepted) {
+            classname = styles.accepted;
+            status = "Đã Duyệt";
           }
 
-          if (row.status === CustomRequestStatus.Canceled) {
-            classname = styles.canceled;
+          if (requestStatus === CraftingRequestStatus.Rejected) {
+            classname = styles.rejected;
             status = "Đã Hủy";
           }
 
-          if (row.status === CustomRequestStatus.OnGoing) {
-            classname = styles.ongoing;
-            status = "Đang Thiết Kế";
+          if (requestStatus === CraftingRequestStatus.Pending) {
+            classname = styles.pending;
+            status = "Đang Chờ Duyệt";
           }
 
-          if (row.status === CustomRequestStatus.Waiting) {
-            classname = styles.ongoing;
-            status = "Chờ Duyệt";
-          }
           return <div className={classname}>{status}</div>;
         },
       },
@@ -131,7 +133,9 @@ function CustomRequest() {
           <Button
             variant="contained"
             sx={{ ...primaryBtn, py: 1, m: 2, borderRadius: 5 }}
-            onClick={() => navigate(`/staff/custom-request/detail/${row.id}`)}
+            onClick={() =>
+              navigate(`/staff/crafting-request/detail/${row.customer.id}`)
+            }
           >
             Chi Tiết
           </Button>
@@ -167,7 +171,7 @@ function CustomRequest() {
 
   useEffect(() => {
     queryClient.invalidateQueries({
-      queryKey: [fetchCustomRequests, filterObj],
+      queryKey: [fetchCraftingRequestGroups, filterObj],
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -175,7 +179,7 @@ function CustomRequest() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Yêu Cầu Thiết Kế</div>
+      <div className={styles.title}>Yêu Cầu Gia Công</div>
 
       <DataGrid
         loading={isLoading}
@@ -200,4 +204,4 @@ function CustomRequest() {
   );
 }
 
-export default CustomRequest;
+export default CraftingRequest;

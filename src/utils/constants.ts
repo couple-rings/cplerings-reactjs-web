@@ -113,3 +113,12 @@ export const diamondShapes = [
 ];
 
 export const goldK = ["14K", "18K"];
+
+export type ChipColor =
+  | "info"
+  | "error"
+  | "success"
+  | "default"
+  | "primary"
+  | "secondary"
+  | "warning";

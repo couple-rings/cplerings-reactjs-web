@@ -72,6 +72,8 @@ import CustomerCustomOrder from "src/pages/Customer/Support/CustomOrder/CustomOr
 import CustomerCustomOrderDetail from "src/pages/Customer/Support/CustomOrderDetail/CustomOrderDetail";
 import CustomerCraftingProcess from "src/pages/Customer/Support/CraftingProcess/CraftingProcess";
 import Deposit from "src/pages/Customer/Support/Deposit/Deposit";
+import ManageBlog from "src/pages/Staff/ManageBlog/ManageBlog";
+import CraftingRequest from "src/pages/Staff/CraftingRequest/CraftingRequest";
 import LoveAgreement from "src/pages/Customer/LoveAgreement/LoveAgreement";
 import LoveAgreeMentDetail from "src/pages/Customer/LoveAgreement/LoveAgreementDetail";
 
@@ -150,7 +152,7 @@ const router = createBrowserRouter([
       },
       {
         path: "love-agreement",
-        element: <LoveAgreement/>
+        element: <LoveAgreement />,
       },
       {
         path: "love-agreement/:id",
@@ -231,7 +233,7 @@ const router = createBrowserRouter([
             element: <CustomerCustomOrderDetail />,
           },
           {
-            path: "custom-order/crafting-process",
+            path: "custom-order/:orderId/crafting-process",
             element: <CustomerCraftingProcess />,
           },
           {
@@ -257,10 +259,9 @@ const router = createBrowserRouter([
         element: <Invoice />,
       },
       {
-        path: "contract",
+        path: "contract/:orderId",
         element: <Contract />,
       },
-      
     ],
   },
   {
@@ -288,11 +289,15 @@ const router = createBrowserRouter([
         element: <DesignVersions />,
       },
       {
-        path: "custom-request/custom-design/:maleDesignId/:femaleDesignId",
+        path: "custom-request/:id/custom-design/:maleDesignId/:femaleDesignId",
         element: <CustomDesign />,
       },
       {
-        path: "crafting-request/detail",
+        path: "crafting-request",
+        element: <CraftingRequest />,
+      },
+      {
+        path: "crafting-request/detail/:customerId",
         element: <CraftingRequestDetail />,
       },
       {
@@ -306,6 +311,10 @@ const router = createBrowserRouter([
       {
         path: "maintenance-payment",
         element: <MaintenancePayment />,
+      },
+      {
+        path: "blog",
+        element: <ManageBlog />,
       },
     ],
   },
