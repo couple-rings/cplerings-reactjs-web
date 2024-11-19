@@ -1,0 +1,123 @@
+.zoomContainer {
+    /* Set the scaling behavior */
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    /* Add the scaling effect */
+    transform: scale(1); /* Default scale */
+    transform-origin: center;
+  }
+  
+  @media (max-width: 1200px) {
+    .zoomContainer {
+      transform: scale(0.8); /* Scale down for smaller screens */
+    }
+  }
+  
+  @media (max-width: 800px) {
+    .zoomContainer {
+      transform: scale(0.6); /* Further scale down */
+    }
+  }
+  
+  @media (max-width: 500px) {
+    .zoomContainer {
+      transform: scale(0.4); /* Mobile view scaling */
+    }
+  }
+  
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  
+    .paper1 {
+      background-color: #b43620;
+      position: relative;
+      width: 700px;
+      height: 700px;
+      margin: 2rem;
+      margin-bottom: 100px;
+    }
+  
+    .paper2 {
+      position: absolute;
+      background-color: #fff;
+      width: 700px;
+      height: 700px;
+      top: 30px;
+      left: 30px;
+      box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    }
+  
+    .iconBox {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin-top: 40px;
+  
+      img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+      }
+  
+      .iconName {
+        font-size: 25px;
+      }
+    }
+  
+    .title {
+      margin-top: 20px;
+      text-align: center;
+    }
+  
+    .description {
+      text-align: center;
+      margin-top: 30px;
+  
+      p {
+        margin: 15px;
+        padding: 0;
+        font-weight: 300;
+        font-style: italic;
+        font-size: 14px;
+      }
+    }
+  
+    .boxSign {
+      margin-top: 50px;
+      display: flex;
+      justify-content: space-evenly;
+  
+      .sign1 {
+        text-align: center;
+        width: 40%;
+  
+        img {
+          text-align: center;
+          margin: 1rem;
+        }
+      }
+    }
+  
+    .date {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 35px;
+    }
+  
+    .id {
+      color: #a8a7a7;
+      margin-left: 15px;
+      margin-top: 40px;
+      font-weight: 300;
+    }
+  }
+  
