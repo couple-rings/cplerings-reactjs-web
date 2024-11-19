@@ -1,5 +1,6 @@
 import {
   CraftingRequestStatus,
+  CustomOrderStatus,
   CustomRequestStatus,
   Status,
   VersionOwner,
@@ -188,5 +189,34 @@ declare global {
     engraving?: string;
     fingerSize: number;
     branchId: number;
+  }
+
+  interface IUpdateCraftingRequest {
+    firstCraftingRequestId: number;
+    secondCraftingRequestId: number;
+    status: CraftingRequestStatus;
+    firstCommentCrafting: string;
+    secondCommentCrafting: string;
+  }
+
+  interface ICustomOrderFilter {
+    page: number;
+    pageSize: number;
+    jewelerId?: number;
+    customerId?: number;
+    status?: CustomOrderStatus;
+    branchId?: number;
+  }
+
+  interface IUpdateContractRequest {
+    signatureId: number;
+    signedDate: string;
+    documentId: number;
+  }
+
+  interface ICraftingStageFilter {
+    page: number;
+    pageSize: number;
+    customOrderId: number;
   }
 }

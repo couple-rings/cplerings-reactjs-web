@@ -192,8 +192,11 @@ function CustomRequestDetail() {
 
   useEffect(() => {
     if (response && response.data) {
+      if (response.data.customer.id !== userId)
+        navigate("/customer/support/custom-request");
+
       if (response.data.status === CustomRequestStatus.Waiting)
-        navigate("not-found");
+        navigate("/customer/support/custom-request");
 
       const maleDesign = response.data.designs.find(
         (item) => item.characteristic === DesignCharacteristic.Male
@@ -209,7 +212,7 @@ function CustomRequestDetail() {
     }
 
     if (response && response.errors) {
-      navigate("not-found");
+      navigate("/customer/support/custom-request");
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -223,7 +223,7 @@ const router = createBrowserRouter([
             element: <CustomerCustomOrderDetail />,
           },
           {
-            path: "custom-order/crafting-process",
+            path: "custom-order/:orderId/crafting-process",
             element: <CustomerCraftingProcess />,
           },
           {
@@ -249,7 +249,7 @@ const router = createBrowserRouter([
         element: <Invoice />,
       },
       {
-        path: "contract",
+        path: "contract/:orderId",
         element: <Contract />,
       },
     ],

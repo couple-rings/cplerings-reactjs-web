@@ -24,3 +24,8 @@ export const fetchCustomDesigns = "fetchCustomDesigns";
 
 export const fetchCraftingRequests = "fetchCraftingRequests";
 export const fetchCraftingRequestGroups = "fetchCraftingRequestGroups";
+
+export const fetchCustomOrders = "fetchCustomOrders";
+export const fetchCustomOrderDetail = "fetchCustomOrderDetail";
+
+export const fetchCraftingStages = "fetchCraftingStages";

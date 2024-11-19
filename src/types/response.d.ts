@@ -135,4 +135,12 @@ declare global {
 
     secondDesignVersion: IDesignVersion;
   }
+
+  interface IUpdateCraftingRequestResponse {
+    customOrder: ICustomOrder;
+
+    firstCraftingRequest: ICraftingRequest;
+
+    secondCraftingRequest: ICraftingRequest;
+  }
 }

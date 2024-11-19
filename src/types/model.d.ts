@@ -1,10 +1,13 @@
 import {
   CraftingRequestStatus,
+  CraftingStageStatus,
+  CustomOrderStatus,
   CustomRequestStatus,
   DesignCharacteristic,
   DivisionType,
   FileType,
   GoldColor,
+  RingStatus,
   VersionOwner,
 } from "src/utils/enums";
 
@@ -228,7 +231,7 @@ declare global {
     comment: string;
     status: CustomRequestStatus;
     customer: Omit<IUser, "hasSpouse">;
-    staff: Omit<IUser, "hasSpouse">;
+    staff?: Omit<IUser, "hasSpouse">;
     designs: IDesign[];
     createdAt: string;
   }
@@ -247,7 +250,7 @@ declare global {
     versionNumber: 0;
     isAccepted: boolean;
     isOld: boolean;
-    owner: VersionOwner;
+    owner?: VersionOwner;
   }
 
   interface ICoordinate {
@@ -306,7 +309,7 @@ declare global {
     address: string;
     storeName: string;
     phone: string;
-    coverImage: {
+    coverImage?: {
       id: number;
       url: string;
     };
@@ -317,7 +320,7 @@ declare global {
     customer: IUser;
     metalSpecification: IMetalSpec;
     diamondSpecification: IDiamondSpec;
-    reviewer: IUser;
+    reviewer?: IUser;
     engraving: string;
     fingerSize: number;
     comment: string;
@@ -329,5 +332,62 @@ declare global {
   interface ICraftingRequestGroup {
     customer: IUser;
     craftingRequests: ICraftingRequest[];
+  }
+
+  interface IRing {
+    id: number;
+    purchaseDate: string;
+    status: RingStatus;
+    maintenanceExpiredDate: string;
+    maintenanceDocument?: {
+      id: number;
+      url: string;
+      createdAt: string;
+    };
+    spouse: ISpouse;
+    customDesign: ICustomDesign;
+    //needs engraving, finger size, metal spec, diamond
+  }
+
+  interface IContract {
+    id: number;
+    signature?: {
+      id: number;
+      url: string;
+      createdAt: string;
+    };
+    signedDate?: string;
+    document?: {
+      id: number;
+      url: string;
+    };
+    createdAt: string;
+  }
+
+  interface ICustomOrder {
+    id: number;
+    firstRing: IRing;
+    secondRing: IRing;
+    customer: IUser;
+    jeweler?: IUser;
+    contract: IContract;
+    totalPrice: {
+      amount: number;
+    };
+    status: CustomOrderStatus;
+    createdAt: string;
+  }
+
+  interface ICraftingStage {
+    id: number;
+    name: string;
+    customOrderId: number;
+    progress: number;
+    completionDate?: string;
+    image?: {
+      id: number;
+      url: string;
+    };
+    status: CraftingStageStatus;
   }
 }

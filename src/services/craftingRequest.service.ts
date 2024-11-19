@@ -25,3 +25,10 @@ export const postCreateCraftingRequests = (data: ICreateCraftingRequest) => {
     data
   );
 };
+
+export const putUpdateCraftingRequests = (data: IUpdateCraftingRequest) => {
+  return axios.put<unknown, IResponse<IUpdateCraftingRequestResponse>>(
+    `crafting-requests/determination`,
+    data
+  );
+};

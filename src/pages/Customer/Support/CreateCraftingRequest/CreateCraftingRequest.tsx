@@ -232,7 +232,7 @@ function CreateCraftingRequest() {
       }
     }
 
-    if (designResponse?.errors) navigate("not-found");
+    if (designResponse?.errors) navigate("/customer/support/crafting-request");
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [designResponse]);
