@@ -10,15 +10,16 @@ export const getDesignVersions = (queryObj: IDesignVersionFilter) => {
 };
 
 export const postCreateDesignVersion = (data: ICreateDesignVersionRequest) => {
-  return axios.post<unknown, IResponse<{ designVersion: IDesignVersion }>>(
+  return axios.post<unknown, IResponse<ICreateDesignVersionResponse>>(
     `designs/versions`,
     data
   );
 };
 
-export const putUpdateDesignVersion = (id: number) => {
-  return axios.put<unknown, IResponse<{ designVersion: IDesignVersion }>>(
-    `designs/versions/${id}`
+export const putUpdateDesignVersion = (data: IUpdateDesignVersionRequest) => {
+  return axios.put<unknown, IResponse<IUpdateDesignVersionResponse>>(
+    `designs/versions/determination`,
+    data
   );
 };
 

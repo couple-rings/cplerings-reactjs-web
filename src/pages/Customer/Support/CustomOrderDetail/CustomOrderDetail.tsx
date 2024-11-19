@@ -1,4 +1,4 @@
-import { Button, Chip, Divider, Grid } from "@mui/material";
+import { Button, Chip, Divider, Grid, Skeleton } from "@mui/material";
 import styles from "./CustomOrderDetail.module.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
@@ -8,12 +8,83 @@ import male from "src/assets/male-icon.png";
 import female from "src/assets/female-icon.png";
 import { secondaryBtn } from "src/utils/styles";
 import DownloadForOfflineRoundedIcon from "@mui/icons-material/DownloadForOfflineRounded";
+import { useQuery } from "@tanstack/react-query";
+import { getCustomOrderDetail } from "src/services/customOrder.service";
+import { fetchCustomOrderDetail } from "src/utils/querykey";
+import { useEffect, useState } from "react";
+import { DesignCharacteristic } from "src/utils/enums";
+import { useAppSelector } from "src/utils/hooks";
 
 function CustomOrderDetail() {
+  const [order, setOrder] = useState<ICustomOrder | null>(null);
+  const [maleRing, setMaleRing] = useState<IRing | null>(null);
+  const [femaleRing, setFemaleRing] = useState<IRing | null>(null);
+
   const { id } = useParams<{ id: string }>();
-  console.log(id);
 
   const navigate = useNavigate();
+
+  const { id: userId } = useAppSelector((state) => state.auth.userInfo);
+
+  const { data: response } = useQuery({
+    queryKey: [fetchCustomOrderDetail, id],
+
+    queryFn: () => {
+      if (id) return getCustomOrderDetail(+id);
+    },
+    enabled: !!id,
+  });
+
+  useEffect(() => {
+    if (response && response.data) {
+      const { firstRing, secondRing, customer } = response.data.customOrder;
+
+      if (customer.id !== userId) navigate("/customer/support/custom-order");
+
+      if (
+        firstRing.customDesign.designVersion.design.characteristic ===
+        DesignCharacteristic.Male
+      )
+        setMaleRing(firstRing);
+      else setFemaleRing(firstRing);
+
+      if (
+        secondRing.customDesign.designVersion.design.characteristic ===
+        DesignCharacteristic.Female
+      )
+        setFemaleRing(secondRing);
+      else setMaleRing(secondRing);
+
+      setOrder(response.data.customOrder);
+    }
+
+    if (response && response.errors) {
+      navigate("/customer/support/custom-order");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response]);
+
+  if (!maleRing || !femaleRing || !order)
+    return (
+      <Grid container justifyContent={"center"} mt={5}>
+        <Grid container item xs={8} mb={3} justifyContent={"space-between"}>
+          <Grid container item xs={5.8} gap={3}>
+            <Skeleton variant="rectangular" width={"100%"} height={300} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+          </Grid>
+          <Grid container item xs={5.8} gap={3}>
+            <Skeleton variant="rectangular" width={"100%"} height={300} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+          </Grid>
+        </Grid>
+      </Grid>
+    );
 
   return (
     <Grid container className={styles.container} justifyContent={"center"}>
@@ -71,7 +142,7 @@ function CustomOrderDetail() {
               Tổng Tiền:
             </Grid>
             <Grid item className={styles.total}>
-              {currencyFormatter(20000000)}
+              {currencyFormatter(order.totalPrice.amount)}
             </Grid>
           </Grid>
         </Grid>
@@ -182,36 +253,35 @@ function CustomOrderDetail() {
               </Grid>
             </Grid>
 
-            <Grid container mt={10} className={styles.download}>
-              <DownloadForOfflineRoundedIcon />
-              <span>Tải File PDF</span>
-            </Grid>
+            {order.contract.document && (
+              <Grid container mt={10} className={styles.download}>
+                <DownloadForOfflineRoundedIcon />
+                <span>Tải File PDF</span>
+              </Grid>
+            )}
 
             <Grid container justifyContent={"center"} mt={5}>
-              {
-                // eslint-disable-next-line no-constant-condition
-                true ? (
-                  <Button
-                    variant="contained"
-                    sx={secondaryBtn}
-                    onClick={() =>
-                      navigate(
-                        "/customer/support/custom-order/crafting-process"
-                      )
-                    }
-                  >
-                    Quá Trình Gia Công
-                  </Button>
-                ) : (
-                  <Button
-                    variant="contained"
-                    sx={secondaryBtn}
-                    onClick={() => navigate("/customer/contract")}
-                  >
-                    Ký Hợp Đồng
-                  </Button>
-                )
-              }
+              {order.contract.signature ? (
+                <Button
+                  variant="contained"
+                  sx={secondaryBtn}
+                  onClick={() =>
+                    navigate(
+                      `/customer/support/custom-order/${order.id}/crafting-process`
+                    )
+                  }
+                >
+                  Quá Trình Gia Công
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  sx={secondaryBtn}
+                  onClick={() => navigate(`/customer/contract/${order.id}`)}
+                >
+                  Ký Hợp Đồng
+                </Button>
+              )}
             </Grid>
           </Grid>
         </Grid>

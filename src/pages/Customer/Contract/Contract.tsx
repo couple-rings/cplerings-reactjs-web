@@ -8,6 +8,7 @@ import {
   DialogTitle,
   Divider,
   Grid,
+  Skeleton,
 } from "@mui/material";
 import styles from "./Contract.module.scss";
 import ring from "src/assets/One Ring.png";
@@ -21,19 +22,37 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import DownloadForOfflineRoundedIcon from "@mui/icons-material/DownloadForOfflineRounded";
 import SignatureCanvas from "react-signature-canvas";
 import { primaryBtn } from "src/utils/styles";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactSignatureCanvas from "react-signature-canvas";
-import { useScrollTop } from "src/utils/hooks";
+import { useAppSelector, useScrollTop } from "src/utils/hooks";
 import KeyboardBackspaceRoundedIcon from "@mui/icons-material/KeyboardBackspaceRounded";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { getCustomOrderDetail } from "src/services/customOrder.service";
+import { fetchCustomOrderDetail } from "src/utils/querykey";
+import { useQuery } from "@tanstack/react-query";
 
 function Contract() {
+  const [order, setOrder] = useState<ICustomOrder | null>(null);
   const [error, setError] = useState(false);
   const [signature, setSignature] = useState("");
   const [open, setOpen] = useState(false);
 
-  const ref = useRef<ReactSignatureCanvas>(null);
   const navigate = useNavigate();
+
+  const ref = useRef<ReactSignatureCanvas>(null);
+
+  const { orderId } = useParams<{ orderId: string }>();
+
+  const { id: userId } = useAppSelector((state) => state.auth.userInfo);
+
+  const { data: response } = useQuery({
+    queryKey: [fetchCustomOrderDetail, orderId],
+
+    queryFn: () => {
+      if (orderId) return getCustomOrderDetail(+orderId);
+    },
+    enabled: !!orderId,
+  });
 
   const verifySignature = () => {
     if (ref.current?.isEmpty()) {
@@ -57,6 +76,34 @@ function Contract() {
   };
 
   useScrollTop();
+
+  useEffect(() => {
+    if (response && response.data) {
+      const { customer } = response.data.customOrder;
+
+      if (customer.id !== userId) navigate("/customer/support/custom-order");
+
+      setOrder(response.data.customOrder);
+    }
+
+    if (response && response.errors) {
+      navigate("/customer/support/custom-order");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response]);
+
+  if (!order)
+    return (
+      <Grid container justifyContent={"center"} mt={5}>
+        <Grid container item xs={8} mb={3} gap={3}>
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+        </Grid>
+      </Grid>
+    );
 
   return (
     <div className={styles.container}>

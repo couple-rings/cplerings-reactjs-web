@@ -60,12 +60,14 @@ export enum CustomRequestStatus {
   Canceled = "REJECTED",
 }
 
-export enum CraftingRequestStatus {
+export enum CustomOrderStatus {
+  Pending = "PENDING",
   Waiting = "WAITING",
-  InProgress = "IN PROGRESS",
+  InProgress = "IN_PROGRESS",
   Done = "DONE",
   Completed = "COMPLETED",
   Delivering = "DELIVERING",
+  Canceled = "CANCELED",
 }
 
 export enum MaintenanceOrderStatus {
@@ -114,4 +116,33 @@ export enum Status {
 export enum FileType {
   Image = "IMAGE",
   Document = "DOCUMENT",
+}
+
+export enum VersionOwner {
+  Self = "SELF",
+  Partner = "PARTNER",
+}
+
+export enum CraftingRequestStatus {
+  Pending = "PENDING",
+  Accepted = "ACCEPTED",
+  Rejected = "REJECTED",
+}
+
+export enum RingStatus {
+  NotAvailable = "NOT_AVAIL",
+  Available = "AVAILABLE",
+  Refunded = "REFUNDED",
+  Resold = "RESOLD",
+}
+
+export enum CraftingStageStatus {
+  Pending = "PENDING",
+  Paid = "PAID",
+}
+
+export enum StagePercentage {
+  First = 50,
+  Second = 75,
+  Third = 100,
 }

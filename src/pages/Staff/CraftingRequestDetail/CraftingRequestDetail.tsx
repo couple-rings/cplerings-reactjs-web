@@ -1,4 +1,4 @@
-import { Button, Divider, Grid } from "@mui/material";
+import { Button, Divider, Grid, Skeleton } from "@mui/material";
 import styles from "./CraftingRequestDetail.module.scss";
 import menring from "src/assets/sampledata/menring.png";
 import womenring from "src/assets/sampledata/womenring.png";
@@ -7,11 +7,72 @@ import female from "src/assets/female-icon.png";
 import HoverCard from "src/components/product/HoverCard";
 import blueprint from "src/assets/sampledata/blueprint.pdf";
 import { roundedPrimaryBtn } from "src/utils/styles";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getCraftingRequests } from "src/services/craftingRequest.service";
+import { useEffect, useState } from "react";
+import { fetchCraftingRequests } from "src/utils/querykey";
+import { CraftingRequestStatus } from "src/utils/enums";
+import RejectModal from "src/components/modal/craftingRequest/Reject.modal";
 
 function CraftingRequestDetail() {
+  const [openReject, setOpenReject] = useState(false);
+  const [filterObj, setFilterObj] = useState<ICraftingRequestFilter | null>(
+    null
+  );
+
+  const { customerId } = useParams<{ customerId: string }>();
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { data, isLoading } = useQuery({
+    queryKey: [fetchCraftingRequests, filterObj],
+
+    queryFn: () => {
+      if (filterObj) return getCraftingRequests(filterObj);
+    },
+    enabled: !!filterObj,
+  });
+
+  useEffect(() => {
+    if (customerId)
+      setFilterObj({
+        page: 0,
+        pageSize: 100,
+        status: CraftingRequestStatus.Pending,
+        customerId: +customerId,
+      });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (isLoading)
+    return (
+      <Grid container justifyContent={"center"} my={10}>
+        <Grid container item xs={8} justifyContent={"space-between"}>
+          <Grid container item xs={5.8} gap={1}>
+            <Skeleton variant="rectangular" width={"100%"} height={200} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+          </Grid>
+
+          <Grid container item xs={5.8} gap={1}>
+            <Skeleton variant="rectangular" width={"100%"} height={200} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+          </Grid>
+        </Grid>
+      </Grid>
+    );
+
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Yêu Cầu Chế Tác</div>
+      <div className={styles.title}>Yêu Cầu Gia Công</div>
 
       <Grid container justifyContent={"center"}>
         <Grid container item lg={10} justifyContent={"space-between"}>
@@ -101,13 +162,20 @@ function CraftingRequestDetail() {
             </Grid>
 
             <Grid item xs={12} sm={4}>
-              <Button variant="contained" fullWidth sx={roundedPrimaryBtn}>
+              <Button
+                variant="contained"
+                fullWidth
+                sx={roundedPrimaryBtn}
+                onClick={() => setOpenReject(true)}
+              >
                 Từ Chối
               </Button>
             </Grid>
           </Grid>
         </Grid>
       </Grid>
+
+      <RejectModal open={openReject} setOpen={setOpenReject} />
     </div>
   );
 }

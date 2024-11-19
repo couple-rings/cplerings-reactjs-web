@@ -318,7 +318,7 @@ declare global {
 
     status: CustomRequestStatus;
 
-    staffId: number;
+    staffId?: number;
 
     id: number;
   }
@@ -335,5 +335,16 @@ declare global {
     image: string;
 
     isPaid: boolean;
+  }
+
+  interface IBlogRowProps {
+    blog: IBlog;
+
+    handleClick: (v: IBlog) => void;
+  }
+
+  interface IBlogModalProps extends IModalProps {
+    resetSelected?: () => void;
+    blog: IBlog;
   }
 }

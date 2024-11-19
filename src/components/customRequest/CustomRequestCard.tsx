@@ -9,6 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import { postCreateConversation } from "src/services/conversation.service";
 import { toast } from "react-toastify";
 import { useAppSelector } from "src/utils/hooks";
+import { ChipColor } from "src/utils/constants";
 
 function CustomRequestCard(props: ICustomRequestCardProps) {
   const { designs, status, id, staffId } = props;
@@ -25,14 +26,7 @@ function CustomRequestCard(props: ICustomRequestCardProps) {
   );
 
   let statusLabel = "";
-  let chipColor:
-    | "primary"
-    | "warning"
-    | "success"
-    | "error"
-    | "default"
-    | "secondary"
-    | "info" = "primary";
+  let chipColor: ChipColor = "primary";
 
   if (status === CustomRequestStatus.Waiting) {
     statusLabel = "Đang chờ duyệt";
@@ -69,9 +63,10 @@ function CustomRequestCard(props: ICustomRequestCardProps) {
   });
 
   const handleChat = () => {
-    chatMutation.mutate({
-      participants: [userId, staffId],
-    });
+    if (staffId)
+      chatMutation.mutate({
+        participants: [userId, staffId],
+      });
   };
 
   return (
@@ -108,7 +103,7 @@ function CustomRequestCard(props: ICustomRequestCardProps) {
         <Divider sx={{ width: "100%" }} />
       </Grid>
 
-      <Grid container p={3} pb={0} justifyContent={"space-between"}>
+      <Grid container p={3} justifyContent={"space-between"}>
         <Grid item xs={12} sm={4} md={2.5}>
           <img
             src={femaleDesign?.designMetalSpecifications[0].image.url}
@@ -116,7 +111,7 @@ function CustomRequestCard(props: ICustomRequestCardProps) {
             style={{ border: "1px solid #ccc" }}
           />
         </Grid>
-        <Grid item xs={12} md={9} py={3}>
+        <Grid item xs={12} md={9} pt={3}>
           <div className={styles.name}>Bản Thiết Kế {femaleDesign?.name}</div>
           <div className={styles.gender}>
             <img src={female} width={15} />
