@@ -5,13 +5,17 @@ import female from "src/assets/female-icon.png";
 import HoverCard from "src/components/product/HoverCard";
 import { roundedPrimaryBtn } from "src/utils/styles";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { getCraftingRequests } from "src/services/craftingRequest.service";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  getCraftingRequests,
+  putUpdateCraftingRequests,
+} from "src/services/craftingRequest.service";
 import { useEffect, useState } from "react";
 import { fetchCraftingRequests } from "src/utils/querykey";
 import { CraftingRequestStatus, DesignCharacteristic } from "src/utils/enums";
 import RejectModal from "src/components/modal/craftingRequest/Reject.modal";
 import { getDiamondSpec } from "src/utils/functions";
+import { toast } from "react-toastify";
 
 function CraftingRequestDetail() {
   const [openReject, setOpenReject] = useState(false);
@@ -36,6 +40,47 @@ function CraftingRequestDetail() {
     },
     enabled: !!filterObj,
   });
+
+  const mutation = useMutation({
+    mutationFn: (data: IUpdateCraftingRequest) => {
+      return putUpdateCraftingRequests(data);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        toast.success("Đã chấp nhận yêu cầu gia công");
+        navigate("/staff/crafting-request");
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
+  const handleReject = (
+    firstCommentCrafting: string,
+    secondCommentCrafting: string
+  ) => {
+    if (maleRequest && femaleRequest)
+      mutation.mutate({
+        firstCraftingRequestId: maleRequest.id,
+        secondCraftingRequestId: femaleRequest.id,
+        firstCommentCrafting,
+        secondCommentCrafting,
+        status: CraftingRequestStatus.Rejected,
+      });
+  };
+
+  const handleAccept = () => {
+    if (maleRequest && femaleRequest)
+      mutation.mutate({
+        firstCraftingRequestId: maleRequest.id,
+        secondCraftingRequestId: femaleRequest.id,
+        firstCommentCrafting: "Đã chấp nhận",
+        secondCommentCrafting: "Đã chấp nhận",
+        status: CraftingRequestStatus.Accepted,
+      });
+  };
 
   useEffect(() => {
     if (customerId)
@@ -211,7 +256,12 @@ function CraftingRequestDetail() {
 
           <Grid container item xs={12} justifyContent={"center"} mt={3} gap={3}>
             <Grid item xs={12} sm={4}>
-              <Button variant="contained" fullWidth sx={roundedPrimaryBtn}>
+              <Button
+                variant="contained"
+                fullWidth
+                sx={roundedPrimaryBtn}
+                onClick={handleAccept}
+              >
                 Chấp Nhận
               </Button>
             </Grid>
@@ -230,7 +280,11 @@ function CraftingRequestDetail() {
         </Grid>
       </Grid>
 
-      <RejectModal open={openReject} setOpen={setOpenReject} />
+      <RejectModal
+        open={openReject}
+        setOpen={setOpenReject}
+        handleReject={handleReject}
+      />
     </div>
   );
 }

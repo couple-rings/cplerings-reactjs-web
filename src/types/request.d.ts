@@ -261,4 +261,15 @@ declare global {
     page: number;
     pageSize: number;
   }
+
+  interface ICreateTransportAddressRequest {
+    address: string;
+    districtCode: number;
+    district: string;
+    wardCode: number;
+    ward: string;
+    receiverName: string;
+    receiverPhone: string;
+    customerId: number;
+  }
 }

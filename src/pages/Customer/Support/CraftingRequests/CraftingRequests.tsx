@@ -73,7 +73,7 @@ function CraftingRequests() {
     if (status === CraftingRequestStatus.Pending)
       return {
         text: "Đang duyệt",
-        color: "info",
+        color: "warning",
       };
 
     if (status === CraftingRequestStatus.Rejected)

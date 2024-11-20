@@ -429,4 +429,16 @@ declare global {
     size: number;
     diameter: number;
   }
+
+  interface ITransportAddress {
+    id: number;
+    address: string;
+    districtCode: number;
+    district: string;
+    wardCode: number;
+    ward: string;
+    receiverName: string;
+    receiverPhone: string;
+    customer: IUser;
+  }
 }

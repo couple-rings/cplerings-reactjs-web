@@ -11,8 +11,8 @@ interface IFormInput {
   femaleReason: string;
 }
 
-function RejectModal(props: IModalProps) {
-  const { open, setOpen } = props;
+function RejectModal(props: IRejectModalProps) {
+  const { open, setOpen, handleReject } = props;
 
   const {
     reset,
@@ -22,7 +22,7 @@ function RejectModal(props: IModalProps) {
   } = useForm<IFormInput>();
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    console.log(data);
+    handleReject(data.maleReason, data.femaleReason);
   };
 
   const handleClose = (

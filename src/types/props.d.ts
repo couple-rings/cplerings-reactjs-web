@@ -15,7 +15,7 @@ declare global {
   }
 
   interface IBranchCardProps {
-    store: IStore;
+    data: IBranch;
   }
 
   interface IHeaderCardProps {
@@ -58,12 +58,14 @@ declare global {
     setOpen: (v: boolean) => void;
   }
 
-  interface IHoverMenuProps<T> {
+  interface IHoverMenuProps {
     title: string;
 
     purpose: HoverMenuPurpose;
 
-    lists: T[];
+    lists: string[] | IMetalSpec[];
+
+    handleFilter?: (v1?: number) => void;
   }
 
   interface ISizeMenuProps {
@@ -349,5 +351,9 @@ declare global {
     maleVersion: IDesignVersion;
     femaleVersion: IDesignVersion;
     designs: ICustomDesign[];
+  }
+
+  interface IRejectModalProps extends IModalProps {
+    handleReject: (v1: string, v2: string) => void;
   }
 }
