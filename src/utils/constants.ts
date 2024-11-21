@@ -126,6 +126,7 @@ export type ChipColor =
 
 export const stages = [
   {
+    name: "Hoàn Thành 50% - Đúc khuôn nhẫn",
     steps: [
       "Nguyên liệu thô được lựa chọn và kiểm tra kỹ lưỡng để đảm bảo chất lượng",
       "Phần khung của nhẫn được đúc hoặc tạo hình từ kim loại đã chọn.",
@@ -133,6 +134,7 @@ export const stages = [
     progress: StagePercentage.First,
   },
   {
+    name: "Hoàn Thành 75% - Gắn kim cương và Đánh bóng",
     steps: [
       "Từng viên kim cương được đặt cẩn thận lên khuôn nhẫn, đảm bảo vị trí và góc độ tối ưu để viên đá tỏa sáng rực rỡ nhất khi đeo.",
       "Các nét trang trí bổ sung được áp dụng để đáp ứng các yêu cầu tùy chỉnh.",
@@ -140,6 +142,7 @@ export const stages = [
     progress: StagePercentage.Second,
   },
   {
+    name: "Hoàn Thành 100% - Đóng gói và Hoàn tất",
     steps: [
       "Khắc lên nhẫn theo yêu cầu để tạo dấu ấn cá nhân riêng biệt (Nếu khách hàng có yêu cầu).",
       "Chuẩn bị giấy tờ chứng nhận chất lượng kim cương và đóng gói cẩn thận trong hộp sang trọng, sẵn sàng để giao hàng.",

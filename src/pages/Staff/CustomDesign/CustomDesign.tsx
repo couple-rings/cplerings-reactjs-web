@@ -31,7 +31,7 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import _ from "lodash";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getDesignVersionDetail } from "src/services/designVersion.service";
 import {
   fetchCustomDesigns,
@@ -103,6 +103,7 @@ function CustomDesign() {
   }>();
 
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data: designResponse } = useQuery({
     queryKey: [fetchCustomDesigns, designFilterObj],
@@ -257,6 +258,9 @@ function CustomDesign() {
 
         if (maleResponse.data && femaleResponse.data) {
           toast.success("Bản thiết kế đã được tạo thành công");
+          queryClient.invalidateQueries({
+            queryKey: [fetchCustomDesigns, designFilterObj],
+          });
         }
       }
     }
@@ -661,7 +665,7 @@ function CustomDesign() {
                       .map((item) => {
                         return (
                           <MenuItem value={item.id} key={item.id}>
-                            {item.shape} {item.weight} - {item.color} -{" "}
+                            {item.shape} {item.weight * 100}PT - {item.color} -{" "}
                             {item.clarity}
                           </MenuItem>
                         );
@@ -710,7 +714,12 @@ function CustomDesign() {
                         </ListItemIcon>
                         <ListItemText
                           sx={{ mr: 5 }}
-                          primary={`${spec?.shape} ${spec?.weight} - ${spec?.color} - ${spec?.clarity}`}
+                          primary={
+                            spec &&
+                            `${spec.shape} ${spec.weight * 100}PT - ${
+                              spec.color
+                            } - ${spec.clarity}`
+                          }
                         />
                       </ListItem>
                     );
@@ -932,7 +941,7 @@ function CustomDesign() {
                       .map((item) => {
                         return (
                           <MenuItem key={item.id} value={item.id}>
-                            {item.shape} {item.weight} - {item.color} -{" "}
+                            {item.shape} {item.weight * 100}PT - {item.color} -{" "}
                             {item.clarity}
                           </MenuItem>
                         );
@@ -984,7 +993,12 @@ function CustomDesign() {
                         </ListItemIcon>
                         <ListItemText
                           sx={{ mr: 5 }}
-                          primary={`${spec?.shape} ${spec?.weight} - ${spec?.color} - ${spec?.clarity}`}
+                          primary={
+                            spec &&
+                            `${spec.shape} ${spec.weight * 100}PT - ${
+                              spec.color
+                            } - ${spec.clarity}`
+                          }
                         />
                       </ListItem>
                     );
@@ -1130,7 +1144,9 @@ const ViewCustomDesign = (props: IViewCustomDesignProps) => {
                         </ListItemIcon>
                         <ListItemText
                           sx={{ mr: 5 }}
-                          primary={`${item.shape} ${item.weight} - ${item.color} - ${item.clarity}`}
+                          primary={`${item.shape} ${item.weight * 100}PT - ${
+                            item.color
+                          } - ${item.clarity}`}
                         />
                       </ListItem>
                     );

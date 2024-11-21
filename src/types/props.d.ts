@@ -253,6 +253,16 @@ declare global {
 
   interface IContractFileProps {
     signature: string;
+
+    total: number;
+
+    name: string;
+
+    email: string;
+
+    phone: string;
+
+    address: string;
   }
 
   interface IAccountModalProps
@@ -333,6 +343,12 @@ declare global {
     steps: string[];
 
     data: ICraftingStage;
+
+    name: string;
+
+    orderId: number;
+
+    previousStage?: ICraftingStage;
   }
 
   interface IBlogRowProps {
@@ -355,5 +371,9 @@ declare global {
 
   interface IRejectModalProps extends IModalProps {
     handleReject: (v1: string, v2: string) => void;
+  }
+
+  interface IPastRequestsProps {
+    data: ICraftingRequest[];
   }
 }

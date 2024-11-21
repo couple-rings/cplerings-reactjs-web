@@ -238,7 +238,7 @@ const router = createBrowserRouter([
             element: <CustomerCraftingProcess />,
           },
           {
-            path: "deposit",
+            path: "custom-order/:orderId/deposit/:stageId",
             element: <Deposit />,
           },
         ],

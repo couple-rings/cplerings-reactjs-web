@@ -336,6 +336,18 @@ declare global {
     craftingRequests: ICraftingRequest[];
   }
 
+  interface IDiamond {
+    id: number;
+    giaReportNumber: string;
+    giaDocument: {
+      id: number;
+      url: string;
+    };
+    diamondSpecification: IDiamondSpec;
+    branch: IBranch;
+    createdAt: string;
+  }
+
   interface IRing {
     id: number;
     purchaseDate: string;
@@ -348,7 +360,10 @@ declare global {
     };
     spouse: ISpouse;
     customDesign: ICustomDesign;
-    //needs engraving, finger size, metal spec, diamond
+    fingerSize: number;
+    engraving?: string;
+    metalSpecification: IMetalSpec;
+    diamonds: IDiamond[];
   }
 
   interface IContract {
@@ -368,6 +383,7 @@ declare global {
 
   interface ICustomOrder {
     id: number;
+    orderNo: string;
     firstRing: IRing;
     secondRing: IRing;
     customer: IUser;
@@ -399,9 +415,9 @@ declare global {
     receiverName: string;
     receiverPhone: string;
     deliveryAddress: string;
-    customOrder: ICustomOrder;
-    transporter: IUser;
-    transportationNotes: {
+    customOrder?: ICustomOrder;
+    transporter?: IUser;
+    transportationNotes?: {
       id: number;
       date: string;
       note: string;

@@ -89,16 +89,23 @@ function CraftingProcess() {
       <Grid container item xs={10}>
         <div className={styles.title}>Quá Trình Gia Công</div>
 
-        {stageResponse.data?.items.map((item) => {
+        {stageResponse.data?.items.map((item, index, list) => {
           const steps = stages.find(
             (stage) => stage.progress === item.progress
           )?.steps;
+
+          const name = stages.find(
+            (stage) => stage.progress === item.progress
+          )?.name;
 
           return (
             <CraftingStage
               key={item.id}
               data={item}
               steps={steps ? steps : []}
+              name={name ? name : item.name}
+              orderId={order.id}
+              previousStage={index !== 0 ? list[index - 1] : undefined}
             />
           );
         })}

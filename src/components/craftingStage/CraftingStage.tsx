@@ -4,10 +4,13 @@ import { secondaryBtn } from "src/utils/styles";
 import VerifiedRoundedIcon from "@mui/icons-material/VerifiedRounded";
 import placeholder from "src/assets/stageplaceholder.png";
 import { CraftingStageStatus } from "src/utils/enums";
+import { useNavigate } from "react-router-dom";
 
 function CraftingStage(props: ICraftingStageProps) {
-  const { steps, data } = props;
-  const { image, status, name } = data;
+  const { steps, data, name, previousStage, orderId } = props;
+  const { image, status, completionDate } = data;
+
+  const navigate = useNavigate();
 
   return (
     <Card className={styles.container}>
@@ -36,6 +39,9 @@ function CraftingStage(props: ICraftingStageProps) {
               {status === CraftingStageStatus.Pending && (
                 <Chip label={"Chưa Thanh Toán"} color="warning" />
               )}
+              {completionDate && (
+                <Chip label={"Đã Hoàn Thành"} color="success" />
+              )}
             </Grid>
           </Grid>
 
@@ -62,15 +68,28 @@ function CraftingStage(props: ICraftingStageProps) {
             </Grid>
           </Grid>
 
-          {status === CraftingStageStatus.Pending && (
-            <Grid container alignItems={"flex-end"} justifyContent={"flex-end"}>
-              <Grid item>
-                <Button variant="contained" sx={secondaryBtn}>
-                  Thanh Toán
-                </Button>
+          {status === CraftingStageStatus.Pending &&
+            (!previousStage || previousStage.completionDate) && (
+              <Grid
+                container
+                alignItems={"flex-end"}
+                justifyContent={"flex-end"}
+              >
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    sx={secondaryBtn}
+                    onClick={() =>
+                      navigate(
+                        `/customer/support/custom-order/${orderId}/deposit/${data.id}`
+                      )
+                    }
+                  >
+                    Thanh Toán
+                  </Button>
+                </Grid>
               </Grid>
-            </Grid>
-          )}
+            )}
         </Grid>
       </Grid>
     </Card>

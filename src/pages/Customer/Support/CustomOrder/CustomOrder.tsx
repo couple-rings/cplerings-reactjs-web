@@ -1,6 +1,5 @@
 import { Box, Button, Card, Chip, Grid, Skeleton } from "@mui/material";
 import styles from "./CustomOrder.module.scss";
-import menring from "src/assets/sampledata/menring.png";
 import male from "src/assets/male-icon.png";
 import female from "src/assets/female-icon.png";
 import { secondaryBtn } from "src/utils/styles";
@@ -10,6 +9,9 @@ import { useAppSelector } from "src/utils/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { getCustomOrders } from "src/services/customOrder.service";
 import { fetchCustomOrders } from "src/utils/querykey";
+import { CustomOrderStatus, DesignCharacteristic } from "src/utils/enums";
+import { ChipColor } from "src/utils/constants";
+import { getDiamondSpec } from "src/utils/functions";
 
 function CustomOrder() {
   const [filterObj, setFilterObj] = useState<ICustomOrderFilter | null>(null);
@@ -26,6 +28,51 @@ function CustomOrder() {
     },
     enabled: !!filterObj,
   });
+
+  const formatStatus = (
+    status: CustomOrderStatus
+  ): { text: string; color: ChipColor } => {
+    if (status === CustomOrderStatus.Pending)
+      return {
+        text: "Chưa Thanh Toán",
+        color: "warning",
+      };
+
+    if (status === CustomOrderStatus.Waiting)
+      return {
+        text: "Đang Chuẩn Bị",
+        color: "warning",
+      };
+
+    if (status === CustomOrderStatus.InProgress)
+      return {
+        text: "Đang Gia Công",
+        color: "secondary",
+      };
+
+    if (status === CustomOrderStatus.Done)
+      return {
+        text: "Chuẩn Bị Giao",
+        color: "primary",
+      };
+
+    if (status === CustomOrderStatus.Delivering)
+      return {
+        text: "Đang Giao",
+        color: "primary",
+      };
+
+    if (status === CustomOrderStatus.Completed)
+      return {
+        text: "Hoàn Thành",
+        color: "success",
+      };
+
+    return {
+      text: "Đã Hủy",
+      color: "error",
+    };
+  };
 
   useEffect(() => {
     setFilterObj({
@@ -60,6 +107,22 @@ function CustomOrder() {
         <div className={styles.title}>Đơn Hàng Gia Công</div>
 
         {response?.data?.items.map((item) => {
+          const maleRing =
+            item.firstRing.customDesign.designVersion.design.characteristic ===
+            DesignCharacteristic.Male
+              ? item.firstRing
+              : item.secondRing;
+
+          const maleDiamondSpec = maleRing.diamonds[0].diamondSpecification;
+
+          const femaleRing =
+            item.firstRing.customDesign.designVersion.design.characteristic ===
+            DesignCharacteristic.Female
+              ? item.firstRing
+              : item.secondRing;
+
+          const femaleDiamondSpec = femaleRing.diamonds[0].diamondSpecification;
+
           return (
             <Card
               key={item.id}
@@ -74,15 +137,21 @@ function CustomOrder() {
                 alignItems={"center"}
               >
                 <Box sx={{ fontSize: "1.2rem" }}>
-                  Mã Đơn: <span className={styles.orderNo}>1234567</span>
+                  Mã Đơn: <span className={styles.orderNo}>{item.orderNo}</span>
                 </Box>
-                <Chip label={"Chưa Thanh Toán"} color="warning" />
+                <Chip
+                  label={formatStatus(item.status).text}
+                  color={formatStatus(item.status).color}
+                />
               </Grid>
 
               <Grid container justifyContent={"space-between"}>
                 <Grid container item sm={5.9} className={styles.section} p={2}>
                   <Grid item lg={4} mb={{ xs: 3, lg: 0 }}>
-                    <img src={menring} className={styles.ringImg} />
+                    <img
+                      src={maleRing.customDesign.designVersion.image.url}
+                      className={styles.ringImg}
+                    />
                   </Grid>
 
                   <Grid container item lg={7} gap={2.5}>
@@ -97,28 +166,34 @@ function CustomOrder() {
                       <Grid item xs={4}>
                         Chất Liệu:
                       </Grid>
-                      <div>Vàng Trắng 18K</div>
+                      <div>{maleRing.metalSpecification.name}</div>
                     </Grid>
 
                     <Grid container>
                       <Grid item xs={4}>
                         Kim Cương:
                       </Grid>
-                      <div>ROUND 15PT ,D ,VS1</div>
+                      <div>
+                        {maleDiamondSpec.shape}{" "}
+                        {getDiamondSpec(maleDiamondSpec)}
+                      </div>
                     </Grid>
 
                     <Grid container>
                       <Grid item xs={4}>
                         Kích Thước:
                       </Grid>
-                      <div>4</div>
+                      <div>{maleRing.fingerSize}</div>
                     </Grid>
                   </Grid>
                 </Grid>
 
                 <Grid container item sm={5.9} className={styles.section} p={2}>
                   <Grid item lg={4} mb={{ xs: 3, lg: 0 }}>
-                    <img src={menring} className={styles.ringImg} />
+                    <img
+                      src={femaleRing.customDesign.designVersion.image.url}
+                      className={styles.ringImg}
+                    />
                   </Grid>
 
                   <Grid container item lg={7} gap={2.5}>
@@ -137,21 +212,24 @@ function CustomOrder() {
                       <Grid item xs={4}>
                         Chất Liệu:
                       </Grid>
-                      <div>Vàng Trắng 18K</div>
+                      <div>{femaleRing.metalSpecification.name}</div>
                     </Grid>
 
                     <Grid container>
                       <Grid item xs={4}>
                         Kim Cương:
                       </Grid>
-                      <div>ROUND 15PT ,D ,VS1</div>
+                      <div>
+                        {femaleDiamondSpec.shape}{" "}
+                        {getDiamondSpec(femaleDiamondSpec)}
+                      </div>
                     </Grid>
 
                     <Grid container>
                       <Grid item xs={4}>
                         Kích Thước:
                       </Grid>
-                      <div>4</div>
+                      <div>{femaleRing.fingerSize}</div>
                     </Grid>
                   </Grid>
                 </Grid>

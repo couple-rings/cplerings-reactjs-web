@@ -1,22 +1,31 @@
 import {
   DataGrid,
   getGridStringOperators,
+  GridActionsCellItem,
   GridColDef,
+  GridEventListener,
   GridFilterModel,
   GridPaginationModel,
+  GridRowEditStopReasons,
+  GridRowId,
+  GridRowModes,
+  GridRowModesModel,
   GridSortModel,
 } from "@mui/x-data-grid";
 import styles from "./ArrangeTransport.module.scss";
 import { pageSize } from "src/utils/constants";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getTransportOrders } from "src/services/transportOrder.service";
 import { fetchTransporters, fetchTransportOrders } from "src/utils/querykey";
 import { TransportOrderStatus } from "src/utils/enums";
-import { Button } from "@mui/material";
+import { Button, MenuItem, Select, TextField } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 import { useAppSelector } from "src/utils/hooks";
 import { getTransporters } from "src/services/account.service";
+import SaveIcon from "@mui/icons-material/Save";
+import CancelIcon from "@mui/icons-material/Close";
+import BorderColorRoundedIcon from "@mui/icons-material/BorderColorRounded";
 
 interface Row extends ITransportOrder {}
 
@@ -32,6 +41,7 @@ const initMetaData = {
 };
 
 function ArrangeTransport() {
+  const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
   const [filterObj, setFilterObj] = useState<ITransportOrderFilter | null>(
     null
@@ -63,7 +73,37 @@ function ArrangeTransport() {
     }
   );
 
-  console.log(transporterResponse);
+  const handleEditClick = useCallback(
+    (id: GridRowId) => () => {
+      setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+    },
+    [rowModesModel]
+  );
+
+  const handleSaveClick = useCallback(
+    (id: GridRowId) => () => {
+      setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+
+      if (transporterResponse?.data) {
+        const editedRow = transporterResponse.data.items.find(
+          (row) => row.id === id
+        );
+        console.log(editedRow);
+        console.log("call api update");
+      }
+    },
+    [rowModesModel, transporterResponse]
+  );
+
+  const handleCancelClick = useCallback(
+    (id: GridRowId) => () => {
+      setRowModesModel({
+        ...rowModesModel,
+        [id]: { mode: GridRowModes.View, ignoreModifications: true },
+      });
+    },
+    [rowModesModel]
+  );
 
   const columns: GridColDef<Row>[] = useMemo(
     () => [
@@ -82,25 +122,51 @@ function ArrangeTransport() {
       {
         field: "customOrder",
         headerName: "Khách Hàng",
-        width: 300,
+        width: 250,
         headerAlign: "center",
         align: "center",
         filterOperators,
         sortable: false,
         valueGetter: (value: ICustomOrder) => {
-          return value.customer.username;
+          return value?.customer.username ?? "";
         },
       },
       {
         field: "transporter",
         headerName: "Người Giao",
-        width: 300,
+        width: 250,
         headerAlign: "center",
         align: "center",
         filterOperators,
         sortable: false,
-        valueGetter: (value: Omit<IUser, "hasSpouse">) => {
-          return value.username;
+        editable: true,
+        type: "singleSelect",
+        renderEditCell: ({ row }) => {
+          if (!row.transporter) {
+            return (
+              <Select sx={{ mx: 3 }} fullWidth defaultValue={0}>
+                <MenuItem value={0} disabled>
+                  <em>Chọn người giao</em>
+                </MenuItem>
+                {transporterResponse?.data?.items.map((item) => {
+                  return (
+                    <MenuItem value={item.id} key={item.id}>
+                      {item.username}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            );
+          } else return <div>{row.transporter.username}</div>;
+        },
+        renderCell: ({ row }) => {
+          if (row.transporter) return <div>{row.transporter.username}</div>;
+          return (
+            <TextField
+              inputProps={{ readOnly: true }}
+              value={"Chọn người giao"}
+            />
+          );
         },
       },
       {
@@ -138,7 +204,9 @@ function ArrangeTransport() {
             classname = styles.delivering;
           }
 
-          return <div className={classname}>{row.status}</div>;
+          return (
+            <div className={classname}>{row.status.toLocaleLowerCase()}</div>
+          );
         },
       },
       {
@@ -148,19 +216,89 @@ function ArrangeTransport() {
         width: 200,
         headerAlign: "center",
         align: "center",
-        renderCell: ({ row }) => (
-          <Button
-            variant="contained"
-            sx={{ ...primaryBtn, py: 1, m: 2, borderRadius: 5 }}
-            onClick={() => console.log(row)}
-          >
-            Chi Tiết
-          </Button>
-        ),
+        getActions: ({ row, id }) => {
+          if (row.transporter)
+            return [
+              <Button
+                variant="contained"
+                sx={{ ...primaryBtn, py: 1, m: 2, borderRadius: 5 }}
+                onClick={() => console.log(row)}
+              >
+                Chi Tiết
+              </Button>,
+            ];
+          else {
+            const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+            if (isInEditMode) {
+              return [
+                <GridActionsCellItem
+                  icon={<SaveIcon color="primary" />}
+                  label="Save"
+                  onClick={handleSaveClick(id)}
+                  sx={{ py: 3 }}
+                />,
+                <GridActionsCellItem
+                  icon={<CancelIcon color="action" />}
+                  label="Cancel"
+                  onClick={handleCancelClick(id)}
+                />,
+              ];
+            }
+
+            return [
+              <GridActionsCellItem
+                sx={{ py: 3 }}
+                icon={<BorderColorRoundedIcon color="action" />}
+                label="Update"
+                onClick={handleEditClick(id)}
+              />,
+            ];
+          }
+        },
       },
     ],
-    []
+    [
+      handleCancelClick,
+      handleEditClick,
+      handleSaveClick,
+      rowModesModel,
+      transporterResponse,
+    ]
   );
+
+  const handleRowEditStop: GridEventListener<"rowEditStop"> = (
+    params,
+    event
+  ) => {
+    const { id } = params;
+    const reasons = [
+      GridRowEditStopReasons.rowFocusOut,
+      GridRowEditStopReasons.escapeKeyDown,
+    ];
+
+    if (params.reason && reasons.includes(params.reason)) {
+      event.defaultMuiPrevented = true;
+      setRowModesModel({
+        ...rowModesModel,
+        [id]: { mode: GridRowModes.View, ignoreModifications: true },
+      });
+    }
+
+    if (params.reason === GridRowEditStopReasons.enterKeyDown) {
+      if (transporterResponse?.data) {
+        const editedRow = transporterResponse.data.items.find(
+          (row) => row.id === id
+        );
+        console.log(editedRow);
+        console.log("call api update");
+      }
+    }
+  };
+
+  const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
+    setRowModesModel(newRowModesModel);
+  };
 
   const handleChangePage = (model: GridPaginationModel) => {
     // model.page is the page to fetch and starts at 0
@@ -216,6 +354,7 @@ function ArrangeTransport() {
       <div className={styles.title}>Sắp Xếp Vận Chuyển</div>
 
       <DataGrid
+        editMode="row"
         loading={isLoading || transporterLoading}
         getRowHeight={() => "auto"}
         rows={response?.data?.items ? response.data.items : []}
@@ -233,6 +372,9 @@ function ArrangeTransport() {
         }}
         onPaginationModelChange={handleChangePage}
         rowCount={metaData.count}
+        onRowEditStop={handleRowEditStop}
+        rowModesModel={rowModesModel}
+        onRowModesModelChange={handleRowModesModelChange}
       />
     </div>
   );

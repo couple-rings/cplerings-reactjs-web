@@ -19,7 +19,6 @@ import { useMutation } from "@tanstack/react-query";
 import { postIdFaceMatching, postIdReading } from "src/services/fpt.service";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { postCreateSpouse } from "src/services/spouse.service";
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 import moment from "moment";
 import { saveProfile } from "src/redux/slice/auth.slice";
@@ -52,7 +51,6 @@ function VerifyID() {
     null
   );
 
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const { id: customerId } = useAppSelector((state) => state.auth.userInfo);
@@ -170,7 +168,6 @@ function VerifyID() {
       if (response.type === ResponseType.Info) {
         toast.success("Xác minh danh tính thành công");
         dispatch(saveProfile({ hasSpouse: true }));
-        navigate("/");
       }
 
       if (response.errors) {

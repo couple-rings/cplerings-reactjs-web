@@ -130,6 +130,9 @@ function CraftingRequests() {
       if (maleDesign && femaleDesign) {
         setMaleDesign(maleDesign);
         setFemaleDesign(femaleDesign);
+      } else {
+        setMaleDesign(null);
+        setFemaleDesign(null);
       }
     }
   }, [designResponse]);
