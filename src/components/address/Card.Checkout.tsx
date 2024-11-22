@@ -4,8 +4,15 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 
 const AddressCard = (props: IAddressCardProps) => {
-  const { address, receiverName, receiverPhone, setOpenDelete, setOpenUpdate } =
-    props;
+  const {
+    data,
+    setOpenDelete,
+    setOpenUpdate,
+    setSelected,
+    checked,
+    handleCheck,
+  } = props;
+  const { receiverName, receiverPhone, address } = data;
 
   return (
     <div className={styles.container}>
@@ -18,6 +25,10 @@ const AddressCard = (props: IAddressCardProps) => {
 
           <Grid item>
             <Checkbox
+              checked={checked ?? false}
+              onChange={(event) => {
+                handleCheck && handleCheck(data.id, event.target.checked);
+              }}
               icon={<RadioButtonUncheckedIcon />}
               checkedIcon={<RadioButtonCheckedIcon />}
             />
@@ -29,7 +40,13 @@ const AddressCard = (props: IAddressCardProps) => {
           <Button variant="text" onClick={() => setOpenDelete(true)}>
             Xóa
           </Button>
-          <Button variant="text" onClick={() => setOpenUpdate(true)}>
+          <Button
+            variant="text"
+            onClick={() => {
+              setOpenUpdate(true);
+              setSelected(data);
+            }}
+          >
             Sửa
           </Button>
         </div>

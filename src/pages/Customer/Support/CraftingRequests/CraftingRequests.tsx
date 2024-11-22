@@ -73,7 +73,7 @@ function CraftingRequests() {
     if (status === CraftingRequestStatus.Pending)
       return {
         text: "Đang duyệt",
-        color: "info",
+        color: "warning",
       };
 
     if (status === CraftingRequestStatus.Rejected)
@@ -130,6 +130,9 @@ function CraftingRequests() {
       if (maleDesign && femaleDesign) {
         setMaleDesign(maleDesign);
         setFemaleDesign(femaleDesign);
+      } else {
+        setMaleDesign(null);
+        setFemaleDesign(null);
       }
     }
   }, [designResponse]);

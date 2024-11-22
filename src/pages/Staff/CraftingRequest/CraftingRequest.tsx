@@ -17,6 +17,8 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCraftingRequestGroups } from "src/services/craftingRequest.service";
 import { fetchCraftingRequestGroups } from "src/utils/querykey";
+import HideSourceRoundedIcon from "@mui/icons-material/HideSourceRounded";
+import ReportProblemRoundedIcon from "@mui/icons-material/ReportProblemRounded";
 
 interface Row extends ICraftingRequestGroup {}
 
@@ -77,49 +79,41 @@ function CraftingRequest() {
       },
       {
         field: "createdAt",
-        headerName: "Ngày Tạo",
-        width: 200,
+        headerName: "Gần Đây Nhất",
+        width: 250,
         headerAlign: "center",
         align: "center",
         filterable: false,
         renderCell: ({ row }) => {
-          return (
-            <div>
-              {moment(row.craftingRequests[0].createdAt).format("DD/MM/YYYY")}
-            </div>
+          const mostRecent = row.craftingRequests.reduce((a, b) =>
+            a.createdAt > b.createdAt ? a : b
           );
+          return <div>{moment(mostRecent.createdAt).format("DD/MM/YYYY")}</div>;
         },
       },
       {
         field: "status",
-        headerName: "Trạng Thái",
+        headerName: "Đang Cần Duyệt",
         width: 200,
         headerAlign: "center",
         align: "center",
         filterOperators,
         sortable: false,
         renderCell: ({ row }) => {
-          const requestStatus = row.craftingRequests[0].craftingRequestStatus;
+          const needApproval = row.craftingRequests.find(
+            (item) =>
+              item.craftingRequestStatus === CraftingRequestStatus.Pending
+          );
 
-          let classname = "";
-          let status = "";
-
-          if (requestStatus === CraftingRequestStatus.Accepted) {
-            classname = styles.accepted;
-            status = "Đã Duyệt";
-          }
-
-          if (requestStatus === CraftingRequestStatus.Rejected) {
-            classname = styles.rejected;
-            status = "Đã Hủy";
-          }
-
-          if (requestStatus === CraftingRequestStatus.Pending) {
-            classname = styles.pending;
-            status = "Đang Chờ Duyệt";
-          }
-
-          return <div className={classname}>{status}</div>;
+          return (
+            <div>
+              {needApproval ? (
+                <ReportProblemRoundedIcon color="warning" />
+              ) : (
+                <HideSourceRoundedIcon color="action" />
+              )}
+            </div>
+          );
         },
       },
       {
@@ -199,6 +193,7 @@ function CraftingRequest() {
         }}
         onPaginationModelChange={handleChangePage}
         rowCount={metaData.count}
+        getRowId={(row) => row.customer.id}
       />
     </div>
   );

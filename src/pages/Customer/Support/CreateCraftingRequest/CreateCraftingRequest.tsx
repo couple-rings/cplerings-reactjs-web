@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Card,
   FormHelperText,
   FormLabel,
@@ -20,56 +19,26 @@ import { menuPaperStyle, secondaryBtn, sizeMenuStyle } from "src/utils/styles";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import _ from "lodash";
 import { useAppSelector } from "src/utils/hooks";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  fetchBranches,
   fetchCraftingRequests,
   fetchCustomDesigns,
-  fetchDiamondSpecs,
-  fetchMetalSpecs,
 } from "src/utils/querykey";
 import { getCustomDesigns } from "src/services/customDesign.service";
-import { getCraftingRequests } from "src/services/craftingRequest.service";
+import {
+  getCraftingRequests,
+  postCreateCraftingRequests,
+} from "src/services/craftingRequest.service";
 import {
   CraftingRequestStatus,
   DesignCharacteristic,
   Status,
 } from "src/utils/enums";
 import { useNavigate } from "react-router-dom";
-import { getDiamondSpecs } from "src/services/diamondSpec.service";
-import { getMetalSpecs } from "src/services/metalSpec.service";
-
-const branches: IBranch[] = [
-  {
-    id: 1,
-    storeName: "Cửa hàng Nhẫn Cưới Quận 1",
-    address: "123 Đường Lê Lợi, Quận 1, TP. Hồ Chí Minh",
-    phone: "0901234567",
-    coverImage: {
-      id: 1,
-      url: "",
-    },
-  },
-  {
-    id: 2,
-    storeName: "Cửa hàng Nhẫn Cưới Quận 3",
-    address: "456 Đường Nguyễn Đình Chiểu, Quận 3, TP. Hồ Chí Minh",
-    phone: "0912345678",
-    coverImage: {
-      id: 2,
-      url: "",
-    },
-  },
-  {
-    id: 3,
-    storeName: "Cửa hàng Nhẫn Cưới Quận 5",
-    address: "789 Đường Trần Hưng Đạo, Quận 5, TP. Hồ Chí Minh",
-    phone: "0923456789",
-    coverImage: {
-      id: 3,
-      url: "",
-    },
-  },
-];
+import { getBranches } from "src/services/branch.service";
+import { toast } from "react-toastify";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 const sizeMenuPaperStyle: SxProps = {
   ...menuPaperStyle,
@@ -94,7 +63,7 @@ interface IFormInput {
   };
 }
 
-const specFilter = {
+const branchFilter: IBranchFilter = {
   page: 0,
   pageSize: 100,
 };
@@ -105,6 +74,7 @@ function CreateCraftingRequest() {
 
   const [designFilterObj, setDesignFilterObj] =
     useState<ICustomDesignFilter | null>(null);
+
   const [maleRequestFilterObj, setMaleRequestFilterObj] =
     useState<ICraftingRequestFilter | null>(null);
   const [femaleRequestFilterObj, setFemaleRequestFilterObj] =
@@ -120,6 +90,14 @@ function CreateCraftingRequest() {
   const { id } = useAppSelector((state) => state.auth.userInfo);
 
   const navigate = useNavigate();
+
+  const { data: branchResponse, isLoading: branchLoading } = useQuery({
+    queryKey: [fetchBranches, branchFilter],
+
+    queryFn: () => {
+      return getBranches(branchFilter);
+    },
+  });
 
   const { data: designResponse, isLoading: designLoading } = useQuery({
     queryKey: [fetchCustomDesigns, designFilterObj],
@@ -153,19 +131,14 @@ function CreateCraftingRequest() {
       enabled: !!femaleRequestFilterObj,
     });
 
-  const { data: diamondSpecResponse } = useQuery({
-    queryKey: [fetchDiamondSpecs, specFilter],
-
-    queryFn: () => {
-      return getDiamondSpecs(specFilter);
+  const mutation = useMutation({
+    mutationFn: (data: ICreateCraftingRequest) => {
+      return postCreateCraftingRequests(data);
     },
-  });
-
-  const { data: metalSpecResponse } = useQuery({
-    queryKey: [fetchMetalSpecs, specFilter],
-
-    queryFn: () => {
-      return getMetalSpecs(specFilter);
+    onSuccess: (response) => {
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
     },
   });
 
@@ -196,7 +169,36 @@ function CreateCraftingRequest() {
     if (onError()) {
       return;
     }
-    console.log(data);
+
+    const { branchId, female, male } = data;
+    if (maleDesign && femaleDesign) {
+      const maleResponse = await mutation.mutateAsync({
+        customerId: id,
+        branchId,
+        customDesignId: maleDesign.id,
+        engraving: male.engraving,
+        fingerSize: maleSize,
+        metalSpecId: male.metalSpecId,
+        diamondSpecId: male.diamondSpecId,
+      });
+
+      const femaleResponse = await mutation.mutateAsync({
+        customerId: id,
+        branchId,
+        customDesignId: femaleDesign.id,
+        engraving: female.engraving,
+        fingerSize: femaleSize,
+        metalSpecId: female.metalSpecId,
+        diamondSpecId: female.diamondSpecId,
+      });
+
+      if (maleResponse.data && femaleResponse.data) {
+        toast.success(
+          "Tạo yêu cầu thành công. Quý khách vui lòng chờ được duyệt."
+        );
+        navigate("/customer/support/crafting-request");
+      }
+    }
   };
 
   useEffect(() => {
@@ -284,8 +286,7 @@ function CreateCraftingRequest() {
     designLoading ||
     maleRequestLoading ||
     femaleRequestLoading ||
-    !diamondSpecResponse ||
-    !metalSpecResponse
+    branchLoading
   )
     return (
       <Grid container justifyContent={"center"} my={5}>
@@ -367,7 +368,7 @@ function CreateCraftingRequest() {
                         <MenuItem value={0} disabled>
                           <em>Chọn chất liệu</em>
                         </MenuItem>
-                        {metalSpecResponse.data?.items.map((item) => {
+                        {maleDesign?.metalSpecifications.map((item) => {
                           return (
                             <MenuItem value={item.id} key={item.id}>
                               {item.name}
@@ -412,7 +413,7 @@ function CreateCraftingRequest() {
                         <MenuItem value={0} disabled>
                           <em>Chọn kim cương</em>
                         </MenuItem>
-                        {diamondSpecResponse.data?.items.map((spec) => {
+                        {maleDesign?.diamondSpecifications.map((spec) => {
                           return (
                             <MenuItem value={spec.id} key={spec.id}>
                               {spec.shape} {spec.weight} - {spec.color} -{" "}
@@ -535,7 +536,7 @@ function CreateCraftingRequest() {
                         <MenuItem value={0} disabled>
                           <em>Chọn chất liệu</em>
                         </MenuItem>
-                        {metalSpecResponse.data?.items.map((item) => {
+                        {femaleDesign?.metalSpecifications.map((item) => {
                           return (
                             <MenuItem value={item.id} key={item.id}>
                               {item.name}
@@ -580,7 +581,7 @@ function CreateCraftingRequest() {
                         <MenuItem value={0} disabled>
                           <em>Chọn kim cương</em>
                         </MenuItem>
-                        {diamondSpecResponse.data?.items.map((spec) => {
+                        {femaleDesign?.diamondSpecifications.map((spec) => {
                           return (
                             <MenuItem value={spec.id} key={spec.id}>
                               {spec.shape} {spec.weight} - {spec.color} -{" "}
@@ -671,7 +672,7 @@ function CreateCraftingRequest() {
                       <MenuItem value={0} disabled>
                         <em>Chọn cửa hàng gần bạn</em>
                       </MenuItem>
-                      {branches.map((item) => {
+                      {branchResponse?.data?.items.map((item) => {
                         return (
                           <MenuItem value={item.id} key={item.id}>
                             {item.storeName} - {item.address}
@@ -690,13 +691,14 @@ function CreateCraftingRequest() {
             </Grid>
 
             <Grid container justifyContent={"center"} mt={5}>
-              <Button
+              <LoadingButton
+                loading={mutation.isPending}
                 variant="contained"
                 sx={secondaryBtn}
                 onClick={handleSubmit(onSubmit, onError)}
               >
                 Xác Nhận
-              </Button>
+              </LoadingButton>
             </Grid>
           </Grid>
         </Card>

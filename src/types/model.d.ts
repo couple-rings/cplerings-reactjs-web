@@ -8,6 +8,7 @@ import {
   FileType,
   GoldColor,
   RingStatus,
+  TransportOrderStatus,
   VersionOwner,
 } from "src/utils/enums";
 
@@ -287,6 +288,7 @@ declare global {
   interface ISpouse {
     id: number;
     customerId?: number;
+    fullName: string;
   }
 
   interface ICustomDesign {
@@ -327,11 +329,24 @@ declare global {
     craftingRequestStatus: CraftingRequestStatus;
     createdAt: string;
     branch: IBranch;
+    customDesign: ICustomDesign;
   }
 
   interface ICraftingRequestGroup {
     customer: IUser;
     craftingRequests: ICraftingRequest[];
+  }
+
+  interface IDiamond {
+    id: number;
+    giaReportNumber: string;
+    giaDocument: {
+      id: number;
+      url: string;
+    };
+    diamondSpecification: IDiamondSpec;
+    branch: IBranch;
+    createdAt: string;
   }
 
   interface IRing {
@@ -346,7 +361,10 @@ declare global {
     };
     spouse: ISpouse;
     customDesign: ICustomDesign;
-    //needs engraving, finger size, metal spec, diamond
+    fingerSize: number;
+    engraving?: string;
+    metalSpecification: IMetalSpec;
+    diamonds: IDiamond[];
   }
 
   interface IContract {
@@ -366,6 +384,7 @@ declare global {
 
   interface ICustomOrder {
     id: number;
+    orderNo: string;
     firstRing: IRing;
     secondRing: IRing;
     customer: IUser;
@@ -389,5 +408,54 @@ declare global {
       url: string;
     };
     status: CraftingStageStatus;
+  }
+
+  interface ITransportOrder {
+    id: number;
+    status: TransportOrderStatus;
+    receiverName: string;
+    receiverPhone: string;
+    deliveryAddress: string;
+    customOrder?: ICustomOrder;
+    transporter?: IUser;
+    transportationNotes?: {
+      id: number;
+      date: string;
+      note: string;
+    }[];
+  }
+
+  interface IAgreement {
+    id: number;
+    customer: IUser;
+    mainName: string;
+    mainSignature: {
+      id: number;
+      url: string;
+    };
+    partnerName: string;
+    partnerSignature: {
+      id: number;
+      url: string;
+    };
+    signedDate: string;
+  }
+
+  interface IFingerSize {
+    id: number;
+    size: number;
+    diameter: number;
+  }
+
+  interface ITransportAddress {
+    id: number;
+    address: string;
+    districtCode: number;
+    district: string;
+    wardCode: number;
+    ward: string;
+    receiverName: string;
+    receiverPhone: string;
+    customer: IUser;
   }
 }

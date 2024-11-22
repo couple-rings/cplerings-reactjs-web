@@ -74,8 +74,9 @@ import CustomerCraftingProcess from "src/pages/Customer/Support/CraftingProcess/
 import Deposit from "src/pages/Customer/Support/Deposit/Deposit";
 import ManageBlog from "src/pages/Staff/ManageBlog/ManageBlog";
 import CraftingRequest from "src/pages/Staff/CraftingRequest/CraftingRequest";
-import LoveAgreement from "src/pages/Customer/LoveAgreement/LoveAgreement";
-import LoveAgreeMentDetail from "src/pages/Customer/LoveAgreement/LoveAgreementDetail";
+import ArrangeTransport from "src/pages/Staff/ArrangeTransport/ArrangeTransport";
+import LoveAgreement from "src/pages/Common/LoveAgreement/LoveAgreement";
+import MyLoveAgreement from "src/pages/Customer/LoveAgreement/MyLoveAgreement";
 
 const router = createBrowserRouter([
   {
@@ -153,10 +154,6 @@ const router = createBrowserRouter([
       {
         path: "love-agreement",
         element: <LoveAgreement />,
-      },
-      {
-        path: "love-agreement/:id",
-        element: <LoveAgreeMentDetail />,
       },
     ],
   },
@@ -237,7 +234,7 @@ const router = createBrowserRouter([
             element: <CustomerCraftingProcess />,
           },
           {
-            path: "deposit",
+            path: "custom-order/:orderId/deposit/:stageId",
             element: <Deposit />,
           },
         ],
@@ -261,6 +258,10 @@ const router = createBrowserRouter([
       {
         path: "contract/:orderId",
         element: <Contract />,
+      },
+      {
+        path: "love-agreement",
+        element: <MyLoveAgreement />,
       },
     ],
   },
@@ -313,6 +314,10 @@ const router = createBrowserRouter([
         element: <MaintenancePayment />,
       },
       {
+        path: "arrange-transport",
+        element: <ArrangeTransport />,
+      },
+      {
         path: "blog",
         element: <ManageBlog />,
       },
@@ -339,7 +344,7 @@ const router = createBrowserRouter([
         element: <CustomOrderDetail />,
       },
       {
-        path: "custom-process",
+        path: "custom-order/:orderId/crafting-process",
         element: <CraftingProcess />,
       },
     ],

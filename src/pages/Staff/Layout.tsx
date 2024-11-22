@@ -11,6 +11,7 @@ import PaletteIcon from "@mui/icons-material/Palette";
 import HandymanIcon from "@mui/icons-material/Handyman";
 import ArticleIcon from "@mui/icons-material/Article";
 import HardwareRoundedIcon from "@mui/icons-material/HardwareRounded";
+import LocalShippingRoundedIcon from "@mui/icons-material/LocalShippingRounded";
 
 const sidebarList = [
   {
@@ -32,6 +33,11 @@ const sidebarList = [
     text: "Đơn Bảo Trì",
     icon: <HandymanIcon />,
     path: "/staff/maintenance-order",
+  },
+  {
+    text: "Sắp Xếp Vận Chuyển",
+    icon: <LocalShippingRoundedIcon />,
+    path: "/staff/arrange-transport",
   },
   {
     text: "Quản Lý Blog",

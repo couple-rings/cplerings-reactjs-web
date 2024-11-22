@@ -9,6 +9,9 @@ export const fetchConversations = "fetchConversations";
 
 export const fetchCustomerProfile = "fetchCustomerProfile";
 export const fetchStaffProfile = "fetchStaffProfile";
+export const fetchJewelerProfile = "fetchJewelerProfile";
+export const fetchManagerProfile = "fetchManagerProfile";
+export const fetchAdminProfile = "fetchAdminProfile";
 
 export const fetchCoupleDesigns = "fetchCoupleDesigns";
 
@@ -29,3 +32,19 @@ export const fetchCustomOrders = "fetchCustomOrders";
 export const fetchCustomOrderDetail = "fetchCustomOrderDetail";
 
 export const fetchCraftingStages = "fetchCraftingStages";
+
+export const fetchTransportAddresses = "fetchTransportAddresses";
+export const fetchDistricts = "fetchDistricts";
+export const fetchWards = "fetchWards";
+
+export const fetchTransportOrders = "fetchTransportOrders";
+
+export const fetchTransporters = "fetchTransporters";
+
+export const fetchFingerSizes = "fetchFingerSizes";
+
+export const fetchBranches = "fetchBranches";
+
+export const fetchDiamonds = "fetchDiamonds";
+
+export const fetchAgreements = "fetchAgreements";

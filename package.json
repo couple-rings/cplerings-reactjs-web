@@ -22,6 +22,7 @@
     "@mui/lab": "^5.0.0-alpha.170",
     "@mui/material": "^5.16.5",
     "@mui/styles": "^6.1.6",
+    "@mui/x-charts": "^7.22.2",
     "@mui/x-data-grid": "^7.11.1",
     "@react-google-maps/api": "^2.20.3",
     "@react-pdf/renderer": "^4.0.0",

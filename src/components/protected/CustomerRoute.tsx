@@ -31,7 +31,8 @@ function CustomerRoute(props: IProtectedRouteProps) {
     }
 
     if (hasSpouse && location.pathname === "/customer/love-verification") {
-      navigate(currentRoute);
+      if (currentRoute === location.pathname) navigate("/");
+      else navigate(currentRoute);
       return;
     }
 
