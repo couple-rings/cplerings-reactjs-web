@@ -56,7 +56,9 @@ function CustomOrderDetail() {
 
   useEffect(() => {
     if (response && response.data) {
-      const { firstRing, secondRing } = response.data.customOrder;
+      const { firstRing, secondRing, jeweler } = response.data.customOrder;
+
+      if (!jeweler || jeweler.id !== userId) navigate("/jeweler/custom-order");
 
       if (
         firstRing.customDesign.designVersion.design.characteristic ===
@@ -303,8 +305,8 @@ function CustomOrderDetail() {
         </Grid>
       </Grid>
 
-      {order.status === CustomOrderStatus.Waiting && (
-        <Grid container justifyContent={"center"}>
+      <Grid container justifyContent={"center"}>
+        {order.status === CustomOrderStatus.Waiting && (
           <LoadingButton
             loading={assignMutation.isPending}
             onClick={() =>
@@ -315,8 +317,21 @@ function CustomOrderDetail() {
           >
             Nhận đơn này
           </LoadingButton>
-        </Grid>
-      )}
+        )}
+
+        {order.status !== CustomOrderStatus.Pending &&
+          order.status !== CustomOrderStatus.Waiting && (
+            <LoadingButton
+              onClick={() =>
+                navigate(`/jeweler/custom-order/${order.id}/crafting-process`)
+              }
+              variant="contained"
+              sx={{ ...primaryBtn, borderRadius: 2, px: 5 }}
+            >
+              Xem quá trình
+            </LoadingButton>
+          )}
+      </Grid>
     </div>
   );
 }

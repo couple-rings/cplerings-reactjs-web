@@ -408,10 +408,7 @@ function CustomDesign() {
 
   useEffect(() => {
     if (response?.data) {
-      if (
-        response.data.status === CustomRequestStatus.Waiting ||
-        response.data.status === CustomRequestStatus.Canceled
-      )
+      if (response.data.status !== CustomRequestStatus.OnGoing)
         navigate("not-found");
 
       setDesignFilterObj({

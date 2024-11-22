@@ -240,7 +240,7 @@ function CustomOrder() {
                   variant="contained"
                   sx={secondaryBtn}
                   onClick={() =>
-                    navigate(`/customer/support/custom-order/detail/${1}`)
+                    navigate(`/customer/support/custom-order/detail/${item.id}`)
                   }
                 >
                   Xem Chi Tiết

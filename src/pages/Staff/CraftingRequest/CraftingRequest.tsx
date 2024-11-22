@@ -17,8 +17,8 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCraftingRequestGroups } from "src/services/craftingRequest.service";
 import { fetchCraftingRequestGroups } from "src/utils/querykey";
-import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
-import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
+import HideSourceRoundedIcon from "@mui/icons-material/HideSourceRounded";
+import ReportProblemRoundedIcon from "@mui/icons-material/ReportProblemRounded";
 
 interface Row extends ICraftingRequestGroup {}
 
@@ -108,9 +108,9 @@ function CraftingRequest() {
           return (
             <div>
               {needApproval ? (
-                <CheckRoundedIcon color="success" />
+                <ReportProblemRoundedIcon color="warning" />
               ) : (
-                <ClearRoundedIcon color="error" />
+                <HideSourceRoundedIcon color="action" />
               )}
             </div>
           );

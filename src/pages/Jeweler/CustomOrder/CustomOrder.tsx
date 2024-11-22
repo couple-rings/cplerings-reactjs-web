@@ -115,21 +115,39 @@ function CustomOrder() {
         sortable: false,
         renderCell: ({ row }) => {
           let classname = "";
-          if (row.status === CustomOrderStatus.Waiting)
-            classname = styles.waiting;
-          if (row.status === CustomOrderStatus.InProgress)
-            classname = styles.ongoing;
-          if (row.status === CustomOrderStatus.Done) classname = styles.done;
-          if (row.status === CustomOrderStatus.Delivering)
-            classname = styles.delivering;
-          if (row.status === CustomOrderStatus.Completed)
-            classname = styles.completed;
-          if (row.status === CustomOrderStatus.Canceled)
-            classname = styles.canceled;
+          let status = "";
 
-          return (
-            <div className={classname}>{row.status.toLocaleLowerCase()}</div>
-          );
+          if (row.status === CustomOrderStatus.Waiting) {
+            classname = styles.waiting;
+            status = "Chờ Nhận";
+          }
+
+          if (row.status === CustomOrderStatus.InProgress) {
+            classname = styles.ongoing;
+            status = "Đang Làm";
+          }
+
+          if (row.status === CustomOrderStatus.Done) {
+            classname = styles.completed;
+            status = "Hoàn Thành";
+          }
+
+          if (row.status === CustomOrderStatus.Delivering) {
+            classname = styles.completed;
+            status = "Hoàn Thành";
+          }
+
+          if (row.status === CustomOrderStatus.Completed) {
+            classname = styles.completed;
+            status = "Hoàn Thành";
+          }
+
+          if (row.status === CustomOrderStatus.Canceled) {
+            classname = styles.canceled;
+            status = "Đã Hủy";
+          }
+
+          return <div className={classname}>{status.toLocaleLowerCase()}</div>;
         },
       },
       {
@@ -144,10 +162,7 @@ function CustomOrder() {
             variant="contained"
             sx={{ ...primaryBtn, py: 1, m: 2, borderRadius: 5 }}
             onClick={() => {
-              if (row.status === CustomOrderStatus.Waiting)
-                navigate(`/jeweler/custom-order/detail/${row.id}`);
-              if (row.status === CustomOrderStatus.InProgress)
-                navigate(`/jeweler/custom-order/${row.id}/crafting-process`);
+              navigate(`/jeweler/custom-order/detail/${row.id}`);
             }}
           >
             Chi Tiết

@@ -70,7 +70,6 @@ export const authSlice = createSlice({
       state.userInfo = initialState.userInfo;
       state.accessToken = "";
       state.refreshToken = "";
-      console.log(initialState.userInfo);
     },
     saveProfile: (state, { payload }: PayloadAction<ISaveProfilePayload>) => {
       const { hasSpouse, account } = payload;

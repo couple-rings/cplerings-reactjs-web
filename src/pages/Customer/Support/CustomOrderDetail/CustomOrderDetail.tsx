@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { CustomOrderStatus, DesignCharacteristic } from "src/utils/enums";
 import { useAppSelector } from "src/utils/hooks";
 import { ChipColor } from "src/utils/constants";
+import DownloadIcon from "@mui/icons-material/Download";
 
 function CustomOrderDetail() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
@@ -83,7 +84,7 @@ function CustomOrderDetail() {
   useEffect(() => {
     if (response && response.data) {
       const { firstRing, secondRing, customer } = response.data.customOrder;
-
+      console.log(customer.id !== userId);
       if (customer.id !== userId) navigate("/customer/support/custom-order");
 
       if (
@@ -205,12 +206,26 @@ function CustomOrderDetail() {
                 />
               </Grid>
 
-              <Grid item xs={12} textAlign={"center"} mb={5}>
+              <Grid item xs={12} textAlign={"center"} mb={2}>
                 <img src={male} width={15} style={{ marginRight: 8 }} />
                 Nhẫn Nam
               </Grid>
 
-              <Grid item xs={9}>
+              {maleRing.maintenanceDocument && (
+                <Grid item xs={12} textAlign={"center"} mb={2}>
+                  <a
+                    download={""}
+                    href={maleRing.maintenanceDocument.url}
+                    className={styles.download}
+                    style={{ fontSize: "1rem" }}
+                  >
+                    <DownloadIcon />
+                    Giấy bảo hành
+                  </a>
+                </Grid>
+              )}
+
+              <Grid item xs={9} mt={3}>
                 <Grid container justifyContent={"space-between"}>
                   <Grid item className={styles.label}>
                     Chất Liệu
@@ -262,12 +277,26 @@ function CustomOrderDetail() {
                 />
               </Grid>
 
-              <Grid item xs={12} textAlign={"center"} mb={5}>
+              <Grid item xs={12} textAlign={"center"} mb={2}>
                 <img src={female} width={15} style={{ marginRight: 8 }} />
                 Nhẫn Nữ
               </Grid>
 
-              <Grid item xs={9}>
+              {femaleRing.maintenanceDocument && (
+                <Grid item xs={12} textAlign={"center"} mb={2}>
+                  <a
+                    download={""}
+                    href={femaleRing.maintenanceDocument.url}
+                    className={styles.download}
+                    style={{ fontSize: "1rem" }}
+                  >
+                    <DownloadIcon />
+                    Giấy bảo hành
+                  </a>
+                </Grid>
+              )}
+
+              <Grid item xs={9} mt={3}>
                 <Grid container justifyContent={"space-between"}>
                   <Grid item className={styles.label}>
                     Chất Liệu

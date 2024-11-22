@@ -46,3 +46,5 @@ export const fetchFingerSizes = "fetchFingerSizes";
 export const fetchBranches = "fetchBranches";
 
 export const fetchDiamonds = "fetchDiamonds";
+
+export const fetchAgreements = "fetchAgreements";

@@ -3,6 +3,7 @@ import {
   AccountStatus,
   CustomRequestStatus,
   DesignCharacteristic,
+  StagePercentage,
 } from "src/utils/enums";
 
 export {};
@@ -50,6 +51,8 @@ declare global {
     setOpenDelete: (v: boolean) => void;
     setOpenUpdate: (v: boolean) => void;
     setSelected: (v: ITransportAddress) => void;
+    handleCheck?: (v1: number, v2: boolean) => void;
+    checked?: boolean;
   }
 
   interface IModalProps {
@@ -238,6 +241,8 @@ declare global {
   interface IImageProcessProps {
     imageSrcs: string[];
     setImageSrcs: (newImageSrcs: string[]) => void;
+    setNoImg: (v: boolean) => void;
+    stage: ICraftingStage;
   }
 
   interface ILoveAgreement {
@@ -388,5 +393,24 @@ declare global {
 
   interface IAddDiamondModalProps extends IModalProps {
     filterObj: IDiamondFilter;
+  }
+
+  interface ICompleteCraftingStageModalProps extends IModalProps {
+    handleComplete: (v1: StagePercentage, v2: number, v3: number) => void;
+
+    updatingStage: boolean;
+  }
+
+  interface IAgreementDetailProps {
+    data: IAgreement;
+
+    handleSignAgreement?: (
+      v1: string,
+      v2: string,
+      v3: string,
+      v4: string
+    ) => Promise<IResponse<IAgreement> | undefined>;
+
+    loading?: boolean;
   }
 }

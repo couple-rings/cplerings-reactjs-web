@@ -1,4 +1,12 @@
-import { Divider, Grid, Radio, Skeleton } from "@mui/material";
+import {
+  Divider,
+  FormControl,
+  FormControlLabel,
+  Grid,
+  Radio,
+  RadioGroup,
+  Skeleton,
+} from "@mui/material";
 import styles from "./Deposit.module.scss";
 import vnpay from "src/assets/vnpay.png";
 import momo from "src/assets/momo.png";
@@ -13,13 +21,17 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   fetchCraftingStages,
   fetchCustomOrderDetail,
+  fetchDistricts,
+  fetchTransportAddresses,
 } from "src/utils/querykey";
 import { getCustomOrderDetail } from "src/services/customOrder.service";
-import { useAppSelector } from "src/utils/hooks";
+import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 import {
   CraftingStageStatus,
+  DeliveryMethod,
   DesignCharacteristic,
   StagePercentage,
+  UserRole,
 } from "src/utils/enums";
 import {
   getCraftingStages,
@@ -27,23 +39,99 @@ import {
 } from "src/services/craftingStage.service";
 import { toast } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import AddressCard from "src/components/address/Card.Checkout";
+import { getTransportAddresses } from "src/services/transportAddress.service";
+import { saveList } from "src/redux/slice/district.slice";
+import { getDistricts } from "src/services/province.service";
+import AddModal from "src/components/modal/address/Add.modal";
+import DeleteModal from "src/components/modal/address/Delete.modal";
+import UpdateModal from "src/components/modal/address/Update.modal";
+import _ from "lodash";
+
+const initSelected: ITransportAddress = {
+  id: 0,
+  address: "",
+  district: "",
+  districtCode: 0,
+  ward: "",
+  wardCode: 0,
+  receiverName: "",
+  receiverPhone: "",
+  customer: {
+    id: 0,
+    avatar: "",
+    email: "",
+    phone: "",
+    username: "",
+    role: UserRole.Default,
+    branch: {
+      id: 0,
+      address: "",
+      phone: "",
+      storeName: "",
+      coverImage: {
+        id: 0,
+        url: "",
+      },
+    },
+  },
+};
 
 function Deposit() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
   const [filterObj, setFilterObj] = useState<ICraftingStageFilter | null>(null);
+
   const [depositStage, setDepositStage] = useState<ICraftingStage | null>(null);
+  const [depositValue, setDepositValue] = useState(0);
 
   const [maleRing, setMaleRing] = useState<IRing | null>(null);
   const [femaleRing, setFemaleRing] = useState<IRing | null>(null);
 
+  const [addressFilterObj, setAddressFilterObj] =
+    useState<ITransportationAddressFilter | null>(null);
+  const [selected, setSelected] = useState<ITransportAddress>(initSelected);
+  const [deliveryMethod, setDeliveryMethod] = useState(DeliveryMethod.Shipping);
+  const [arrayCheck, setArrayCheck] = useState<
+    { id: number; checked: boolean }[]
+  >([]);
+
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [openUpdate, setOpenUpdate] = useState(false);
+
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const { id: userId } = useAppSelector((state) => state.auth.userInfo);
+  const { districts } = useAppSelector((state) => state.district);
 
   const { orderId, stageId } = useParams<{
     orderId: string;
     stageId: string;
   }>();
+
+  const { data: addressResponse, isLoading: addressLoading } = useQuery({
+    queryKey: [fetchTransportAddresses, addressFilterObj],
+
+    queryFn: () => {
+      if (addressFilterObj) return getTransportAddresses(addressFilterObj);
+    },
+    enabled:
+      addressFilterObj !== null &&
+      depositStage?.progress === StagePercentage.Third,
+  });
+
+  const { data: districtsResponse, isLoading: districtsLoading } = useQuery({
+    queryKey: [fetchDistricts, filterObj],
+
+    queryFn: () => {
+      return getDistricts();
+    },
+    enabled:
+      districts.length === 0 &&
+      depositStage?.progress === StagePercentage.Third,
+  });
 
   const { data: response } = useQuery({
     queryKey: [fetchCustomOrderDetail, orderId],
@@ -110,6 +198,48 @@ function Deposit() {
     };
   };
 
+  const resetSelected = () => {
+    setSelected(initSelected);
+  };
+
+  const handleCheck = (id: number, value: boolean) => {
+    if (value === true) {
+      const clone = _.cloneDeep(arrayCheck);
+      clone.forEach((item) => {
+        if (item.id === id) {
+          item.checked = true;
+        } else item.checked = false;
+      });
+
+      setArrayCheck(clone);
+    }
+  };
+
+  const handlePayment = () => {
+    if (depositStage) {
+      if (depositStage.progress === StagePercentage.Third) {
+        if (deliveryMethod === DeliveryMethod.Pickup)
+          mutation.mutate({ craftingStageId: depositStage.id });
+        else {
+          const checkedItem = arrayCheck.find((item) => item.checked);
+
+          mutation.mutate({
+            craftingStageId: depositStage.id,
+            transportationAddressId: checkedItem?.id,
+          });
+        }
+      } else mutation.mutate({ craftingStageId: depositStage.id });
+    }
+  };
+
+  useEffect(() => {
+    if (districtsResponse?.districts) {
+      dispatch(saveList(districtsResponse.districts));
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [districtsResponse]);
+
   useEffect(() => {
     if (response && response.data) {
       const { firstRing, secondRing, customer } = response.data.customOrder;
@@ -159,6 +289,12 @@ function Deposit() {
           navigate("/customer/support/custom-order");
 
         setDepositStage(stages[stageIndex]);
+
+        if (stageIndex === 0) setDepositValue(stages[stageIndex].progress);
+        else
+          setDepositValue(
+            stages[stageIndex].progress - stages[stageIndex - 1].progress
+          );
       }
     }
 
@@ -178,7 +314,39 @@ function Deposit() {
       });
   }, [orderId]);
 
-  if (!order || !maleRing || !femaleRing || !depositStage)
+  useEffect(() => {
+    if (addressResponse?.data) {
+      const arrayCheck = addressResponse.data.items.map((item) => {
+        return {
+          id: item.id,
+          checked: false,
+        };
+      });
+
+      arrayCheck[0].checked = true;
+      setArrayCheck(arrayCheck);
+    }
+  }, [addressResponse]);
+
+  useEffect(() => {
+    setAddressFilterObj({
+      page: 0,
+      pageSize: 100,
+      customerId: userId,
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (
+    !order ||
+    !maleRing ||
+    !femaleRing ||
+    !depositStage ||
+    !addressResponse ||
+    addressLoading ||
+    districtsLoading
+  )
     return (
       <Grid container justifyContent={"center"} my={5}>
         <Grid container item xs={8} mb={3} justifyContent={"space-between"}>
@@ -194,7 +362,7 @@ function Deposit() {
 
   return (
     <div className={styles.container}>
-      <Grid container item lg={10} justifyContent={"space-between"}>
+      <Grid container item xs={11} justifyContent={"space-between"}>
         <Grid item xs={12} className={styles.title}>
           Thanh Toán Tiền Đặt Cọc
         </Grid>
@@ -221,20 +389,96 @@ function Deposit() {
             <div className={styles.notAvailable}>Paypal (Sắp ra mắt)</div>
           </div>
 
+          {depositStage.progress === StagePercentage.Third && (
+            <Grid item xs={12} className={styles.left} mt={7}>
+              <div className={styles.title}>Phương Thức Giao Hàng</div>
+
+              <FormControl>
+                <RadioGroup
+                  row
+                  sx={{ gap: 3 }}
+                  value={deliveryMethod}
+                  onChange={(e) =>
+                    setDeliveryMethod(e.target.value as DeliveryMethod)
+                  }
+                >
+                  <FormControlLabel
+                    value={DeliveryMethod.Shipping}
+                    control={<Radio />}
+                    label="Giao đến nhà"
+                  />
+                  <FormControlLabel
+                    value={DeliveryMethod.Pickup}
+                    control={<Radio />}
+                    label="Đến cửa hàng"
+                  />
+                </RadioGroup>
+              </FormControl>
+
+              <Divider sx={{ backgroundColor: "#555", mt: 1 }} />
+
+              {deliveryMethod === DeliveryMethod.Shipping && (
+                <div className={styles.shipping}>
+                  <div className={styles.titleContainer}>
+                    <div className={styles.title}>Địa Chỉ Giao Hàng</div>
+                    <div
+                      className={styles.addBtn}
+                      onClick={() => setOpenAdd(true)}
+                    >
+                      <AddCircleIcon className={styles.icon} />
+                      <span>Thêm Mới</span>
+                    </div>
+                  </div>
+                  <Divider sx={{ backgroundColor: "#555" }} />
+
+                  <div>
+                    {addressResponse?.data?.items.map((item) => {
+                      const checkItem = arrayCheck.find(
+                        (i) => i.id === item.id
+                      );
+
+                      return (
+                        <AddressCard
+                          key={item.id}
+                          data={item}
+                          setOpenDelete={setOpenDelete}
+                          setOpenUpdate={setOpenUpdate}
+                          setSelected={setSelected}
+                          handleCheck={handleCheck}
+                          checked={checkItem?.checked}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {deliveryMethod === DeliveryMethod.Pickup && (
+                <div className={styles.pickup}>
+                  <div className={styles.title}>Địa chỉ cửa hàng</div>
+                  <div className={styles.address}>
+                    No.6B Store, i SQUARE International Plaza, No.63 Nathan
+                    Road, Tsim Sha Tsui, Kowloon, Hong Kong (H exit, Tsim Sha
+                    Tsui metro station)
+                  </div>
+                  <div className={styles.phone}>Tel:00852-23677389</div>
+                  <Divider sx={{ backgroundColor: "#555" }} />
+                </div>
+              )}
+            </Grid>
+          )}
+
           <LoadingButton
             loading={mutation.isPending}
             variant="contained"
             sx={{ ...secondaryBtn, my: 3 }}
             fullWidth
-            onClick={() =>
-              mutation.mutate({ craftingStageId: depositStage.id })
-            }
+            onClick={handlePayment}
           >
             Thanh Toán
           </LoadingButton>
         </Grid>
-
-        <Grid item md={7.5} className={styles.summary}>
+        <Grid item md={7} className={styles.summary}>
           <div className={styles.title}>Thông Tin Thanh Toán</div>
 
           <Divider sx={{ backgroundColor: "#ccc", my: 3 }} />
@@ -313,7 +557,7 @@ function Deposit() {
             <Grid item>Tỷ Lệ Cọc</Grid>
 
             <Grid item fontSize={"1.2rem"}>
-              {depositStage.progress}% Giá Trị
+              {depositValue}% Giá Trị
             </Grid>
           </Grid>
 
@@ -328,12 +572,25 @@ function Deposit() {
 
             <Grid item fontWeight={600} fontSize={"1.3rem"}>
               {currencyFormatter(
-                order.totalPrice.amount * (depositStage.progress / 100)
+                order.totalPrice.amount * (depositValue / 100)
               )}
             </Grid>
           </Grid>
         </Grid>
       </Grid>
+
+      <AddModal
+        open={openAdd}
+        setOpen={setOpenAdd}
+        filterObj={addressFilterObj as ITransportationAddressFilter}
+      />
+      <DeleteModal open={openDelete} setOpen={setOpenDelete} />
+      <UpdateModal
+        open={openUpdate}
+        setOpen={setOpenUpdate}
+        selected={selected}
+        resetSelected={resetSelected}
+      />
     </div>
   );
 }

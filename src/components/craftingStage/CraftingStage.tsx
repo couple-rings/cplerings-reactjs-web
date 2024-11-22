@@ -33,7 +33,7 @@ function CraftingStage(props: ICraftingStageProps) {
               {name}
             </Grid>
             <Grid item mb={{ xs: 3, lg: 0 }}>
-              {status === CraftingStageStatus.Paid && (
+              {status === CraftingStageStatus.Paid && !completionDate && (
                 <Chip label={"Đang Tiến Hành"} color="info" />
               )}
               {status === CraftingStageStatus.Pending && (

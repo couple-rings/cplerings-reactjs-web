@@ -3,6 +3,7 @@ import {
   CustomOrderStatus,
   CustomRequestStatus,
   Status,
+  TransportOrderStatus,
   VersionOwner,
 } from "src/utils/enums";
 
@@ -244,12 +245,13 @@ declare global {
     pageSize: number;
     transporterId?: number;
     branchId?: number;
-    // need status and branch id
+    status?: TransportOrderStatus;
   }
 
   interface IAgreementFilter {
     page: number;
     pageSize: number;
+    customerId?: number;
   }
 
   interface IFingerSizeFilter {
@@ -291,5 +293,13 @@ declare global {
     giaReportNumber: string;
     diamondSpecificationId: number;
     branchId: number;
+  }
+
+  interface IUpdateAgreementRequest {
+    agreementId: number;
+    mainName: string;
+    mainSignatureId: number;
+    partnerName: string;
+    partnerSignatureId: number;
   }
 }

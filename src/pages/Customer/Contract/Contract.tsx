@@ -28,16 +28,21 @@ import { useAppSelector, useScrollTop } from "src/utils/hooks";
 import KeyboardBackspaceRoundedIcon from "@mui/icons-material/KeyboardBackspaceRounded";
 import { useNavigate, useParams } from "react-router-dom";
 import { getCustomOrderDetail } from "src/services/customOrder.service";
-import { fetchCustomOrderDetail } from "src/utils/querykey";
+import {
+  fetchCustomerSpouse,
+  fetchCustomOrderDetail,
+} from "src/utils/querykey";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { postUploadFile } from "src/services/file.service";
 import { toast } from "react-toastify";
 import { putUpdateContract } from "src/services/contract.service";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { getCustomerSpouse } from "src/services/spouse.service";
 
 function Contract() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
   const [error, setError] = useState(false);
+  const [customerSpouse, setCustomerSpouse] = useState<ISpouse | null>(null);
 
   const [signature, setSignature] = useState("");
   const [signed, setSigned] = useState(false);
@@ -48,7 +53,7 @@ function Contract() {
     document: (
       <ContractFile
         signature={signature}
-        name="Nguyễn Văn A"
+        name=""
         email={""}
         phone={""}
         total={0}
@@ -72,6 +77,14 @@ function Contract() {
       if (orderId) return getCustomOrderDetail(+orderId);
     },
     enabled: !!orderId,
+  });
+
+  const { data: spouseResponse } = useQuery({
+    queryKey: [fetchCustomerSpouse, userId],
+
+    queryFn: () => {
+      return getCustomerSpouse(userId);
+    },
   });
 
   const uploadMutation = useMutation({
@@ -161,7 +174,7 @@ function Contract() {
       update(
         <ContractFile
           signature={signature}
-          name="Nguyễn Văn A"
+          name={customerSpouse?.fullName ? customerSpouse?.fullName : ""}
           email={order.customer.email}
           phone={order.customer.phone ? order.customer.phone : "--"}
           total={order.totalPrice.amount}
@@ -172,6 +185,14 @@ function Contract() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [order, signature]);
+
+  useEffect(() => {
+    if (spouseResponse?.data) {
+      spouseResponse.data.spouses.forEach((item) => {
+        if (item.customerId) setCustomerSpouse(item);
+      });
+    }
+  }, [spouseResponse]);
 
   if (!order)
     return (
@@ -217,7 +238,8 @@ function Contract() {
                 <Box sx={{ fontWeight: 500 }}>Khách Hàng:</Box>
                 <Divider sx={{ backgroundColor: "#555", my: 2 }} />
                 <div className={styles.info}>
-                  <b>Họ Tên : </b>Nguyễn Văn A
+                  <b>Họ Tên : </b>
+                  {customerSpouse?.fullName}
                 </div>
                 <div className={styles.info}>
                   <b>Số Điện Thoại : </b>
@@ -474,7 +496,7 @@ function Contract() {
                 )}
                 <Divider sx={{ backgroundColor: "#555", my: 3 }} />
                 <Box sx={{ mb: 1 }}>
-                  <b>Nguyễn Văn A</b>
+                  <b>{customerSpouse?.fullName}</b>
                 </Box>
                 <div>
                   Ngày {moment().format("DD")} Tháng {moment().format("MM")} Năm{" "}
@@ -549,7 +571,7 @@ function Contract() {
               document={
                 <ContractFile
                   signature={signature}
-                  name="Nguyễn Văn A"
+                  name={customerSpouse?.fullName ? customerSpouse.fullName : ""}
                   email={order.customer.email}
                   phone={order.customer.phone ? order.customer.phone : "--"}
                   total={order.totalPrice.amount}

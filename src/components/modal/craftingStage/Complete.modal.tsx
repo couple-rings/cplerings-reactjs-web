@@ -5,14 +5,31 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Box, FormHelperText, FormLabel, TextField } from "@mui/material";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { postUploadFile } from "src/services/file.service";
+import { toast } from "react-toastify";
+import { toBase64 } from "src/utils/functions";
+import { StagePercentage } from "src/utils/enums";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 interface IFormInput {
   maleDocument: File;
   femaleDocument: File;
 }
 
-function CompleteModal(props: IModalProps) {
-  const { open, setOpen } = props;
+function CompleteModal(props: ICompleteCraftingStageModalProps) {
+  const { open, setOpen, handleComplete, updatingStage } = props;
+
+  const uploadMutation = useMutation({
+    mutationFn: (base64: string) => {
+      return postUploadFile(base64);
+    },
+    onSuccess: (response) => {
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
 
   const {
     reset,
@@ -21,8 +38,24 @@ function CompleteModal(props: IModalProps) {
     control,
   } = useForm<IFormInput>();
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    const { maleDocument, femaleDocument } = data;
+
+    const maleBase64 = await toBase64(maleDocument);
+    const femaleBase64 = await toBase64(femaleDocument);
+
+    const maleResponse = await uploadMutation.mutateAsync(maleBase64);
+    const femaleResponse = await uploadMutation.mutateAsync(femaleBase64);
+
+    if (maleResponse.data && femaleResponse.data) {
+      handleComplete(
+        StagePercentage.Third,
+        maleResponse.data.id,
+        femaleResponse.data.id
+      );
+
+      handleClose();
+    }
   };
 
   const handleClose = (
@@ -108,9 +141,13 @@ function CompleteModal(props: IModalProps) {
         <Button variant="outlined" onClick={handleClose}>
           Hủy
         </Button>
-        <Button variant="contained" type="submit">
+        <LoadingButton
+          loading={uploadMutation.isPending || updatingStage}
+          variant="contained"
+          type="submit"
+        >
           Xác Nhận
-        </Button>
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );

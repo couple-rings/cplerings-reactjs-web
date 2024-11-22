@@ -288,6 +288,7 @@ declare global {
   interface ISpouse {
     id: number;
     customerId?: number;
+    fullName: string;
   }
 
   interface ICustomDesign {

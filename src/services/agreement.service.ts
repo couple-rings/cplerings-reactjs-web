@@ -8,3 +8,10 @@ export const getAgreements = (queryObj: IAgreementFilter) => {
     `agreements?${queryUrl}`
   );
 };
+
+export const putUpdateAgreement = (data: IUpdateAgreementRequest) => {
+  return axios.put<unknown, IResponse<IAgreement>>(
+    `agreements/${data.agreementId}`,
+    data
+  );
+};
