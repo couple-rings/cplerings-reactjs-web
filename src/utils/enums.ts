@@ -65,8 +65,8 @@ export enum CustomOrderStatus {
   Waiting = "WAITING",
   InProgress = "IN_PROGRESS",
   Done = "DONE",
-  Completed = "COMPLETED",
   Delivering = "DELIVERING",
+  Completed = "COMPLETED",
   Canceled = "CANCELED",
 }
 
@@ -145,4 +145,14 @@ export enum StagePercentage {
   First = 50,
   Second = 75,
   Third = 100,
+}
+
+export enum TransportOrderStatus {
+  Pending = "PENDING",
+  Waiting = "WAITING",
+  OnGoing = "ON_GOING",
+  Delivering = "DELIVERING",
+  Rejected = "REJECTED",
+  Completed = "COMPLETED",
+  Failed = "FAILED",
 }

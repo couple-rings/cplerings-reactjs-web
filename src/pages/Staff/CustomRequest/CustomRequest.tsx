@@ -110,7 +110,7 @@ function CustomRequest() {
 
           if (row.status === CustomRequestStatus.OnGoing) {
             classname = styles.ongoing;
-            status = "Đang Thiết Kế";
+            status = "Đang Thực Hiện";
           }
 
           if (row.status === CustomRequestStatus.Waiting) {

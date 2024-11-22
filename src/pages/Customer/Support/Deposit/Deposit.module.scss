@@ -39,6 +39,73 @@
         }
     }
 
+    .left {
+        .title {
+            color        : $primaryColor;
+            font-size    : 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .shipping {
+            margin-bottom: 3rem;
+
+            .titleContainer {
+                display        : flex;
+                justify-content: space-between;
+                margin         : 1.5rem 0;
+
+                .title {
+                    font-size    : 1.3rem;
+                    color        : $primaryColor;
+                    margin-bottom: 0;
+                }
+
+                .addBtn {
+                    display    : flex;
+                    align-items: center;
+                    gap        : 5px;
+                    cursor     : pointer;
+
+                    &:hover {
+                        opacity: 0.4;
+                    }
+
+                    .icon {
+                        color: $secondaryColor;
+                    }
+
+                    span {
+                        color    : $primaryColor;
+                        font-size: 1.3rem;
+                    }
+                }
+            }
+        }
+
+        .pickup {
+            margin-bottom: 2rem;
+
+            .title {
+                color    : $primaryColor;
+                font-size: 1.3rem;
+                margin   : 2rem 0;
+            }
+
+            .address {
+                color        : $primaryColor;
+                margin-bottom: 0.8rem;
+                line-height  : 1.8rem;
+                font-size    : 1.1rem;
+            }
+
+            .phone {
+                color        : $primaryColor;
+                margin-bottom: 2rem;
+                font-size    : 1.1rem;
+            }
+        }
+    }
+
     .summary {
         border : 1px solid #B43620;
         padding: 3rem 4rem;

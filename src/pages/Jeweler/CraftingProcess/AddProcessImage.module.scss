@@ -3,20 +3,19 @@
 
 .imageBox {
     background-color: #d9d9d9;
-    border-radius: 10px;
-    height: 230px;
-    width: 180px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    border-radius   : 10px;
+    display         : flex;
+    flex-direction  : column;
+    align-items     : center;
+    justify-content : center;
+    position        : relative;
+    box-shadow      : rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    height          : 230px;
 
     .content {
-        font-size: 16px;
+        font-size  : 16px;
         font-weight: 400;
-        color: #6f6a6a;
+        color      : #6f6a6a;
     }
 
     .pdf {
@@ -42,4 +41,3 @@
         }
     }
 }
-

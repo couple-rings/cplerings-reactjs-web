@@ -121,13 +121,15 @@ function CustomRequestCard(props: ICustomRequestCardProps) {
           {(status === CustomRequestStatus.OnGoing ||
             status === CustomRequestStatus.Completed) && (
             <Box sx={{ textAlign: "right" }}>
-              <Button
-                sx={{ ...secondaryBtn, px: 2, mt: 2 }}
-                variant="contained"
-                onClick={handleChat}
-              >
-                Chat với nhân viên
-              </Button>
+              {staffId && (
+                <Button
+                  sx={{ ...secondaryBtn, px: 2, mt: 2 }}
+                  variant="contained"
+                  onClick={handleChat}
+                >
+                  Chat với nhân viên
+                </Button>
+              )}
               <Button
                 sx={{ ...secondaryBtn, px: 2, mt: 2, ml: 2 }}
                 variant="contained"

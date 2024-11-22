@@ -14,11 +14,12 @@ import light from "src/assets/font/BeVietnamPro-Light.ttf";
 import medium from "src/assets/font/BeVietnamPro-Medium.ttf";
 import semiBold from "src/assets/font/BeVietnamPro-SemiBold.ttf";
 import ring from "src/assets/One Ring.png";
-import email from "src/assets/email.png";
-import phone from "src/assets/phone.png";
+import emailIcon from "src/assets/email.png";
+import phoneIcon from "src/assets/phone.png";
 import ringBlack from "src/assets/One Ring Black.png";
 import { currencyFormatter } from "src/utils/functions";
 import moment from "moment";
+import sampleSignature from "src/assets/sampledata/signature.png";
 
 Font.register({
   family: "Be Vietnam Pro",
@@ -43,7 +44,7 @@ Font.register({
 });
 
 function ContractFile(props: IContractFileProps) {
-  const { signature } = props;
+  const { signature, address, email, name, phone, total } = props;
 
   return (
     <Document>
@@ -57,12 +58,12 @@ function ContractFile(props: IContractFileProps) {
 
           <View style={styles.contactContainer}>
             <View style={styles.contact}>
-              <Image src={email} style={styles.icon} />
+              <Image src={emailIcon} style={styles.icon} />
               <Text>couplerings@gmail.com</Text>
             </View>
 
             <View style={styles.contact}>
-              <Image src={phone} style={styles.icon} />
+              <Image src={phoneIcon} style={styles.icon} />
               <Text>0123-456-789</Text>
             </View>
           </View>
@@ -71,7 +72,8 @@ function ContractFile(props: IContractFileProps) {
             <Text style={{ marginBottom: "15px" }}>
               Hợp đồng này được ký kết vào{" "}
               <Text style={{ fontWeight: 600 }}>
-                ngày 21 tháng 12 năm 2024{" "}
+                ngày {moment().format("DD")} tháng {moment().format("MM")} năm{" "}
+                {moment().format("YYYY")}{" "}
               </Text>
               giữa:
             </Text>
@@ -93,21 +95,23 @@ function ContractFile(props: IContractFileProps) {
                   />
                 </Svg>
                 <Text style={styles.info}>
-                  <Text style={{ fontWeight: 600 }}>Họ Tên : </Text>Nguyễn Văn A
+                  <Text style={{ fontWeight: 600 }}>Họ Tên : </Text>
+                  {name}
                 </Text>
 
                 <Text style={styles.info}>
                   <Text style={{ fontWeight: 600 }}>Số Điện Thoại : </Text>
-                  (+84)234567891
+                  {phone}
                 </Text>
 
                 <Text style={styles.info}>
-                  <Text style={{ fontWeight: 600 }}>Email : </Text>nva@gmail.com
+                  <Text style={{ fontWeight: 600 }}>Email : </Text>
+                  {email}
                 </Text>
 
                 <Text style={styles.info}>
-                  <Text style={{ fontWeight: 600 }}>Địa Chỉ : </Text>123 Âu
-                  Dương Lân, Quận 8, HCM
+                  <Text style={{ fontWeight: 600 }}>Địa Chỉ : </Text>
+                  {address}
                 </Text>
               </View>
 
@@ -133,7 +137,7 @@ function ContractFile(props: IContractFileProps) {
 
                 <Text style={styles.info}>
                   <Text style={{ fontWeight: 600 }}>Người Đại Diện : </Text>
-                  Nguyễn Văn B
+                  Nguyễn Văn Bê
                 </Text>
 
                 <Text style={styles.info}>
@@ -195,7 +199,9 @@ function ContractFile(props: IContractFileProps) {
 
               <View style={styles.row} wrap={false}>
                 <Text style={styles.col1}>Hoàn Thành 50% (Đúc khuôn nhẫn)</Text>
-                <Text style={styles.col2}>{currencyFormatter(10000000)}</Text>
+                <Text style={styles.col2}>
+                  {currencyFormatter(total * 0.5)}
+                </Text>
                 <Text style={styles.col3}>3 ngày sau khi có hợp đồng</Text>
               </View>
 
@@ -203,7 +209,9 @@ function ContractFile(props: IContractFileProps) {
                 <Text style={styles.col1}>
                   Hoàn Thành 75% (Gắn kim cương và Đánh bóng)
                 </Text>
-                <Text style={styles.col2}>{currencyFormatter(10000000)}</Text>
+                <Text style={styles.col2}>
+                  {currencyFormatter(total * 0.25)}
+                </Text>
                 <Text style={styles.col3}>
                   1 tuần sau khi hoàn thành 50% tiến độ
                 </Text>
@@ -213,7 +221,9 @@ function ContractFile(props: IContractFileProps) {
                 <Text style={styles.col1}>
                   Hoàn Thành 100% (Đóng gói và Hoàn tất)
                 </Text>
-                <Text style={styles.col2}>{currencyFormatter(10000000)}</Text>
+                <Text style={styles.col2}>
+                  {currencyFormatter(total * 0.25)}
+                </Text>
                 <Text style={styles.col3}>
                   1 tuần sau khi hoàn thành 75% tiến độ
                 </Text>
@@ -372,7 +382,7 @@ function ContractFile(props: IContractFileProps) {
                 >
                   Khách Hàng
                 </Text>
-                <Image src={signature} />
+                <Image src={signature ? signature : sampleSignature} />
                 <Svg height={5} style={{ marginTop: "5px" }}>
                   <Line
                     x1="0"
@@ -384,9 +394,12 @@ function ContractFile(props: IContractFileProps) {
                   />
                 </Svg>
                 <Text style={{ fontWeight: 600, marginVertical: "8px" }}>
-                  Nguyễn Văn A
+                  {name}
                 </Text>
-                <Text>Ngày {moment().format("DD-MM-YYYY")}</Text>
+                <Text>
+                  Ngày {moment().format("DD")} Tháng {moment().format("MM")} Năm{" "}
+                  {moment().format("YYYY")}
+                </Text>
               </View>
 
               <View style={{ width: "35%", textAlign: "center" }}>
@@ -410,12 +423,14 @@ function ContractFile(props: IContractFileProps) {
                   />
                 </Svg>
                 <Text style={{ fontWeight: 600, marginVertical: "8px" }}>
-                  Nguyễn Văn B
+                  Nguyễn Văn Bê
                 </Text>
                 <Text style={{ fontWeight: 600, marginBottom: "8px" }}>
                   Công Ty TNHH Couple Ring
                 </Text>
-                <Text>Ngày {moment().format("DD-MM-YYYY")}</Text>
+                <Text>
+                  Ngày {"__"} Tháng {"__"} Năm {"____"}
+                </Text>
               </View>
             </View>
           </View>

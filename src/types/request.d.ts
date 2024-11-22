@@ -3,6 +3,7 @@ import {
   CustomOrderStatus,
   CustomRequestStatus,
   Status,
+  TransportOrderStatus,
   VersionOwner,
 } from "src/utils/enums";
 
@@ -218,5 +219,87 @@ declare global {
     page: number;
     pageSize: number;
     customOrderId: number;
+  }
+
+  interface IUpdateCraftingStageRequest {
+    imageId: number;
+    ringMaintenances?: {
+      ringId: number;
+      maintenanceDocumentId: number;
+    }[];
+  }
+
+  interface IDepositCraftingStageRequest {
+    craftingStageId: number;
+    transportationAddressId?: number;
+  }
+
+  interface ITransporterFilter {
+    page: number;
+    pageSize: number;
+    branchId: number;
+  }
+
+  interface ITransportOrderFilter {
+    page: number;
+    pageSize: number;
+    transporterId?: number;
+    branchId?: number;
+    status?: TransportOrderStatus;
+  }
+
+  interface IAgreementFilter {
+    page: number;
+    pageSize: number;
+    customerId?: number;
+  }
+
+  interface IFingerSizeFilter {
+    page: number;
+    pageSize: number;
+  }
+
+  interface IBranchFilter {
+    page: number;
+    pageSize: number;
+  }
+
+  interface ICreateTransportAddressRequest {
+    address: string;
+    districtCode: number;
+    district: string;
+    wardCode: number;
+    ward: string;
+    receiverName: string;
+    receiverPhone: string;
+    customerId: number;
+  }
+
+  interface ITransportationAddressFilter {
+    page: number;
+    pageSize: number;
+    customerId: number;
+  }
+
+  interface IDiamondFilter {
+    page: number;
+    pageSize: number;
+    branchId: number;
+    giaReportNumber?: string;
+  }
+
+  interface ICreateDiamondRequest {
+    giaDocumentId: number;
+    giaReportNumber: string;
+    diamondSpecificationId: number;
+    branchId: number;
+  }
+
+  interface IUpdateAgreementRequest {
+    agreementId: number;
+    mainName: string;
+    mainSignatureId: number;
+    partnerName: string;
+    partnerSignatureId: number;
   }
 }

@@ -1,7 +1,6 @@
 import { Grid, Skeleton } from "@mui/material";
 import styles from "./CraftingProcess.module.scss";
 import CraftingStage from "src/components/craftingStage/CraftingStage";
-import sample from "src/assets/sampledata/ringdesign.png";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppSelector } from "src/utils/hooks";
 import { useQuery } from "@tanstack/react-query";
@@ -12,42 +11,7 @@ import {
 import { getCustomOrderDetail } from "src/services/customOrder.service";
 import { useEffect, useState } from "react";
 import { getCraftingStages } from "src/services/craftingStage.service";
-
-const stages = [
-  {
-    id: 1,
-    name: "Hoàn Thành 50% - Đúc Khuôn Nhẫn",
-    image: sample,
-    isPaid: true,
-    steps: [
-      "Nguyên liệu thô được lựa chọn và kiểm tra kỹ lưỡng để đảm bảo chất lượng",
-      "Phần khung của nhẫn được đúc hoặc tạo hình từ kim loại đã chọn.",
-    ],
-    progress: 50,
-  },
-  {
-    id: 2,
-    name: "Hoàn Thành 75% - Gắn Kim Cương",
-    image: "",
-    isPaid: false,
-    steps: [
-      "Từng viên kim cương được đặt cẩn thận lên khuôn nhẫn, đảm bảo vị trí và góc độ tối ưu để viên đá tỏa sáng rực rỡ nhất khi đeo.",
-      "Kim cương được gắn chắc chắn lên nhẫn, giúp bảo vệ đá khỏi rơi rớt và giữ cho nhẫn luôn đẹp hoàn hảo theo thời gian.",
-    ],
-    progress: 75,
-  },
-  {
-    id: 3,
-    name: "Hoàn Thành 100% - Hoàn Thiện Và Đóng Gói",
-    image: "",
-    isPaid: false,
-    steps: [
-      "Khắc lên nhẫn theo yêu cầu để tạo dấu ấn cá nhân riêng biệt (Nếu khách hàng có yêu cầu).",
-      "Chuẩn bị giấy tờ chứng nhận chất lượng kim cương và đóng gói cẩn thận trong hộp sang trọng, sẵn sàng để trao đến tay bạn.",
-    ],
-    progress: 100,
-  },
-];
+import { stages } from "src/utils/constants";
 
 function CraftingProcess() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
@@ -125,8 +89,25 @@ function CraftingProcess() {
       <Grid container item xs={10}>
         <div className={styles.title}>Quá Trình Gia Công</div>
 
-        {stages.map((item) => {
-          return <CraftingStage key={item.id} {...item} />;
+        {stageResponse.data?.items.map((item, index, list) => {
+          const steps = stages.find(
+            (stage) => stage.progress === item.progress
+          )?.steps;
+
+          const name = stages.find(
+            (stage) => stage.progress === item.progress
+          )?.name;
+
+          return (
+            <CraftingStage
+              key={item.id}
+              data={item}
+              steps={steps ? steps : []}
+              name={name ? name : item.name}
+              orderId={order.id}
+              previousStage={index !== 0 ? list[index - 1] : undefined}
+            />
+          );
         })}
       </Grid>
     </Grid>

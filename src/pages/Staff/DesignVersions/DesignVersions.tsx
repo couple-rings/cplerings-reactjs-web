@@ -243,10 +243,7 @@ function DesignVersions() {
 
   useEffect(() => {
     if (response && response.data) {
-      if (
-        response.data.status === CustomRequestStatus.Waiting ||
-        response.data.status === CustomRequestStatus.Canceled
-      )
+      if (response.data.status !== CustomRequestStatus.OnGoing)
         navigate("not-found");
 
       const maleDesign = response.data.designs.find(

@@ -14,3 +14,12 @@ export const getCustomOrderDetail = (id: number) => {
     `custom-orders/${id}`
   );
 };
+
+export const postAssignCustomOrder = (orderId: number, jewelerId: number) => {
+  return axios.post<unknown, IResponse<{ customOrder: ICustomOrder }>>(
+    `custom-orders/${orderId}/assigning`,
+    {
+      jewelerId,
+    }
+  );
+};

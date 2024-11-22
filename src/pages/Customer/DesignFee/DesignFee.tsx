@@ -11,7 +11,7 @@ import { currencyFormatter } from "src/utils/functions";
 import { secondaryBtn } from "src/utils/styles";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "src/utils/hooks";
+import { useAppDispatch, useAppSelector, useScrollTop } from "src/utils/hooks";
 import {
   removeRequestedDesigns,
   saveRequestedDesigns,
@@ -68,6 +68,8 @@ function DesignFee() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [femaleDesignId, maleDesignId]);
+
+  useScrollTop();
 
   return (
     <div className={styles.container}>
@@ -163,7 +165,7 @@ function DesignFee() {
             <Grid item>Thành Tiền</Grid>
 
             <Grid item fontWeight={600} fontSize={"1.3rem"}>
-              {currencyFormatter(350000)}
+              {currencyFormatter(500000)}
             </Grid>
           </Grid>
         </Grid>

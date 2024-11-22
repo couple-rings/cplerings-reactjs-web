@@ -103,3 +103,8 @@ export const toBase64 = (file: File): Promise<string> =>
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = reject;
   });
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const instanceOfMetalSpec = (object: any): object is IMetalSpec => {
+  return "pricePerUnit" in object;
+};

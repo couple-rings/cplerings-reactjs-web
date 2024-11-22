@@ -16,6 +16,9 @@ import {
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useEffect, useMemo } from "react";
 import { toBase64 } from "src/utils/functions";
+import { fetchDiamondSpecs } from "src/utils/querykey";
+import { useQuery } from "@tanstack/react-query";
+import { getDiamondSpecs } from "src/services/diamondSpec.service";
 
 interface IFormInput {
   giaReportNumber: string;
@@ -23,39 +26,22 @@ interface IFormInput {
   diamondSpecId: number;
 }
 
-const diamondSpecs = [
-  {
-    id: 1,
-    name: "Pure Heart",
-    weight: 0.05,
-    color: "D",
-    clarity: "VS2",
-    shape: "HEART",
-    price: 3600000,
-  },
-  {
-    id: 2,
-    name: "Graceful Oval",
-    weight: 0.05,
-    color: "G",
-    clarity: "SI1",
-    shape: "OVAL",
-    price: 3120000,
-  },
-  {
-    id: 3,
-    name: "Dazzling Round",
-    weight: 0.15,
-    color: "G",
-    clarity: "VS2",
-    shape: "ROUND",
-    price: 3600000,
-  },
-];
+const specFilter = {
+  page: 0,
+  pageSize: 100,
+};
 
 function UpdateModal(props: IDiamondModalProps) {
   const { open, setOpen, giaReportNumber, diamondSpecId, resetSelected } =
     props;
+
+  const { data: specResponse } = useQuery({
+    queryKey: [fetchDiamondSpecs, specFilter],
+
+    queryFn: () => {
+      return getDiamondSpecs(specFilter);
+    },
+  });
 
   const {
     reset,
@@ -143,7 +129,7 @@ function UpdateModal(props: IDiamondModalProps) {
                     <MenuItem value={0} disabled>
                       <em>Select specification</em>
                     </MenuItem>
-                    {diamondSpecs.map((spec) => {
+                    {specResponse?.data?.items.map((spec) => {
                       return (
                         <MenuItem value={spec.id} key={spec.id}>
                           {spec.shape} {spec.weight} - {spec.color} -{" "}

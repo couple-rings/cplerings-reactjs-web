@@ -80,8 +80,9 @@ export const authSlice = createSlice({
         if (phone) state.userInfo.phone = phone;
         if (avatar) state.userInfo.avatar = avatar;
         if (branch) state.userInfo.branchId = branch.id;
+        if (!state.userInfo.hasSpouse) state.userInfo.hasSpouse = hasSpouse;
 
-        state.userInfo = { ...state.userInfo, hasSpouse, ...rest };
+        state.userInfo = { ...state.userInfo, ...rest };
       } else state.userInfo = { ...state.userInfo, hasSpouse };
     },
     saveToken: (state, { payload }: PayloadAction<ISaveTokenPayload>) => {
