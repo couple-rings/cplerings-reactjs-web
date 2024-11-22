@@ -38,6 +38,7 @@ function CommonRoute(props: IProtectedRouteProps) {
 
   useEffect(() => {
     if (response && response.data) {
+      console.log(isAuthenticated);
       dispatch(saveProfile(response.data));
     }
 

@@ -24,7 +24,12 @@ import {
 } from "src/utils/functions";
 import { useEffect, useState } from "react";
 import CustomExpandIcon from "src/components/icon/CustomExpandIcon";
-import { DesignCharacteristic, GoldColor } from "src/utils/enums";
+import {
+  CustomOrderStatus,
+  CustomRequestStatus,
+  DesignCharacteristic,
+  GoldColor,
+} from "src/utils/enums";
 import SizeMenu from "src/components/menu/SizeMenu";
 import GuideDialog from "src/components/dialog/GuideDialog";
 import AssignmentReturnOutlinedIcon from "@mui/icons-material/AssignmentReturnOutlined";
@@ -35,6 +40,10 @@ import brandIntro from "src/assets/brand-intro.png";
 import FeedbackSection from "src/components/feedback/FeedbackSection";
 import { metalWeightUnit, profitRatio } from "src/utils/constants";
 import { useAppSelector, useScrollTop } from "src/utils/hooks";
+import { useQuery } from "@tanstack/react-query";
+import { fetchCustomOrders, fetchCustomRequests } from "src/utils/querykey";
+import { getCustomRequests } from "src/services/customRequest.service";
+import { getCustomOrders } from "src/services/customOrder.service";
 
 const sizeMenuPaperStyle: SxProps = {
   ...menuPaperStyle,
@@ -67,6 +76,12 @@ const initDiamond = {
 };
 
 function WeddingRingsDetail() {
+  const [allow, setAllow] = useState(true);
+  const [customRequestFilterObj, setCustomRequestFilterObj] =
+    useState<ICustomRequestFilter | null>(null);
+  const [customOrderFilterObj, setCustomOrderFilterObj] =
+    useState<ICustomOrderFilter | null>(null);
+
   const [firstMetal, setFirstMetal] = useState(initMetal);
   const [firstDiamond, setFirstDiamond] = useState(initDiamond);
 
@@ -79,6 +94,7 @@ function WeddingRingsDetail() {
   const navigate = useNavigate();
 
   const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { id: userId } = useAppSelector((state) => state.auth.userInfo);
 
   const location: Location<{
     data: ICoupleDesign;
@@ -91,6 +107,25 @@ function WeddingRingsDetail() {
     description: coupleDescription,
   } = data || {};
   const collectionName = designs ? designs[0]?.designCollection?.name : "";
+
+  const { data: customRequestResponse } = useQuery({
+    queryKey: [fetchCustomRequests, customRequestFilterObj],
+
+    queryFn: () => {
+      if (customRequestFilterObj)
+        return getCustomRequests(customRequestFilterObj);
+    },
+    enabled: !!customRequestFilterObj,
+  });
+
+  const { data: customOrderResponse } = useQuery({
+    queryKey: [fetchCustomOrders, customOrderFilterObj],
+
+    queryFn: () => {
+      if (customOrderFilterObj) return getCustomOrders(customOrderFilterObj);
+    },
+    enabled: !!customOrderFilterObj,
+  });
 
   const handlePayDesignFee = () => {
     if (!isAuthenticated) {
@@ -181,6 +216,57 @@ function WeddingRingsDetail() {
       setPrice(price);
     }
   }, [designs, firstDiamond, firstMetal, secondMetal, secondDiamond]);
+
+  useEffect(() => {
+    if (customRequestResponse?.data && customOrderResponse?.data) {
+      const { items: requests } = customRequestResponse.data;
+      const { items: orders } = customOrderResponse.data;
+
+      if (requests.length !== 0) {
+        const inProgress = requests.find(
+          (item) =>
+            item.status === CustomRequestStatus.Waiting ||
+            item.status === CustomRequestStatus.OnGoing
+        );
+
+        if (inProgress) {
+          setAllow(false);
+          return;
+        }
+
+        const allRequestsCanceled = requests.every(
+          (item) => item.status === CustomRequestStatus.Canceled
+        );
+
+        // exist both completed and canceled request
+        if (!allRequestsCanceled) {
+          const allOrdersCanceled = orders.every(
+            (item) => item.status === CustomOrderStatus.Canceled
+          );
+
+          if (!allOrdersCanceled) {
+            setAllow(false);
+          }
+        }
+      }
+    }
+  }, [customRequestResponse, customOrderResponse]);
+
+  useEffect(() => {
+    setCustomRequestFilterObj({
+      page: 0,
+      pageSize: 100,
+      customerId: userId,
+    });
+
+    setCustomOrderFilterObj({
+      page: 0,
+      pageSize: 100,
+      customerId: userId,
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useScrollTop();
 
@@ -463,20 +549,22 @@ function WeddingRingsDetail() {
 
             <Divider sx={{ backgroundColor: "#ccc", mt: 1, mb: 5 }} />
 
-            <div className={styles.btnGroup}>
-              <Button variant="contained" sx={primaryBtn} fullWidth>
-                Bắt Đầu Gia Công
-              </Button>
-              <div className={styles.text}>Hoặc</div>
-              <Button
-                variant="contained"
-                sx={primaryBtn}
-                fullWidth
-                onClick={handlePayDesignFee}
-              >
-                Yêu Cầu Thiết Kế
-              </Button>
-            </div>
+            {allow && (
+              <div className={styles.btnGroup}>
+                <Button variant="contained" sx={primaryBtn} fullWidth>
+                  Bắt Đầu Gia Công
+                </Button>
+                <div className={styles.text}>Hoặc</div>
+                <Button
+                  variant="contained"
+                  sx={primaryBtn}
+                  fullWidth
+                  onClick={handlePayDesignFee}
+                >
+                  Yêu Cầu Thiết Kế
+                </Button>
+              </div>
+            )}
 
             {/* Note start */}
             <div className={styles.note}>

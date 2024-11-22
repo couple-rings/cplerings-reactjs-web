@@ -33,6 +33,10 @@ export const fetchCustomOrderDetail = "fetchCustomOrderDetail";
 
 export const fetchCraftingStages = "fetchCraftingStages";
 
+export const fetchTransportAddresses = "fetchTransportAddresses";
+export const fetchDistricts = "fetchDistricts";
+export const fetchWards = "fetchWards";
+
 export const fetchTransportOrders = "fetchTransportOrders";
 
 export const fetchTransporters = "fetchTransporters";
@@ -40,3 +44,5 @@ export const fetchTransporters = "fetchTransporters";
 export const fetchFingerSizes = "fetchFingerSizes";
 
 export const fetchBranches = "fetchBranches";
+
+export const fetchDiamonds = "fetchDiamonds";

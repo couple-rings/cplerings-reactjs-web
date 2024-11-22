@@ -2,8 +2,8 @@ import { Button, Divider, Grid } from "@mui/material";
 import styles from "./Card.Manage.module.scss";
 
 const AddressCard = (props: IAddressCardProps) => {
-  const { address, receiverName, receiverPhone, setOpenDelete, setOpenUpdate } =
-    props;
+  const { setOpenDelete, setOpenUpdate, setSelected, data } = props;
+  const { receiverName, receiverPhone, address } = data;
 
   return (
     <Grid item md={5.5} className={styles.container}>
@@ -15,7 +15,13 @@ const AddressCard = (props: IAddressCardProps) => {
           <Button variant="text" onClick={() => setOpenDelete(true)}>
             Xóa
           </Button>
-          <Button variant="text" onClick={() => setOpenUpdate(true)}>
+          <Button
+            variant="text"
+            onClick={() => {
+              setOpenUpdate(true);
+              setSelected(data);
+            }}
+          >
             Sửa
           </Button>
         </div>

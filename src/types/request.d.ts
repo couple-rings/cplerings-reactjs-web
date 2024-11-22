@@ -272,4 +272,24 @@ declare global {
     receiverPhone: string;
     customerId: number;
   }
+
+  interface ITransportationAddressFilter {
+    page: number;
+    pageSize: number;
+    customerId: number;
+  }
+
+  interface IDiamondFilter {
+    page: number;
+    pageSize: number;
+    branchId: number;
+    giaReportNumber?: string;
+  }
+
+  interface ICreateDiamondRequest {
+    giaDocumentId: number;
+    giaReportNumber: string;
+    diamondSpecificationId: number;
+    branchId: number;
+  }
 }

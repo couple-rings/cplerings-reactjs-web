@@ -46,11 +46,10 @@ declare global {
   }
 
   interface IAddressCardProps {
-    receiverName: string;
-    address: string;
-    receiverPhone: string;
+    data: ITransportAddress;
     setOpenDelete: (v: boolean) => void;
     setOpenUpdate: (v: boolean) => void;
+    setSelected: (v: ITransportAddress) => void;
   }
 
   interface IModalProps {
@@ -375,5 +374,19 @@ declare global {
 
   interface IPastRequestsProps {
     data: ICraftingRequest[];
+  }
+
+  interface IUpdateAddressModalProps extends IModalProps {
+    selected: ITransportAddress;
+
+    resetSelected: () => void;
+  }
+
+  interface IAddAddressModalProps extends IModalProps {
+    filterObj: ITransportationAddressFilter;
+  }
+
+  interface IAddDiamondModalProps extends IModalProps {
+    filterObj: IDiamondFilter;
   }
 }

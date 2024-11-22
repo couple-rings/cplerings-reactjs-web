@@ -1,8 +1,5 @@
-import { Button, Grid, Skeleton } from "@mui/material";
+import { Grid, Skeleton } from "@mui/material";
 import Divider from "@mui/material/Divider";
-
-import blueprint from "src/assets/sampledata/blueprint.pdf";
-import menring from "src/assets/sampledata/menring.png";
 import HoverCard from "src/components/product/HoverCard";
 import MaleIcon from "@mui/icons-material/Male";
 import FemaleIcon from "@mui/icons-material/Female";
@@ -10,19 +7,27 @@ import styles from "./CustomOrderDetail.module.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { primaryBtn } from "src/utils/styles";
 import { fetchCustomOrderDetail } from "src/utils/querykey";
-import { useQuery } from "@tanstack/react-query";
-import { getCustomOrderDetail } from "src/services/customOrder.service";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  getCustomOrderDetail,
+  postAssignCustomOrder,
+} from "src/services/customOrder.service";
 import { useEffect, useState } from "react";
 import { CustomOrderStatus, DesignCharacteristic } from "src/utils/enums";
+import { getDiamondSpec } from "src/utils/functions";
+import { toast } from "react-toastify";
+import { useAppSelector } from "src/utils/hooks";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 function CustomOrderDetail() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
   const [maleRing, setMaleRing] = useState<IRing | null>(null);
   const [femaleRing, setFemaleRing] = useState<IRing | null>(null);
 
-  const { id } = useParams<{ id: string }>();
-
   const navigate = useNavigate();
+
+  const { id } = useParams<{ id: string }>();
+  const { id: userId } = useAppSelector((state) => state.auth.userInfo);
 
   const { data: response } = useQuery({
     queryKey: [fetchCustomOrderDetail, id],
@@ -31,6 +36,22 @@ function CustomOrderDetail() {
       if (id) return getCustomOrderDetail(+id);
     },
     enabled: !!id,
+  });
+
+  const assignMutation = useMutation({
+    mutationFn: (data: { orderId: number; jewelerId: number }) => {
+      return postAssignCustomOrder(data.orderId, data.jewelerId);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        toast.success("Đã nhận đơn này");
+        navigate("/jeweler/custom-order");
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
   });
 
   useEffect(() => {
@@ -102,7 +123,10 @@ function CustomOrderDetail() {
           pb={5}
         >
           <Grid item xs={12} md={12} pb={3} className="image-item">
-            <HoverCard file={blueprint} image={menring} />
+            <HoverCard
+              file={maleRing.customDesign.blueprint.url}
+              image={maleRing.customDesign.designVersion.image.url}
+            />
           </Grid>
 
           <Grid container pb={5} className={styles.genderDefine}>
@@ -125,7 +149,7 @@ function CustomOrderDetail() {
                 Chất Liệu
               </Grid>
               <Grid item className="info-detail-content">
-                18K white gold
+                {maleRing.metalSpecification.name}
               </Grid>
             </Grid>
 
@@ -138,7 +162,8 @@ function CustomOrderDetail() {
                 Kim cương
               </Grid>
               <Grid item className="info-detail-content">
-                12PT, D
+                {maleRing.diamonds[0].diamondSpecification.shape}{" "}
+                {getDiamondSpec(maleRing.diamonds[0].diamondSpecification)}
               </Grid>
             </Grid>
 
@@ -151,7 +176,7 @@ function CustomOrderDetail() {
                 Kích cỡ
               </Grid>
               <Grid item className="info-detail-content">
-                3
+                {maleRing.fingerSize}
               </Grid>
             </Grid>
 
@@ -164,7 +189,7 @@ function CustomOrderDetail() {
                 Khắc Chữ
               </Grid>
               <Grid item className="info-detail-content">
-                Hehehoho
+                {maleRing.engraving}
               </Grid>
             </Grid>
 
@@ -177,7 +202,7 @@ function CustomOrderDetail() {
                 Trọng Lượng
               </Grid>
               <Grid item className="info-detail-content">
-                5 chỉ
+                {maleRing.customDesign.metalWeight} chỉ
               </Grid>
             </Grid>
           </Grid>
@@ -192,7 +217,10 @@ function CustomOrderDetail() {
           pb={5}
         >
           <Grid item xs={12} md={12} pb={3} className="image-item">
-            <HoverCard file={blueprint} image={menring} />
+            <HoverCard
+              file={femaleRing.customDesign.blueprint.url}
+              image={femaleRing.customDesign.designVersion.image.url}
+            />
           </Grid>
 
           <Grid container pb={5} className={styles.genderDefine}>
@@ -215,7 +243,7 @@ function CustomOrderDetail() {
                 Chất Liệu
               </Grid>
               <Grid item className="info-detail-content">
-                18K white gold
+                {femaleRing.metalSpecification.name}
               </Grid>
             </Grid>
 
@@ -228,7 +256,8 @@ function CustomOrderDetail() {
                 Kim cương
               </Grid>
               <Grid item className="info-detail-content">
-                12PT, D
+                {femaleRing.diamonds[0].diamondSpecification.shape}{" "}
+                {getDiamondSpec(femaleRing.diamonds[0].diamondSpecification)}
               </Grid>
             </Grid>
 
@@ -241,7 +270,7 @@ function CustomOrderDetail() {
                 Kích cỡ
               </Grid>
               <Grid item className="info-detail-content">
-                3
+                {femaleRing.fingerSize}
               </Grid>
             </Grid>
 
@@ -254,7 +283,7 @@ function CustomOrderDetail() {
                 Khắc Chữ
               </Grid>
               <Grid item className="info-detail-content">
-                Hehehoho
+                {femaleRing.engraving}
               </Grid>
             </Grid>
 
@@ -267,7 +296,7 @@ function CustomOrderDetail() {
                 Trọng Lượng
               </Grid>
               <Grid item className="info-detail-content">
-                5 chỉ
+                {femaleRing.customDesign.metalWeight} chỉ
               </Grid>
             </Grid>
           </Grid>
@@ -276,12 +305,16 @@ function CustomOrderDetail() {
 
       {order.status === CustomOrderStatus.Waiting && (
         <Grid container justifyContent={"center"}>
-          <Button
+          <LoadingButton
+            loading={assignMutation.isPending}
+            onClick={() =>
+              assignMutation.mutate({ orderId: order.id, jewelerId: userId })
+            }
             variant="contained"
             sx={{ ...primaryBtn, borderRadius: 2, px: 5 }}
           >
             Nhận đơn này
-          </Button>
+          </LoadingButton>
         </Grid>
       )}
     </div>

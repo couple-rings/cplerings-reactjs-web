@@ -83,7 +83,7 @@ function CustomOrder() {
           index.api.getRowIndexRelativeToVisibleRows(index.row.id) + 1,
       },
       {
-        field: "username",
+        field: "customer",
         headerName: "Khách Hàng",
         width: 300,
         headerAlign: "center",
@@ -143,7 +143,12 @@ function CustomOrder() {
           <Button
             variant="contained"
             sx={{ ...primaryBtn, py: 1, m: 2, borderRadius: 5 }}
-            onClick={() => navigate(`/jeweler/custom-order/detail/${row.id}`)}
+            onClick={() => {
+              if (row.status === CustomOrderStatus.Waiting)
+                navigate(`/jeweler/custom-order/detail/${row.id}`);
+              if (row.status === CustomOrderStatus.InProgress)
+                navigate(`/jeweler/custom-order/${row.id}/crafting-process`);
+            }}
           >
             Chi Tiết
           </Button>
