@@ -20,6 +20,7 @@ export const fetchDiamondSpecs = "fetchDiamondSpecs";
 export const fetchMetalSpecs = "fetchMetalSpecs";
 
 export const fetchCustomerSessionCount = "fetchCustomerSessionCount";
+export const fetchOwnSessionCount = "fetchOwnSessionCount";
 
 export const fetchCustomerSpouse = "fetchCustomerSpouse";
 
@@ -38,6 +39,8 @@ export const fetchDistricts = "fetchDistricts";
 export const fetchWards = "fetchWards";
 
 export const fetchTransportOrders = "fetchTransportOrders";
+export const fetchTransportOrdersWithCustomOrder =
+  "fetchTransportOrderWithCustomOrder";
 
 export const fetchTransporters = "fetchTransporters";
 

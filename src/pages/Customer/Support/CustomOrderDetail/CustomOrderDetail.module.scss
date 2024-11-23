@@ -9,6 +9,15 @@
         margin-bottom: 3rem;
     }
 
+    .loveVerification {
+        color : $secondaryColor;
+        cursor: pointer;
+
+        &:hover {
+            opacity: 0.6;
+        }
+    }
+
     .info {
         color      : #888;
         font-weight: 300;

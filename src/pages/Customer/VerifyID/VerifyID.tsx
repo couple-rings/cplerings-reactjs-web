@@ -270,6 +270,22 @@ function VerifyID() {
             return;
           }
 
+          const currentYear = moment().year();
+          const selfYear = moment(selfIdInfo.dob, "DD/MM/YYYY").year();
+          const partnerYear = moment(partnerIdInfo.dob, "DD/MM/YYYY").year();
+          const selfAge = currentYear - selfYear;
+          const partnerAge = currentYear - partnerYear;
+
+          if (selfAge < 18) {
+            toast.error("Bạn chưa đủ tuổi. Yêu cầu trên 18 tuổi");
+            return;
+          }
+
+          if (partnerAge < 18) {
+            toast.error("Bạn đời chưa đủ tuổi. Yêu cầu trên 18 tuổi");
+            return;
+          }
+
           const data: ICreateSpouseRequest = {
             primarySpouse: {
               customerId,

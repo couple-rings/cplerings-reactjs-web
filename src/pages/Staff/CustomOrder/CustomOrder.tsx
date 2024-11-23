@@ -1,4 +1,7 @@
-import { Button, Divider } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import styles from "./CustomOrder.module.scss";
+import { useAppSelector } from "src/utils/hooks";
+import { pageSize } from "src/utils/constants";
 import {
   DataGrid,
   getGridStringOperators,
@@ -7,17 +10,15 @@ import {
   GridPaginationModel,
   GridSortModel,
 } from "@mui/x-data-grid";
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { CustomOrderStatus } from "src/utils/enums";
-import { primaryBtn } from "src/utils/styles";
-import styles from "./CustomOrder.module.scss";
-import { pageSize } from "src/utils/constants";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCustomOrders } from "src/services/customOrder.service";
 import { fetchCustomOrders } from "src/utils/querykey";
-import { useAppSelector } from "src/utils/hooks";
 import moment from "moment";
+import { CustomOrderStatus } from "src/utils/enums";
+import { Button, Link } from "@mui/material";
+import { primaryBtn } from "src/utils/styles";
+import FileDownloadSharpIcon from "@mui/icons-material/FileDownloadSharp";
+import { useNavigate } from "react-router-dom";
 
 interface Row extends ICustomOrder {}
 
@@ -36,17 +37,10 @@ function CustomOrder() {
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
   const [filterObj, setFilterObj] = useState<ICustomOrderFilter | null>(null);
 
-  const [ownMetaData, setOwnMetaData] = useState<IListMetaData>(initMetaData);
-  const [ownFilterObj, setOwnFilterObj] = useState<ICustomOrderFilter | null>(
-    null
-  );
-
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
-  const { branchId, id: userId } = useAppSelector(
-    (state) => state.auth.userInfo
-  );
+  const { branchId } = useAppSelector((state) => state.auth.userInfo);
 
   const { data: response, isLoading } = useQuery({
     queryKey: [fetchCustomOrders, filterObj],
@@ -56,16 +50,6 @@ function CustomOrder() {
     },
 
     enabled: !!filterObj,
-  });
-
-  const { data: ownResponse, isLoading: ownLoading } = useQuery({
-    queryKey: [fetchCustomOrders, ownFilterObj],
-
-    queryFn: () => {
-      if (ownFilterObj) return getCustomOrders(ownFilterObj);
-    },
-
-    enabled: !!ownFilterObj,
   });
 
   const columns: GridColDef<Row>[] = useMemo(
@@ -82,24 +66,36 @@ function CustomOrder() {
       {
         field: "customer",
         headerName: "Khách Hàng",
-        width: 300,
+        width: 250,
         headerAlign: "center",
         align: "center",
         filterOperators,
         sortable: false,
-        valueGetter: (value: Omit<IUser, "hasSpouse">) => {
+        valueGetter: (value: IUser) => {
           return value.username;
         },
       },
       {
         field: "createdAt",
         headerName: "Ngày Tạo",
-        width: 200,
+        width: 150,
         headerAlign: "center",
         align: "center",
         filterable: false,
         renderCell: ({ row }) => {
           return <div>{moment(row.createdAt).format("DD/MM/YYYY")}</div>;
+        },
+      },
+      {
+        field: "jeweler",
+        headerName: "Thợ Làm",
+        width: 200,
+        headerAlign: "center",
+        align: "center",
+        filterOperators,
+        sortable: false,
+        valueGetter: (value: IUser) => {
+          return value ? value.username : "----";
         },
       },
       {
@@ -114,6 +110,11 @@ function CustomOrder() {
           let classname = "";
           let status = "";
 
+          if (row.status === CustomOrderStatus.Pending) {
+            classname = styles.pending;
+            status = "Chưa Bắt Đầu";
+          }
+
           if (row.status === CustomOrderStatus.Waiting) {
             classname = styles.waiting;
             status = "Chờ Nhận";
@@ -125,13 +126,13 @@ function CustomOrder() {
           }
 
           if (row.status === CustomOrderStatus.Done) {
-            classname = styles.completed;
-            status = "Hoàn Thành";
+            classname = styles.done;
+            status = "Chờ Vận Chuyển";
           }
 
           if (row.status === CustomOrderStatus.Delivering) {
-            classname = styles.completed;
-            status = "Hoàn Thành";
+            classname = styles.delivering;
+            status = "Đang Giao";
           }
 
           if (row.status === CustomOrderStatus.Completed) {
@@ -148,6 +149,32 @@ function CustomOrder() {
         },
       },
       {
+        field: "contract",
+        headerName: "Hợp Đồng",
+        width: 150,
+        headerAlign: "center",
+        align: "center",
+        filterable: false,
+        sortable: false,
+        disableColumnMenu: true,
+        renderCell: ({ row }) => {
+          if (row.contract.document)
+            return (
+              <Link
+                href={row.contract.document.url}
+                py={3}
+                alignItems={"center"}
+                display={"flex"}
+                gap={1}
+                sx={{ textDecoration: "none" }}
+              >
+                <FileDownloadSharpIcon fontSize="small" /> <span>Tải Về</span>
+              </Link>
+            );
+          else return <div>----</div>;
+        },
+      },
+      {
         field: "actions",
         headerName: "",
         type: "actions",
@@ -159,7 +186,7 @@ function CustomOrder() {
             variant="contained"
             sx={{ ...primaryBtn, py: 1, m: 2, borderRadius: 5 }}
             onClick={() => {
-              navigate(`/jeweler/custom-order/detail/${row.id}`);
+              navigate(`/staff/custom-order/detail/${row.id}`);
             }}
           >
             Chi Tiết
@@ -187,23 +214,6 @@ function CustomOrder() {
     console.log(model);
   };
 
-  const handleOwnChangePage = (model: GridPaginationModel) => {
-    // model.page is the page to fetch and starts at 0
-    if (ownFilterObj)
-      setOwnFilterObj({
-        ...ownFilterObj,
-        page: model.page,
-      });
-  };
-
-  const handleOwnFilter = (model: GridFilterModel) => {
-    console.log(model);
-  };
-
-  const handleOwnSort = (model: GridSortModel) => {
-    console.log(model);
-  };
-
   useEffect(() => {
     if (response && response.data) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -227,39 +237,12 @@ function CustomOrder() {
         page: 0,
         pageSize,
         branchId,
-        status: CustomOrderStatus.Waiting,
       });
   }, [branchId]);
 
-  useEffect(() => {
-    if (ownResponse && ownResponse.data) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { items, ...rest } = ownResponse.data;
-      setOwnMetaData(rest);
-    }
-  }, [ownResponse]);
-
-  useEffect(() => {
-    if (ownFilterObj)
-      queryClient.invalidateQueries({
-        queryKey: [fetchCustomOrders, ownFilterObj],
-      });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ownFilterObj]);
-
-  useEffect(() => {
-    setOwnFilterObj({
-      page: 0,
-      pageSize,
-      jewelerId: userId,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Đơn Hiện Tại</div>
+      <div className={styles.title}>Đơn Gia Công</div>
 
       <DataGrid
         loading={isLoading}
@@ -279,29 +262,6 @@ function CustomOrder() {
         }}
         onPaginationModelChange={handleChangePage}
         rowCount={metaData.count}
-      />
-
-      <Divider sx={{ my: 10 }} />
-      <div className={styles.title}>Đơn Của Tôi</div>
-
-      <DataGrid
-        loading={ownLoading}
-        getRowHeight={() => "auto"}
-        rows={ownResponse?.data?.items ? ownResponse.data.items : []}
-        columns={columns}
-        onFilterModelChange={handleOwnFilter}
-        onSortModelChange={handleOwnSort}
-        pageSizeOptions={[pageSize]}
-        disableColumnSelector
-        disableRowSelectionOnClick
-        autoHeight
-        paginationMode="server"
-        paginationModel={{
-          page: ownFilterObj?.page ? ownFilterObj.page : 0,
-          pageSize: ownFilterObj?.pageSize ? ownFilterObj.pageSize : pageSize,
-        }}
-        onPaginationModelChange={handleOwnChangePage}
-        rowCount={ownMetaData.count}
       />
     </div>
   );

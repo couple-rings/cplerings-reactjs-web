@@ -77,6 +77,9 @@ import CraftingRequest from "src/pages/Staff/CraftingRequest/CraftingRequest";
 import ArrangeTransport from "src/pages/Staff/ArrangeTransport/ArrangeTransport";
 import LoveAgreement from "src/pages/Common/LoveAgreement/LoveAgreement";
 import MyLoveAgreement from "src/pages/Customer/LoveAgreement/MyLoveAgreement";
+import StaffCustomOrder from "src/pages/Staff/CustomOrder/CustomOrder";
+import StaffCustomOrderDetail from "src/pages/Staff/CustomOrderDetail/CustomOrderDetail";
+import LoveAgreementDetail from "src/pages/Common/LoveAgreementDetail/LoveAgreementDetail";
 
 const router = createBrowserRouter([
   {
@@ -155,6 +158,10 @@ const router = createBrowserRouter([
         path: "love-agreement",
         element: <LoveAgreement />,
       },
+      {
+        path: "love-agreement/:customerId",
+        element: <LoveAgreementDetail />,
+      },
     ],
   },
   {
@@ -194,7 +201,7 @@ const router = createBrowserRouter([
         element: <OrderDetail />,
       },
       {
-        path: "transport",
+        path: "transport/:id",
         element: <Map />,
       },
       {
@@ -300,6 +307,14 @@ const router = createBrowserRouter([
       {
         path: "crafting-request/detail/:customerId",
         element: <CraftingRequestDetail />,
+      },
+      {
+        path: "custom-order",
+        element: <StaffCustomOrder />,
+      },
+      {
+        path: "custom-order/detail/:id",
+        element: <StaffCustomOrderDetail />,
       },
       {
         path: "maintenance-order",

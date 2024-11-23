@@ -11,3 +11,9 @@ export const getCustomerSessionCount = (id: number) => {
     `designs/sessions/customers/${id}/left`
   );
 };
+
+export const getOwnSessionCount = () => {
+  return axios.get<unknown, IResponse<{ remainingCount: number }>>(
+    `designs/sessions`
+  );
+};
