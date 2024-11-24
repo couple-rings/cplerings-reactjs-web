@@ -6,6 +6,7 @@ import {
   GridEventListener,
   GridFilterModel,
   GridPaginationModel,
+  GridRowEditStopParams,
   GridRowEditStopReasons,
   GridRowId,
   GridRowModes,
@@ -15,8 +16,11 @@ import {
 import styles from "./ArrangeTransport.module.scss";
 import { pageSize } from "src/utils/constants";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getTransportOrders } from "src/services/transportOrder.service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  getTransportOrders,
+  postAssignTransportOrder,
+} from "src/services/transportOrder.service";
 import { fetchTransporters, fetchTransportOrders } from "src/utils/querykey";
 import { TransportOrderStatus } from "src/utils/enums";
 import { Button, MenuItem, Select, TextField } from "@mui/material";
@@ -26,6 +30,8 @@ import { getTransporters } from "src/services/account.service";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import BorderColorRoundedIcon from "@mui/icons-material/BorderColorRounded";
+import { toast } from "react-toastify";
+import ViewModal from "src/components/modal/transportOrder/Detail.modal";
 
 interface Row extends ITransportOrder {}
 
@@ -41,6 +47,11 @@ const initMetaData = {
 };
 
 function ArrangeTransport() {
+  const [open, setOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<ITransportOrder | null>(
+    null
+  );
+
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
   const [filterObj, setFilterObj] = useState<ITransportOrderFilter | null>(
@@ -48,6 +59,7 @@ function ArrangeTransport() {
   );
   const [transporterFilterObj, setTransporterFilterObj] =
     useState<ITransporterFilter | null>(null);
+  const [selected, setSelected] = useState(0);
 
   const queryClient = useQueryClient();
 
@@ -73,6 +85,24 @@ function ArrangeTransport() {
     }
   );
 
+  const assignMutation = useMutation({
+    mutationFn: (data: { orderId: number; transporterId: number }) => {
+      return postAssignTransportOrder(data.orderId, data.transporterId);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        toast.success("Đơn đã được giao cho nhân viên vận chuyển");
+        queryClient.invalidateQueries({
+          queryKey: [fetchTransportOrders, filterObj],
+        });
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
   const handleEditClick = useCallback(
     (id: GridRowId) => () => {
       setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
@@ -81,18 +111,12 @@ function ArrangeTransport() {
   );
 
   const handleSaveClick = useCallback(
-    (id: GridRowId) => () => {
+    (id: GridRowId, row: Row) => () => {
       setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
 
-      if (transporterResponse?.data) {
-        const editedRow = transporterResponse.data.items.find(
-          (row) => row.id === id
-        );
-        console.log(editedRow);
-        console.log("call api update");
-      }
+      assignMutation.mutate({ orderId: row.id, transporterId: selected });
     },
-    [rowModesModel, transporterResponse]
+    [assignMutation, rowModesModel, selected]
   );
 
   const handleCancelClick = useCallback(
@@ -108,16 +132,13 @@ function ArrangeTransport() {
   const columns: GridColDef<Row>[] = useMemo(
     () => [
       {
-        field: "index",
-        headerName: "No",
-        width: 110,
+        field: "orderNo",
+        headerName: "Mã Đơn",
+        width: 150,
         headerAlign: "center",
         align: "center",
         sortable: false,
-        filterable: false,
-        disableColumnMenu: true,
-        renderCell: (index) =>
-          index.api.getRowIndexRelativeToVisibleRows(index.row.id) + 1,
+        filterOperators,
       },
       {
         field: "customOrder",
@@ -144,7 +165,12 @@ function ArrangeTransport() {
         renderEditCell: ({ row }) => {
           if (!row.transporter) {
             return (
-              <Select sx={{ mx: 3 }} fullWidth defaultValue={0}>
+              <Select
+                sx={{ mx: 3 }}
+                fullWidth
+                value={selected}
+                onChange={(e) => setSelected(+e.target.value)}
+              >
                 <MenuItem value={0} disabled>
                   <em>Chọn người giao</em>
                 </MenuItem>
@@ -163,7 +189,7 @@ function ArrangeTransport() {
           if (row.transporter) return <div>{row.transporter.username}</div>;
           return (
             <TextField
-              inputProps={{ readOnly: true }}
+              inputProps={{ readOnly: true, style: { textAlign: "center" } }}
               value={"Chọn người giao"}
             />
           );
@@ -222,7 +248,10 @@ function ArrangeTransport() {
               <Button
                 variant="contained"
                 sx={{ ...primaryBtn, py: 1, m: 2, borderRadius: 5 }}
-                onClick={() => console.log(row)}
+                onClick={() => {
+                  setSelectedOrder(row);
+                  setOpen(true);
+                }}
               >
                 Chi Tiết
               </Button>,
@@ -235,7 +264,7 @@ function ArrangeTransport() {
                 <GridActionsCellItem
                   icon={<SaveIcon color="primary" />}
                   label="Save"
-                  onClick={handleSaveClick(id)}
+                  onClick={handleSaveClick(id, row)}
                   sx={{ py: 3 }}
                 />,
                 <GridActionsCellItem
@@ -263,15 +292,16 @@ function ArrangeTransport() {
       handleEditClick,
       handleSaveClick,
       rowModesModel,
+      selected,
       transporterResponse,
     ]
   );
 
   const handleRowEditStop: GridEventListener<"rowEditStop"> = (
-    params,
+    params: GridRowEditStopParams<Row>,
     event
   ) => {
-    const { id } = params;
+    const { id, row } = params;
     const reasons = [
       GridRowEditStopReasons.rowFocusOut,
       GridRowEditStopReasons.escapeKeyDown,
@@ -286,13 +316,7 @@ function ArrangeTransport() {
     }
 
     if (params.reason === GridRowEditStopReasons.enterKeyDown) {
-      if (transporterResponse?.data) {
-        const editedRow = transporterResponse.data.items.find(
-          (row) => row.id === id
-        );
-        console.log(editedRow);
-        console.log("call api update");
-      }
+      assignMutation.mutateAsync({ orderId: row.id, transporterId: selected });
     }
   };
 
@@ -376,6 +400,10 @@ function ArrangeTransport() {
         rowModesModel={rowModesModel}
         onRowModesModelChange={handleRowModesModelChange}
       />
+
+      {selectedOrder && (
+        <ViewModal open={open} setOpen={setOpen} order={selectedOrder} />
+      )}
     </div>
   );
 }

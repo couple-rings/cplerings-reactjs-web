@@ -12,9 +12,9 @@ export const certificateTabData = [
     img: loveCheck,
   },
   {
-    title: "Khám Phá Thỏa Thuận Tình Yêu",
-    subTitle: "Khám Phá Thêm >",
-    path: "/",
+    title: "Bảng Vinh Danh Tình Yêu",
+    subTitle: "Xem Thêm >",
+    path: "/love-agreement",
     img: loveAgreement,
   },
 ];

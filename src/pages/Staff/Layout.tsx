@@ -12,6 +12,7 @@ import HandymanIcon from "@mui/icons-material/Handyman";
 import ArticleIcon from "@mui/icons-material/Article";
 import HardwareRoundedIcon from "@mui/icons-material/HardwareRounded";
 import LocalShippingRoundedIcon from "@mui/icons-material/LocalShippingRounded";
+import TaskRoundedIcon from "@mui/icons-material/TaskRounded";
 
 const sidebarList = [
   {
@@ -28,6 +29,11 @@ const sidebarList = [
     text: "Yêu Cầu Gia Công",
     icon: <HardwareRoundedIcon />,
     path: "/staff/crafting-request",
+  },
+  {
+    text: "Đơn Gia Công",
+    icon: <TaskRoundedIcon />,
+    path: "/staff/custom-order",
   },
   {
     text: "Đơn Bảo Trì",

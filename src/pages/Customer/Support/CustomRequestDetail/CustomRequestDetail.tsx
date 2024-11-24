@@ -11,13 +11,17 @@ import {
   RadioGroup,
   Skeleton,
 } from "@mui/material";
-import { getCustomRequestDetail } from "src/services/customRequest.service";
+import {
+  getCustomRequestDetail,
+  putCancelCustomRequest,
+} from "src/services/customRequest.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   fetchCustomDesigns,
   fetchCustomRequestDetail,
   fetchFemaleDesignVersions,
   fetchMaleDesignVersions,
+  fetchOwnSessionCount,
 } from "src/utils/querykey";
 import { useEffect, useState } from "react";
 import {
@@ -40,6 +44,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import Grid from "@mui/material/Unstable_Grid2";
 import { useAppSelector } from "src/utils/hooks";
 import { getCustomDesigns } from "src/services/customDesign.service";
+import { getOwnSessionCount } from "src/services/designSession.service";
 
 function CustomRequestDetail() {
   const [maleDesign, setMaleDesign] = useState<IDesign | null>(null);
@@ -74,6 +79,14 @@ function CustomRequestDetail() {
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const { data: sessionResponse } = useQuery({
+    queryKey: [fetchOwnSessionCount],
+
+    queryFn: () => {
+      return getOwnSessionCount();
+    },
+  });
 
   const { data: customDesignResponse } = useQuery({
     queryKey: [fetchCustomDesigns, customDesignFilterObj],
@@ -118,6 +131,22 @@ function CustomRequestDetail() {
       return putUpdateDesignVersion(data);
     },
     onSuccess: (response) => {
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
+  const cancelMutation = useMutation({
+    mutationFn: (id: number) => {
+      return putCancelCustomRequest(id);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        toast.success("Đã hủy yêu cầu thiết kế");
+        navigate("/wedding-rings");
+      }
+
       if (response.errors) {
         response.errors.forEach((err) => toast.error(err.description));
       }
@@ -277,7 +306,7 @@ function CustomRequestDetail() {
     }
   }, [maleVersions, femaleVersions]);
 
-  if (!maleDesign || !femaleDesign || !customDesignResponse)
+  if (!maleDesign || !femaleDesign || !customDesignResponse || !sessionResponse)
     return (
       <Grid container justifyContent={"center"} py={5}>
         <Grid container xs={10} justifyContent={"center"}>
@@ -553,22 +582,43 @@ function CustomRequestDetail() {
           )}
         </Box>
 
-        {selected.male !== 0 &&
-          selected.female !== 0 &&
-          accepted.male === 0 &&
-          accepted.female === 0 &&
-          response?.data?.status === CustomRequestStatus.OnGoing && (
-            <Box sx={{ textAlign: "center", mt: 10 }}>
-              <LoadingButton
-                loading={updateMutation.isPending}
-                variant={"contained"}
-                sx={{ ...secondaryBtn, py: 2 }}
-                onClick={handleConfirmVersion}
-              >
-                Xác Nhận Bản Thiết Kế
-              </LoadingButton>
-            </Box>
-          )}
+        <Grid container justifyContent={"center"} gap={3}>
+          {accepted.male === 0 &&
+            accepted.female === 0 &&
+            response?.data?.status === CustomRequestStatus.OnGoing &&
+            sessionResponse.data?.remainingCount === 0 && (
+              <Box sx={{ textAlign: "center", mt: 10 }}>
+                <LoadingButton
+                  loading={cancelMutation.isPending}
+                  variant={"contained"}
+                  sx={{ ...secondaryBtn, py: 2 }}
+                  onClick={() => {
+                    if (response.data) cancelMutation.mutate(response.data.id);
+                  }}
+                >
+                  Hủy Và Thiết Kế Lại
+                </LoadingButton>
+              </Box>
+            )}
+
+          {selected.male !== 0 &&
+            selected.female !== 0 &&
+            accepted.male === 0 &&
+            accepted.female === 0 &&
+            response?.data?.status === CustomRequestStatus.OnGoing && (
+              <Box sx={{ textAlign: "center", mt: 10 }}>
+                <LoadingButton
+                  loading={updateMutation.isPending}
+                  variant={"contained"}
+                  sx={{ ...secondaryBtn, py: 2 }}
+                  onClick={handleConfirmVersion}
+                >
+                  Xác Nhận Bản Thiết Kế
+                </LoadingButton>
+              </Box>
+            )}
+        </Grid>
+
         {accepted.male !== 0 &&
           accepted.female !== 0 &&
           response?.data?.status === CustomRequestStatus.OnGoing &&

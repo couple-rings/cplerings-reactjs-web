@@ -26,3 +26,9 @@ export const putUpdateCustomRequest = (data: IUpdateCRRequest, id: number) => {
     data
   );
 };
+
+export const putCancelCustomRequest = (id: number) => {
+  return axios.put<unknown, IResponse<{ customRequest: ICustomRequest }>>(
+    `custom-requests/${id}/rejection`
+  );
+};

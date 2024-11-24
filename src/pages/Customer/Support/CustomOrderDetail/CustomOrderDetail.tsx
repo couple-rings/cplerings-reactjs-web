@@ -9,12 +9,20 @@ import { secondaryBtn } from "src/utils/styles";
 import DownloadForOfflineRoundedIcon from "@mui/icons-material/DownloadForOfflineRounded";
 import { useQuery } from "@tanstack/react-query";
 import { getCustomOrderDetail } from "src/services/customOrder.service";
-import { fetchCustomOrderDetail } from "src/utils/querykey";
+import {
+  fetchCustomOrderDetail,
+  fetchTransportOrdersWithCustomOrder,
+} from "src/utils/querykey";
 import { useEffect, useState } from "react";
-import { CustomOrderStatus, DesignCharacteristic } from "src/utils/enums";
+import {
+  CustomOrderStatus,
+  DesignCharacteristic,
+  TransportOrderStatus,
+} from "src/utils/enums";
 import { useAppSelector } from "src/utils/hooks";
 import { ChipColor } from "src/utils/constants";
 import DownloadIcon from "@mui/icons-material/Download";
+import { getTransportOrderWithCustomOrder } from "src/services/transportOrder.service";
 
 function CustomOrderDetail() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
@@ -34,6 +42,15 @@ function CustomOrderDetail() {
       if (id) return getCustomOrderDetail(+id);
     },
     enabled: !!id,
+  });
+
+  const { data: transportResponse } = useQuery({
+    queryKey: [fetchTransportOrdersWithCustomOrder, order?.id],
+
+    queryFn: () => {
+      if (order?.id) return getTransportOrderWithCustomOrder(order.id);
+    },
+    enabled: !!order?.id,
   });
 
   const formatStatus = (
@@ -143,7 +160,7 @@ function CustomOrderDetail() {
                 Mã Đơn:
               </Grid>
               <Grid item className={styles.info}>
-                1234567
+                {order.orderNo}
               </Grid>
             </Grid>
 
@@ -186,14 +203,42 @@ function CustomOrderDetail() {
             </Grid>
           </Grid>
 
-          <Grid container item fontSize={"1.2rem"} mb={2} alignItems={"center"}>
-            <Grid item xs={1.5}>
+          <Grid
+            container
+            item
+            xs={6}
+            fontSize={"1.2rem"}
+            mb={2}
+            alignItems={"center"}
+          >
+            <Grid item xs={3}>
               Tổng Tiền:
             </Grid>
             <Grid item className={styles.total}>
               {currencyFormatter(order.totalPrice.amount)}
             </Grid>
           </Grid>
+
+          {[
+            CustomOrderStatus.Done,
+            CustomOrderStatus.Delivering,
+            CustomOrderStatus.Completed,
+          ].includes(order.status) && (
+            <Grid container item xs={6}>
+              <Grid container item fontSize={"1.2rem"} mb={2}>
+                <Grid
+                  item
+                  className={styles.loveVerification}
+                  onClick={() => navigate("/customer/love-agreement")}
+                >
+                  Chứng Nhận Tình Yêu
+                </Grid>
+                <Grid item ml={1}>
+                  Của Bạn
+                </Grid>
+              </Grid>
+            </Grid>
+          )}
         </Grid>
 
         <Grid container justifyContent={"center"} mt={5}>
@@ -353,7 +398,7 @@ function CustomOrderDetail() {
               </Grid>
             )}
 
-            <Grid container justifyContent={"center"} mt={5}>
+            <Grid container justifyContent={"center"} mt={5} gap={3}>
               {order.contract.signature ? (
                 <Button
                   variant="contained"
@@ -373,6 +418,17 @@ function CustomOrderDetail() {
                   onClick={() => navigate(`/customer/contract/${order.id}`)}
                 >
                   Ký Hợp Đồng
+                </Button>
+              )}
+
+              {transportResponse?.data?.status ===
+                TransportOrderStatus.Delivering && (
+                <Button
+                  variant="contained"
+                  sx={secondaryBtn}
+                  onClick={() => navigate(`/customer/transport/${order.id}`)}
+                >
+                  Vị Trí Người Giao Hàng
                 </Button>
               )}
             </Grid>

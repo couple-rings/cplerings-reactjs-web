@@ -239,7 +239,9 @@ function Contract() {
                 <Divider sx={{ backgroundColor: "#555", my: 2 }} />
                 <div className={styles.info}>
                   <b>Họ Tên : </b>
-                  {customerSpouse?.fullName}
+                  <span style={{ textTransform: "capitalize" }}>
+                    {customerSpouse?.fullName.toLowerCase()}
+                  </span>
                 </div>
                 <div className={styles.info}>
                   <b>Số Điện Thoại : </b>
@@ -496,7 +498,9 @@ function Contract() {
                 )}
                 <Divider sx={{ backgroundColor: "#555", my: 3 }} />
                 <Box sx={{ mb: 1 }}>
-                  <b>{customerSpouse?.fullName}</b>
+                  <b style={{ textTransform: "capitalize" }}>
+                    {customerSpouse?.fullName.toLowerCase()}
+                  </b>
                 </Box>
                 <div>
                   Ngày {moment().format("DD")} Tháng {moment().format("MM")} Năm{" "}

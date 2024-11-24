@@ -21,7 +21,9 @@ function ConversationList(props: IConversationListProps) {
   const dispatch = useAppDispatch();
 
   const { id: userId } = useAppSelector((state) => state.auth.userInfo);
-  const { conversationsList } = useAppSelector((state) => state.conversation);
+  const { conversationsList, currentConversation } = useAppSelector(
+    (state) => state.conversation
+  );
 
   const { data: response } = useQuery({
     queryKey: [fetchConversations, userId],
@@ -34,9 +36,6 @@ function ConversationList(props: IConversationListProps) {
   useEffect(() => {
     if (response && response.statusCode === 200 && response.data) {
       if (firstRender) {
-        const rooms = response.data.map((conversation) => conversation._id);
-        joinRooms(rooms);
-
         const notificationList: string[] = [];
         response.data.forEach((conversation) => {
           if (
@@ -48,19 +47,23 @@ function ConversationList(props: IConversationListProps) {
 
         dispatch(saveNotifications(notificationList));
 
-        if (response.data.length > 0) {
-          if (conversation) dispatch(selectConversation(conversation));
-          else dispatch(selectConversation(response.data[0]));
-        }
-        if (response.data.length === 0) dispatch(removeConversations());
-
         setFirstRender(false);
       }
+
+      const rooms = response.data.map((conversation) => conversation._id);
+      joinRooms(rooms);
+
+      if (response.data.length > 0 && !currentConversation._id) {
+        if (conversation) dispatch(selectConversation(conversation));
+        else dispatch(selectConversation(response.data[0]));
+      }
+      if (response.data.length === 0) dispatch(removeConversations());
+
       dispatch(saveConversations(response.data));
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [conversation, response]);
+  }, [conversation, response, currentConversation]);
 
   if (conversationsList.length > 0)
     return (
