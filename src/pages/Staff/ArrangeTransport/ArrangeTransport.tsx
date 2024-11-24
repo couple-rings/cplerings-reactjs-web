@@ -48,7 +48,9 @@ const initMetaData = {
 
 function ArrangeTransport() {
   const [open, setOpen] = useState(false);
-  const [viewId, setViewId] = useState(0);
+  const [selectedOrder, setSelectedOrder] = useState<ITransportOrder | null>(
+    null
+  );
 
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
@@ -247,7 +249,7 @@ function ArrangeTransport() {
                 variant="contained"
                 sx={{ ...primaryBtn, py: 1, m: 2, borderRadius: 5 }}
                 onClick={() => {
-                  setViewId(row.id);
+                  setSelectedOrder(row);
                   setOpen(true);
                 }}
               >
@@ -399,7 +401,9 @@ function ArrangeTransport() {
         onRowModesModelChange={handleRowModesModelChange}
       />
 
-      <ViewModal open={open} setOpen={setOpen} id={viewId} />
+      {selectedOrder && (
+        <ViewModal open={open} setOpen={setOpen} order={selectedOrder} />
+      )}
     </div>
   );
 }

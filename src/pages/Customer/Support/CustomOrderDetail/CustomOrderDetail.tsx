@@ -160,7 +160,7 @@ function CustomOrderDetail() {
                 Mã Đơn:
               </Grid>
               <Grid item className={styles.info}>
-                1234567
+                {order.orderNo}
               </Grid>
             </Grid>
 

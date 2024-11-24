@@ -583,23 +583,6 @@ function CustomRequestDetail() {
         </Box>
 
         <Grid container justifyContent={"center"} gap={3}>
-          {selected.male !== 0 &&
-            selected.female !== 0 &&
-            accepted.male === 0 &&
-            accepted.female === 0 &&
-            response?.data?.status === CustomRequestStatus.OnGoing && (
-              <Box sx={{ textAlign: "center", mt: 10 }}>
-                <LoadingButton
-                  loading={updateMutation.isPending}
-                  variant={"contained"}
-                  sx={{ ...secondaryBtn, py: 2 }}
-                  onClick={handleConfirmVersion}
-                >
-                  Xác Nhận Bản Thiết Kế
-                </LoadingButton>
-              </Box>
-            )}
-
           {accepted.male === 0 &&
             accepted.female === 0 &&
             response?.data?.status === CustomRequestStatus.OnGoing &&
@@ -614,6 +597,23 @@ function CustomRequestDetail() {
                   }}
                 >
                   Hủy Và Thiết Kế Lại
+                </LoadingButton>
+              </Box>
+            )}
+
+          {selected.male !== 0 &&
+            selected.female !== 0 &&
+            accepted.male === 0 &&
+            accepted.female === 0 &&
+            response?.data?.status === CustomRequestStatus.OnGoing && (
+              <Box sx={{ textAlign: "center", mt: 10 }}>
+                <LoadingButton
+                  loading={updateMutation.isPending}
+                  variant={"contained"}
+                  sx={{ ...secondaryBtn, py: 2 }}
+                  onClick={handleConfirmVersion}
+                >
+                  Xác Nhận Bản Thiết Kế
                 </LoadingButton>
               </Box>
             )}

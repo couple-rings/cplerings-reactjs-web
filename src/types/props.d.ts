@@ -415,6 +415,6 @@ declare global {
   }
 
   interface ITransportOrderModalProps extends IModalProps {
-    id: number;
+    order: ITransportOrder;
   }
 }

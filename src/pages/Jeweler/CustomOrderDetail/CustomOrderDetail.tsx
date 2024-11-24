@@ -27,7 +27,9 @@ function CustomOrderDetail() {
   const navigate = useNavigate();
 
   const { id } = useParams<{ id: string }>();
-  const { id: userId } = useAppSelector((state) => state.auth.userInfo);
+  const { id: userId, branchId } = useAppSelector(
+    (state) => state.auth.userInfo
+  );
 
   const { data: response } = useQuery({
     queryKey: [fetchCustomOrderDetail, id],
@@ -58,7 +60,11 @@ function CustomOrderDetail() {
     if (response && response.data) {
       const { firstRing, secondRing, jeweler } = response.data.customOrder;
 
-      if (!jeweler || jeweler.id !== userId) navigate("/jeweler/custom-order");
+      const { branch } = firstRing;
+
+      if (branch.id !== branchId) navigate("/jeweler/custom-order");
+
+      if (jeweler && jeweler.id !== userId) navigate("/jeweler/custom-order");
 
       if (
         firstRing.customDesign.designVersion.design.characteristic ===

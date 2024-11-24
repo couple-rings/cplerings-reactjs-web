@@ -5,26 +5,11 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Divider, FormHelperText, FormLabel, Grid } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getTransportOrderDetail } from "src/services/transportOrder.service";
-import { fetchTransportOrderDetail } from "src/utils/querykey";
 import defaultImg from "src/assets/default.jpg";
 import moment from "moment";
 
 function ViewModal(props: ITransportOrderModalProps) {
-  const { open, setOpen, id } = props;
-
-  const [order, setOrder] = useState<ITransportOrder | null>(null);
-
-  const { data: orderResponse } = useQuery({
-    queryKey: [fetchTransportOrderDetail, id],
-
-    queryFn: () => {
-      return getTransportOrderDetail(id);
-    },
-    enabled: id !== 0,
-  });
+  const { open, setOpen, order } = props;
 
   const handleClose = (
     event?: object,
@@ -33,12 +18,6 @@ function ViewModal(props: ITransportOrderModalProps) {
     if (reason && reason === "backdropClick") return;
     setOpen(false);
   };
-
-  useEffect(() => {
-    if (orderResponse?.data) {
-      setOrder(orderResponse.data.transportationOrder);
-    }
-  }, [orderResponse]);
 
   return (
     <Dialog

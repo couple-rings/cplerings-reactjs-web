@@ -3,9 +3,7 @@ import styles from "./DesignFee.module.scss";
 import vnpay from "src/assets/vnpay.png";
 import momo from "src/assets/momo.png";
 import paypal from "src/assets/paypal.png";
-import menring from "src/assets/sampledata/menring.png";
 import male from "src/assets/male-icon.png";
-import womenring from "src/assets/sampledata/womenring.png";
 import female from "src/assets/female-icon.png";
 import { currencyFormatter } from "src/utils/functions";
 import { secondaryBtn } from "src/utils/styles";
@@ -16,10 +14,12 @@ import {
   removeRequestedDesigns,
   saveRequestedDesigns,
 } from "src/redux/slice/design.slice";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { postCreateSession } from "src/services/designSession.service";
 import { toast } from "react-toastify";
 import SpouseModal from "src/components/modal/redirect/Spouse.modal";
+import { fetchDesignDetail } from "src/utils/querykey";
+import { getDesignDetail } from "src/services/design.service";
 
 function DesignFee() {
   const [open, setOpen] = useState(false);
@@ -33,6 +33,24 @@ function DesignFee() {
     maleDesignId: string;
     femaleDesignId: string;
   }>();
+
+  const { data: maleResponse } = useQuery({
+    queryKey: [fetchDesignDetail, maleDesignId],
+
+    queryFn: () => {
+      if (maleDesignId) return getDesignDetail(+maleDesignId);
+    },
+    enabled: !!maleDesignId,
+  });
+
+  const { data: femaleResponse } = useQuery({
+    queryKey: [fetchDesignDetail, femaleDesignId],
+
+    queryFn: () => {
+      if (femaleDesignId) return getDesignDetail(+femaleDesignId);
+    },
+    enabled: !!femaleDesignId,
+  });
 
   const mutation = useMutation({
     mutationFn: () => {
@@ -68,6 +86,14 @@ function DesignFee() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [femaleDesignId, maleDesignId]);
+
+  useEffect(() => {
+    if (maleResponse?.errors || femaleResponse?.errors) {
+      navigate("/wedding-rings");
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [femaleResponse, maleResponse]);
 
   useScrollTop();
 
@@ -119,13 +145,19 @@ function DesignFee() {
             <div className={styles.title}>Thiết Kế Gốc</div>
             <Grid container className={styles.design} gap={3}>
               <Grid item sm={3} className={styles.left}>
-                <img src={menring} />
+                <img
+                  src={
+                    maleResponse?.data?.designMetalSpecifications[0].image.url
+                  }
+                />
               </Grid>
               <Grid item sm={8}>
                 <div className={styles.name}>
-                  CR Two-row Diamond Pavé Wedding Rings
+                  Bản Thiết Kế {maleResponse?.data?.name}
                 </div>
-                <div className={styles.collection}>Bộ sưu tập Forever</div>
+                <div className={styles.collection}>
+                  Bộ sưu tập {maleResponse?.data?.designCollection.name}
+                </div>
                 <div className={styles.gender}>
                   <img src={male} />
                   Nhẫn nam
@@ -135,13 +167,19 @@ function DesignFee() {
 
             <Grid container className={styles.design} gap={3}>
               <Grid item sm={3} className={styles.left}>
-                <img src={womenring} />
+                <img
+                  src={
+                    femaleResponse?.data?.designMetalSpecifications[0].image.url
+                  }
+                />
               </Grid>
               <Grid item sm={8}>
                 <div className={styles.name}>
-                  CR Two-row Diamond Pavé Wedding Rings
+                  Bản Thiết Kế {femaleResponse?.data?.name}
                 </div>
-                <div className={styles.collection}>Bộ sưu tập Forever</div>
+                <div className={styles.collection}>
+                  Bộ sưu tập {femaleResponse?.data?.designCollection.name}
+                </div>
                 <div className={styles.gender}>
                   <img src={female} />
                   Nhẫn nữ
