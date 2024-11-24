@@ -380,7 +380,7 @@ function DesignVersions() {
                       file={item.designFile.url}
                     />
                     <div className={styles.versionNo}>
-                      Version {item.versionNumber}
+                      Version {item.versionNumber} {item.isOld && "(Cũ)"}
                     </div>
                     {item.isAccepted && <CheckCircleIcon color="success" />}
                   </Card>
@@ -449,7 +449,7 @@ function DesignVersions() {
                       file={item.designFile.url}
                     />
                     <div className={styles.versionNo}>
-                      Version {item.versionNumber}
+                      Version {item.versionNumber} {item.isOld && "(Cũ)"}
                     </div>
                     {item.isAccepted && <CheckCircleIcon color="success" />}
                   </Card>

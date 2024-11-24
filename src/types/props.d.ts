@@ -413,4 +413,8 @@ declare global {
 
     loading?: boolean;
   }
+
+  interface ITransportOrderModalProps extends IModalProps {
+    order: ITransportOrder;
+  }
 }

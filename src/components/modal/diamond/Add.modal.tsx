@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import { postCreateDiamond } from "src/services/diamond.service";
 import { toBase64 } from "src/utils/functions";
 import { useAppSelector } from "src/utils/hooks";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 interface IFormInput {
   giaReportNumber: string;
@@ -216,9 +217,13 @@ function AddModal(props: IAddDiamondModalProps) {
         <Button variant="outlined" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="contained" type="submit">
+        <LoadingButton
+          loading={uploadMutation.isPending || createMutation.isPending}
+          variant="contained"
+          type="submit"
+        >
           Confirm
-        </Button>
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );

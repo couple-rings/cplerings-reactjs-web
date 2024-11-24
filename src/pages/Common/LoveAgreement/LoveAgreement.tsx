@@ -1,44 +1,90 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Divider, Grid } from "@mui/material";
+import { Button, Divider, Grid, Skeleton } from "@mui/material";
 import styles from "./LoveAgreement.module.scss";
 import BoxLoveAgreement from "./BoxLoveAgreement";
+import { useEffect, useState } from "react";
+import { getAgreements } from "src/services/agreement.service";
+import { pageSize } from "src/utils/constants";
+import { fetchAgreements } from "src/utils/querykey";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import moment from "moment";
+import { secondaryBtn } from "src/utils/styles";
 import { useNavigate } from "react-router-dom";
 
-const agreement = [
-  {
-    id: 1,
-    spouse: "Bean & Hung",
-    date: "25 tháng 12, 2024",
-  },
-  {
-    id: 2,
-    spouse: "Bean & Boo",
-    date: "25 tháng 12, 2024",
-  },
-  {
-    id: 3,
-    spouse: "Bean & Blaa",
-    date: "25 tháng 12, 2024",
-  },
-  {
-    id: 4,
-    spouse: "Bean & Hung",
-    date: "25 tháng 12, 2024",
-  },
-  {
-    id: 5,
-    spouse: "Bean & Hung",
-    date: "25 tháng 12, 2024",
-  },
-  {
-    id: 6,
-    spouse: "Bean & Hung",
-    date: "25 tháng 12, 2024",
-  },
-];
+const initMetaData = {
+  page: 0,
+  pageSize,
+  totalPages: 0,
+  count: 0,
+};
 
 function LoveAgreement() {
+  const [agreementList, setAgreementList] = useState<IAgreement[]>([]);
+  const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
+  const [filterObj, setFilterObj] = useState<IAgreementFilter>({
+    page: 0,
+    pageSize,
+  });
+
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  const { data: response, isLoading } = useQuery({
+    queryKey: [fetchAgreements, filterObj],
+
+    queryFn: () => {
+      return getAgreements(filterObj);
+    },
+  });
+
+  const handleLoadMore = () => {
+    setFilterObj({
+      ...filterObj,
+      page: metaData.page + 1,
+    });
+  };
+
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: [fetchAgreements, filterObj],
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterObj]);
+
+  useEffect(() => {
+    if (response && response.data) {
+      const { items, ...rest } = response.data;
+
+      if (items.length !== 0) {
+        if (rest.page === 0) setAgreementList(items);
+        else setAgreementList((current) => [...current, ...items]);
+
+        setMetaData(rest);
+      }
+    }
+  }, [response]);
+
+  if (isLoading)
+    return (
+      <Grid container justifyContent={"center"} my={5}>
+        <Grid container item xs={10} justifyContent={"space-between"}>
+          <Grid item xs={2.5} mb={3}>
+            <Skeleton variant="rectangular" width={"100%"} height={300} />
+          </Grid>
+
+          <Grid item xs={2.5} mb={3}>
+            <Skeleton variant="rectangular" width={"100%"} height={300} />
+          </Grid>
+
+          <Grid item xs={2.5} mb={3}>
+            <Skeleton variant="rectangular" width={"100%"} height={300} />
+          </Grid>
+
+          <Grid item xs={2.5} mb={3}>
+            <Skeleton variant="rectangular" width={"100%"} height={300} />
+          </Grid>
+        </Grid>
+      </Grid>
+    );
 
   return (
     <div className={styles.container}>
@@ -56,12 +102,7 @@ function LoveAgreement() {
         </Grid>
       </Grid>
 
-      <Grid
-        container
-        lg={12}
-        justifyContent={"center"}
-        className={styles.honorBoard}
-      >
+      <Grid container justifyContent={"center"} className={styles.honorBoard}>
         <Grid item lg={12} container className={styles.honorTitleBoard}>
           <Grid
             item
@@ -133,14 +174,36 @@ function LoveAgreement() {
           Các Bản Cam Kết
         </Grid>
         <Grid item container>
-          {agreement.map((item) => (
-            <Grid item md={3} lg={3}>
+          {agreementList.map((item) => (
+            <Grid
+              item
+              md={3}
+              lg={3}
+              onClick={() => navigate(`/love-agreement/${item.customer.id}`)}
+            >
               <div className={styles.abc} key={item.id}>
-                <BoxLoveAgreement spouseName={item.spouse} date={item.date} />
+                <BoxLoveAgreement
+                  spouseName={item.mainName}
+                  date={`${moment(item.signedDate).format("DD")} tháng ${moment(
+                    item.signedDate
+                  ).format("MM")}, ${moment(item.signedDate).format("YYYY")}`}
+                />
               </div>
             </Grid>
           ))}
         </Grid>
+
+        {metaData.totalPages > 1 && (
+          <Grid container justifyContent={"center"} mt={10}>
+            <Button
+              variant="contained"
+              sx={secondaryBtn}
+              onClick={handleLoadMore}
+            >
+              Xem Thêm
+            </Button>
+          </Grid>
+        )}
       </Grid>
     </div>
   );

@@ -323,7 +323,7 @@ function Deposit() {
         };
       });
 
-      arrayCheck[0].checked = true;
+      if (arrayCheck.length > 0) arrayCheck[0].checked = true;
       setArrayCheck(arrayCheck);
     }
   }, [addressResponse]);
@@ -343,7 +343,6 @@ function Deposit() {
     !maleRing ||
     !femaleRing ||
     !depositStage ||
-    !addressResponse ||
     addressLoading ||
     districtsLoading
   )
@@ -457,11 +456,11 @@ function Deposit() {
                 <div className={styles.pickup}>
                   <div className={styles.title}>Địa chỉ cửa hàng</div>
                   <div className={styles.address}>
-                    No.6B Store, i SQUARE International Plaza, No.63 Nathan
-                    Road, Tsim Sha Tsui, Kowloon, Hong Kong (H exit, Tsim Sha
-                    Tsui metro station)
+                    {maleRing.branch.address}
                   </div>
-                  <div className={styles.phone}>Tel:00852-23677389</div>
+                  <div className={styles.phone}>
+                    Tel:{maleRing.branch.phone}
+                  </div>
                   <Divider sx={{ backgroundColor: "#555" }} />
                 </div>
               )}

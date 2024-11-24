@@ -136,6 +136,12 @@ export enum RingStatus {
   Resold = "RESOLD",
 }
 
+export enum DesignStatus {
+  NotAvailable = "UNAVAILABLE",
+  Available = "AVAILABLE",
+  Used = "USED",
+}
+
 export enum CraftingStageStatus {
   Pending = "PENDING",
   Paid = "PAID",

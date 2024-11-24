@@ -5,19 +5,15 @@ import MaleIcon from "@mui/icons-material/Male";
 import FemaleIcon from "@mui/icons-material/Female";
 import styles from "./CustomOrderDetail.module.scss";
 import { useNavigate, useParams } from "react-router-dom";
-import { primaryBtn } from "src/utils/styles";
+// import { primaryBtn } from "src/utils/styles";
 import { fetchCustomOrderDetail } from "src/utils/querykey";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-  getCustomOrderDetail,
-  postAssignCustomOrder,
-} from "src/services/customOrder.service";
+import { useQuery } from "@tanstack/react-query";
+import { getCustomOrderDetail } from "src/services/customOrder.service";
 import { useEffect, useState } from "react";
-import { CustomOrderStatus, DesignCharacteristic } from "src/utils/enums";
+import { DesignCharacteristic } from "src/utils/enums";
 import { getDiamondSpec } from "src/utils/functions";
-import { toast } from "react-toastify";
 import { useAppSelector } from "src/utils/hooks";
-import LoadingButton from "@mui/lab/LoadingButton";
+// import LoadingButton from "@mui/lab/LoadingButton";
 
 function CustomOrderDetail() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
@@ -27,9 +23,8 @@ function CustomOrderDetail() {
   const navigate = useNavigate();
 
   const { id } = useParams<{ id: string }>();
-  const { id: userId, branchId } = useAppSelector(
-    (state) => state.auth.userInfo
-  );
+
+  const { branchId } = useAppSelector((state) => state.auth.userInfo);
 
   const { data: response } = useQuery({
     queryKey: [fetchCustomOrderDetail, id],
@@ -40,31 +35,28 @@ function CustomOrderDetail() {
     enabled: !!id,
   });
 
-  const assignMutation = useMutation({
-    mutationFn: (data: { orderId: number; jewelerId: number }) => {
-      return postAssignCustomOrder(data.orderId, data.jewelerId);
-    },
-    onSuccess: (response) => {
-      if (response.data) {
-        toast.success("Đã nhận đơn này");
-        navigate("/jeweler/custom-order");
-      }
+  //   const assignMutation = useMutation({
+  //     mutationFn: (data: { orderId: number; jewelerId: number }) => {
+  //       return postAssignCustomOrder(data.orderId, data.jewelerId);
+  //     },
+  //     onSuccess: (response) => {
+  //       if (response.data) {
+  //         toast.success("Đã nhận đơn này");
+  //         navigate("/jeweler/custom-order");
+  //       }
 
-      if (response.errors) {
-        response.errors.forEach((err) => toast.error(err.description));
-      }
-    },
-  });
+  //       if (response.errors) {
+  //         response.errors.forEach((err) => toast.error(err.description));
+  //       }
+  //     },
+  //   });
 
   useEffect(() => {
     if (response && response.data) {
-      const { firstRing, secondRing, jeweler } = response.data.customOrder;
+      const { firstRing, secondRing } = response.data.customOrder;
 
-      const { branch } = firstRing;
-
-      if (branch.id !== branchId) navigate("/jeweler/custom-order");
-
-      if (jeweler && jeweler.id !== userId) navigate("/jeweler/custom-order");
+      if (firstRing.branch.id !== branchId || secondRing.branch.id !== branchId)
+        navigate("/staff/custom-order");
 
       if (
         firstRing.customDesign.designVersion.design.characteristic ===
@@ -84,7 +76,7 @@ function CustomOrderDetail() {
     }
 
     if (response && response.errors) {
-      navigate("/jeweler/custom-order");
+      navigate("/staff/custom-order");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [response]);
@@ -311,7 +303,7 @@ function CustomOrderDetail() {
         </Grid>
       </Grid>
 
-      <Grid container justifyContent={"center"}>
+      {/* <Grid container justifyContent={"center"}>
         {order.status === CustomOrderStatus.Waiting && (
           <LoadingButton
             loading={assignMutation.isPending}
@@ -337,7 +329,7 @@ function CustomOrderDetail() {
               Xem quá trình
             </LoadingButton>
           )}
-      </Grid>
+      </Grid> */}
     </div>
   );
 }

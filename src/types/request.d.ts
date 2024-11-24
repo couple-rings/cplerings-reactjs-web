@@ -2,6 +2,7 @@ import {
   CraftingRequestStatus,
   CustomOrderStatus,
   CustomRequestStatus,
+  DesignStatus,
   Status,
   TransportOrderStatus,
   VersionOwner,
@@ -89,6 +90,7 @@ declare global {
     metalSpecificationId?: number;
     minPrice?: number;
     maxPrice?: number;
+    status?: DesignStatus;
   }
 
   interface ICustomRequestFilter {

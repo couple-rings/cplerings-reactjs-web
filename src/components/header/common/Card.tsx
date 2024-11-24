@@ -2,12 +2,18 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
+import { useNavigate } from "react-router-dom";
 
 function HeaderCard(props: IHeaderCardProps) {
-  const { img, subTitle, title } = props;
+  const { img, subTitle, title, path } = props;
+
+  const navigate = useNavigate();
 
   return (
-    <Card sx={{ width: 250, borderRadius: 0, cursor: "pointer" }}>
+    <Card
+      sx={{ width: 250, borderRadius: 0, cursor: "pointer" }}
+      onClick={() => navigate(path)}
+    >
       <CardMedia component="img" alt="green iguana" height="180" image={img} />
       <CardContent>
         <span>{title}</span>

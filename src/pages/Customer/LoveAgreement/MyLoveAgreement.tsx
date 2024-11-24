@@ -99,12 +99,14 @@ function MyLoveAgreement() {
   return (
     <Grid container className={styles.container} justifyContent={"center"}>
       <div className={styles.title}>Chứng Nhận Tình Yêu Đích Thực</div>
-      {response?.data && (
+      {response?.data && response.data.items.length > 0 ? (
         <LoveAgreeMentDetail
           data={response.data.items[0]}
           handleSignAgreement={handleSignAgreement}
           loading={uploadMutation.isPending || signMutation.isPending}
         />
+      ) : (
+        <div>Bạn chưa có chứng nhận tình yêu</div>
       )}
     </Grid>
   );

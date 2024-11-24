@@ -10,5 +10,7 @@ export const getDiamonds = (queryObj: IDiamondFilter) => {
 };
 
 export const postCreateDiamond = (data: ICreateDiamondRequest) => {
-  return axios.post<unknown, IResponse<IDiamond>>(`diamonds`, data);
+  const queryUrl = queryString.stringify(data);
+
+  return axios.post<unknown, IResponse<IDiamond>>(`diamonds?${queryUrl}`);
 };

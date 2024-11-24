@@ -231,15 +231,15 @@ declare global {
     id: number;
     comment: string;
     status: CustomRequestStatus;
-    customer: Omit<IUser, "hasSpouse">;
-    staff?: Omit<IUser, "hasSpouse">;
+    customer: IUser;
+    staff?: IUser;
     designs: IDesign[];
     createdAt: string;
   }
 
   interface IDesignVersion {
     id: number;
-    customer: Omit<IUser, "hasSpouse">;
+    customer: IUser;
     design: IDesign;
     image: {
       url: string;
@@ -295,7 +295,7 @@ declare global {
     id: number;
     designVersion: IDesignVersion;
     spouse: ISpouse;
-    account: Omit<IUser, "hasSpouse">;
+    account: IUser;
     metalWeight: number;
     blueprint: {
       id: number;
@@ -365,6 +365,7 @@ declare global {
     engraving?: string;
     metalSpecification: IMetalSpec;
     diamonds: IDiamond[];
+    branch: IBranch;
   }
 
   interface IContract {
@@ -412,6 +413,7 @@ declare global {
 
   interface ITransportOrder {
     id: number;
+    orderNo: string;
     status: TransportOrderStatus;
     receiverName: string;
     receiverPhone: string;
@@ -423,6 +425,10 @@ declare global {
       date: string;
       note: string;
     }[];
+    image: {
+      id: number;
+      url: string;
+    };
   }
 
   interface IAgreement {
