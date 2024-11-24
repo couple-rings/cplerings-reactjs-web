@@ -26,3 +26,10 @@ export const getTransportOrderWithCustomOrder = (customOrderId: number) => {
     `transportation-orders/custom-orders/${customOrderId}`
   );
 };
+
+export const getTransportOrderDetail = (id: number) => {
+  return axios.get<
+    unknown,
+    IResponse<{ transportationOrder: ITransportOrder }>
+  >(`transportation-orders/${id}`);
+};

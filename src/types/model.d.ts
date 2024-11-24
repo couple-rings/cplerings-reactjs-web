@@ -425,6 +425,10 @@ declare global {
       date: string;
       note: string;
     }[];
+    image: {
+      id: number;
+      url: string;
+    };
   }
 
   interface IAgreement {

@@ -12,7 +12,7 @@ import wedding1 from "src/assets/wedding1.png";
 import wedding2 from "src/assets/wedding2.png";
 import { useNavigate } from "react-router-dom";
 import HoverMenu from "src/components/menu/HoverMenu";
-import { HoverMenuPurpose, ProductType } from "src/utils/enums";
+import { DesignStatus, HoverMenuPurpose, ProductType } from "src/utils/enums";
 import ProductCard from "src/components/product/ProductCard";
 import { useEffect, useRef, useState } from "react";
 import WeddingRingsAccordian from "src/components/accordion/WeddingRings.Accordion";
@@ -47,9 +47,10 @@ const specFilter = {
   pageSize: 100,
 };
 
-const initFilter = {
+const initFilter: ICoupleDesignFilter = {
   page: 0,
   pageSize: pageSize,
+  status: DesignStatus.Available,
 };
 
 const initMetaData = {

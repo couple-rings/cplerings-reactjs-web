@@ -14,6 +14,7 @@ export const fetchManagerProfile = "fetchManagerProfile";
 export const fetchAdminProfile = "fetchAdminProfile";
 
 export const fetchCoupleDesigns = "fetchCoupleDesigns";
+export const fetchDesignDetail = "fetchDesignDetail";
 
 export const fetchDiamondSpecs = "fetchDiamondSpecs";
 
@@ -41,6 +42,7 @@ export const fetchWards = "fetchWards";
 export const fetchTransportOrders = "fetchTransportOrders";
 export const fetchTransportOrdersWithCustomOrder =
   "fetchTransportOrderWithCustomOrder";
+export const fetchTransportOrderDetail = "fetchTransportOrderDetail";
 
 export const fetchTransporters = "fetchTransporters";
 

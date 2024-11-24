@@ -31,6 +31,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import BorderColorRoundedIcon from "@mui/icons-material/BorderColorRounded";
 import { toast } from "react-toastify";
+import ViewModal from "src/components/modal/transportOrder/Detail.modal";
 
 interface Row extends ITransportOrder {}
 
@@ -46,6 +47,9 @@ const initMetaData = {
 };
 
 function ArrangeTransport() {
+  const [open, setOpen] = useState(false);
+  const [viewId, setViewId] = useState(0);
+
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
   const [filterObj, setFilterObj] = useState<ITransportOrderFilter | null>(
@@ -242,7 +246,10 @@ function ArrangeTransport() {
               <Button
                 variant="contained"
                 sx={{ ...primaryBtn, py: 1, m: 2, borderRadius: 5 }}
-                onClick={() => console.log(row)}
+                onClick={() => {
+                  setViewId(row.id);
+                  setOpen(true);
+                }}
               >
                 Chi Tiết
               </Button>,
@@ -391,6 +398,8 @@ function ArrangeTransport() {
         rowModesModel={rowModesModel}
         onRowModesModelChange={handleRowModesModelChange}
       />
+
+      <ViewModal open={open} setOpen={setOpen} id={viewId} />
     </div>
   );
 }
