@@ -24,7 +24,7 @@ import { useAppDispatch, useAppSelector, useScrollTop } from "src/utils/hooks";
 import { login } from "src/redux/slice/auth.slice";
 import { jwtDecode } from "jwt-decode";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { ErrorCode } from "src/utils/enums";
+import { ErrorCode, UserRole } from "src/utils/enums";
 
 interface IFormInput {
   email: string;
@@ -48,6 +48,12 @@ const Login = () => {
         const { refreshToken, token: accessToken } = response.data;
         const userInfo = jwtDecode<ITokenData>(accessToken);
         const { id, sub, role } = userInfo;
+
+        if (role === UserRole.Transporter) {
+          toast.error("Tài khoản không sử dụng được hệ thống này");
+          return;
+        }
+
         dispatch(
           login({ id: +id, role, email: sub, accessToken, refreshToken })
         );

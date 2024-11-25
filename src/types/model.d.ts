@@ -69,6 +69,8 @@ declare global {
 
     participants: number[];
 
+    partner?: IUser;
+
     latestMessage?: IMessage;
 
     notifiedUsers?: number[];

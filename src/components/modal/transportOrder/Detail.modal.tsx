@@ -89,25 +89,38 @@ function ViewModal(props: ITransportOrderModalProps) {
           <fieldset style={{ width: "100%" }}>
             <legend>Quá Trình Giao Hàng</legend>
 
-            <Grid container item justifyContent={"space-between"} my={2}>
-              <Grid item xs={3}>
-                <FormLabel focused>Thời Gian</FormLabel>
-              </Grid>
+            {order.transportationNotes?.length !== 0 ? (
+              <Grid container item justifyContent={"space-between"} my={2}>
+                <Grid item xs={3}>
+                  <FormLabel focused>Thời Gian</FormLabel>
+                </Grid>
 
-              <Grid item xs={8}>
-                <FormLabel focused>Ghi Chú</FormLabel>
+                <Grid item xs={8}>
+                  <FormLabel focused>Ghi Chú</FormLabel>
+                </Grid>
               </Grid>
-            </Grid>
+            ) : (
+              <FormHelperText>Chưa bắt đầu giao hàng</FormHelperText>
+            )}
 
-            <Grid container item justifyContent={"space-between"}>
-              <Grid item xs={3}>
-                {moment().format("DD/MM/YYYY HH:mm")}
-              </Grid>
+            {order.transportationNotes?.map((item) => {
+              return (
+                <Grid
+                  container
+                  item
+                  justifyContent={"space-between"}
+                  key={item.id}
+                >
+                  <Grid item xs={3}>
+                    {moment(item.date).format("DD/MM/YYYY HH:mm")}
+                  </Grid>
 
-              <Grid item xs={8}>
-                Bắt đầu giao hàng
-              </Grid>
-            </Grid>
+                  <Grid item xs={8}>
+                    {item.note}
+                  </Grid>
+                </Grid>
+              );
+            })}
           </fieldset>
         </Grid>
       </DialogContent>
