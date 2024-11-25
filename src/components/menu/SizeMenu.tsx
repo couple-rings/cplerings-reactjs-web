@@ -83,7 +83,7 @@ function SizeMenu(props: ISizeMenuProps) {
           </div>
 
           <div className={styles.column}>
-            <div className={styles.title}>Đường kính (cm)</div>
+            <div className={styles.title}>Đường kính (mm)</div>
             {response?.data?.items.map((item) => {
               return (
                 <div key={uuidv4()} className={styles.plainItem}>
@@ -94,7 +94,7 @@ function SizeMenu(props: ISizeMenuProps) {
           </div>
 
           <div className={styles.column}>
-            <div className={styles.title}>Chu vi (cm)</div>
+            <div className={styles.title}>Chu vi (mm)</div>
             {response?.data?.items.map((item) => {
               return (
                 <div key={uuidv4()} className={styles.plainItem}>
