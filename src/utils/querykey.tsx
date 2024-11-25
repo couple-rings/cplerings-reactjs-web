@@ -6,6 +6,7 @@ export const fetchFemaleDesignVersions = "fetchFemaleDesignVersions";
 export const fetchDesignVersionDetail = "fetchDesignVersionDetail";
 
 export const fetchConversations = "fetchConversations";
+export const fetchConversationDetail = "fetchConversationDetail";
 
 export const fetchCustomerProfile = "fetchCustomerProfile";
 export const fetchStaffProfile = "fetchStaffProfile";

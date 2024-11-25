@@ -49,6 +49,12 @@ declare global {
     userId: number;
   }
 
+  interface IConversationDetailRequest {
+    userId: number;
+
+    conversationId: string;
+  }
+
   interface ICreateConversationRequest {
     participants: number[];
   }

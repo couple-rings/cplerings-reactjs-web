@@ -9,6 +9,14 @@ export const getConversations = (queryObj: IConversationFilter) => {
   );
 };
 
+export const getConversationDetail = (queryObj: IConversationDetailRequest) => {
+  const queryUrl = queryString.stringify(queryObj);
+
+  return axios.get<unknown, ISecondaryResponse<IConversation>>(
+    `conversations/detail?${queryUrl}`
+  );
+};
+
 export const putUpdateConversation = (
   id: string,
   data: IUpdateConversationRequest
@@ -23,5 +31,12 @@ export const postCreateConversation = (data: ICreateConversationRequest) => {
   return axios.post<unknown, ISecondaryResponse<IConversation>>(
     `conversations`,
     data
+  );
+};
+
+export const postCreateRandomConversation = (userId: number) => {
+  return axios.post<unknown, ISecondaryResponse<IConversation>>(
+    `conversations/random`,
+    { userId }
   );
 };
