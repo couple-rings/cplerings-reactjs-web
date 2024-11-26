@@ -585,8 +585,7 @@ function CustomRequestDetail() {
         <Grid container justifyContent={"center"} gap={3}>
           {accepted.male === 0 &&
             accepted.female === 0 &&
-            response?.data?.status === CustomRequestStatus.OnGoing &&
-            sessionResponse.data?.remainingCount === 0 && (
+            response?.data?.status === CustomRequestStatus.OnGoing && (
               <Box sx={{ textAlign: "center", mt: 10 }}>
                 <LoadingButton
                   loading={cancelMutation.isPending}

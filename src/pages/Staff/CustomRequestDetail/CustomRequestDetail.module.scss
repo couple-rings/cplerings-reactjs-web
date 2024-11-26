@@ -2,55 +2,75 @@
 
 .container {
     display       : flex;
-    align-items   : center;
     flex-direction: column;
-    padding       : 4rem;
+    padding-bottom: 4rem;
+
+    .mainTitle {
+        font-size  : 1.6rem;
+        color      : $primaryColor;
+        margin     : 3rem;
+        margin-left: 4rem;
+    }
+
+    .customer {
+        .title {
+            font-size    : 1.4rem;
+            color        : $primaryColor;
+            margin-bottom: 0;
+
+            @media screen and (max-width: 800px) {
+                font-size: 1.5rem;
+            }
+        }
+    }
 
     .title {
-        font-size    : 2rem;
+        font-size    : 1.4rem;
         color        : $primaryColor;
-        margin-bottom: 3rem;
+        margin-bottom: 2rem;
 
         @media screen and (max-width: 800px) {
             font-size: 1.5rem;
         }
     }
 
-    .section {
-        margin-bottom   : 4rem;
-        justify-content : space-between;
-        align-items     : center;
-        background-color: #F5F5F5;
-        border-radius   : 10px;
-        padding         : 1rem;
-        box-shadow      : 0 4px 2px -2px #ccc;
+    .sectionContainer {
+        border-radius: 10px;
+        border       : 1px solid #ccc;
 
-        .right {
-            padding-left: 1rem;
-            padding-top : 1rem;
+        .section {
+            border-radius     : 10px;
+            justify-content   : center;
+            // box-shadow     : $boxShadow;
 
-            .gender {
-                font-size    : 1.3rem;
+            .title {
+                font-size    : 1.2rem;
                 color        : $primaryColor;
-                margin-bottom: 1rem;
+                margin-bottom: 1.5rem;
+            }
 
-                img {
-                    width       : 25px;
-                    margin-right: 1rem;
+            .info {
+                .gender {
+                    color     : $primaryColor;
+                    margin    : 1rem 0;
+                    text-align: center;
+
+                    img {
+                        width       : 15px;
+                        margin-right: 10px;
+                    }
                 }
-            }
 
-            .label {
-                color        : $primaryColor;
-                font-size    : 1.1rem;
-                margin-bottom: 1rem;
-            }
+                .label {
+                    color: $primaryColor;
+                }
 
-            .item {
-                margin-bottom: 0.5rem;
-                color        : $grayColor;
-                display      : flex;
-                align-items  : center;
+                .item {
+                    color        : $grayColor;
+                    display      : flex;
+                    align-items  : center;
+                    margin-bottom: 0.5rem;
+                }
             }
         }
     }

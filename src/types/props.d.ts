@@ -227,6 +227,8 @@ declare global {
       diamondSpec: IDiamondSpec;
 
       sideDiamondsCount: number;
+
+      metalWeight: number;
     };
 
     femaleDetail?: {
@@ -235,6 +237,8 @@ declare global {
       diamondSpec: IDiamondSpec;
 
       sideDiamondsCount: number;
+
+      metalWeight: number;
     };
   }
 

@@ -337,7 +337,7 @@ function DesignVersions() {
             />
             <div className={styles.label}>
               <img src={male} />
-              <span>Nhẫn Nam</span>
+              <span>Nam Tính</span>
             </div>
           </Grid>
           <Grid item md={5}>
@@ -347,7 +347,7 @@ function DesignVersions() {
             />
             <div className={styles.label}>
               <img src={female} />
-              <span>Nhẫn Nữ</span>
+              <span>Nữ Tính</span>
             </div>
           </Grid>
         </Grid>
@@ -365,8 +365,7 @@ function DesignVersions() {
           className={styles.versionList}
         >
           <Grid item xs={12} className={styles.label}>
-            <img src={male} />
-            <span>Nhẫn Nam</span>
+            Dành Cho Bản {maleDesign.name}
           </Grid>
 
           {maleVersionResponse?.data?.items
@@ -434,8 +433,7 @@ function DesignVersions() {
           className={styles.versionList}
         >
           <Grid item xs={12} className={styles.label}>
-            <img src={female} />
-            <span>Nhẫn Nữ</span>
+            Dành Cho Bản {femaleDesign.name}
           </Grid>
 
           {femaleVersionResponse?.data?.items

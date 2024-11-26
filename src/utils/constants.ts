@@ -150,3 +150,5 @@ export const stages = [
     progress: StagePercentage.Third,
   },
 ];
+
+export const designFee = 500000;

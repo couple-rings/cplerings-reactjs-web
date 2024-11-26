@@ -13,7 +13,6 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import FmdGoodOutlinedIcon from "@mui/icons-material/FmdGoodOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import logo from "src/assets/logo.png";
-import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import Drawer from "@mui/material/Drawer";
@@ -27,6 +26,9 @@ import { logout } from "src/redux/slice/auth.slice";
 import { removeRoute } from "src/redux/slice/route.slice";
 import { removeMessages } from "src/redux/slice/message.slice";
 import { removeConversations } from "src/redux/slice/conversation.slice";
+import AccountCircleSharpIcon from "@mui/icons-material/AccountCircleSharp";
+import PulseIcon from "src/components/icon/PulseIcon";
+import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 
 const fastSearchs = [
   "Nhẫn Cưới",
@@ -85,7 +87,8 @@ const UpperBar = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
 
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, userInfo } = useAppSelector((state) => state.auth);
+  const { hasSpouse } = userInfo;
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     if (isAuthenticated) setAnchorElUser(event.currentTarget);
@@ -175,9 +178,46 @@ const UpperBar = () => {
                 justifyContent: "flex-end",
               }}
             >
-              <Tooltip title="Tài Khoản Của Tôi">
+              <Tooltip
+                title={
+                  !isAuthenticated
+                    ? "Đăng nhập"
+                    : hasSpouse
+                    ? "Bạn đã xác minh danh tính"
+                    : "Bạn cần xác minh danh tính"
+                }
+              >
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, mr: 1 }}>
-                  <PermIdentityIcon fontSize="large" className={styles.icon} />
+                  {!isAuthenticated && (
+                    <PermIdentityIcon
+                      fontSize="large"
+                      className={styles.icon}
+                    />
+                  )}
+                  {isAuthenticated && !hasSpouse && (
+                    <PulseIcon
+                      icon={
+                        <AccountCircleSharpIcon
+                          fontSize="large"
+                          className={styles.icon}
+                          sx={{ color: "white" }}
+                        />
+                      }
+                      backgroundColor="#f1c40f"
+                    />
+                  )}
+                  {isAuthenticated && hasSpouse && (
+                    <PulseIcon
+                      icon={
+                        <AccountCircleSharpIcon
+                          fontSize="large"
+                          className={styles.icon}
+                          sx={{ color: "white" }}
+                        />
+                      }
+                      backgroundColor="#07bc0c"
+                    />
+                  )}
                 </IconButton>
               </Tooltip>
               <Menu

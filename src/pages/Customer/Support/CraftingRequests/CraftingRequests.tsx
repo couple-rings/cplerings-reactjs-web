@@ -1,8 +1,6 @@
 import { Box, Button, Chip, Divider, Grid, Skeleton } from "@mui/material";
 import styles from "./CraftingRequests.module.scss";
 import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
-import male from "src/assets/male-icon.png";
-import female from "src/assets/female-icon.png";
 import ArrowRightRoundedIcon from "@mui/icons-material/ArrowRightRounded";
 import { secondaryBtn } from "src/utils/styles";
 import { useNavigate } from "react-router-dom";
@@ -213,8 +211,7 @@ function CraftingRequests() {
         <>
           <Grid container item xs={11} lg={10}>
             <Box sx={{ marginBottom: "2.5rem" }}>
-              <img src={male} width={18} />
-              <span className={styles.subtitle}>Thiết Kế Của Nam</span>
+              <span className={styles.subtitle}>Thiết Kế Của Bạn</span>
             </Box>
           </Grid>
 
@@ -349,8 +346,7 @@ function CraftingRequests() {
         <>
           <Grid container item xs={11} lg={10}>
             <Box sx={{ marginBottom: "2.5rem" }}>
-              <img src={female} width={18} />
-              <span className={styles.subtitle}>Thiết Kế Của Nữ</span>
+              <span className={styles.subtitle}>Thiết Kế Của Bạn Đời</span>
             </Box>
           </Grid>
 
