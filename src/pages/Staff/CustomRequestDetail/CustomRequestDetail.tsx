@@ -4,7 +4,9 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Chip,
   Divider,
+  FormLabel,
   Grid,
   Skeleton,
 } from "@mui/material";
@@ -14,7 +16,10 @@ import female from "src/assets/female-icon.png";
 import { roundedPrimaryBtn } from "src/utils/styles";
 import HoverCard from "src/components/product/HoverCard";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchCustomRequestDetail } from "src/utils/querykey";
+import {
+  fetchCustomerSpouse,
+  fetchCustomRequestDetail,
+} from "src/utils/querykey";
 import {
   getCustomRequestDetail,
   putUpdateCustomRequest,
@@ -27,10 +32,15 @@ import { toast } from "react-toastify";
 import { useAppSelector } from "src/utils/hooks";
 import { postCreateConversation } from "src/services/conversation.service";
 import CustomExpandIcon from "src/components/icon/CustomExpandIcon";
+import moment from "moment";
+import { ChipColor } from "src/utils/constants";
+import { getCustomerSpouse } from "src/services/spouse.service";
 
 function CustomRequestDetail() {
   const [maleDesign, setMaleDesign] = useState<IDesign | null>(null);
   const [femaleDesign, setFemaleDesign] = useState<IDesign | null>(null);
+
+  const [ownerSpouse, setOwnerSpouse] = useState<ISpouse | null>(null);
 
   const { id } = useParams<{ id: string }>();
   const { id: staffId } = useAppSelector((state) => state.auth.userInfo);
@@ -44,6 +54,16 @@ function CustomRequestDetail() {
       if (id) return getCustomRequestDetail(+id);
     },
     enabled: !!id,
+  });
+
+  const { data: spouseResponse } = useQuery({
+    queryKey: [fetchCustomerSpouse, response?.data?.customer.id],
+
+    queryFn: () => {
+      if (response?.data?.customer.id)
+        return getCustomerSpouse(response?.data?.customer.id);
+    },
+    enabled: !!response?.data?.customer.id,
   });
 
   const statusMutation = useMutation({
@@ -95,6 +115,33 @@ function CustomRequestDetail() {
       });
   };
 
+  const formatStatus = (
+    status: CustomRequestStatus
+  ): { text: string; color: ChipColor } => {
+    if (status === CustomRequestStatus.Waiting)
+      return {
+        text: "Đang Chờ Duyệt",
+        color: "warning",
+      };
+
+    if (status === CustomRequestStatus.OnGoing)
+      return {
+        text: "Đang Thiết Kế",
+        color: "warning",
+      };
+
+    if (status === CustomRequestStatus.Canceled)
+      return {
+        text: "Đã Hủy",
+        color: "error",
+      };
+
+    return {
+      text: "Đã Hoàn Thành",
+      color: "success",
+    };
+  };
+
   useEffect(() => {
     if (response && response.data) {
       const maleDesign = response.data.designs.find(
@@ -116,6 +163,15 @@ function CustomRequestDetail() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [response]);
+
+  useEffect(() => {
+    if (spouseResponse?.data) {
+      const ownerSpouse = spouseResponse.data.spouses.find(
+        (item) => !!item.customerId
+      );
+      if (ownerSpouse) setOwnerSpouse(ownerSpouse);
+    }
+  }, [spouseResponse]);
 
   if (!maleDesign || !femaleDesign)
     return (
@@ -145,9 +201,56 @@ function CustomRequestDetail() {
       <div className={styles.mainTitle}>Yêu Cầu Thiết Kế</div>
 
       <Grid container justifyContent={"center"} mb={5}>
+        <Grid container item xs={11} lg={9} mb={5}>
+          <Grid container>
+            <Grid item xs={2}>
+              Ngày Tạo:
+            </Grid>
+            <FormLabel>
+              {moment(response?.data?.createdAt).format("DD/MM/YYYY")}
+            </FormLabel>
+          </Grid>
+
+          <Grid container my={2}>
+            <Grid item xs={2}>
+              Ngày Cập Nhật:
+            </Grid>
+            <FormLabel>
+              {moment(response?.data?.createdAt).format("DD/MM/YYYY")}
+            </FormLabel>
+          </Grid>
+
+          <Grid container alignItems={"center"}>
+            <Grid item xs={2}>
+              Trạng Thái:
+            </Grid>
+            <Grid item>
+              <Chip
+                label={
+                  formatStatus(response?.data?.status as CustomRequestStatus)
+                    .text
+                }
+                color={
+                  formatStatus(response?.data?.status as CustomRequestStatus)
+                    .color
+                }
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+
         <Grid container item xs={11} lg={9} className={styles.customer}>
           <fieldset style={{ width: "100%", padding: "1rem" }}>
             <legend className={styles.title}>Khách Hàng</legend>
+            <Grid container mb={1}>
+              <Grid item xs={3}>
+                Họ Tên:
+              </Grid>
+              <Grid item sx={{ textTransform: "capitalize" }}>
+                {ownerSpouse?.fullName.toLowerCase()}
+              </Grid>
+            </Grid>
+
             <Grid container mb={1}>
               <Grid item xs={3}>
                 Tên tài khoản:

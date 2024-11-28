@@ -4,6 +4,8 @@ import loveCheck from "src/assets/header_love_check.jpg";
 import loveAgreement from "src/assets/header_love_agreement.jpg";
 import { StagePercentage } from "./enums";
 
+export const pageSize = 8;
+
 export const certificateTabData = [
   {
     title: "Minh Chứng Tình Yêu",
@@ -18,7 +20,6 @@ export const certificateTabData = [
     img: loveAgreement,
   },
 ];
-
 export const aboutTabData = [
   {
     title: "Sứ Mệnh CR",
@@ -33,31 +34,6 @@ export const aboutTabData = [
     path: "/stores",
   },
 ];
-
-export const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-export const passwordPattern =
-  /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-export const phonePattern = /^(0)\d{9}$/;
-
-export const validAttachments = [
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  "application/pdf",
-  "application/msword",
-];
-
-export const messageCardBg = "#e5efff";
-
-export const drawerWidth = 260;
-
-export const pageSize = 8;
-
-export const metalWeightUnit = 3.75; // 1 chỉ vàng = 3.75 gram
-
-export const meleeDiamondCarat = 0.008;
-
-export const profitRatio = 1.3;
 
 export const diamondColors = [
   "D",
@@ -84,7 +60,6 @@ export const diamondColors = [
   "Y",
   "Z",
 ];
-
 export const diamondClarity = [
   "FL",
   "IF",
@@ -98,7 +73,6 @@ export const diamondClarity = [
   "I2",
   "I3",
 ];
-
 export const diamondShapes = [
   "Round",
   "Princess",
@@ -112,18 +86,7 @@ export const diamondShapes = [
   "Heart",
   "Trillion",
 ];
-
 export const goldK = ["14K", "18K"];
-
-export type ChipColor =
-  | "info"
-  | "error"
-  | "success"
-  | "default"
-  | "primary"
-  | "secondary"
-  | "warning";
-
 export const stages = [
   {
     name: "Hoàn Thành 50% - Đúc khuôn nhẫn",
@@ -151,4 +114,35 @@ export const stages = [
   },
 ];
 
+export const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+export const passwordPattern =
+  /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+export const phonePattern = /^(0)\d{9}$/;
+export const validAttachments = [
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/pdf",
+  "application/msword",
+];
+
+export const companyEmail = "couplerings.sep@gmail.com";
+export const companyName = "Công Ty TNHH Couple Ring";
+export const companyAddress =
+  "Lô E2a-7, Đường D1, Đ. D1, Long Thạnh Mỹ, Thành Phố Thủ Đức, Hồ Chí Minh";
+export const companyPhone = "0928226767";
+
+export const messageCardBg = "#e5efff";
+export const drawerWidth = 260;
+export type ChipColor =
+  | "info"
+  | "error"
+  | "success"
+  | "default"
+  | "primary"
+  | "secondary"
+  | "warning";
+
+export const metalWeightUnit = 3.75; // 1 chỉ vàng = 3.75 gram
+export const meleeDiamondCarat = 0.008;
+export const profitRatio = 1.3;
 export const designFee = 500000;
+export const taxRate = 0;

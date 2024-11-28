@@ -72,14 +72,14 @@ function CustomRequestCard(props: ICustomRequestCardProps) {
   return (
     <Card className={styles.container}>
       <Grid container p={3} justifyContent={"space-between"}>
-        <Grid item xs={12} sm={4} md={2.5}>
+        <Grid item xs={12} sm={4} md={2}>
           <img
             src={maleDesign?.designMetalSpecifications[0].image.url}
             width={"100%"}
             style={{ border: "1px solid #ccc" }}
           />
         </Grid>
-        <Grid container item xs={12} md={9} py={3}>
+        <Grid container item xs={12} md={9.5}>
           <Grid item flex={1}>
             <Grid
               container
@@ -104,14 +104,14 @@ function CustomRequestCard(props: ICustomRequestCardProps) {
       </Grid>
 
       <Grid container p={3} justifyContent={"space-between"}>
-        <Grid item xs={12} sm={4} md={2.5}>
+        <Grid item xs={12} sm={4} md={2}>
           <img
             src={femaleDesign?.designMetalSpecifications[0].image.url}
             width={"100%"}
             style={{ border: "1px solid #ccc" }}
           />
         </Grid>
-        <Grid item xs={12} md={9} pt={3}>
+        <Grid item xs={12} md={9.5}>
           <div className={styles.name}>Bản Thiết Kế {femaleDesign?.name}</div>
           <div className={styles.gender}>
             <img src={female} width={15} />

@@ -3,6 +3,10 @@
 .container {
     text-align: center;
 
+    @media print {
+        display: none;
+    }
+
     .slogan {
         padding  : 1rem;
         font-size: 1.1rem;

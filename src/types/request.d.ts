@@ -200,6 +200,27 @@ declare global {
     branchId: number;
   }
 
+  interface ICreateCraftingRingRequest {
+    customerId: number;
+    branchId: number;
+    self: {
+      designId: number;
+      spouseId: number;
+      metalSpecId: number;
+      diamondSpecId: number;
+      engraving?: string;
+      fingerSize: number;
+    };
+    partner: {
+      designId: number;
+      spouseId: number;
+      metalSpecId: number;
+      diamondSpecId: number;
+      engraving?: string;
+      fingerSize: number;
+    };
+  }
+
   interface IUpdateCraftingRequest {
     firstCraftingRequestId: number;
     secondCraftingRequestId: number;

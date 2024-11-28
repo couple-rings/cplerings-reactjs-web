@@ -167,3 +167,8 @@ export enum TransportOrderStatus {
   Completed = "COMPLETED",
   Failed = "FAILED",
 }
+
+export enum TransactionType {
+  ATM = "ATM",
+  QrCode = "QRCODE",
+}

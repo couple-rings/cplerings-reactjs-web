@@ -421,4 +421,10 @@ declare global {
   interface ITransportOrderModalProps extends IModalProps {
     order: ITransportOrder;
   }
+
+  interface ICustomRequestRowProps {
+    data: ICustomRequest;
+
+    expandComponent: JSX.Element;
+  }
 }

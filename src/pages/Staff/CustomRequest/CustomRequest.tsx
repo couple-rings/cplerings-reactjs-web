@@ -8,15 +8,34 @@ import {
 } from "@mui/x-data-grid";
 import { useEffect, useMemo, useState } from "react";
 import styles from "./CustomRequest.module.scss";
-import { Button } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormLabel,
+  Grid,
+  IconButton,
+  Popover,
+  SxProps,
+  Tab,
+  Tabs,
+} from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 import { CustomRequestStatus } from "src/utils/enums";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchCustomRequests } from "src/utils/querykey";
 import { getCustomRequests } from "src/services/customRequest.service";
-import { pageSize } from "src/utils/constants";
+import { designFee, pageSize } from "src/utils/constants";
 import moment from "moment";
+import { currencyFormatter } from "src/utils/functions";
+import RemoveRedEyeSharpIcon from "@mui/icons-material/RemoveRedEyeSharp";
+
+const boxStyle: SxProps = {
+  borderBottom: 1,
+  borderColor: "divider",
+  width: "100%",
+  mb: 6,
+};
 
 interface Row extends ICustomRequest {}
 
@@ -36,7 +55,21 @@ function CustomRequest() {
   const [filterObj, setFilterObj] = useState<ICustomRequestFilter>({
     page: 0,
     pageSize,
+    status: CustomRequestStatus.Waiting,
   });
+
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const openPopover = Boolean(anchorEl);
+  const id = openPopover ? "simple-popover" : undefined;
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -52,32 +85,85 @@ function CustomRequest() {
   const columns: GridColDef<Row>[] = useMemo(
     () => [
       {
-        field: "index",
-        headerName: "No",
-        width: 110,
-        headerAlign: "center",
-        align: "center",
-        sortable: false,
-        filterable: false,
-        disableColumnMenu: true,
-        renderCell: (index) =>
-          index.api.getRowIndexRelativeToVisibleRows(index.row.id) + 1,
-      },
-      {
         field: "customer",
         headerName: "Khách Hàng",
-        width: 300,
+        width: 200,
         headerAlign: "center",
         align: "center",
         filterOperators,
         sortable: false,
-        valueGetter: (value: Omit<IUser, "hasSpouse">) => {
-          return value.username;
+        renderCell: ({ row }) => {
+          return (
+            <div>
+              {row.customer.username}{" "}
+              <IconButton onClick={handleClick}>
+                <RemoveRedEyeSharpIcon fontSize="small" />
+              </IconButton>{" "}
+              <Popover
+                id={id}
+                open={openPopover}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+              >
+                <Grid container width={300} p={3} gap={1}>
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Username:</Grid>
+
+                    <Grid item>{row.customer.username}</Grid>
+                  </Grid>
+
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Email:</Grid>
+
+                    <Grid item>
+                      <FormLabel>{row.customer.email}</FormLabel>
+                    </Grid>
+                  </Grid>
+
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Số điện thoại:</Grid>
+
+                    <Grid item>{row.customer.phone ?? "--"}</Grid>
+                  </Grid>
+                </Grid>
+              </Popover>
+            </div>
+          );
         },
       },
       {
         field: "createdAt",
         headerName: "Ngày Tạo",
+        width: 200,
+        headerAlign: "center",
+        align: "center",
+        filterable: false,
+        renderCell: ({ row }) => {
+          return <div>{moment(row.createdAt).format("DD/MM/YYYY")}</div>;
+        },
+      },
+      {
+        field: "comment",
+        headerName: "Tiền Thanh Toán",
+        width: 150,
+        headerAlign: "center",
+        align: "center",
+        filterable: false,
+        renderCell: () => {
+          return <div>{currencyFormatter(designFee)}</div>;
+        },
+      },
+      {
+        field: "staff",
+        headerName: "Ngày Cập Nhật",
         width: 200,
         headerAlign: "center",
         align: "center",
@@ -138,7 +224,7 @@ function CustomRequest() {
         ),
       },
     ],
-    [navigate]
+    [anchorEl, id, navigate, openPopover]
   );
 
   const handleChangePage = (model: GridPaginationModel) => {
@@ -146,6 +232,15 @@ function CustomRequest() {
     setFilterObj({
       ...filterObj,
       page: model.page,
+    });
+  };
+
+  const handleChangeStatus = (status: CustomRequestStatus) => {
+    setFilterObj({
+      ...filterObj,
+      page: 0,
+      pageSize,
+      status,
     });
   };
 
@@ -176,6 +271,51 @@ function CustomRequest() {
   return (
     <div className={styles.container}>
       <div className={styles.title}>Yêu Cầu Thiết Kế</div>
+
+      <Box sx={boxStyle}>
+        <Tabs
+          classes={{
+            indicator: "myIndicator",
+          }}
+          value={filterObj?.status}
+          onChange={(e, value: CustomRequestStatus) =>
+            handleChangeStatus(value)
+          }
+        >
+          <Tab
+            classes={{
+              selected: "selectedCustomRequestTab",
+            }}
+            className={styles.tabLabel}
+            label="Đang chờ duyệt"
+            value={CustomRequestStatus.Waiting}
+          />
+          <Tab
+            classes={{
+              selected: "selectedCustomRequestTab",
+            }}
+            className={styles.tabLabel}
+            label="Đang thiết kế"
+            value={CustomRequestStatus.OnGoing}
+          />
+          <Tab
+            classes={{
+              selected: "selectedCustomRequestTab",
+            }}
+            className={styles.tabLabel}
+            label="Đã hoàn thành"
+            value={CustomRequestStatus.Completed}
+          />
+          <Tab
+            classes={{
+              selected: "selectedCustomRequestTab",
+            }}
+            className={styles.tabLabel}
+            label="Đã hủy"
+            value={CustomRequestStatus.Canceled}
+          />
+        </Tabs>
+      </Box>
 
       <DataGrid
         loading={isLoading}

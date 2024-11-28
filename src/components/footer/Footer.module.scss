@@ -1,6 +1,10 @@
 @use 'src/index.scss'as *;
 
 .container {
+    @media print {
+        display: none;
+    }
+
     .upper {
         padding         : 2.5rem 0;
         text-align      : center;
