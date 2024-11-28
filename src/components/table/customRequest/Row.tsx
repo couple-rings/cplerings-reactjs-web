@@ -20,6 +20,10 @@ import RemoveRedEyeSharpIcon from "@mui/icons-material/RemoveRedEyeSharp";
 function Row(props: ICustomRequestRowProps) {
   const { data, expandComponent } = props;
 
+  const currentStatus = data.customRequestHistories.find(
+    (item) => item.status === data.status
+  );
+
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
@@ -83,7 +87,10 @@ function Row(props: ICustomRequestRowProps) {
         >
           {formatStatus(data.status).text}
         </TableCell>
-        <TableCell align="center"> {moment().format("DD/MM/YYYY")}</TableCell>
+        <TableCell align="center">
+          {" "}
+          {moment(currentStatus?.createdAt).format("DD/MM/YYYY")}
+        </TableCell>
         <TableCell align="center">
           {data.staff?.username ?? "--"}{" "}
           {data.staff && (

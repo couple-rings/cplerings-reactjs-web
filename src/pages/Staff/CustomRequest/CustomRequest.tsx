@@ -162,14 +162,18 @@ function CustomRequest() {
         },
       },
       {
-        field: "staff",
+        field: "customRequestHistories",
         headerName: "Ngày Cập Nhật",
         width: 200,
         headerAlign: "center",
         align: "center",
         filterable: false,
         renderCell: ({ row }) => {
-          return <div>{moment(row.createdAt).format("DD/MM/YYYY")}</div>;
+          const current = row.customRequestHistories.find(
+            (item) => item.status === row.status
+          );
+
+          return <div>{moment(current?.createdAt).format("DD/MM/YYYY")}</div>;
         },
       },
       {

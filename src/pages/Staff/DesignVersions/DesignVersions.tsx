@@ -1,4 +1,4 @@
-import { Card, Divider, Grid, Skeleton } from "@mui/material";
+import { Card, Chip, Divider, Grid, Skeleton } from "@mui/material";
 import styles from "./DesignVersions.module.scss";
 import HoverCard from "src/components/product/HoverCard";
 import male from "src/assets/male-icon.png";
@@ -26,6 +26,17 @@ import { postUploadFile } from "src/services/file.service";
 import { toast } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { getCustomerSessionCount } from "src/services/designSession.service";
+import moment from "moment";
+import Timeline from "@mui/lab/Timeline";
+import TimelineItem from "@mui/lab/TimelineItem";
+import TimelineSeparator from "@mui/lab/TimelineSeparator";
+import TimelineConnector from "@mui/lab/TimelineConnector";
+import TimelineContent from "@mui/lab/TimelineContent";
+import TimelineDot from "@mui/lab/TimelineDot";
+import TimelineOppositeContent, {
+  timelineOppositeContentClasses,
+} from "@mui/lab/TimelineOppositeContent";
+import { formatCustomRequestStatus } from "src/utils/functions";
 
 const initDraft = {
   image: "",
@@ -317,13 +328,22 @@ function DesignVersions() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Thiết Kế Gốc</div>
-      <Grid container justifyContent={"center"}>
+      <Grid container mb={5} alignItems={"center"} gap={5}>
+        <div className={styles.title}> Quy Trình Thiết Kế</div>
+
+        {response?.data && (
+          <Chip
+            label={formatCustomRequestStatus(response.data.status).text}
+            color={formatCustomRequestStatus(response.data.status).color}
+          />
+        )}
+      </Grid>
+      <Grid container justifyContent={"space-between"}>
         <Grid
           container
           item
-          sm={10}
-          md={8}
+          xs={12}
+          md={6}
           justifyContent={"center"}
           className={styles.original}
         >
@@ -351,9 +371,67 @@ function DesignVersions() {
             </div>
           </Grid>
         </Grid>
+
+        <Grid container item xs={12} md={5.7}>
+          <Timeline
+            sx={{
+              [`& .${timelineOppositeContentClasses.root}`]: {
+                flex: 0.2,
+              },
+            }}
+          >
+            <TimelineItem>
+              <TimelineOppositeContent color="textSecondary">
+                {moment(
+                  response?.data?.customRequestHistories.find(
+                    (item) => item.status === CustomRequestStatus.OnGoing
+                  )?.createdAt
+                ).format("DD/MM/YYYY HH:mm")}
+              </TimelineOppositeContent>
+              <TimelineSeparator>
+                <TimelineDot color="info" />
+                <TimelineConnector />
+              </TimelineSeparator>
+              <TimelineContent>Tiếp nhận yêu cầu thiết kế</TimelineContent>
+            </TimelineItem>
+
+            {maleVersionResponse?.data?.items.map((item) => {
+              return (
+                <TimelineItem key={item.id}>
+                  <TimelineOppositeContent color="textSecondary">
+                    {moment(item.createdAt).format("DD/MM/YYYY HH:mm")}
+                  </TimelineOppositeContent>
+                  <TimelineSeparator>
+                    <TimelineDot color="info" />
+                    <TimelineConnector />
+                  </TimelineSeparator>
+                  <TimelineContent>
+                    Hoàn tất bản thiết kế version {item.versionNumber}
+                  </TimelineContent>
+                </TimelineItem>
+              );
+            })}
+          </Timeline>
+        </Grid>
       </Grid>
 
-      <div className={styles.title}>Các Phiên Bản</div>
+      <Grid container justifyContent={"center"}>
+        <Grid
+          container
+          item
+          xs={11}
+          alignItems={"center"}
+          justifyContent={"space-between"}
+        >
+          <Grid item className={styles.title}>
+            Các Phiên Bản
+          </Grid>
+
+          <Grid item className={styles.count}>
+            Còn {sessionResponse?.data?.numOfSessions} lượt thiết kế
+          </Grid>
+        </Grid>
+      </Grid>
 
       <Grid container justifyContent={"center"}>
         <Grid
@@ -374,6 +452,9 @@ function DesignVersions() {
               return (
                 <Grid item md={3} key={item.id}>
                   <Card className={styles.version}>
+                    <div className={styles.date}>
+                      Ngày tạo: {moment(item.createdAt).format("DD/MM/YYYY")}
+                    </div>
                     <HoverCard
                       image={item.image.url}
                       file={item.designFile.url}
@@ -442,6 +523,9 @@ function DesignVersions() {
               return (
                 <Grid item md={3} key={item.id}>
                   <Card className={styles.version}>
+                    <div className={styles.date}>
+                      Ngày tạo: {moment(item.createdAt).format("DD/MM/YYYY")}
+                    </div>
                     <HoverCard
                       image={item.image.url}
                       file={item.designFile.url}

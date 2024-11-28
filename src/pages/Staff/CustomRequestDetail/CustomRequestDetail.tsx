@@ -26,14 +26,17 @@ import {
 } from "src/services/customRequest.service";
 import { useEffect, useState } from "react";
 import { CustomRequestStatus, DesignCharacteristic } from "src/utils/enums";
-import { getDiamondSpec } from "src/utils/functions";
+import {
+  currencyFormatter,
+  formatCustomRequestStatus,
+  getDiamondSpec,
+} from "src/utils/functions";
 import ArrowRightRoundedIcon from "@mui/icons-material/ArrowRightRounded";
 import { toast } from "react-toastify";
 import { useAppSelector } from "src/utils/hooks";
 import { postCreateConversation } from "src/services/conversation.service";
 import CustomExpandIcon from "src/components/icon/CustomExpandIcon";
 import moment from "moment";
-import { ChipColor } from "src/utils/constants";
 import { getCustomerSpouse } from "src/services/spouse.service";
 
 function CustomRequestDetail() {
@@ -115,33 +118,6 @@ function CustomRequestDetail() {
       });
   };
 
-  const formatStatus = (
-    status: CustomRequestStatus
-  ): { text: string; color: ChipColor } => {
-    if (status === CustomRequestStatus.Waiting)
-      return {
-        text: "Đang Chờ Duyệt",
-        color: "warning",
-      };
-
-    if (status === CustomRequestStatus.OnGoing)
-      return {
-        text: "Đang Thiết Kế",
-        color: "warning",
-      };
-
-    if (status === CustomRequestStatus.Canceled)
-      return {
-        text: "Đã Hủy",
-        color: "error",
-      };
-
-    return {
-      text: "Đã Hoàn Thành",
-      color: "success",
-    };
-  };
-
   useEffect(() => {
     if (response && response.data) {
       const maleDesign = response.data.designs.find(
@@ -202,39 +178,56 @@ function CustomRequestDetail() {
 
       <Grid container justifyContent={"center"} mb={5}>
         <Grid container item xs={11} lg={9} mb={5}>
-          <Grid container>
-            <Grid item xs={2}>
-              Ngày Tạo:
+          <Grid container item xs={5.7}>
+            <Grid container>
+              <Grid item xs={5}>
+                Ngày Tạo:
+              </Grid>
+              <FormLabel>
+                {moment(response?.data?.createdAt).format("DD/MM/YYYY HH:mm")}
+              </FormLabel>
             </Grid>
-            <FormLabel>
-              {moment(response?.data?.createdAt).format("DD/MM/YYYY")}
-            </FormLabel>
+
+            <Grid container mt={2}>
+              <Grid item xs={5}>
+                Ngày Cập Nhật:
+              </Grid>
+              <FormLabel>
+                {moment(
+                  response?.data?.customRequestHistories.find(
+                    (item) => item.status === response.data?.status
+                  )?.createdAt
+                ).format("DD/MM/YYYY HH:mm")}
+              </FormLabel>
+            </Grid>
           </Grid>
 
-          <Grid container my={2}>
-            <Grid item xs={2}>
-              Ngày Cập Nhật:
+          <Grid container item xs={5.7}>
+            <Grid container>
+              <Grid item xs={5}>
+                Tiền Thanh Toán:
+              </Grid>
+              <FormLabel>{currencyFormatter(500000)}</FormLabel>
             </Grid>
-            <FormLabel>
-              {moment(response?.data?.createdAt).format("DD/MM/YYYY")}
-            </FormLabel>
-          </Grid>
 
-          <Grid container alignItems={"center"}>
-            <Grid item xs={2}>
-              Trạng Thái:
-            </Grid>
-            <Grid item>
-              <Chip
-                label={
-                  formatStatus(response?.data?.status as CustomRequestStatus)
-                    .text
-                }
-                color={
-                  formatStatus(response?.data?.status as CustomRequestStatus)
-                    .color
-                }
-              />
+            <Grid container alignItems={"center"} mt={2}>
+              <Grid item xs={5}>
+                Trạng Thái:
+              </Grid>
+              <Grid item>
+                <Chip
+                  label={
+                    formatCustomRequestStatus(
+                      response?.data?.status as CustomRequestStatus
+                    ).text
+                  }
+                  color={
+                    formatCustomRequestStatus(
+                      response?.data?.status as CustomRequestStatus
+                    ).color
+                  }
+                />
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
