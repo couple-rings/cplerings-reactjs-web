@@ -80,6 +80,8 @@ import MyLoveAgreement from "src/pages/Customer/LoveAgreement/MyLoveAgreement";
 import StaffCustomOrder from "src/pages/Staff/CustomOrder/CustomOrder";
 import StaffCustomOrderDetail from "src/pages/Staff/CustomOrderDetail/CustomOrderDetail";
 import LoveAgreementDetail from "src/pages/Common/LoveAgreementDetail/LoveAgreementDetail";
+import MaintenanceList from "src/pages/Jeweler/MaintenanceOrder/MaintenanceList";
+import MaintenanceOrderDetail from "src/pages/Jeweler/MaintenanceOrderDetail/MaintenanceOrderDetail";
 import RefundOrder from "src/pages/Staff/RefundOrder/RefundOrder";
 import RefundOrderDetail from "src/pages/Staff/RefundOrderDetail/RefundOrderDetail";
 import RefundCreateForm from "src/pages/Staff/RefundCreateForm/RefundCreateForm";
@@ -376,6 +378,14 @@ const router = createBrowserRouter([
       {
         path: "custom-order/:orderId/crafting-process",
         element: <CraftingProcess />,
+      },
+      {
+        path: "maintenance-order",
+        element: <MaintenanceList />,
+      },
+      {
+        path: "maintenance-order/detail/:id",
+        element: <MaintenanceOrderDetail />,
       },
     ],
   },
