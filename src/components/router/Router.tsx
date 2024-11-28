@@ -80,6 +80,9 @@ import MyLoveAgreement from "src/pages/Customer/LoveAgreement/MyLoveAgreement";
 import StaffCustomOrder from "src/pages/Staff/CustomOrder/CustomOrder";
 import StaffCustomOrderDetail from "src/pages/Staff/CustomOrderDetail/CustomOrderDetail";
 import LoveAgreementDetail from "src/pages/Common/LoveAgreementDetail/LoveAgreementDetail";
+import RefundOrder from "src/pages/Staff/RefundOrder/RefundOrder";
+import RefundOrderDetail from "src/pages/Staff/RefundOrderDetail/RefundOrderDetail";
+import RefundCreateForm from "src/pages/Staff/RefundCreateForm/RefundCreateForm";
 
 const router = createBrowserRouter([
   {
@@ -335,6 +338,18 @@ const router = createBrowserRouter([
       {
         path: "blog",
         element: <ManageBlog />,
+      },
+      {
+        path: "refund-order",
+        element: <RefundOrder />,
+      },
+      {
+        path: "refund-order/detail/:id",
+        element: <RefundOrderDetail />,
+      },
+      {
+        path: "refund-create-form",
+        element: <RefundCreateForm />,
       },
     ],
   },

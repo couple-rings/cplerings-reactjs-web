@@ -13,6 +13,7 @@ import ArticleIcon from "@mui/icons-material/Article";
 import HardwareRoundedIcon from "@mui/icons-material/HardwareRounded";
 import LocalShippingRoundedIcon from "@mui/icons-material/LocalShippingRounded";
 import TaskRoundedIcon from "@mui/icons-material/TaskRounded";
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 
 const sidebarList = [
   {
@@ -39,6 +40,11 @@ const sidebarList = [
     text: "Đơn Bảo Trì",
     icon: <HandymanIcon />,
     path: "/staff/maintenance-order",
+  },
+  {
+    text: "Yêu Cầu Hoàn Tiền",
+    icon: <CurrencyExchangeIcon />,
+    path: "/staff/refund-order",
   },
   {
     text: "Sắp Xếp Vận Chuyển",
