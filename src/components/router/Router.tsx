@@ -72,6 +72,8 @@ import CustomerCustomOrder from "src/pages/Customer/Support/CustomOrder/CustomOr
 import CustomerCustomOrderDetail from "src/pages/Customer/Support/CustomOrderDetail/CustomOrderDetail";
 import CustomerCraftingProcess from "src/pages/Customer/Support/CraftingProcess/CraftingProcess";
 import Deposit from "src/pages/Customer/Support/Deposit/Deposit";
+import MaintenanceList from "src/pages/Jeweler/MaintenanceOrder/MaintenanceList";
+import MaintenanceOrderDetail from "src/pages/Jeweler/MaintenanceOrderDetail/MaintenanceOrderDetail";
 
 const router = createBrowserRouter([
   {
@@ -321,6 +323,14 @@ const router = createBrowserRouter([
       {
         path: "custom-process",
         element: <CraftingProcess />,
+      },
+      {
+        path: "maintenance-order",
+        element: <MaintenanceList />,
+      },
+      {
+        path: "maintenance-order/detail/:id",
+        element: <MaintenanceOrderDetail />,
       },
     ],
   },

@@ -1,7 +1,9 @@
-import { Button, Divider, Grid } from "@mui/material";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import { useState } from "react";
+import { Button, Card, Chip, Divider, Grid } from "@mui/material";
+import { currencyFormatter } from "src/utils/functions";
+import styles from "./MaintenanceList.module.scss";
+import sample from "src/assets/sampledata/ringdesign.png";
+import { secondaryBtn } from "src/utils/styles";
+import { useNavigate } from "react-router-dom";
 
 const maintainService = [
   {
@@ -18,44 +20,61 @@ const maintainService = [
   },
 ];
 
-function MaintenanceOrderList() {
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
-  const [total, setTotal] = useState<number>(0);
-
-  const handleCheckboxClick = (itemId: number, itemPrice: number) => {
-    setSelectedItems((prevSelectedItems) => {
-      const isSelected = prevSelectedItems.includes(itemId);
-      if (isSelected) {
-        setTotal((prevTotal) => prevTotal - itemPrice);
-        return prevSelectedItems.filter((id) => id !== itemId);
-      } else {
-        setTotal((prevTotal) => prevTotal + itemPrice);
-        return [...prevSelectedItems, itemId];
-      }
-    });
-  };
+function MaintenanceList() {
+  const navigate = useNavigate();
 
   return (
-    <div>
-      <h2>Danh Sách Dịch Vụ Bảo Trì</h2>
-      <Grid container>
-        {maintainService.map((item) => (
-          <Grid item xs={12} key={item.id}>
-            <div onClick={() => handleCheckboxClick(item.id, item.price)}>
-              {selectedItems.includes(item.id) ? <CheckBoxIcon /> : <CheckBoxOutlineBlankIcon />}
-              <span>{item.title} - {item.price} VND</span>
-              <p>{item.description}</p>
-            </div>
-            <Divider />
+    <>
+      <Card className={styles.container}>
+        <div className={styles.header}>
+          <div className={styles.left}>
+            <div>09/10/2024</div>
+            <div>Mã đơn: 824000000777</div>
+          </div>
+          <Chip label="Đang xử lý" color="warning" />
+        </div>
+
+        <Grid container className={styles.body}>
+          <Grid item xs={12} sm={3} md={2}>
+            <img src={sample} alt="Ring" className={styles.productImage} />
           </Grid>
-        ))}
-      </Grid>
-      <div>
-        <h3>Tổng Tiền: {total} VND</h3>
-        <Button variant="contained">Xác Nhận Đơn</Button>
-      </div>
-    </div>
+
+          <Grid item xs={12} sm={9} md={7} className={styles.middle}>
+            <div className={styles.title}>Dịch Vụ Bảo Trì và Bảo Dưỡng</div>
+            <div className={styles.customerInfo}>
+              <span className={styles.label}>Khách hàng:</span>
+              <span>Nguyễn Văn A</span>
+            </div>
+            <div className={styles.services}>
+              {maintainService.map((service) => (
+                <div key={service.id} className={styles.service}>
+                  <div className={styles.serviceName}>{service.title}</div>
+                  <div className={styles.serviceDesc}>{service.description}</div>
+                  <div className={styles.price}>
+                    {currencyFormatter(service.price)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Grid>
+
+          <Grid container item xs={12} md={3} lg={2.5} className={styles.right}>
+            <Grid item xs={12}>
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{ ...secondaryBtn }}
+                onClick={() => navigate(`/jeweler/maintenance-order/detail/1`)}
+              >
+                Chi Tiết
+              </Button>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Card>
+      <Divider sx={{ backgroundColor: "#555", my: 5 }} />
+    </>
   );
 }
 
-export default MaintenanceOrderList;
+export default MaintenanceList;

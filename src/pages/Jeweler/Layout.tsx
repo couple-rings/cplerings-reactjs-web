@@ -7,6 +7,7 @@ import Main from "src/components/layout/Main";
 import SideBar from "src/components/layout/SideBar";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import PaletteIcon from "@mui/icons-material/Palette";
+import HandymanIcon from '@mui/icons-material/Handyman';
 
 
 const sidebarList = [
@@ -19,6 +20,11 @@ const sidebarList = [
     text: "Yêu Cầu Gia Công",
     icon: <PaletteIcon />,
     path: "/jeweler/custom-order",
+  },
+  {
+    text: "Yêu Cầu Bảo Dưỡng",
+    icon: <HandymanIcon />,
+    path: "/jeweler/maintenance-order",
   },
 ];
 
