@@ -80,8 +80,14 @@ import MyLoveAgreement from "src/pages/Customer/LoveAgreement/MyLoveAgreement";
 import StaffCustomOrder from "src/pages/Staff/CustomOrder/CustomOrder";
 import StaffCustomOrderDetail from "src/pages/Staff/CustomOrderDetail/CustomOrderDetail";
 import LoveAgreementDetail from "src/pages/Common/LoveAgreementDetail/LoveAgreementDetail";
+<<<<<<< HEAD
 import MaintenanceList from "src/pages/Jeweler/MaintenanceOrder/MaintenanceList";
 import MaintenanceOrderDetail from "src/pages/Jeweler/MaintenanceOrderDetail/MaintenanceOrderDetail";
+=======
+import RefundOrder from "src/pages/Staff/RefundOrder/RefundOrder";
+import RefundOrderDetail from "src/pages/Staff/RefundOrderDetail/RefundOrderDetail";
+import RefundCreateForm from "src/pages/Staff/RefundCreateForm/RefundCreateForm";
+>>>>>>> 44f753596f34e6a8761e6dd48e026c6788589241
 
 const router = createBrowserRouter([
   {
@@ -337,6 +343,18 @@ const router = createBrowserRouter([
       {
         path: "blog",
         element: <ManageBlog />,
+      },
+      {
+        path: "refund-order",
+        element: <RefundOrder />,
+      },
+      {
+        path: "refund-order/detail/:id",
+        element: <RefundOrderDetail />,
+      },
+      {
+        path: "refund-create-form",
+        element: <RefundCreateForm />,
       },
     ],
   },
