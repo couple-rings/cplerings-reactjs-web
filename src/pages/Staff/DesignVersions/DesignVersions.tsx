@@ -1,4 +1,4 @@
-import { Card, Divider, Grid, Pagination, Skeleton } from "@mui/material";
+import { Card, Divider, Grid, Skeleton } from "@mui/material";
 import styles from "./DesignVersions.module.scss";
 import HoverCard from "src/components/product/HoverCard";
 import male from "src/assets/male-icon.png";
@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  fetchCustomerSessionCount,
   fetchCustomRequestDetail,
   fetchFemaleDesignVersions,
   fetchMaleDesignVersions,
@@ -24,13 +25,7 @@ import {
 import { postUploadFile } from "src/services/file.service";
 import { toast } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
-
-const initMetaData = {
-  page: 0,
-  pageSize: 3,
-  totalPages: 0,
-  count: 0,
-};
+import { getCustomerSessionCount } from "src/services/designSession.service";
 
 const initDraft = {
   image: "",
@@ -43,6 +38,7 @@ function DesignVersions() {
   const [createGender, setCreateGender] = useState(
     DesignCharacteristic.Default
   );
+  const [canCreate, setCanCreate] = useState(false);
 
   const [maleDesign, setMaleDesign] = useState<IDesign | null>(null);
   const [femaleDesign, setFemaleDesign] = useState<IDesign | null>(null);
@@ -50,12 +46,9 @@ function DesignVersions() {
   const [maleNewVersion, setMaleNewVersion] = useState(initDraft);
   const [femaleNewVersion, setFemaleNewVersion] = useState(initDraft);
 
-  const [maleMetaData, setMaleMetaData] = useState<IListMetaData>(initMetaData);
   const [maleFilterObj, setMaleFilterObj] =
     useState<IDesignVersionFilter | null>(null);
 
-  const [femaleMetaData, setFemaleMetaData] =
-    useState<IListMetaData>(initMetaData);
   const [femaleFilterObj, setFemaleFilterObj] =
     useState<IDesignVersionFilter | null>(null);
 
@@ -73,7 +66,17 @@ function DesignVersions() {
     enabled: !!id,
   });
 
-  const { data: maleVersionResponse } = useQuery({
+  const { data: sessionResponse, isLoading: loadingSession } = useQuery({
+    queryKey: [fetchCustomerSessionCount, response?.data?.customer.id],
+
+    queryFn: () => {
+      if (response?.data?.customer.id)
+        return getCustomerSessionCount(response?.data?.customer.id);
+    },
+    enabled: !!response?.data?.customer.id,
+  });
+
+  const { data: maleVersionResponse, isLoading: maleLoading } = useQuery({
     queryKey: [fetchMaleDesignVersions, maleFilterObj],
 
     queryFn: () => {
@@ -83,7 +86,7 @@ function DesignVersions() {
     enabled: !!maleFilterObj,
   });
 
-  const { data: femaleVersionResponse } = useQuery({
+  const { data: femaleVersionResponse, isLoading: femaleLoading } = useQuery({
     queryKey: [fetchFemaleDesignVersions, femaleFilterObj],
 
     queryFn: () => {
@@ -115,26 +118,11 @@ function DesignVersions() {
     },
   });
 
-  const handleMaleChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
-    if (maleFilterObj)
-      setMaleFilterObj({
-        ...maleFilterObj,
-        page: value - 1,
-      });
-  };
-
-  const handleFemaleChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
-    if (femaleFilterObj)
-      setFemaleFilterObj({
-        ...femaleFilterObj,
-        page: value - 1,
-      });
+  const isAccepted = () => {
+    return !!(
+      maleVersionResponse?.data?.items.find((item) => item.isAccepted) &&
+      femaleVersionResponse?.data?.items.find((item) => item.isAccepted)
+    );
   };
 
   const handleCreateVersion = (image: string, designFile: string) => {
@@ -203,21 +191,22 @@ function DesignVersions() {
         femaleImageResponse.data &&
         femalePdfResponse.data
       ) {
-        const maleResponse = await createVersionMutation.mutateAsync({
-          customerId: response.data.customer.id,
-          designId: maleDesign.id,
-          previewImageId: maleImageResponse.data.id,
-          designFileId: malePdfResponse.data.id,
+        const createVersionResponse = await createVersionMutation.mutateAsync({
+          maleVersion: {
+            customerId: response.data.customer.id,
+            designId: maleDesign.id,
+            previewImageId: maleImageResponse.data.id,
+            designFileId: malePdfResponse.data.id,
+          },
+          femaleVersion: {
+            customerId: response.data.customer.id,
+            designId: femaleDesign.id,
+            previewImageId: femaleImageResponse.data.id,
+            designFileId: femalePdfResponse.data.id,
+          },
         });
 
-        const femaleResponse = await createVersionMutation.mutateAsync({
-          customerId: response.data.customer.id,
-          designId: femaleDesign.id,
-          previewImageId: femaleImageResponse.data.id,
-          designFileId: femalePdfResponse.data.id,
-        });
-
-        if (maleResponse.data && femaleResponse.data) {
+        if (createVersionResponse.data) {
           setMaleNewVersion(initDraft);
           setFemaleNewVersion(initDraft);
 
@@ -226,6 +215,9 @@ function DesignVersions() {
           });
           queryClient.invalidateQueries({
             queryKey: [fetchFemaleDesignVersions, femaleFilterObj],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [fetchCustomerSessionCount, response.data.customer.id],
           });
 
           toast.success("Tạo phiên bản thành công");
@@ -244,14 +236,14 @@ function DesignVersions() {
       )?.id;
 
       navigate(
-        `/staff/custom-request/custom-design/${maleVersionId}/${femaleVersionId}`
+        `/staff/custom-request/${id}/custom-design/${maleVersionId}/${femaleVersionId}`
       );
     }
   };
 
   useEffect(() => {
     if (response && response.data) {
-      if (response.data.status === CustomRequestStatus.Waiting)
+      if (response.data.status !== CustomRequestStatus.OnGoing)
         navigate("not-found");
 
       const maleDesign = response.data.designs.find(
@@ -275,40 +267,40 @@ function DesignVersions() {
   }, [response]);
 
   useEffect(() => {
-    if (maleDesign)
+    if (sessionResponse && sessionResponse.data) {
+      if (sessionResponse.data.numOfSessions !== 0) {
+        setCanCreate(true);
+      } else setCanCreate(false);
+    }
+  }, [sessionResponse]);
+
+  useEffect(() => {
+    if (maleDesign && response?.data)
       setMaleFilterObj({
         page: 0,
-        pageSize: 3,
+        pageSize: 100,
         designId: maleDesign.id,
+        customerId: response.data.customer.id,
       });
-  }, [maleDesign]);
+  }, [maleDesign, response]);
 
   useEffect(() => {
-    if (femaleDesign)
+    if (femaleDesign && response?.data)
       setFemaleFilterObj({
         page: 0,
-        pageSize: 3,
+        pageSize: 100,
         designId: femaleDesign.id,
+        customerId: response.data.customer.id,
       });
-  }, [femaleDesign]);
+  }, [femaleDesign, response]);
 
-  useEffect(() => {
-    if (maleVersionResponse && maleVersionResponse.data) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { items, ...rest } = maleVersionResponse.data;
-      setMaleMetaData(rest);
-    }
-  }, [maleVersionResponse]);
-
-  useEffect(() => {
-    if (femaleVersionResponse && femaleVersionResponse.data) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { items, ...rest } = femaleVersionResponse.data;
-      setFemaleMetaData(rest);
-    }
-  }, [femaleVersionResponse]);
-
-  if (!maleDesign || !femaleDesign)
+  if (
+    !maleDesign ||
+    !femaleDesign ||
+    loadingSession ||
+    maleLoading ||
+    femaleLoading
+  )
     return (
       <Grid container justifyContent={"center"} py={5}>
         <Grid container item xs={8} justifyContent={"flex-start"}>
@@ -377,22 +369,24 @@ function DesignVersions() {
             <span>Nhẫn Nam</span>
           </Grid>
 
-          {maleVersionResponse?.data?.items?.map((item) => {
-            return (
-              <Grid item md={3} key={item.id}>
-                <Card className={styles.version}>
-                  <HoverCard
-                    image={item.image.url}
-                    file={item.designFile.url}
-                  />
-                  <div className={styles.versionNo}>
-                    Version {item.versionNumber}
-                  </div>
-                  {item.isAccepted && <CheckCircleIcon color="success" />}
-                </Card>
-              </Grid>
-            );
-          })}
+          {maleVersionResponse?.data?.items
+            ?.sort((a, b) => a.versionNumber - b.versionNumber)
+            .map((item) => {
+              return (
+                <Grid item md={3} key={item.id}>
+                  <Card className={styles.version}>
+                    <HoverCard
+                      image={item.image.url}
+                      file={item.designFile.url}
+                    />
+                    <div className={styles.versionNo}>
+                      Version {item.versionNumber} {item.isOld && "(Cũ)"}
+                    </div>
+                    {item.isAccepted && <CheckCircleIcon color="success" />}
+                  </Card>
+                </Grid>
+              );
+            })}
 
           {/* Male newly created version in draft state */}
           {maleNewVersion.versionNo !== 0 && (
@@ -409,7 +403,7 @@ function DesignVersions() {
             </Grid>
           )}
 
-          {maleNewVersion.versionNo === 0 && (
+          {maleNewVersion.versionNo === 0 && canCreate && (
             <Grid
               item
               xs={12}
@@ -425,14 +419,6 @@ function DesignVersions() {
               </Card>
             </Grid>
           )}
-
-          <Grid container justifyContent={"center"}>
-            <Pagination
-              count={maleMetaData.totalPages}
-              size="medium"
-              onChange={handleMaleChange}
-            />
-          </Grid>
 
           <Divider sx={{ backgroundColor: "#ccc", width: "100%", my: 3 }} />
         </Grid>
@@ -452,22 +438,24 @@ function DesignVersions() {
             <span>Nhẫn Nữ</span>
           </Grid>
 
-          {femaleVersionResponse?.data?.items?.map((item) => {
-            return (
-              <Grid item md={3} key={item.id}>
-                <Card className={styles.version}>
-                  <HoverCard
-                    image={item.image.url}
-                    file={item.designFile.url}
-                  />
-                  <div className={styles.versionNo}>
-                    Version {item.versionNumber}
-                  </div>
-                  {item.isAccepted && <CheckCircleIcon color="success" />}
-                </Card>
-              </Grid>
-            );
-          })}
+          {femaleVersionResponse?.data?.items
+            ?.sort((a, b) => a.versionNumber - b.versionNumber)
+            .map((item) => {
+              return (
+                <Grid item md={3} key={item.id}>
+                  <Card className={styles.version}>
+                    <HoverCard
+                      image={item.image.url}
+                      file={item.designFile.url}
+                    />
+                    <div className={styles.versionNo}>
+                      Version {item.versionNumber} {item.isOld && "(Cũ)"}
+                    </div>
+                    {item.isAccepted && <CheckCircleIcon color="success" />}
+                  </Card>
+                </Grid>
+              );
+            })}
 
           {/* Female newly created version in draft state */}
           {femaleNewVersion.versionNo !== 0 && (
@@ -484,7 +472,7 @@ function DesignVersions() {
             </Grid>
           )}
 
-          {femaleNewVersion.versionNo === 0 && (
+          {femaleNewVersion.versionNo === 0 && canCreate && (
             <Grid
               item
               xs={12}
@@ -500,35 +488,28 @@ function DesignVersions() {
               </Card>
             </Grid>
           )}
-
-          <Grid container justifyContent={"center"}>
-            <Pagination
-              count={femaleMetaData.totalPages}
-              size="medium"
-              onChange={handleFemaleChange}
-            />
-          </Grid>
         </Grid>
       </Grid>
 
       <Grid container justifyContent={"center"} mt={10}>
         <Grid item xs={11} md={4}>
-          {response?.data?.status === CustomRequestStatus.OnGoing && (
-            <LoadingButton
-              disabled={!maleNewVersion.image || !femaleNewVersion.image}
-              loading={
-                uploadMutation.isPending || createVersionMutation.isPending
-              }
-              variant="contained"
-              sx={roundedPrimaryBtn}
-              fullWidth
-              onClick={handleConfirm}
-            >
-              Xác Nhận Tạo
-            </LoadingButton>
-          )}
+          {response?.data?.status === CustomRequestStatus.OnGoing &&
+            !isAccepted() && (
+              <LoadingButton
+                disabled={!maleNewVersion.image || !femaleNewVersion.image}
+                loading={
+                  uploadMutation.isPending || createVersionMutation.isPending
+                }
+                variant="contained"
+                sx={roundedPrimaryBtn}
+                fullWidth
+                onClick={handleConfirm}
+              >
+                Xác Nhận Tạo
+              </LoadingButton>
+            )}
 
-          {response?.data?.status === CustomRequestStatus.Completed && (
+          {isAccepted() && (
             <LoadingButton
               variant="contained"
               sx={roundedPrimaryBtn}

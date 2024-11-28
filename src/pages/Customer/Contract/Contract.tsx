@@ -8,32 +8,112 @@ import {
   DialogTitle,
   Divider,
   Grid,
+  Skeleton,
 } from "@mui/material";
 import styles from "./Contract.module.scss";
 import ring from "src/assets/One Ring.png";
 import EmailSharpIcon from "@mui/icons-material/EmailSharp";
 import PhoneSharpIcon from "@mui/icons-material/PhoneSharp";
 import ringblack from "src/assets/One Ring Black.png";
-import { currencyFormatter } from "src/utils/functions";
+import { currencyFormatter, toBase64 } from "src/utils/functions";
 import moment from "moment";
 import ContractFile from "src/components/pdf/ContractFile";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import { PDFDownloadLink, usePDF } from "@react-pdf/renderer";
 import DownloadForOfflineRoundedIcon from "@mui/icons-material/DownloadForOfflineRounded";
 import SignatureCanvas from "react-signature-canvas";
 import { primaryBtn } from "src/utils/styles";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactSignatureCanvas from "react-signature-canvas";
-import { useScrollTop } from "src/utils/hooks";
+import { useAppSelector, useScrollTop } from "src/utils/hooks";
 import KeyboardBackspaceRoundedIcon from "@mui/icons-material/KeyboardBackspaceRounded";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { getCustomOrderDetail } from "src/services/customOrder.service";
+import {
+  fetchCustomerSpouse,
+  fetchCustomOrderDetail,
+} from "src/utils/querykey";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { postUploadFile } from "src/services/file.service";
+import { toast } from "react-toastify";
+import { putUpdateContract } from "src/services/contract.service";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { getCustomerSpouse } from "src/services/spouse.service";
 
 function Contract() {
+  const [order, setOrder] = useState<ICustomOrder | null>(null);
   const [error, setError] = useState(false);
+  const [customerSpouse, setCustomerSpouse] = useState<ISpouse | null>(null);
+
   const [signature, setSignature] = useState("");
+  const [signed, setSigned] = useState(false);
+
   const [open, setOpen] = useState(false);
 
-  const ref = useRef<ReactSignatureCanvas>(null);
+  const [instance, update] = usePDF({
+    document: (
+      <ContractFile
+        signature={signature}
+        name=""
+        email={""}
+        phone={""}
+        total={0}
+        address={""}
+      />
+    ),
+  });
+
   const navigate = useNavigate();
+
+  const ref = useRef<ReactSignatureCanvas>(null);
+
+  const { orderId } = useParams<{ orderId: string }>();
+
+  const { id: userId } = useAppSelector((state) => state.auth.userInfo);
+
+  const { data: response } = useQuery({
+    queryKey: [fetchCustomOrderDetail, orderId],
+
+    queryFn: () => {
+      if (orderId) return getCustomOrderDetail(+orderId);
+    },
+    enabled: !!orderId,
+  });
+
+  const { data: spouseResponse } = useQuery({
+    queryKey: [fetchCustomerSpouse, userId],
+
+    queryFn: () => {
+      return getCustomerSpouse(userId);
+    },
+  });
+
+  const uploadMutation = useMutation({
+    mutationFn: (base64: string) => {
+      return postUploadFile(base64);
+    },
+    onSuccess: (response) => {
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
+  const signContractMutation = useMutation({
+    mutationFn: (data: { id: number; payload: IUpdateContractRequest }) => {
+      return putUpdateContract(data.id, data.payload);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        toast.success(
+          "Đã hoàn tất ký hợp đồng. Quý khách vui lòng thanh toán tiền cọc đợt 1"
+        );
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
 
   const verifySignature = () => {
     if (ref.current?.isEmpty()) {
@@ -43,8 +123,24 @@ function Contract() {
     setOpen(true);
   };
 
-  const confirmSignature = () => {
-    if (ref.current) setSignature(ref.current?.toDataURL());
+  const confirmSignature = async () => {
+    const base64 = await toBase64(instance.blob as File);
+
+    const uploadContractResponse = await uploadMutation.mutateAsync(base64);
+    const uploadSignatureResponse = await uploadMutation.mutateAsync(signature);
+
+    if (uploadContractResponse.data && uploadSignatureResponse.data && order) {
+      signContractMutation.mutate({
+        id: order.contract.id,
+        payload: {
+          documentId: uploadContractResponse.data.id,
+          signatureId: uploadSignatureResponse.data.id,
+          signedDate: moment().toISOString(),
+        },
+      });
+    }
+
+    setSigned(true);
     setOpen(false);
   };
 
@@ -57,6 +153,59 @@ function Contract() {
   };
 
   useScrollTop();
+
+  useEffect(() => {
+    if (response && response.data) {
+      const { customer } = response.data.customOrder;
+
+      if (customer.id !== userId) navigate("/customer/support/custom-order");
+
+      setOrder(response.data.customOrder);
+    }
+
+    if (response && response.errors) {
+      navigate("/customer/support/custom-order");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response]);
+
+  useEffect(() => {
+    if (signature && order) {
+      update(
+        <ContractFile
+          signature={signature}
+          name={customerSpouse?.fullName ? customerSpouse?.fullName : ""}
+          email={order.customer.email}
+          phone={order.customer.phone ? order.customer.phone : "--"}
+          total={order.totalPrice.amount}
+          address={"--"}
+        />
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order, signature]);
+
+  useEffect(() => {
+    if (spouseResponse?.data) {
+      spouseResponse.data.spouses.forEach((item) => {
+        if (item.customerId) setCustomerSpouse(item);
+      });
+    }
+  }, [spouseResponse]);
+
+  if (!order)
+    return (
+      <Grid container justifyContent={"center"} mt={5}>
+        <Grid container item xs={8} mb={3} gap={3}>
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+        </Grid>
+      </Grid>
+    );
 
   return (
     <div className={styles.container}>
@@ -77,7 +226,11 @@ function Contract() {
           </Grid>
           <Grid container sx={{ p: 8 }} className={styles.content}>
             <Box sx={{ mb: 5 }}>
-              Hợp đồng này được ký kết vào <b>ngày 21 tháng 12 năm 2024</b>{" "}
+              Hợp đồng này được ký kết vào{" "}
+              <b>
+                ngày {moment().format("DD")} tháng {moment().format("MM")} năm{" "}
+                {moment().format("YYYY")}
+              </b>{" "}
               giữa:
             </Box>
             <Grid container justifyContent={"space-between"} mb={3}>
@@ -85,16 +238,21 @@ function Contract() {
                 <Box sx={{ fontWeight: 500 }}>Khách Hàng:</Box>
                 <Divider sx={{ backgroundColor: "#555", my: 2 }} />
                 <div className={styles.info}>
-                  <b>Họ Tên : </b>Nguyễn Văn A
+                  <b>Họ Tên : </b>
+                  <span style={{ textTransform: "capitalize" }}>
+                    {customerSpouse?.fullName.toLowerCase()}
+                  </span>
                 </div>
                 <div className={styles.info}>
-                  <b>Số Điện Thoại : </b>(+84)234567891
+                  <b>Số Điện Thoại : </b>
+                  {order.customer.phone ? order.customer.phone : "--"}
                 </div>
                 <div className={styles.info}>
-                  <b>Email : </b>nva@gmail.com
+                  <b>Email : </b>
+                  {order.customer.email}
                 </div>
                 <div className={styles.info}>
-                  <b>Địa Chỉ : </b>123 Âu Dương Lân, Quận 8, HCM
+                  <b>Địa Chỉ : </b>--
                 </div>
               </Grid>
               <Grid item xs={5}>
@@ -104,7 +262,7 @@ function Contract() {
                   <b>Tên Công Ty : </b>Couple Rings
                 </div>
                 <div className={styles.info}>
-                  <b>Người Đại Diện : </b>Nguyễn Văn B
+                  <b>Người Đại Diện : </b>Nguyễn Văn Bê
                 </div>
                 <div className={styles.info}>
                   <b>Số Điện Thoại : </b>(+84)928226767
@@ -159,17 +317,17 @@ function Contract() {
                 <tbody>
                   <tr>
                     <td>Hoàn Thành 50% (Đúc khuôn nhẫn)</td>
-                    <td>{currencyFormatter(10000000)}</td>
+                    <td>{currencyFormatter(order.totalPrice.amount * 0.5)}</td>
                     <td>3 ngày sau khi có hợp đồng</td>
                   </tr>
                   <tr>
                     <td>Hoàn Thành 75% (Gắn kim cương và Đánh bóng)</td>
-                    <td>{currencyFormatter(10000000)}</td>
+                    <td>{currencyFormatter(order.totalPrice.amount * 0.25)}</td>
                     <td>1 tuần sau khi hoàn thành 50% tiến độ</td>
                   </tr>
                   <tr>
                     <td>Hoàn Thành 100% (Đóng gói và Hoàn tất)</td>
-                    <td>{currencyFormatter(10000000)}</td>
+                    <td>{currencyFormatter(order.totalPrice.amount * 0.25)}</td>
                     <td>1 tuần sau khi hoàn thành 75% tiến độ</td>
                   </tr>
                 </tbody>
@@ -317,11 +475,14 @@ function Contract() {
             <Grid container justifyContent={"space-around"} my={3}>
               <Grid item xs={4.2} textAlign={"center"}>
                 <div className={styles.label}>Khách Hàng:</div>
-                {signature ? (
-                  <img src={signature} />
-                ) : (
+                {signed && !order.contract.signature && <img src={signature} />}
+
+                {!signed && !order.contract.signature && (
                   <SignatureCanvas
                     ref={ref}
+                    onEnd={() => {
+                      if (ref.current) setSignature(ref.current?.toDataURL());
+                    }}
                     onBegin={() => setError(false)}
                     penColor="black"
                     canvasProps={{
@@ -332,11 +493,19 @@ function Contract() {
                   />
                 )}
 
+                {order.contract.signature && (
+                  <img src={order.contract.signature.url} />
+                )}
                 <Divider sx={{ backgroundColor: "#555", my: 3 }} />
                 <Box sx={{ mb: 1 }}>
-                  <b>Nguyễn Văn A</b>
+                  <b style={{ textTransform: "capitalize" }}>
+                    {customerSpouse?.fullName.toLowerCase()}
+                  </b>
                 </Box>
-                <div>Ngày {moment().format("DD-MM-YYYY")}</div>
+                <div>
+                  Ngày {moment().format("DD")} Tháng {moment().format("MM")} Năm{" "}
+                  {moment().format("YYYY")}
+                </div>
               </Grid>
               <Grid item xs={4} textAlign={"center"}>
                 <div className={styles.label}>Bên Cung Cấp Dịch Vụ:</div>
@@ -344,12 +513,14 @@ function Contract() {
 
                 <Divider sx={{ backgroundColor: "#555", my: 3 }} />
                 <Box sx={{ mb: 1 }}>
-                  <b>Nguyễn Văn B</b>
+                  <b>Nguyễn Văn Bê</b>
                 </Box>
                 <Box sx={{ mb: 1 }}>
                   <b>Công Ty TNHH Couple Ring</b>
                 </Box>
-                <div>Ngày {moment().format("DD-MM-YYYY")}</div>
+                <div>
+                  Ngày {"__"} Tháng {"__"} Năm {"____"}
+                </div>
               </Grid>
             </Grid>
 
@@ -372,7 +543,7 @@ function Contract() {
           </Grid>
         </Grid>
 
-        {!signature && (
+        {!signed && !order.contract.signature && (
           <Grid container item xs={12} justifyContent={"center"} gap={3}>
             <Button
               variant="contained"
@@ -381,13 +552,15 @@ function Contract() {
             >
               Xóa Và Ký Lại
             </Button>
-            <Button
+            <LoadingButton
+              loading={instance.loading}
+              disabled={instance.loading}
               variant="contained"
               sx={{ ...primaryBtn, py: 1 }}
               onClick={verifySignature}
             >
               Xác Nhận Chữ Ký
-            </Button>
+            </LoadingButton>
           </Grid>
         )}
         {error && (
@@ -396,10 +569,19 @@ function Contract() {
           </div>
         )}
 
-        {signature && (
+        {signed && (
           <Grid item xs={12} textAlign={"center"} mt={4}>
             <PDFDownloadLink
-              document={<ContractFile signature={signature} />}
+              document={
+                <ContractFile
+                  signature={signature}
+                  name={customerSpouse?.fullName ? customerSpouse.fullName : ""}
+                  email={order.customer.email}
+                  phone={order.customer.phone ? order.customer.phone : "--"}
+                  total={order.totalPrice.amount}
+                  address={"--"}
+                />
+              }
               fileName="Contract.pdf"
               className={styles.download}
             >
@@ -414,7 +596,9 @@ function Contract() {
               gap={1}
               mt={5}
               className={styles.back}
-              onClick={() => navigate(`/customer/support/custom-order`)}
+              onClick={() =>
+                navigate(`/customer/support/custom-order/detail/${order.id}`)
+              }
             >
               <KeyboardBackspaceRoundedIcon /> Quay Về Đơn Gia Công
             </Grid>
@@ -444,12 +628,22 @@ function Contract() {
           </div>
         </DialogContent>
         <DialogActions sx={{ mt: 3 }}>
-          <Button variant="outlined" onClick={handleClose}>
+          <Button
+            disabled={
+              signContractMutation.isPending || uploadMutation.isPending
+            }
+            variant="outlined"
+            onClick={handleClose}
+          >
             Hủy
           </Button>
-          <Button variant="contained" onClick={confirmSignature}>
+          <LoadingButton
+            loading={signContractMutation.isPending || uploadMutation.isPending}
+            variant="contained"
+            onClick={confirmSignature}
+          >
             Xác Nhận
-          </Button>
+          </LoadingButton>
         </DialogActions>
       </Dialog>
     </div>

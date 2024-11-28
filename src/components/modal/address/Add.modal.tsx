@@ -18,6 +18,11 @@ import { phonePattern } from "src/utils/constants";
 import { useAppSelector } from "src/utils/hooks";
 import { getWards } from "src/services/province.service";
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { postCreateTransportAddress } from "src/services/transportAddress.service";
+import { toast } from "react-toastify";
+import { fetchTransportAddresses } from "src/utils/querykey";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 interface IFormInput {
   receiverName: string;
@@ -27,10 +32,13 @@ interface IFormInput {
   ward: number;
 }
 
-function AddModal(props: IModalProps) {
-  const { open, setOpen } = props;
+function AddModal(props: IAddAddressModalProps) {
+  const { open, setOpen, filterObj } = props;
 
   const [wards, setWards] = useState<IWard[]>([]);
+
+  const { id } = useAppSelector((state) => state.auth.userInfo);
+  const { districts } = useAppSelector((state) => state.district);
 
   const {
     reset,
@@ -39,15 +47,46 @@ function AddModal(props: IModalProps) {
     handleSubmit,
     control,
   } = useForm<IFormInput>();
+
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (data: ICreateTransportAddressRequest) => {
+      return postCreateTransportAddress(data);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        toast.success("Tạo địa chỉ thành công");
+        queryClient.invalidateQueries({
+          queryKey: [fetchTransportAddresses, filterObj],
+        });
+        handleClose();
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     const district = districts.find((item) => item.code === data.district);
     const ward = wards.find((item) => item.code === data.ward);
     if (district && ward) {
       const address = `${data.address}, ${ward.name}, ${district.name}, TP Hồ Chí Minh`;
-      console.log(address);
+
+      mutation.mutate({
+        customerId: id,
+        address,
+        receiverName: data.receiverName,
+        receiverPhone: data.receiverPhone,
+        ward: ward.name,
+        wardCode: ward.code,
+        district: district.name,
+        districtCode: district.code,
+      });
     }
   };
-  const { districts } = useAppSelector((state) => state.district);
 
   const handleSelectDistrict = async (districtCode: number | string) => {
     if (!districtCode) {
@@ -152,7 +191,10 @@ function AddModal(props: IModalProps) {
                 defaultValue={0}
                 name="district"
                 control={control}
-                rules={{ required: "Vui lòng chọn quận, huyện" }}
+                rules={{
+                  required: "Vui lòng chọn quận, huyện",
+                  min: { value: 1, message: "Vui lòng chọn quận, huyện" },
+                }}
                 render={({ field }) => (
                   <Select
                     {...field}
@@ -187,7 +229,10 @@ function AddModal(props: IModalProps) {
                 defaultValue={0}
                 name="ward"
                 control={control}
-                rules={{ required: "Vui lòng chọn xã, phường" }}
+                rules={{
+                  required: "Vui lòng chọn xã, phường",
+                  min: { value: 1, message: "Vui lòng chọn quận, huyện" },
+                }}
                 render={({ field }) => (
                   <Select {...field}>
                     <MenuItem value={0} disabled>
@@ -214,9 +259,13 @@ function AddModal(props: IModalProps) {
         <Button variant="outlined" onClick={handleClose}>
           Hủy
         </Button>
-        <Button variant="contained" type="submit">
+        <LoadingButton
+          variant="contained"
+          type="submit"
+          loading={mutation.isPending}
+        >
           Xác Nhận
-        </Button>
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );

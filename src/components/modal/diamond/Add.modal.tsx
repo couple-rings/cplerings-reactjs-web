@@ -14,6 +14,15 @@ import {
   Select,
 } from "@mui/material";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchDiamondSpecs, fetchDiamonds } from "src/utils/querykey";
+import { getDiamondSpecs } from "src/services/diamondSpec.service";
+import { postUploadFile } from "src/services/file.service";
+import { toast } from "react-toastify";
+import { postCreateDiamond } from "src/services/diamond.service";
+import { toBase64 } from "src/utils/functions";
+import { useAppSelector } from "src/utils/hooks";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 interface IFormInput {
   giaReportNumber: string;
@@ -21,38 +30,57 @@ interface IFormInput {
   diamondSpecId: number;
 }
 
-const diamondSpecs = [
-  {
-    id: 1,
-    name: "Pure Heart",
-    weight: 0.05,
-    color: "D",
-    clarity: "VS2",
-    shape: "HEART",
-    price: 3600000,
-  },
-  {
-    id: 2,
-    name: "Graceful Oval",
-    weight: 0.05,
-    color: "G",
-    clarity: "SI1",
-    shape: "OVAL",
-    price: 3120000,
-  },
-  {
-    id: 3,
-    name: "Dazzling Round",
-    weight: 0.15,
-    color: "G",
-    clarity: "VS2",
-    shape: "ROUND",
-    price: 3600000,
-  },
-];
+const specFilter = {
+  page: 0,
+  pageSize: 100,
+};
 
-function AddModal(props: IModalProps) {
-  const { open, setOpen } = props;
+function AddModal(props: IAddDiamondModalProps) {
+  const { open, setOpen, filterObj } = props;
+
+  const queryClient = useQueryClient();
+
+  const { branchId } = useAppSelector((state) => state.auth.userInfo);
+
+  const { data: specResponse } = useQuery({
+    queryKey: [fetchDiamondSpecs, specFilter],
+
+    queryFn: () => {
+      return getDiamondSpecs(specFilter);
+    },
+  });
+
+  const uploadMutation = useMutation({
+    mutationFn: (base64: string) => {
+      return postUploadFile(base64);
+    },
+    onSuccess: (response) => {
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (data: ICreateDiamondRequest) => {
+      return postCreateDiamond(data);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        toast.success("Thêm kim cương thành công");
+
+        queryClient.invalidateQueries({
+          queryKey: [fetchDiamonds, filterObj],
+        });
+
+        handleClose();
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
 
   const {
     control,
@@ -61,7 +89,20 @@ function AddModal(props: IModalProps) {
     formState: { errors },
     handleSubmit,
   } = useForm<IFormInput>();
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    const base64 = await toBase64(data.giaDocument);
+
+    const uploadResponse = await uploadMutation.mutateAsync(base64);
+
+    if (uploadResponse.data) {
+      createMutation.mutate({
+        branchId,
+        giaDocumentId: uploadResponse.data.id,
+        diamondSpecificationId: data.diamondSpecId,
+        giaReportNumber: data.giaReportNumber,
+      });
+    }
     console.log(data);
   };
 
@@ -125,7 +166,7 @@ function AddModal(props: IModalProps) {
                     <MenuItem value={0} disabled>
                       <em>Select specification</em>
                     </MenuItem>
-                    {diamondSpecs.map((spec) => {
+                    {specResponse?.data?.items.map((spec) => {
                       return (
                         <MenuItem value={spec.id} key={spec.id}>
                           {spec.shape} {spec.weight} - {spec.color} -{" "}
@@ -176,9 +217,13 @@ function AddModal(props: IModalProps) {
         <Button variant="outlined" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="contained" type="submit">
+        <LoadingButton
+          loading={uploadMutation.isPending || createMutation.isPending}
+          variant="contained"
+          type="submit"
+        >
           Confirm
-        </Button>
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );

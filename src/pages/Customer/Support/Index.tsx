@@ -3,15 +3,20 @@ import styles from "./Index.module.scss";
 import Chatbox from "src/components/chat/chatbox/Chatbox";
 import { useAppDispatch, useAppSelector, useScrollTop } from "src/utils/hooks";
 import { useEffect, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { saveNotifications } from "src/redux/slice/conversation.slice";
-import { putUpdateConversation } from "src/services/conversation.service";
+import {
+  postCreateRandomConversation,
+  putUpdateConversation,
+} from "src/services/conversation.service";
 import { putUpdateMessage } from "src/services/message.service";
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 import { socket } from "src/config/socket";
 import { fetchConversations } from "src/utils/querykey";
 import { Location, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 function Index() {
   const [receiveMessage, setReceiveMessage] = useState<null | IMessage>(null);
@@ -28,6 +33,25 @@ function Index() {
   );
 
   const { _id } = currentConversation;
+
+  const chatMutation = useMutation({
+    mutationFn: (userId: number) => {
+      return postCreateRandomConversation(userId);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        queryClient.invalidateQueries({
+          queryKey: [fetchConversations, userId],
+        });
+
+        toast.success("Bạn đã có thể bắt đầu chat");
+      }
+
+      if (response.error) {
+        toast.error(response.error);
+      }
+    },
+  });
 
   const joinRooms = (rooms: string[]) => {
     socket.emit("join_room", rooms, (response: string) =>
@@ -110,9 +134,14 @@ function Index() {
               chúng tôi.
             </div>
             <div style={{ textAlign: "center" }}>
-              <Button variant="contained" sx={{ ...primaryBtn, py: 1 }}>
+              <LoadingButton
+                loading={chatMutation.isPending}
+                variant="contained"
+                sx={{ ...primaryBtn, py: 1 }}
+                onClick={() => chatMutation.mutate(userId)}
+              >
                 Chat Ngay
-              </Button>
+              </LoadingButton>
             </div>
           </Grid>
         </Grid>

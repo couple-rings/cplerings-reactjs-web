@@ -1,12 +1,12 @@
 import {
   Box,
-  Button,
   Card,
   FormHelperText,
   FormLabel,
   Grid,
   MenuItem,
   Select,
+  Skeleton,
   SxProps,
   TextField,
 } from "@mui/material";
@@ -18,51 +18,27 @@ import SizeMenu from "src/components/menu/SizeMenu";
 import { menuPaperStyle, secondaryBtn, sizeMenuStyle } from "src/utils/styles";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import _ from "lodash";
-
-const metalsSpecs = [
-  {
-    id: 1,
-    name: "Gold 18K - Yellow",
-  },
-  {
-    id: 2,
-    name: "Gold 18K - White",
-  },
-  {
-    id: 3,
-    name: "Gold 18K - Rose",
-  },
-];
-
-const diamondSpecs = [
-  {
-    id: 1,
-    name: "Pure Heart",
-    weight: 0.05,
-    color: "D",
-    clarity: "VS2",
-    shape: "HEART",
-    price: 3600000,
-  },
-  {
-    id: 2,
-    name: "Graceful Oval",
-    weight: 0.05,
-    color: "G",
-    clarity: "SI1",
-    shape: "OVAL",
-    price: 3120000,
-  },
-  {
-    id: 3,
-    name: "Dazzling Round",
-    weight: 0.15,
-    color: "G",
-    clarity: "VS2",
-    shape: "ROUND",
-    price: 3600000,
-  },
-];
+import { useAppSelector } from "src/utils/hooks";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  fetchBranches,
+  fetchCraftingRequests,
+  fetchCustomDesigns,
+} from "src/utils/querykey";
+import { getCustomDesigns } from "src/services/customDesign.service";
+import {
+  getCraftingRequests,
+  postCreateCraftingRequests,
+} from "src/services/craftingRequest.service";
+import {
+  CraftingRequestStatus,
+  DesignCharacteristic,
+  Status,
+} from "src/utils/enums";
+import { useNavigate } from "react-router-dom";
+import { getBranches } from "src/services/branch.service";
+import { toast } from "react-toastify";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 const sizeMenuPaperStyle: SxProps = {
   ...menuPaperStyle,
@@ -72,6 +48,7 @@ const sizeMenuPaperStyle: SxProps = {
 };
 
 interface IFormInput {
+  branchId: number;
   male: {
     metalSpecId: number;
     diamondSpecId: number;
@@ -86,12 +63,83 @@ interface IFormInput {
   };
 }
 
+const branchFilter: IBranchFilter = {
+  page: 0,
+  pageSize: 100,
+};
+
 function CreateCraftingRequest() {
+  const [maleDesign, setMaleDesign] = useState<ICustomDesign | null>(null);
+  const [femaleDesign, setFemaleDesign] = useState<ICustomDesign | null>(null);
+
+  const [designFilterObj, setDesignFilterObj] =
+    useState<ICustomDesignFilter | null>(null);
+
+  const [maleRequestFilterObj, setMaleRequestFilterObj] =
+    useState<ICraftingRequestFilter | null>(null);
+  const [femaleRequestFilterObj, setFemaleRequestFilterObj] =
+    useState<ICraftingRequestFilter | null>(null);
+
   const [maleSize, setMaleSize] = useState(0);
   const [femaleSize, setFemaleSize] = useState(0);
   const [error, setError] = useState({
     maleSizeNotSelected: false,
     femaleSizeNotSelected: false,
+  });
+
+  const { id } = useAppSelector((state) => state.auth.userInfo);
+
+  const navigate = useNavigate();
+
+  const { data: branchResponse, isLoading: branchLoading } = useQuery({
+    queryKey: [fetchBranches, branchFilter],
+
+    queryFn: () => {
+      return getBranches(branchFilter);
+    },
+  });
+
+  const { data: designResponse, isLoading: designLoading } = useQuery({
+    queryKey: [fetchCustomDesigns, designFilterObj],
+
+    queryFn: () => {
+      if (designFilterObj) return getCustomDesigns(designFilterObj);
+    },
+    enabled: !!designFilterObj,
+  });
+
+  const { data: maleRequestResponse, isLoading: maleRequestLoading } = useQuery(
+    {
+      queryKey: [fetchCraftingRequests, maleRequestFilterObj],
+
+      queryFn: () => {
+        if (maleRequestFilterObj)
+          return getCraftingRequests(maleRequestFilterObj);
+      },
+      enabled: !!maleRequestFilterObj,
+    }
+  );
+
+  const { data: femaleRequestResponse, isLoading: femaleRequestLoading } =
+    useQuery({
+      queryKey: [fetchCraftingRequests, femaleRequestFilterObj],
+
+      queryFn: () => {
+        if (femaleRequestFilterObj)
+          return getCraftingRequests(femaleRequestFilterObj);
+      },
+      enabled: !!femaleRequestFilterObj,
+    });
+
+  const mutation = useMutation({
+    mutationFn: (data: ICreateCraftingRequest) => {
+      return postCreateCraftingRequests(data);
+    },
+    onSuccess: (response) => {
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
   });
 
   const {
@@ -121,8 +169,110 @@ function CreateCraftingRequest() {
     if (onError()) {
       return;
     }
-    console.log(data);
+
+    const { branchId, female, male } = data;
+    if (maleDesign && femaleDesign) {
+      const maleResponse = await mutation.mutateAsync({
+        customerId: id,
+        branchId,
+        customDesignId: maleDesign.id,
+        engraving: male.engraving,
+        fingerSize: maleSize,
+        metalSpecId: male.metalSpecId,
+        diamondSpecId: male.diamondSpecId,
+      });
+
+      const femaleResponse = await mutation.mutateAsync({
+        customerId: id,
+        branchId,
+        customDesignId: femaleDesign.id,
+        engraving: female.engraving,
+        fingerSize: femaleSize,
+        metalSpecId: female.metalSpecId,
+        diamondSpecId: female.diamondSpecId,
+      });
+
+      if (maleResponse.data && femaleResponse.data) {
+        toast.success(
+          "Tạo yêu cầu thành công. Quý khách vui lòng chờ được duyệt."
+        );
+        navigate("/customer/support/crafting-request");
+      }
+    }
   };
+
+  useEffect(() => {
+    setDesignFilterObj({
+      page: 0,
+      pageSize: 100,
+      state: Status.Active,
+      customerId: id,
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (designResponse?.data) {
+      if (designResponse.data.items.length === 0)
+        navigate("/customer/support/crafting-request");
+
+      const maleDesign = designResponse.data.items.find(
+        (item) =>
+          item.designVersion.design.characteristic === DesignCharacteristic.Male
+      );
+
+      const femaleDesign = designResponse.data.items.find(
+        (item) =>
+          item.designVersion.design.characteristic ===
+          DesignCharacteristic.Female
+      );
+
+      if (maleDesign && femaleDesign) {
+        setMaleDesign(maleDesign);
+        setFemaleDesign(femaleDesign);
+      }
+    }
+
+    if (designResponse?.errors) navigate("/customer/support/crafting-request");
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [designResponse]);
+
+  useEffect(() => {
+    if (maleDesign)
+      setMaleRequestFilterObj({
+        page: 0,
+        pageSize: 100,
+        customDesignId: maleDesign.id,
+      });
+  }, [maleDesign]);
+
+  useEffect(() => {
+    if (femaleDesign)
+      setFemaleRequestFilterObj({
+        page: 0,
+        pageSize: 100,
+        customDesignId: femaleDesign.id,
+      });
+  }, [femaleDesign]);
+
+  useEffect(() => {
+    if (maleRequestResponse?.data && femaleRequestResponse?.data) {
+      const malePending = maleRequestResponse.data.items.find(
+        (item) => item.craftingRequestStatus === CraftingRequestStatus.Pending
+      );
+
+      const femalePending = femaleRequestResponse.data.items.find(
+        (item) => item.craftingRequestStatus === CraftingRequestStatus.Pending
+      );
+
+      if (malePending || femalePending)
+        navigate("/customer/support/crafting-request");
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [femaleRequestResponse, maleRequestResponse]);
 
   useEffect(() => {
     if (maleSize > 0)
@@ -132,26 +282,62 @@ function CreateCraftingRequest() {
       setError((current) => ({ ...current, femaleSizeNotSelected: false }));
   }, [femaleSize, maleSize]);
 
+  if (
+    designLoading ||
+    maleRequestLoading ||
+    femaleRequestLoading ||
+    branchLoading
+  )
+    return (
+      <Grid container justifyContent={"center"} my={5}>
+        <Grid container item xs={8} justifyContent={"space-between"}>
+          <Grid container item xs={5.8} gap={1}>
+            <Skeleton variant="rectangular" width={"100%"} height={200} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+          </Grid>
+
+          <Grid container item xs={5.8} gap={1}>
+            <Skeleton variant="rectangular" width={"100%"} height={200} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+          </Grid>
+        </Grid>
+      </Grid>
+    );
+
   return (
     <Grid container className={styles.container} justifyContent={"center"}>
-      <Grid item xs={8}>
+      <Grid item xs={10} lg={8}>
         <div className={styles.title}>Tạo Yêu Cầu Gia Công</div>
         <Card className={styles.body}>
           <Grid container>
-            <Grid item xs={6} p={5}>
+            <Grid item md={6} p={{ xs: 1, sm: 5 }}>
               <div className={styles.design}>
                 <Box sx={{ marginBottom: "1.5rem", textAlign: "center" }}>
                   <img src={male} width={18} />
                   <span className={styles.subtitle}>Thiết Kế Của Nam</span>
                 </Box>
+
+                <Grid container justifyContent={"center"} mb={3}>
+                  <Grid item xs={8}>
+                    <img
+                      src={maleDesign?.designVersion.image.url}
+                      className={styles.designImg}
+                    />
+                  </Grid>
+                </Grid>
+
                 <Grid container justifyContent={"center"} gap={11.9} mb={2}>
                   <div>Trọng lượng:</div>
-                  <div>3 Chỉ</div>
+                  <div>{maleDesign?.metalWeight} Chỉ</div>
                 </Grid>
 
                 <Grid container justifyContent={"center"} gap={5}>
                   <div>Số kim cương phụ:</div>
-                  <div>8 Viên</div>
+                  <div>{maleDesign?.sideDiamondsCount} Viên</div>
                 </Grid>
               </div>
 
@@ -182,7 +368,7 @@ function CreateCraftingRequest() {
                         <MenuItem value={0} disabled>
                           <em>Chọn chất liệu</em>
                         </MenuItem>
-                        {metalsSpecs.map((item) => {
+                        {maleDesign?.metalSpecifications.map((item) => {
                           return (
                             <MenuItem value={item.id} key={item.id}>
                               {item.name}
@@ -227,7 +413,7 @@ function CreateCraftingRequest() {
                         <MenuItem value={0} disabled>
                           <em>Chọn kim cương</em>
                         </MenuItem>
-                        {diamondSpecs.map((spec) => {
+                        {maleDesign?.diamondSpecifications.map((spec) => {
                           return (
                             <MenuItem value={spec.id} key={spec.id}>
                               {spec.shape} {spec.weight} - {spec.color} -{" "}
@@ -296,20 +482,30 @@ function CreateCraftingRequest() {
               </Grid>
             </Grid>
 
-            <Grid item xs={6} p={5}>
+            <Grid item md={6} p={{ xs: 1, sm: 5 }}>
               <div className={styles.design}>
                 <Box sx={{ marginBottom: "1.5rem", textAlign: "center" }}>
                   <img src={female} width={18} />
                   <span className={styles.subtitle}>Thiết Kế Của Nữ</span>
                 </Box>
+
+                <Grid container justifyContent={"center"} mb={3}>
+                  <Grid item xs={8}>
+                    <img
+                      src={femaleDesign?.designVersion.image.url}
+                      className={styles.designImg}
+                    />
+                  </Grid>
+                </Grid>
+
                 <Grid container justifyContent={"center"} gap={11.9} mb={2}>
                   <div>Trọng lượng:</div>
-                  <div>3 Chỉ</div>
+                  <div>{femaleDesign?.metalWeight} Chỉ</div>
                 </Grid>
 
                 <Grid container justifyContent={"center"} gap={5}>
                   <div>Số kim cương phụ:</div>
-                  <div>8 Viên</div>
+                  <div>{femaleDesign?.sideDiamondsCount} Viên</div>
                 </Grid>
               </div>
 
@@ -340,7 +536,7 @@ function CreateCraftingRequest() {
                         <MenuItem value={0} disabled>
                           <em>Chọn chất liệu</em>
                         </MenuItem>
-                        {metalsSpecs.map((item) => {
+                        {femaleDesign?.metalSpecifications.map((item) => {
                           return (
                             <MenuItem value={item.id} key={item.id}>
                               {item.name}
@@ -385,7 +581,7 @@ function CreateCraftingRequest() {
                         <MenuItem value={0} disabled>
                           <em>Chọn kim cương</em>
                         </MenuItem>
-                        {diamondSpecs.map((spec) => {
+                        {femaleDesign?.diamondSpecifications.map((spec) => {
                           return (
                             <MenuItem value={spec.id} key={spec.id}>
                               {spec.shape} {spec.weight} - {spec.color} -{" "}
@@ -454,14 +650,55 @@ function CreateCraftingRequest() {
               </Grid>
             </Grid>
 
+            <Grid container justifyContent={"center"} my={5}>
+              <Grid item xs={6}>
+                <FormLabel error={!!errors.branchId}>Cửa Hàng</FormLabel>
+                <Controller
+                  defaultValue={0}
+                  name="branchId"
+                  rules={{
+                    required: "* Vui lòng chọn cửa hàng",
+                    min: { value: 1, message: "* Vui lòng chọn cửa hàng" },
+                  }}
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      error={!!errors.branchId}
+                      fullWidth
+                      variant="standard"
+                      defaultValue={0}
+                    >
+                      <MenuItem value={0} disabled>
+                        <em>Chọn cửa hàng gần bạn</em>
+                      </MenuItem>
+                      {branchResponse?.data?.items.map((item) => {
+                        return (
+                          <MenuItem value={item.id} key={item.id}>
+                            {item.storeName} - {item.address}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  )}
+                />
+                {errors.branchId && (
+                  <FormHelperText error sx={{ mt: 1 }}>
+                    {errors.branchId.message}
+                  </FormHelperText>
+                )}
+              </Grid>
+            </Grid>
+
             <Grid container justifyContent={"center"} mt={5}>
-              <Button
+              <LoadingButton
+                loading={mutation.isPending}
                 variant="contained"
                 sx={secondaryBtn}
                 onClick={handleSubmit(onSubmit, onError)}
               >
                 Xác Nhận
-              </Button>
+              </LoadingButton>
             </Grid>
           </Grid>
         </Card>

@@ -1,0 +1,108 @@
+.container {
+    width         : 100vw;
+    padding-bottom: 5rem;
+
+    .header {
+        background-image   : url("../../../assets/loveAgreement.png");
+        width              : 100vw;
+        background-size    : cover;
+        background-position: center;
+
+        .box {
+            padding: 5rem 3rem;
+
+            .headerTitle {
+                color       : black;
+                font-size   : 25px;
+                word-spacing: 3px;
+            }
+
+            .headerDescription {
+                color      : #6f6a6a;
+                line-height: 40px;
+                margin-top : 30px;
+                font-style : italic;
+                font-weight: 300;
+            }
+        }
+    }
+
+    .honorBoard {
+        margin-top: 50px;
+
+        .honorTitleBoard {
+            text-align: center;
+
+            .title {
+                color    : #6f6a6a;
+                font-size: 22px;
+            }
+
+            .description {
+                color      : #a8a7a7;
+                font-style : italic;
+                font-weight: 350;
+                margin-top : 5px;
+            }
+        }
+
+        .agreementBox {
+            text-align: center;
+        }
+
+        .second {
+            text-align: center;
+        }
+
+        .abc {
+            display        : flex;
+            align-items    : center;
+            justify-content: center;
+            margin-bottom  : 30px;
+
+        }
+
+        .inside {
+            box-shadow: 0px 7px 29px 0px #fbe6a8;
+
+        }
+
+        .boxContainer {
+            display        : flex;
+            justify-content: center;
+            align-items    : center;
+        }
+
+        .box {
+            background-color: #b43620;
+            width           : fit-content;
+            text-align      : center;
+            padding         : 0.5rem;
+            font-weight     : 300;
+            color           : #ffffff;
+            border          : 2px solid #fbe6a8;
+            box-shadow      : 0px 7px 29px 0px #fbe6a8;
+            margin-bottom   : 30px;
+        }
+    }
+
+    .list {
+        margin-top: 50px;
+        padding   : 0 3rem;
+
+        .listTitle {
+            font-size    : 22px;
+            color        : #6f6a6a;
+            font-weight  : 300;
+            margin-bottom: 50px;
+        }
+
+        .abc {
+            display        : flex;
+            align-items    : center;
+            justify-content: center;
+            margin-bottom  : 70px;
+            cursor         : pointer;
+        }
+    }
+}

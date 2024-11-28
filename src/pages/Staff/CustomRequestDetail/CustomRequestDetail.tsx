@@ -253,9 +253,8 @@ function CustomRequestDetail() {
         </Grid>
 
         <Grid container justifyContent={"center"}>
-          <Grid container item xs={8} md={4} gap={3}>
-            {(response?.data?.status === CustomRequestStatus.OnGoing ||
-              response?.data?.status === CustomRequestStatus.Completed) && (
+          <Grid container item xs={8} md={6} gap={3} justifyContent={"center"}>
+            {response?.data?.status === CustomRequestStatus.OnGoing && (
               <>
                 <Grid item>
                   <LoadingButton

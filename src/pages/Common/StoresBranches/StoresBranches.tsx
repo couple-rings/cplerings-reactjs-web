@@ -1,32 +1,45 @@
-import { Breadcrumbs, Grid, Typography, Link } from "@mui/material";
+import { Breadcrumbs, Grid, Typography, Link, Skeleton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import styles from "./StoresBranches.module.scss";
 import BranchCard from "src/components/branch/BranchCard";
-import StoreImage from "src/assets/store.png";
+import { useQuery } from "@tanstack/react-query";
+import { fetchBranches } from "src/utils/querykey";
+import { getBranches } from "src/services/branch.service";
+
+const branchFilter: IBranchFilter = {
+  page: 0,
+  pageSize: 100,
+};
 
 const StoresBranches = () => {
   const navigate = useNavigate();
 
-  const store = [
-    {
-      coverImg: StoreImage,
-      name: "Paris-Carrousel du Louvre",
-      adr: "Darry Ring, Carrousel du Louvre, 99 Rue de Rivoli, 75001 Paris",
-      contact: "+33 986414300",
+  const { data: response, isLoading } = useQuery({
+    queryKey: [fetchBranches, branchFilter],
+
+    queryFn: () => {
+      return getBranches(branchFilter);
     },
-    {
-      coverImg: StoreImage,
-      name: "Hong Kong International Plaza",
-      adr: "No.6B Store,International Plaza, No.63 Nathan Road, Tsim Sha Tsui, Kowloon, Hong Kong (H exit, Tsim Sha Tsui metro station)",
-      contact: "00852-23677389",
-    },
-    {
-      coverImg: StoreImage,
-      name: "Paris-Carrousel du Louvre",
-      adr: "Darry Ring, Carrousel du Louvre, 99 Rue de Rivoli, 75001 Paris",
-      contact: "021-59100836",
-    },
-  ];
+  });
+
+  if (isLoading)
+    return (
+      <Grid container justifyContent={"center"} my={5}>
+        <Grid container item xs={8} justifyContent={"space-between"}>
+          <Grid container item xs={3.8}>
+            <Skeleton variant="rectangular" width={"100%"} height={500} />
+          </Grid>
+
+          <Grid container item xs={3.8}>
+            <Skeleton variant="rectangular" width={"100%"} height={500} />
+          </Grid>
+
+          <Grid container item xs={3.8}>
+            <Skeleton variant="rectangular" width={"100%"} height={500} />
+          </Grid>
+        </Grid>
+      </Grid>
+    );
 
   return (
     <div className={styles.container}>
@@ -42,14 +55,15 @@ const StoresBranches = () => {
           </Link>
           <Typography sx={{ color: "text.primary" }}>Cửa Hàng</Typography>
         </Breadcrumbs>
+
+        <div className={styles.title}>
+          <h1>Tìm kiếm cửa hàng</h1>
+          <p>
+            Vui lòng liên hệ với nhóm trực tuyến hoặc các cửa hàng bên dưới nếu
+            có bất kỳ thắc mắc nào và chúng tôi rất vui lòng được trợ giúp.
+          </p>
+        </div>
       </Grid>
-      <div className={styles.title}>
-        <h1>Tìm kiếm cửa hàng</h1>
-        <p>
-          Vui lòng liên hệ với nhóm trực tuyến hoặc các cửa hàng bên dưới nếu có
-          bất kỳ thắc mắc nào và chúng tôi rất vui lòng được trợ giúp.
-        </p>
-      </div>
 
       <Grid
         container
@@ -59,10 +73,10 @@ const StoresBranches = () => {
         justifyContent={"center"}
         className="list"
       >
-        {store?.map((item, index) => {
+        {response?.data?.items.map((item) => {
           return (
-            <Grid item sm={6} md={4} lg={3.5} key={index}>
-              <BranchCard store={item} />
+            <Grid item sm={6} md={4} key={item.id}>
+              <BranchCard data={item} />
             </Grid>
           );
         })}

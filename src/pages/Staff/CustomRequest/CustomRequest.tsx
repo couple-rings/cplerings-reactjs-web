@@ -100,22 +100,22 @@ function CustomRequest() {
 
           if (row.status === CustomRequestStatus.Completed) {
             classname = styles.completed;
-            status = "Completed";
+            status = "Hoàn Thành";
           }
 
           if (row.status === CustomRequestStatus.Canceled) {
             classname = styles.canceled;
-            status = "Canceled";
+            status = "Đã Hủy";
           }
 
           if (row.status === CustomRequestStatus.OnGoing) {
             classname = styles.ongoing;
-            status = "On Going";
+            status = "Đang Thực Hiện";
           }
 
           if (row.status === CustomRequestStatus.Waiting) {
             classname = styles.ongoing;
-            status = "Waiting";
+            status = "Chờ Duyệt";
           }
           return <div className={classname}>{status}</div>;
         },

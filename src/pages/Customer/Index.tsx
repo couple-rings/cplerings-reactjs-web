@@ -31,7 +31,7 @@ const imgLists = [
   },
   {
     img: agreement,
-    path: "/customer",
+    path: "/customer/love-agreement",
   },
   {
     img: support,

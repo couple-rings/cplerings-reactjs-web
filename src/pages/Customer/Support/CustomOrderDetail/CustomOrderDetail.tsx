@@ -1,19 +1,153 @@
-import { Button, Chip, Divider, Grid } from "@mui/material";
+import { Button, Chip, Divider, Grid, Skeleton } from "@mui/material";
 import styles from "./CustomOrderDetail.module.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import { currencyFormatter } from "src/utils/functions";
-import menring from "src/assets/sampledata/menring.png";
 import male from "src/assets/male-icon.png";
 import female from "src/assets/female-icon.png";
 import { secondaryBtn } from "src/utils/styles";
 import DownloadForOfflineRoundedIcon from "@mui/icons-material/DownloadForOfflineRounded";
+import { useQuery } from "@tanstack/react-query";
+import { getCustomOrderDetail } from "src/services/customOrder.service";
+import {
+  fetchCustomOrderDetail,
+  fetchTransportOrdersWithCustomOrder,
+} from "src/utils/querykey";
+import { useEffect, useState } from "react";
+import {
+  CustomOrderStatus,
+  DesignCharacteristic,
+  TransportOrderStatus,
+} from "src/utils/enums";
+import { useAppSelector } from "src/utils/hooks";
+import { ChipColor } from "src/utils/constants";
+import DownloadIcon from "@mui/icons-material/Download";
+import { getTransportOrderWithCustomOrder } from "src/services/transportOrder.service";
 
 function CustomOrderDetail() {
+  const [order, setOrder] = useState<ICustomOrder | null>(null);
+  const [maleRing, setMaleRing] = useState<IRing | null>(null);
+  const [femaleRing, setFemaleRing] = useState<IRing | null>(null);
+
   const { id } = useParams<{ id: string }>();
-  console.log(id);
 
   const navigate = useNavigate();
+
+  const { id: userId } = useAppSelector((state) => state.auth.userInfo);
+
+  const { data: response } = useQuery({
+    queryKey: [fetchCustomOrderDetail, id],
+
+    queryFn: () => {
+      if (id) return getCustomOrderDetail(+id);
+    },
+    enabled: !!id,
+  });
+
+  const { data: transportResponse } = useQuery({
+    queryKey: [fetchTransportOrdersWithCustomOrder, order?.id],
+
+    queryFn: () => {
+      if (order?.id) return getTransportOrderWithCustomOrder(order.id);
+    },
+    enabled: !!order?.id,
+  });
+
+  const formatStatus = (
+    status: CustomOrderStatus
+  ): { text: string; color: ChipColor } => {
+    if (status === CustomOrderStatus.Pending)
+      return {
+        text: "Chưa Thanh Toán",
+        color: "warning",
+      };
+
+    if (status === CustomOrderStatus.Waiting)
+      return {
+        text: "Đang Chuẩn Bị",
+        color: "warning",
+      };
+
+    if (status === CustomOrderStatus.InProgress)
+      return {
+        text: "Đang Gia Công",
+        color: "secondary",
+      };
+
+    if (status === CustomOrderStatus.Done)
+      return {
+        text: "Chuẩn Bị Giao",
+        color: "primary",
+      };
+
+    if (status === CustomOrderStatus.Delivering)
+      return {
+        text: "Đang Giao",
+        color: "primary",
+      };
+
+    if (status === CustomOrderStatus.Completed)
+      return {
+        text: "Hoàn Thành",
+        color: "success",
+      };
+
+    return {
+      text: "Đã Hủy",
+      color: "error",
+    };
+  };
+
+  useEffect(() => {
+    if (response && response.data) {
+      const { firstRing, secondRing, customer } = response.data.customOrder;
+      console.log(customer.id !== userId);
+      if (customer.id !== userId) navigate("/customer/support/custom-order");
+
+      if (
+        firstRing.customDesign.designVersion.design.characteristic ===
+        DesignCharacteristic.Male
+      )
+        setMaleRing(firstRing);
+      else setFemaleRing(firstRing);
+
+      if (
+        secondRing.customDesign.designVersion.design.characteristic ===
+        DesignCharacteristic.Female
+      )
+        setFemaleRing(secondRing);
+      else setMaleRing(secondRing);
+
+      setOrder(response.data.customOrder);
+    }
+
+    if (response && response.errors) {
+      navigate("/customer/support/custom-order");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response]);
+
+  if (!maleRing || !femaleRing || !order)
+    return (
+      <Grid container justifyContent={"center"} mt={5}>
+        <Grid container item xs={8} mb={3} justifyContent={"space-between"}>
+          <Grid container item xs={5.8} gap={3}>
+            <Skeleton variant="rectangular" width={"100%"} height={300} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+          </Grid>
+          <Grid container item xs={5.8} gap={3}>
+            <Skeleton variant="rectangular" width={"100%"} height={300} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+            <Skeleton variant="rectangular" width={"100%"} height={100} />
+          </Grid>
+        </Grid>
+      </Grid>
+    );
 
   return (
     <Grid container className={styles.container} justifyContent={"center"}>
@@ -26,7 +160,7 @@ function CustomOrderDetail() {
                 Mã Đơn:
               </Grid>
               <Grid item className={styles.info}>
-                1234567
+                {order.orderNo}
               </Grid>
             </Grid>
 
@@ -35,7 +169,7 @@ function CustomOrderDetail() {
                 Ngày Tạo:
               </Grid>
               <Grid item className={styles.info}>
-                {moment().format("DD/MM/YYYY")}
+                {moment(order.createdAt).format("DD/MM/YYYY")}
               </Grid>
             </Grid>
           </Grid>
@@ -52,7 +186,10 @@ function CustomOrderDetail() {
                 Trạng Thái:
               </Grid>
               <Grid item>
-                <Chip label={"Chưa Thanh Toán"} color="warning" />
+                <Chip
+                  label={formatStatus(order.status).text}
+                  color={formatStatus(order.status).color}
+                />
               </Grid>
             </Grid>
 
@@ -61,34 +198,79 @@ function CustomOrderDetail() {
                 Thợ Gia Công:
               </Grid>
               <Grid item className={styles.info}>
-                N/A
+                {order.jeweler ? order.jeweler.username : "N/A"}
               </Grid>
             </Grid>
           </Grid>
 
-          <Grid container item fontSize={"1.2rem"} mb={2} alignItems={"center"}>
-            <Grid item xs={1.5}>
+          <Grid
+            container
+            item
+            xs={6}
+            fontSize={"1.2rem"}
+            mb={2}
+            alignItems={"center"}
+          >
+            <Grid item xs={3}>
               Tổng Tiền:
             </Grid>
             <Grid item className={styles.total}>
-              {currencyFormatter(20000000)}
+              {currencyFormatter(order.totalPrice.amount)}
             </Grid>
           </Grid>
+
+          {[
+            CustomOrderStatus.Done,
+            CustomOrderStatus.Delivering,
+            CustomOrderStatus.Completed,
+          ].includes(order.status) && (
+            <Grid container item xs={6}>
+              <Grid container item fontSize={"1.2rem"} mb={2}>
+                <Grid
+                  item
+                  className={styles.loveVerification}
+                  onClick={() => navigate("/customer/love-agreement")}
+                >
+                  Chứng Nhận Tình Yêu
+                </Grid>
+                <Grid item ml={1}>
+                  Của Bạn
+                </Grid>
+              </Grid>
+            </Grid>
+          )}
         </Grid>
 
         <Grid container justifyContent={"center"} mt={5}>
           <Grid container item xs={8} className={styles.card} py={5}>
             <Grid container item xs={6} justifyContent={"center"}>
               <Grid item xs={9} mb={3}>
-                <img src={menring} className={styles.ringImage} />
+                <img
+                  src={maleRing.customDesign.designVersion.image.url}
+                  className={styles.ringImage}
+                />
               </Grid>
 
-              <Grid item xs={12} textAlign={"center"} mb={5}>
+              <Grid item xs={12} textAlign={"center"} mb={2}>
                 <img src={male} width={15} style={{ marginRight: 8 }} />
                 Nhẫn Nam
               </Grid>
 
-              <Grid item xs={9}>
+              {maleRing.maintenanceDocument && (
+                <Grid item xs={12} textAlign={"center"} mb={2}>
+                  <a
+                    download={""}
+                    href={maleRing.maintenanceDocument.url}
+                    className={styles.download}
+                    style={{ fontSize: "1rem" }}
+                  >
+                    <DownloadIcon />
+                    Giấy bảo hành
+                  </a>
+                </Grid>
+              )}
+
+              <Grid item xs={9} mt={3}>
                 <Grid container justifyContent={"space-between"}>
                   <Grid item className={styles.label}>
                     Chất Liệu
@@ -109,7 +291,7 @@ function CustomOrderDetail() {
                   <Grid item className={styles.label}>
                     Kích Thước
                   </Grid>
-                  <Grid item>4</Grid>
+                  <Grid item>{maleRing.fingerSize}</Grid>
                 </Grid>
                 <Divider sx={{ my: 2 }} />
 
@@ -117,7 +299,9 @@ function CustomOrderDetail() {
                   <Grid item className={styles.label}>
                     Khắc Chữ
                   </Grid>
-                  <Grid item>NVA</Grid>
+                  <Grid item>
+                    {maleRing.engraving ? maleRing.engraving : "--"}
+                  </Grid>
                 </Grid>
                 <Divider sx={{ my: 2 }} />
 
@@ -125,22 +309,39 @@ function CustomOrderDetail() {
                   <Grid item className={styles.label}>
                     Khối Lượng
                   </Grid>
-                  <Grid item>3 Chỉ</Grid>
+                  <Grid item>{maleRing.customDesign.metalWeight} Chỉ</Grid>
                 </Grid>
               </Grid>
             </Grid>
 
             <Grid container item xs={6} justifyContent={"center"}>
               <Grid item xs={9} mb={3}>
-                <img src={menring} className={styles.ringImage} />
+                <img
+                  src={femaleRing.customDesign.designVersion.image.url}
+                  className={styles.ringImage}
+                />
               </Grid>
 
-              <Grid item xs={12} textAlign={"center"} mb={5}>
+              <Grid item xs={12} textAlign={"center"} mb={2}>
                 <img src={female} width={15} style={{ marginRight: 8 }} />
                 Nhẫn Nữ
               </Grid>
 
-              <Grid item xs={9}>
+              {femaleRing.maintenanceDocument && (
+                <Grid item xs={12} textAlign={"center"} mb={2}>
+                  <a
+                    download={""}
+                    href={femaleRing.maintenanceDocument.url}
+                    className={styles.download}
+                    style={{ fontSize: "1rem" }}
+                  >
+                    <DownloadIcon />
+                    Giấy bảo hành
+                  </a>
+                </Grid>
+              )}
+
+              <Grid item xs={9} mt={3}>
                 <Grid container justifyContent={"space-between"}>
                   <Grid item className={styles.label}>
                     Chất Liệu
@@ -161,7 +362,7 @@ function CustomOrderDetail() {
                   <Grid item className={styles.label}>
                     Kích Thước
                   </Grid>
-                  <Grid item>4</Grid>
+                  <Grid item>{femaleRing.fingerSize}</Grid>
                 </Grid>
                 <Divider sx={{ my: 2 }} />
 
@@ -169,7 +370,9 @@ function CustomOrderDetail() {
                   <Grid item className={styles.label}>
                     Khắc Chữ
                   </Grid>
-                  <Grid item>NVA</Grid>
+                  <Grid item>
+                    {femaleRing.engraving ? femaleRing.engraving : "--"}
+                  </Grid>
                 </Grid>
                 <Divider sx={{ my: 2 }} />
 
@@ -177,41 +380,57 @@ function CustomOrderDetail() {
                   <Grid item className={styles.label}>
                     Khối Lượng
                   </Grid>
-                  <Grid item>3 Chỉ</Grid>
+                  <Grid item>{femaleRing.customDesign.metalWeight} Chỉ</Grid>
                 </Grid>
               </Grid>
             </Grid>
 
-            <Grid container mt={10} className={styles.download}>
-              <DownloadForOfflineRoundedIcon />
-              <span>Tải File PDF</span>
-            </Grid>
+            {order.contract.document && (
+              <Grid container mt={10} justifyContent={"center"}>
+                <a
+                  download={""}
+                  href={order.contract.document.url}
+                  className={styles.download}
+                >
+                  <DownloadForOfflineRoundedIcon />
+                  <span>Tải File PDF</span>
+                </a>
+              </Grid>
+            )}
 
-            <Grid container justifyContent={"center"} mt={5}>
-              {
-                // eslint-disable-next-line no-constant-condition
-                true ? (
-                  <Button
-                    variant="contained"
-                    sx={secondaryBtn}
-                    onClick={() =>
-                      navigate(
-                        "/customer/support/custom-order/crafting-process"
-                      )
-                    }
-                  >
-                    Quá Trình Gia Công
-                  </Button>
-                ) : (
-                  <Button
-                    variant="contained"
-                    sx={secondaryBtn}
-                    onClick={() => navigate("/customer/contract")}
-                  >
-                    Ký Hợp Đồng
-                  </Button>
-                )
-              }
+            <Grid container justifyContent={"center"} mt={5} gap={3}>
+              {order.contract.signature ? (
+                <Button
+                  variant="contained"
+                  sx={secondaryBtn}
+                  onClick={() =>
+                    navigate(
+                      `/customer/support/custom-order/${order.id}/crafting-process`
+                    )
+                  }
+                >
+                  Quá Trình Gia Công
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  sx={secondaryBtn}
+                  onClick={() => navigate(`/customer/contract/${order.id}`)}
+                >
+                  Ký Hợp Đồng
+                </Button>
+              )}
+
+              {transportResponse?.data?.status ===
+                TransportOrderStatus.Delivering && (
+                <Button
+                  variant="contained"
+                  sx={secondaryBtn}
+                  onClick={() => navigate(`/customer/transport/${order.id}`)}
+                >
+                  Vị Trí Người Giao Hàng
+                </Button>
+              )}
             </Grid>
           </Grid>
         </Grid>

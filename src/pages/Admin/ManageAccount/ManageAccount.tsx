@@ -20,19 +20,20 @@ import { primaryBtn } from "src/utils/styles";
 
 interface Row {
   id: number;
-  avatar: string;
+  avatar: string | null;
   email: string;
   username: string;
   role: UserRole;
   status: AccountStatus;
-  phone: string;
+  phone: string | null;
+  branch: IBranch | null;
 }
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
   ["contains", "equals" /* add more over time */].includes(value)
 );
 
-const rows = [
+const rows: Row[] = [
   {
     id: 1,
     avatar,
@@ -41,6 +42,7 @@ const rows = [
     role: UserRole.Customer,
     status: AccountStatus.Active,
     phone: "0987654321",
+    branch: null,
   },
   {
     id: 2,
@@ -50,6 +52,7 @@ const rows = [
     role: UserRole.Staff,
     status: AccountStatus.Active,
     phone: "0987654321",
+    branch: null,
   },
   {
     id: 3,
@@ -59,6 +62,7 @@ const rows = [
     role: UserRole.Manager,
     status: AccountStatus.Inactive,
     phone: "0987654321",
+    branch: null,
   },
   {
     id: 4,
@@ -68,6 +72,7 @@ const rows = [
     role: UserRole.Jeweler,
     status: AccountStatus.Verifying,
     phone: "0987654321",
+    branch: null,
   },
   {
     id: 5,
@@ -77,10 +82,11 @@ const rows = [
     role: UserRole.Transporter,
     status: AccountStatus.Verifying,
     phone: "0987654321",
+    branch: null,
   },
 ];
 
-const initSelected = {
+const initSelected: Row = {
   id: 0,
   avatar: "",
   email: "",
@@ -88,6 +94,7 @@ const initSelected = {
   phone: "",
   role: UserRole.Default,
   status: AccountStatus.Active,
+  branch: null,
 };
 
 function ManageAccount() {
@@ -109,7 +116,7 @@ function ManageAccount() {
         disableColumnMenu: true,
         renderCell: ({ row }) => (
           <img
-            src={row.avatar}
+            src={row.avatar ?? ""}
             alt=""
             style={{ height: "5rem", margin: "1rem" }}
           />

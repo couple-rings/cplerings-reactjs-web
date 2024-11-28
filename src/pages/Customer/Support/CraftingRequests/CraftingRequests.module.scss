@@ -35,9 +35,9 @@
     .request {
         box-shadow      : $boxShadow;
         padding         : 1rem;
-        background-color: $secondaryColor;
-        color           : white;
         cursor          : pointer;
+        border          : 1px solid $secondaryColor;
+        background-color: #FBE7C6;
 
         &:hover {
             opacity: 0.8;
