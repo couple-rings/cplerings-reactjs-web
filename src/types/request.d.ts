@@ -1,4 +1,12 @@
-import { CustomRequestStatus } from "src/utils/enums";
+import {
+  CraftingRequestStatus,
+  CustomOrderStatus,
+  CustomRequestStatus,
+  DesignStatus,
+  Status,
+  TransportOrderStatus,
+  VersionOwner,
+} from "src/utils/enums";
 
 export {};
 
@@ -39,6 +47,12 @@ declare global {
 
   interface IConversationFilter {
     userId: number;
+  }
+
+  interface IConversationDetailRequest {
+    userId: number;
+
+    conversationId: string;
   }
 
   interface ICreateConversationRequest {
@@ -82,6 +96,7 @@ declare global {
     metalSpecificationId?: number;
     minPrice?: number;
     maxPrice?: number;
+    status?: DesignStatus;
   }
 
   interface ICustomRequestFilter {
@@ -105,13 +120,33 @@ declare global {
     page: number;
     pageSize: number;
     designId: number;
+    customerId: number;
   }
 
   interface ICreateDesignVersionRequest {
-    designId: number;
-    customerId: number;
-    previewImageId: number;
-    designFileId: number;
+    maleVersion: {
+      designId: number;
+      customerId: number;
+      previewImageId: number;
+      designFileId: number;
+    };
+    femaleVersion: {
+      designId: number;
+      customerId: number;
+      previewImageId: number;
+      designFileId: number;
+    };
+  }
+
+  interface IUpdateDesignVersionRequest {
+    maleVersion: {
+      designVersionId: number;
+      owner: VersionOwner;
+    };
+    femaleVersion: {
+      designVersionId: number;
+      owner: VersionOwner;
+    };
   }
 
   interface IDiamondSpecFilter {
@@ -122,5 +157,157 @@ declare global {
   interface IMetalSpecFilter {
     page: number;
     pageSize: number;
+  }
+
+  interface ICreateCustomDesignRequest {
+    designVersionId: number;
+    customerId: number;
+    spouseId: number;
+    metalWeight: number;
+    blueprintId: number;
+    sideDiamondAmount: number;
+    diamondSpecIds: number[];
+    metalSpecIds: number[];
+  }
+
+  interface ICustomDesignFilter {
+    page: number;
+    pageSize: number;
+    state: Status;
+    customerId: number;
+  }
+
+  interface ICraftingRequestFilter {
+    page: number;
+    pageSize: number;
+    customDesignId?: number;
+    customerId?: number;
+    status?: CraftingRequestStatus;
+  }
+
+  interface ICraftingRequestGroupFilter {
+    page: number;
+    pageSize: number;
+  }
+
+  interface ICreateCraftingRequest {
+    customerId: number;
+    metalSpecId: number;
+    diamondSpecId: number;
+    customDesignId: number;
+    engraving?: string;
+    fingerSize: number;
+    branchId: number;
+  }
+
+  interface IUpdateCraftingRequest {
+    firstCraftingRequestId: number;
+    secondCraftingRequestId: number;
+    status: CraftingRequestStatus;
+    firstCommentCrafting: string;
+    secondCommentCrafting: string;
+  }
+
+  interface ICustomOrderFilter {
+    page: number;
+    pageSize: number;
+    jewelerId?: number;
+    customerId?: number;
+    status?: CustomOrderStatus;
+    branchId?: number;
+  }
+
+  interface IUpdateContractRequest {
+    signatureId: number;
+    signedDate: string;
+    documentId: number;
+  }
+
+  interface ICraftingStageFilter {
+    page: number;
+    pageSize: number;
+    customOrderId: number;
+  }
+
+  interface IUpdateCraftingStageRequest {
+    imageId: number;
+    ringMaintenances?: {
+      ringId: number;
+      maintenanceDocumentId: number;
+    }[];
+  }
+
+  interface IDepositCraftingStageRequest {
+    craftingStageId: number;
+    transportationAddressId?: number;
+  }
+
+  interface ITransporterFilter {
+    page: number;
+    pageSize: number;
+    branchId: number;
+  }
+
+  interface ITransportOrderFilter {
+    page: number;
+    pageSize: number;
+    transporterId?: number;
+    branchId?: number;
+    status?: TransportOrderStatus;
+  }
+
+  interface IAgreementFilter {
+    page: number;
+    pageSize: number;
+    customerId?: number;
+  }
+
+  interface IFingerSizeFilter {
+    page: number;
+    pageSize: number;
+  }
+
+  interface IBranchFilter {
+    page: number;
+    pageSize: number;
+  }
+
+  interface ICreateTransportAddressRequest {
+    address: string;
+    districtCode: number;
+    district: string;
+    wardCode: number;
+    ward: string;
+    receiverName: string;
+    receiverPhone: string;
+    customerId: number;
+  }
+
+  interface ITransportationAddressFilter {
+    page: number;
+    pageSize: number;
+    customerId: number;
+  }
+
+  interface IDiamondFilter {
+    page: number;
+    pageSize: number;
+    branchId: number;
+    giaReportNumber?: string;
+  }
+
+  interface ICreateDiamondRequest {
+    giaDocumentId: number;
+    giaReportNumber: string;
+    diamondSpecificationId: number;
+    branchId: number;
+  }
+
+  interface IUpdateAgreementRequest {
+    agreementId: number;
+    mainName: string;
+    mainSignatureId: number;
+    partnerName: string;
+    partnerSignatureId: number;
   }
 }

@@ -8,3 +8,7 @@ export const getCoupleDesigns = (queryObj: ICoupleDesignFilter) => {
     `designs/couple?${queryUrl}`
   );
 };
+
+export const getDesignDetail = (id: number) => {
+  return axios.get<unknown, IResponse<IDesign>>(`designs/${id}`);
+};

@@ -3,16 +3,21 @@ import styles from "./CraftingStage.module.scss";
 import { secondaryBtn } from "src/utils/styles";
 import VerifiedRoundedIcon from "@mui/icons-material/VerifiedRounded";
 import placeholder from "src/assets/stageplaceholder.png";
+import { CraftingStageStatus } from "src/utils/enums";
+import { useNavigate } from "react-router-dom";
 
 function CraftingStage(props: ICraftingStageProps) {
-  const { image, isPaid, name, steps } = props;
+  const { steps, data, name, previousStage, orderId } = props;
+  const { image, status, completionDate } = data;
+
+  const navigate = useNavigate();
 
   return (
     <Card className={styles.container}>
       <Grid container p={5} justifyContent={"space-between"}>
         <Grid item lg={3} mb={{ xs: 5, lg: 0 }}>
           <img
-            src={image ? image : placeholder}
+            src={image ? image.url : placeholder}
             className={styles.previewImg}
           />
         </Grid>
@@ -28,8 +33,15 @@ function CraftingStage(props: ICraftingStageProps) {
               {name}
             </Grid>
             <Grid item mb={{ xs: 3, lg: 0 }}>
-              {isPaid && <Chip label={"Đang Tiến Hành"} color="info" />}
-              {!isPaid && <Chip label={"Chưa Thanh Toán"} color="warning" />}
+              {status === CraftingStageStatus.Paid && !completionDate && (
+                <Chip label={"Đang Tiến Hành"} color="info" />
+              )}
+              {status === CraftingStageStatus.Pending && (
+                <Chip label={"Chưa Thanh Toán"} color="warning" />
+              )}
+              {completionDate && (
+                <Chip label={"Đã Hoàn Thành"} color="success" />
+              )}
             </Grid>
           </Grid>
 
@@ -56,15 +68,28 @@ function CraftingStage(props: ICraftingStageProps) {
             </Grid>
           </Grid>
 
-          {!isPaid && (
-            <Grid container alignItems={"flex-end"} justifyContent={"flex-end"}>
-              <Grid item>
-                <Button variant="contained" sx={secondaryBtn}>
-                  Thanh Toán
-                </Button>
+          {status === CraftingStageStatus.Pending &&
+            (!previousStage || previousStage.completionDate) && (
+              <Grid
+                container
+                alignItems={"flex-end"}
+                justifyContent={"flex-end"}
+              >
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    sx={secondaryBtn}
+                    onClick={() =>
+                      navigate(
+                        `/customer/support/custom-order/${orderId}/deposit/${data.id}`
+                      )
+                    }
+                  >
+                    Thanh Toán
+                  </Button>
+                </Grid>
               </Grid>
-            </Grid>
-          )}
+            )}
         </Grid>
       </Grid>
     </Card>

@@ -4,6 +4,7 @@ import {
   Grid,
   Link,
   Pagination,
+  Skeleton,
   Typography,
 } from "@mui/material";
 import styles from "./WeddingRings.module.scss";
@@ -11,7 +12,7 @@ import wedding1 from "src/assets/wedding1.png";
 import wedding2 from "src/assets/wedding2.png";
 import { useNavigate } from "react-router-dom";
 import HoverMenu from "src/components/menu/HoverMenu";
-import { HoverMenuPurpose, ProductType } from "src/utils/enums";
+import { DesignStatus, HoverMenuPurpose, ProductType } from "src/utils/enums";
 import ProductCard from "src/components/product/ProductCard";
 import { useEffect, useRef, useState } from "react";
 import WeddingRingsAccordian from "src/components/accordion/WeddingRings.Accordion";
@@ -20,7 +21,8 @@ import { getCoupleDesigns } from "src/services/design.service";
 import { pageSize } from "src/utils/constants";
 import { calculateDefaultPrice } from "src/utils/functions";
 import LoadingProduct from "src/components/product/LoadingProduct";
-import { fetchCoupleDesigns } from "src/utils/querykey";
+import { fetchCoupleDesigns, fetchMetalSpecs } from "src/utils/querykey";
+import { getMetalSpecs } from "src/services/metalSpec.service";
 
 const collections = [
   "DR Heart",
@@ -29,13 +31,6 @@ const collections = [
   "Eternal Love",
   "Love Line",
   "Love Palace",
-];
-
-const metals = [
-  "Vàng Trắng 14K",
-  "Vàng Trắng 18K",
-  "Vàng Thường 18K",
-  "Vàng Hồng 18K",
 ];
 
 const prices = [
@@ -47,9 +42,15 @@ const prices = [
 
 const sorts = ["Mới nhất", "Giá - Thấp đến Cao", "Giá - Cao đến Thấp"];
 
-const initFilter = {
+const specFilter = {
+  page: 0,
+  pageSize: 100,
+};
+
+const initFilter: ICoupleDesignFilter = {
   page: 0,
   pageSize: pageSize,
+  status: DesignStatus.Available,
 };
 
 const initMetaData = {
@@ -74,10 +75,25 @@ function WeddingRings() {
     },
   });
 
+  const { data: metalSpecResponse } = useQuery({
+    queryKey: [fetchMetalSpecs, specFilter],
+
+    queryFn: () => {
+      return getMetalSpecs(specFilter);
+    },
+  });
+
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setFilterObj({
       ...filterObj,
       page: value - 1,
+    });
+  };
+
+  const handleFilter = (metalSpecId?: number) => {
+    setFilterObj({
+      ...filterObj,
+      metalSpecificationId: metalSpecId,
     });
   };
 
@@ -102,6 +118,17 @@ function WeddingRings() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterObj]);
+
+  if (!metalSpecResponse?.data)
+    return (
+      <Grid container justifyContent={"center"} mb={5}>
+        <Grid container item xs={10} gap={3}>
+          <Skeleton width={"100%"} height={80} variant="rectangular" />
+
+          <Skeleton width={"100%"} height={500} variant="rectangular" />
+        </Grid>
+      </Grid>
+    );
 
   return (
     <div className={styles.container}>
@@ -148,16 +175,19 @@ function WeddingRings() {
               purpose={HoverMenuPurpose.Filter}
               title="Bộ Sưu Tập"
               lists={collections}
+              handleFilter={handleFilter}
             />
             <HoverMenu
               purpose={HoverMenuPurpose.Filter}
               title="Mức Giá"
               lists={prices}
+              handleFilter={handleFilter}
             />
             <HoverMenu
               purpose={HoverMenuPurpose.Filter}
               title="Loại Vàng"
-              lists={metals}
+              lists={metalSpecResponse.data.items}
+              handleFilter={handleFilter}
             />
           </Grid>
 

@@ -43,4 +43,19 @@
             }
         }
     }
+
+    .cardContainer {
+        color        : $primaryColor;
+        border       : 1px solid $secondaryColor;
+        margin-bottom: 3rem;
+
+        .gender {
+            color: #555;
+
+            img {
+                margin-right: 10px;
+            }
+        }
+    }
+
 }

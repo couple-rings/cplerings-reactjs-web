@@ -8,7 +8,11 @@ import Header from "src/components/layout/Header";
 import { Outlet } from "react-router-dom";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import PaletteIcon from "@mui/icons-material/Palette";
-import HandymanIcon from '@mui/icons-material/Handyman';
+import HandymanIcon from "@mui/icons-material/Handyman";
+import ArticleIcon from "@mui/icons-material/Article";
+import HardwareRoundedIcon from "@mui/icons-material/HardwareRounded";
+import LocalShippingRoundedIcon from "@mui/icons-material/LocalShippingRounded";
+import TaskRoundedIcon from "@mui/icons-material/TaskRounded";
 
 const sidebarList = [
   {
@@ -22,9 +26,29 @@ const sidebarList = [
     path: "/staff/custom-request",
   },
   {
-    text: "Yêu Cầu Bảo Trì",
+    text: "Yêu Cầu Gia Công",
+    icon: <HardwareRoundedIcon />,
+    path: "/staff/crafting-request",
+  },
+  {
+    text: "Đơn Gia Công",
+    icon: <TaskRoundedIcon />,
+    path: "/staff/custom-order",
+  },
+  {
+    text: "Đơn Bảo Trì",
     icon: <HandymanIcon />,
     path: "/staff/maintenance-order",
+  },
+  {
+    text: "Sắp Xếp Vận Chuyển",
+    icon: <LocalShippingRoundedIcon />,
+    path: "/staff/arrange-transport",
+  },
+  {
+    text: "Quản Lý Blog",
+    icon: <ArticleIcon />,
+    path: "/staff/blog",
   },
 ];
 

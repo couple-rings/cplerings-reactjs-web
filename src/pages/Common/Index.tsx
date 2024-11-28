@@ -40,7 +40,7 @@ import brand from "src/assets/brand.png";
 import store from "src/assets/storeHD.png";
 import Advertisement from "src/components/advertisement/Advertisement";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "src/utils/hooks";
+import { useAppSelector, useScrollTop } from "src/utils/hooks";
 import { toast } from "react-toastify";
 
 const processSteps = [
@@ -151,6 +151,8 @@ const HomeDefault = () => {
 
     navigate("/customer/love-verification");
   };
+
+  useScrollTop();
 
   return (
     <div className={styles.container}>

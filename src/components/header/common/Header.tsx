@@ -3,6 +3,7 @@ import TextTransition, { presets } from "react-text-transition";
 import styles from "./Header.module.scss";
 import UpperBar from "./UpperBar";
 import LowerBar from "./LowerBar";
+import { useNavigate } from "react-router-dom";
 
 const TEXTS = [
   <span>
@@ -18,6 +19,8 @@ const TEXTS = [
 const Header = () => {
   const [index, setIndex] = useState(0);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const intervalId = setInterval(
       () => setIndex((index) => index + 1),
@@ -30,12 +33,14 @@ const Header = () => {
     <div className={styles.container}>
       <div className={styles.slogan}>Một Tình Yêu, Một Đời Người</div>
 
-      <TextTransition
-        springConfig={presets.wobbly}
-        className={styles.transitionText}
-      >
-        {TEXTS[index % TEXTS.length]}
-      </TextTransition>
+      <div onClick={() => navigate("/wedding-rings")}>
+        <TextTransition
+          springConfig={presets.wobbly}
+          className={styles.transitionText}
+        >
+          {TEXTS[index % TEXTS.length]}
+        </TextTransition>
+      </div>
 
       <UpperBar />
 

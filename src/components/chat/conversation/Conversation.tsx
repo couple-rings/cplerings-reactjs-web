@@ -107,10 +107,16 @@ function Conversation(props: IConversationProps) {
     <ListItem disablePadding className={styles.container}>
       <ListItemButton onClick={handleClickConversation}>
         <ListItemIcon>
-          <AccountCircleIcon sx={{ fontSize: 50, marginRight: 2 }} />
+          {conversation.partner?.avatar ? (
+            <img src={conversation.partner.avatar} className={styles.avatar} />
+          ) : (
+            <AccountCircleIcon sx={{ fontSize: 50, marginRight: 2 }} />
+          )}
         </ListItemIcon>
         <ListItemText
-          primary={conversation.participants.find((user) => user !== userId)}
+          primary={
+            conversation.partner ? conversation.partner.username : "Anonymous"
+          }
           secondary={renderLatestMsg(conversation.latestMessage)}
         />
         {conversation.latestMessage && (

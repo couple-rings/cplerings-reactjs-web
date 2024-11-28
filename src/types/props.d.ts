@@ -3,6 +3,7 @@ import {
   AccountStatus,
   CustomRequestStatus,
   DesignCharacteristic,
+  StagePercentage,
 } from "src/utils/enums";
 
 export {};
@@ -15,7 +16,7 @@ declare global {
   }
 
   interface IBranchCardProps {
-    store: IStore;
+    data: IBranch;
   }
 
   interface IHeaderCardProps {
@@ -46,11 +47,12 @@ declare global {
   }
 
   interface IAddressCardProps {
-    receiverName: string;
-    address: string;
-    receiverPhone: string;
+    data: ITransportAddress;
     setOpenDelete: (v: boolean) => void;
     setOpenUpdate: (v: boolean) => void;
+    setSelected: (v: ITransportAddress) => void;
+    handleCheck?: (v1: number, v2: boolean) => void;
+    checked?: boolean;
   }
 
   interface IModalProps {
@@ -58,12 +60,14 @@ declare global {
     setOpen: (v: boolean) => void;
   }
 
-  interface IHoverMenuProps<T> {
+  interface IHoverMenuProps {
     title: string;
 
     purpose: HoverMenuPurpose;
 
-    lists: T[];
+    lists: string[] | IMetalSpec[];
+
+    handleFilter?: (v1?: number) => void;
   }
 
   interface ISizeMenuProps {
@@ -237,6 +241,13 @@ declare global {
   interface IImageProcessProps {
     imageSrcs: string[];
     setImageSrcs: (newImageSrcs: string[]) => void;
+    setNoImg: (v: boolean) => void;
+    stage: ICraftingStage;
+  }
+
+  interface ILoveAgreement {
+    spouseName: string;
+    date: string;
   }
   interface IPulseIconProps {
     icon: React.ReactNode;
@@ -246,6 +257,16 @@ declare global {
 
   interface IContractFileProps {
     signature: string;
+
+    total: number;
+
+    name: string;
+
+    email: string;
+
+    phone: string;
+
+    address: string;
   }
 
   interface IAccountModalProps
@@ -313,7 +334,7 @@ declare global {
 
     status: CustomRequestStatus;
 
-    staffId: number;
+    staffId?: number;
 
     id: number;
   }
@@ -323,12 +344,77 @@ declare global {
   }
 
   interface ICraftingStageProps {
-    name: string;
-
     steps: string[];
 
-    image: string;
+    data: ICraftingStage;
 
-    isPaid: boolean;
+    name: string;
+
+    orderId: number;
+
+    previousStage?: ICraftingStage;
+  }
+
+  interface IBlogRowProps {
+    blog: IBlog;
+
+    handleClick: (v: IBlog) => void;
+  }
+
+  interface IBlogModalProps extends IModalProps {
+    resetSelected?: () => void;
+    blog: IBlog;
+  }
+
+  interface IViewCustomDesignProps {
+    customRequestId: number;
+    maleVersion: IDesignVersion;
+    femaleVersion: IDesignVersion;
+    designs: ICustomDesign[];
+  }
+
+  interface IRejectModalProps extends IModalProps {
+    handleReject: (v1: string, v2: string) => void;
+  }
+
+  interface IPastRequestsProps {
+    data: ICraftingRequest[];
+  }
+
+  interface IUpdateAddressModalProps extends IModalProps {
+    selected: ITransportAddress;
+
+    resetSelected: () => void;
+  }
+
+  interface IAddAddressModalProps extends IModalProps {
+    filterObj: ITransportationAddressFilter;
+  }
+
+  interface IAddDiamondModalProps extends IModalProps {
+    filterObj: IDiamondFilter;
+  }
+
+  interface ICompleteCraftingStageModalProps extends IModalProps {
+    handleComplete: (v1: StagePercentage, v2: number, v3: number) => void;
+
+    updatingStage: boolean;
+  }
+
+  interface IAgreementDetailProps {
+    data: IAgreement;
+
+    handleSignAgreement?: (
+      v1: string,
+      v2: string,
+      v3: string,
+      v4: string
+    ) => Promise<IResponse<IAgreement> | undefined>;
+
+    loading?: boolean;
+  }
+
+  interface ITransportOrderModalProps extends IModalProps {
+    order: ITransportOrder;
   }
 }

@@ -64,7 +64,7 @@ function Invoice() {
 
   useEffect(() => {
     if (!status || !amount || !customer || !date) navigate("/");
-    else {
+    else if (requestedDesigns.length > 0) {
       mutation.mutate({
         customerId: id,
         designIds: requestedDesigns,
@@ -73,7 +73,7 @@ function Invoice() {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [amount, status, customer, date]);
+  }, [amount, status, customer, date, requestedDesigns]);
 
   return (
     <div className={styles.container}>

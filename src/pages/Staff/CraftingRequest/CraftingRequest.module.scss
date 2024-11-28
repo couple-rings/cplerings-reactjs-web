@@ -1,0 +1,37 @@
+@use 'src/index.scss'as *;
+
+.container {
+    padding: 3rem;
+
+    .title {
+        color        : $primaryColor;
+        font-size    : 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .accepted {
+        background-color: #07bc0c;
+        color           : #ffffff;
+        border-radius   : 15px;
+        padding         : 5px 10px;
+        text-transform  : capitalize;
+        width           : 100px;
+    }
+
+    .rejected {
+        background-color: #e74c3c;
+        color           : #ffffff;
+        border-radius   : 15px;
+        padding         : 5px 10px;
+        text-transform  : capitalize;
+        width           : 100px;
+    }
+
+    .pending {
+        background-color: #f1c40f;
+        color           : #ffffff;
+        border-radius   : 15px;
+        padding         : 5px 10px;
+        text-transform  : capitalize;
+    }
+}

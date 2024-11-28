@@ -27,8 +27,8 @@ interface IFormInput {
   ward: number;
 }
 
-function UpdateModal(props: IModalProps) {
-  const { open, setOpen } = props;
+function UpdateModal(props: IUpdateAddressModalProps) {
+  const { open, setOpen, selected, resetSelected } = props;
 
   const [wards, setWards] = useState<IWard[]>([]);
 
@@ -40,14 +40,14 @@ function UpdateModal(props: IModalProps) {
     control,
   } = useForm<IFormInput>({
     defaultValues: useMemo(() => {
+      const { receiverName, receiverPhone, address, districtCode } = selected;
       return {
-        receiverName: "Nguyễn Tín",
-        receiverPhone: "0987446873",
-        address: "bla bla bla",
-        district: 785,
-        ward: 27619,
+        receiverName,
+        receiverPhone,
+        address,
+        district: districtCode,
       };
-    }, []),
+    }, [selected]),
   });
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
@@ -60,7 +60,10 @@ function UpdateModal(props: IModalProps) {
   };
   const { districts } = useAppSelector((state) => state.district);
 
-  const handleSelectDistrict = async (districtCode: number | string) => {
+  const handleSelectDistrict = async (
+    districtCode: number | string,
+    newDistrict?: boolean
+  ) => {
     if (!districtCode) {
       reset({
         ward: 0,
@@ -69,7 +72,18 @@ function UpdateModal(props: IModalProps) {
       return;
     }
     const data = await getWards(+districtCode);
-    if (data && data.wards) setWards(data.wards);
+    if (data && data.wards) {
+      setWards(data.wards);
+      if (newDistrict)
+        reset({
+          ward: 0,
+          district: +districtCode,
+        });
+      else
+        reset({
+          ward: selected.wardCode,
+        });
+    }
   };
 
   const handleClose = (
@@ -78,21 +92,22 @@ function UpdateModal(props: IModalProps) {
   ) => {
     if (reason && reason === "backdropClick") return;
     setOpen(false);
+    resetSelected && resetSelected();
   };
 
   useEffect(() => {
-    handleSelectDistrict(785);
+    const { receiverName, receiverPhone, address, districtCode } = selected;
+    handleSelectDistrict(districtCode);
 
     reset({
-      receiverName: "Nguyễn Tín",
-      receiverPhone: "0987446873",
-      address: "bla bla bla",
-      district: 785,
-      ward: 27619,
+      receiverName,
+      receiverPhone,
+      address,
+      district: districtCode,
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selected]);
 
   return (
     <Dialog
@@ -181,7 +196,7 @@ function UpdateModal(props: IModalProps) {
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);
-                      handleSelectDistrict(e.target.value);
+                      handleSelectDistrict(e.target.value, true);
                     }}
                   >
                     <MenuItem value={0} disabled>

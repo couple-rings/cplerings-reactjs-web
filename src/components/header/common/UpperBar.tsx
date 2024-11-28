@@ -60,8 +60,8 @@ const settings = [
     path: "/",
   },
   {
-    text: "Đơn Mua",
-    path: "/",
+    text: "Đơn Gia Công",
+    path: "/customer/support/custom-order",
   },
   {
     text: "Tài Khoản Của Tôi",

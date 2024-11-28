@@ -4,77 +4,65 @@ import {
   GridActionsCellItem,
   GridColDef,
   GridFilterModel,
+  GridPaginationModel,
   GridSortModel,
   getGridStringOperators,
 } from "@mui/x-data-grid";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
 import { Button, Grid, Link } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
-import samplePdf from "src/assets/sampledata/blueprint.pdf";
 import FileDownloadSharpIcon from "@mui/icons-material/FileDownloadSharp";
 import UpdateModal from "src/components/modal/diamond/Update.modal";
 import AddModal from "src/components/modal/diamond/Add.modal";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import DeleteModal from "src/components/modal/diamond/Delete.modal";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { pageSize } from "src/utils/constants";
+import { useAppSelector } from "src/utils/hooks";
+import { fetchDiamonds } from "src/utils/querykey";
+import { getDiamonds } from "src/services/diamond.service";
 
-interface Row {
-  id: number;
-  giaReportNumber: string;
-  giaDocument: string;
-  diamondSpecId: number;
-  weight: number;
-  color: string;
-  clarity: string;
-  shape: string;
-}
+interface Row extends IDiamond {}
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
   ["contains", "equals" /* add more over time */].includes(value)
 );
 
-const rows = [
-  {
-    id: 1,
-    giaReportNumber: "2326328623",
-    giaDocument: samplePdf,
-    diamondSpecId: 1,
-    weight: 0.05,
-    color: "D",
-    clarity: "VS2",
-    shape: "HEART",
-  },
-  {
-    id: 2,
-    giaReportNumber: "2326328624",
-    giaDocument: samplePdf,
-    diamondSpecId: 2,
-    weight: 0.05,
-    color: "G",
-    clarity: "SI1",
-    shape: "OVAL",
-  },
-  {
-    id: 3,
-    giaReportNumber: "2326328625",
-    giaDocument: samplePdf,
-    diamondSpecId: 3,
-    weight: 0.15,
-    color: "G",
-    clarity: "VS2",
-    shape: "ROUND",
-  },
-];
+const initMetaData = {
+  page: 0,
+  pageSize,
+  totalPages: 0,
+  count: 0,
+};
 
-const initSelected = {
+const initSelected: IDiamond = {
   id: 0,
   giaReportNumber: "",
-  giaDocument: "",
-  diamondSpecId: 0,
-  weight: 0.15,
-  color: "",
-  clarity: "",
-  shape: "",
+  giaDocument: {
+    id: 0,
+    url: "",
+  },
+  branch: {
+    id: 0,
+    address: "",
+    phone: "",
+    storeName: "",
+    coverImage: {
+      id: 0,
+      url: "",
+    },
+  },
+  diamondSpecification: {
+    id: 0,
+    clarity: "",
+    color: "",
+    name: "",
+    price: 0,
+    shape: "",
+    weight: 0,
+  },
+  createdAt: "",
 };
 
 function ManageDiamond() {
@@ -82,6 +70,22 @@ function ManageDiamond() {
   const [openAdd, setOpenAdd] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [selected, setSelected] = useState(initSelected);
+
+  const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
+  const [filterObj, setFilterObj] = useState<IDiamondFilter | null>(null);
+
+  const queryClient = useQueryClient();
+
+  const { branchId } = useAppSelector((state) => state.auth.userInfo);
+
+  const { data: response, isLoading } = useQuery({
+    queryKey: [fetchDiamonds, filterObj],
+
+    queryFn: () => {
+      if (filterObj) return getDiamonds(filterObj);
+    },
+    enabled: !!filterObj,
+  });
 
   const columns: GridColDef<Row>[] = useMemo(
     () => [
@@ -102,6 +106,7 @@ function ManageDiamond() {
         align: "center",
         filterOperators,
         sortable: false,
+        renderCell: ({ row }) => <div>{row.diamondSpecification.shape}</div>,
       },
       {
         field: "weight",
@@ -110,6 +115,7 @@ function ManageDiamond() {
         headerAlign: "center",
         align: "center",
         filterable: false,
+        renderCell: ({ row }) => <div>{row.diamondSpecification.weight}</div>,
       },
       {
         field: "color",
@@ -119,6 +125,7 @@ function ManageDiamond() {
         align: "center",
         filterOperators,
         sortable: false,
+        renderCell: ({ row }) => <div>{row.diamondSpecification.color}</div>,
       },
       {
         field: "clarity",
@@ -128,6 +135,7 @@ function ManageDiamond() {
         align: "center",
         filterOperators,
         sortable: false,
+        renderCell: ({ row }) => <div>{row.diamondSpecification.clarity}</div>,
       },
       {
         field: "giaDocument",
@@ -137,9 +145,10 @@ function ManageDiamond() {
         align: "center",
         filterable: false,
         sortable: false,
+        disableColumnMenu: true,
         renderCell: ({ row }) => (
           <Link
-            href={row.giaDocument}
+            href={row.giaDocument.url}
             py={3}
             alignItems={"center"}
             display={"flex"}
@@ -184,13 +193,57 @@ function ManageDiamond() {
     setSelected(initSelected);
   };
 
+  const handleChangePage = (model: GridPaginationModel) => {
+    // model.page is the page to fetch and starts at 0
+    if (filterObj)
+      setFilterObj({
+        ...filterObj,
+        page: model.page,
+      });
+  };
+
   const handleFilter = (model: GridFilterModel) => {
-    console.log(model);
+    if (model.items.length > 0) {
+      const field = model.items[0].field;
+      const value = model.items[0].value;
+
+      if (filterObj)
+        setFilterObj({
+          ...filterObj,
+          [`${field}`]: value,
+        });
+    }
   };
 
   const handleSort = (model: GridSortModel) => {
     console.log(model);
   };
+
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: [fetchDiamonds, filterObj],
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterObj]);
+
+  useEffect(() => {
+    if (response && response.data) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { items, ...rest } = response.data;
+      setMetaData(rest);
+    }
+  }, [response]);
+
+  useEffect(() => {
+    if (branchId !== 0) {
+      setFilterObj({
+        page: 0,
+        pageSize,
+        branchId,
+      });
+    }
+  }, [branchId]);
 
   return (
     <div className={styles.container}>
@@ -207,22 +260,35 @@ function ManageDiamond() {
       </Grid>
 
       <DataGrid
+        loading={isLoading}
         getRowHeight={() => "auto"}
-        rows={rows}
+        rows={response?.data?.items ? response.data.items : []}
         columns={columns}
         onFilterModelChange={handleFilter}
         onSortModelChange={handleSort}
-        pageSizeOptions={[100]}
+        pageSizeOptions={[pageSize]}
         disableColumnSelector
         disableRowSelectionOnClick
         autoHeight
+        paginationMode="server"
+        paginationModel={{
+          page: filterObj?.page ? filterObj.page : 0,
+          pageSize: filterObj?.pageSize ? filterObj.pageSize : pageSize,
+        }}
+        onPaginationModelChange={handleChangePage}
+        rowCount={metaData.count}
       />
 
-      <AddModal open={openAdd} setOpen={setOpenAdd} />
+      <AddModal
+        open={openAdd}
+        setOpen={setOpenAdd}
+        filterObj={filterObj as IDiamondFilter}
+      />
       <UpdateModal
         open={openUpdate}
         setOpen={setOpenUpdate}
-        {...selected}
+        giaReportNumber={selected.giaReportNumber}
+        diamondSpecId={selected.diamondSpecification.id}
         resetSelected={resetSelected}
       />
       <DeleteModal open={openDelete} setOpen={setOpenDelete} />

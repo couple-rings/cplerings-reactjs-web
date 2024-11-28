@@ -17,16 +17,7 @@ import { getCoupleDesigns } from "src/services/design.service";
 import { pageSize } from "src/utils/constants";
 import { fetchCoupleDesigns } from "src/utils/querykey";
 
-interface Row {
-  id: number;
-  name: string;
-  description: string;
-  previewImage: {
-    url: string;
-  };
-  designs: IDesign[];
-  // isActive: boolean;
-}
+interface Row extends ICoupleDesign {}
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
   ["contains" /* add more over time */].includes(value)

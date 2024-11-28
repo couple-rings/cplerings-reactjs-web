@@ -1,3 +1,12 @@
+@use 'src/index.scss'as *;
+
 .container {
-    padding: 5rem 0;
+    padding: 1.5rem;
+
+    .title {
+        color        : $primaryColor;
+        font-size    : 1.7rem;
+        margin-bottom: 1rem;
+    }
+
 }

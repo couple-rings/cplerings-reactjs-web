@@ -72,6 +72,14 @@ import CustomerCustomOrder from "src/pages/Customer/Support/CustomOrder/CustomOr
 import CustomerCustomOrderDetail from "src/pages/Customer/Support/CustomOrderDetail/CustomOrderDetail";
 import CustomerCraftingProcess from "src/pages/Customer/Support/CraftingProcess/CraftingProcess";
 import Deposit from "src/pages/Customer/Support/Deposit/Deposit";
+import ManageBlog from "src/pages/Staff/ManageBlog/ManageBlog";
+import CraftingRequest from "src/pages/Staff/CraftingRequest/CraftingRequest";
+import ArrangeTransport from "src/pages/Staff/ArrangeTransport/ArrangeTransport";
+import LoveAgreement from "src/pages/Common/LoveAgreement/LoveAgreement";
+import MyLoveAgreement from "src/pages/Customer/LoveAgreement/MyLoveAgreement";
+import StaffCustomOrder from "src/pages/Staff/CustomOrder/CustomOrder";
+import StaffCustomOrderDetail from "src/pages/Staff/CustomOrderDetail/CustomOrderDetail";
+import LoveAgreementDetail from "src/pages/Common/LoveAgreementDetail/LoveAgreementDetail";
 import MaintenanceList from "src/pages/Jeweler/MaintenanceOrder/MaintenanceList";
 import MaintenanceOrderDetail from "src/pages/Jeweler/MaintenanceOrderDetail/MaintenanceOrderDetail";
 
@@ -148,6 +156,14 @@ const router = createBrowserRouter([
         path: "stores",
         element: <StoresBranches />,
       },
+      {
+        path: "love-agreement",
+        element: <LoveAgreement />,
+      },
+      {
+        path: "love-agreement/:customerId",
+        element: <LoveAgreementDetail />,
+      },
     ],
   },
   {
@@ -187,7 +203,7 @@ const router = createBrowserRouter([
         element: <OrderDetail />,
       },
       {
-        path: "transport",
+        path: "transport/:id",
         element: <Map />,
       },
       {
@@ -223,11 +239,11 @@ const router = createBrowserRouter([
             element: <CustomerCustomOrderDetail />,
           },
           {
-            path: "custom-order/crafting-process",
+            path: "custom-order/:orderId/crafting-process",
             element: <CustomerCraftingProcess />,
           },
           {
-            path: "deposit",
+            path: "custom-order/:orderId/deposit/:stageId",
             element: <Deposit />,
           },
         ],
@@ -249,8 +265,12 @@ const router = createBrowserRouter([
         element: <Invoice />,
       },
       {
-        path: "contract",
+        path: "contract/:orderId",
         element: <Contract />,
+      },
+      {
+        path: "love-agreement",
+        element: <MyLoveAgreement />,
       },
     ],
   },
@@ -279,12 +299,24 @@ const router = createBrowserRouter([
         element: <DesignVersions />,
       },
       {
-        path: "custom-request/custom-design/:maleDesignId/:femaleDesignId",
+        path: "custom-request/:id/custom-design/:maleDesignId/:femaleDesignId",
         element: <CustomDesign />,
       },
       {
-        path: "crafting-request/detail",
+        path: "crafting-request",
+        element: <CraftingRequest />,
+      },
+      {
+        path: "crafting-request/detail/:customerId",
         element: <CraftingRequestDetail />,
+      },
+      {
+        path: "custom-order",
+        element: <StaffCustomOrder />,
+      },
+      {
+        path: "custom-order/detail/:id",
+        element: <StaffCustomOrderDetail />,
       },
       {
         path: "maintenance-order",
@@ -297,6 +329,14 @@ const router = createBrowserRouter([
       {
         path: "maintenance-payment",
         element: <MaintenancePayment />,
+      },
+      {
+        path: "arrange-transport",
+        element: <ArrangeTransport />,
+      },
+      {
+        path: "blog",
+        element: <ManageBlog />,
       },
     ],
   },
@@ -321,7 +361,7 @@ const router = createBrowserRouter([
         element: <CustomOrderDetail />,
       },
       {
-        path: "custom-process",
+        path: "custom-order/:orderId/crafting-process",
         element: <CraftingProcess />,
       },
       {

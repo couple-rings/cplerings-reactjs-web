@@ -38,7 +38,7 @@ function CommonRoute(props: IProtectedRouteProps) {
 
   useEffect(() => {
     if (response && response.data) {
-      dispatch(saveProfile(response.data));
+      if (isAuthenticated) dispatch(saveProfile(response.data));
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

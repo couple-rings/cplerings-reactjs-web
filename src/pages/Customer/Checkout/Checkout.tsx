@@ -6,9 +6,10 @@ import {
   Grid,
   Radio,
   RadioGroup,
+  Skeleton,
 } from "@mui/material";
 import styles from "./Checkout.module.scss";
-import { DeliveryMethod } from "src/utils/enums";
+import { DeliveryMethod, UserRole } from "src/utils/enums";
 import { useEffect, useState } from "react";
 import { primaryBtn } from "src/utils/styles";
 import vnpay from "src/assets/vnpay.png";
@@ -26,24 +27,46 @@ import Card from "src/components/checkout/Card";
 import { currencyFormatter } from "src/utils/functions";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useQuery } from "@tanstack/react-query";
+import { fetchDistricts, fetchTransportAddresses } from "src/utils/querykey";
+import { getTransportAddresses } from "src/services/transportAddress.service";
 
-const addresses = [
-  {
-    receiverName: "Nguyễn Tín",
-    address:
-      "Chung cư NestHome Block1.2 phòng 110, đường Chu Huy Mân,Đà Nẵng,Quận Sơn Trà",
-    receiverPhone: "0987446873",
+const initSelected: ITransportAddress = {
+  id: 0,
+  address: "",
+  district: "",
+  districtCode: 0,
+  ward: "",
+  wardCode: 0,
+  receiverName: "",
+  receiverPhone: "",
+  customer: {
+    id: 0,
+    avatar: "",
+    email: "",
+    phone: "",
+    username: "",
+    role: UserRole.Default,
+    branch: {
+      id: 0,
+      address: "",
+      phone: "",
+      storeName: "",
+      coverImage: {
+        id: 0,
+        url: "",
+      },
+    },
   },
-  {
-    receiverName: "Nguyễn Tín",
-    address:
-      "Chung cư NestHome Block1.2 phòng 110, đường Chu Huy Mân,Đà Nẵng,Quận Sơn Trà",
-    receiverPhone: "0987446873",
-  },
-];
+};
 
 function Checkout() {
+  const [filterObj, setFilterObj] =
+    useState<ITransportationAddressFilter | null>(null);
+
   const [deliveryMethod, setDeliveryMethod] = useState(DeliveryMethod.Shipping);
+
+  const [selected, setSelected] = useState<ITransportAddress>(initSelected);
   const [openAdd, setOpenAdd] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
@@ -52,18 +75,64 @@ function Checkout() {
   const theme = useTheme();
 
   const minLarge = useMediaQuery(theme.breakpoints.up("lg"));
+
   const { districts } = useAppSelector((state) => state.district);
+  const { id } = useAppSelector((state) => state.auth.userInfo);
+
+  const { data: response, isLoading } = useQuery({
+    queryKey: [fetchTransportAddresses, filterObj],
+
+    queryFn: () => {
+      if (filterObj) return getTransportAddresses(filterObj);
+    },
+    enabled: !!filterObj,
+  });
+
+  const { data: districtsResponse, isLoading: loadingDistricts } = useQuery({
+    queryKey: [fetchDistricts, filterObj],
+
+    queryFn: () => {
+      return getDistricts();
+    },
+    enabled: districts.length === 0,
+  });
+
+  const resetSelected = () => {
+    setSelected(initSelected);
+  };
 
   useEffect(() => {
-    (async () => {
-      if (districts.length === 0) {
-        const data = await getDistricts();
-        if (data && data.districts) {
-          dispatch(saveList(data.districts));
-        }
-      }
-    })();
-  }, [dispatch, districts.length]);
+    if (districtsResponse?.districts) {
+      dispatch(saveList(districtsResponse.districts));
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [districtsResponse]);
+
+  useEffect(() => {
+    setFilterObj({
+      page: 0,
+      pageSize: 100,
+      customerId: id,
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (isLoading || loadingDistricts)
+    return (
+      <Grid container justifyContent={"center"} mb={5}>
+        <Grid container item xs={10} gap={3} justifyContent={"space-between"}>
+          <Grid item xs={5.7}>
+            <Skeleton width={"100%"} height={300} variant="rectangular" />
+          </Grid>
+
+          <Grid item xs={5.7}>
+            <Skeleton width={"100%"} height={300} variant="rectangular" />
+          </Grid>
+        </Grid>
+      </Grid>
+    );
 
   return (
     <div className={styles.container}>
@@ -137,13 +206,14 @@ function Checkout() {
               <Divider sx={{ backgroundColor: "#555" }} />
 
               <div>
-                {addresses.map((item, index) => {
+                {response?.data?.items.map((item) => {
                   return (
                     <AddressCard
-                      key={index}
-                      {...item}
+                      key={item.id}
+                      data={item}
                       setOpenDelete={setOpenDelete}
                       setOpenUpdate={setOpenUpdate}
+                      setSelected={setSelected}
                     />
                   );
                 })}
@@ -218,9 +288,18 @@ function Checkout() {
         )}
       </Grid>
 
-      <AddModal open={openAdd} setOpen={setOpenAdd} />
+      <AddModal
+        open={openAdd}
+        setOpen={setOpenAdd}
+        filterObj={filterObj as ITransportationAddressFilter}
+      />
       <DeleteModal open={openDelete} setOpen={setOpenDelete} />
-      <UpdateModal open={openUpdate} setOpen={setOpenUpdate} />
+      <UpdateModal
+        open={openUpdate}
+        setOpen={setOpenUpdate}
+        selected={selected}
+        resetSelected={resetSelected}
+      />
     </div>
   );
 }

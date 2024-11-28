@@ -19,7 +19,6 @@ import { useMutation } from "@tanstack/react-query";
 import { postIdFaceMatching, postIdReading } from "src/services/fpt.service";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { postCreateSpouse } from "src/services/spouse.service";
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 import moment from "moment";
 import { saveProfile } from "src/redux/slice/auth.slice";
@@ -52,7 +51,6 @@ function VerifyID() {
     null
   );
 
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const { id: customerId } = useAppSelector((state) => state.auth.userInfo);
@@ -170,7 +168,6 @@ function VerifyID() {
       if (response.type === ResponseType.Info) {
         toast.success("Xác minh danh tính thành công");
         dispatch(saveProfile({ hasSpouse: true }));
-        navigate("/");
       }
 
       if (response.errors) {
@@ -270,6 +267,22 @@ function VerifyID() {
         if (!selfError.notMatch.value && !partnerError.notMatch.value) {
           if (selfIdInfo.id === partnerIdInfo.id) {
             toast.error("Căn cước công dân của bạn và bạn đời bị trùng");
+            return;
+          }
+
+          const currentYear = moment().year();
+          const selfYear = moment(selfIdInfo.dob, "DD/MM/YYYY").year();
+          const partnerYear = moment(partnerIdInfo.dob, "DD/MM/YYYY").year();
+          const selfAge = currentYear - selfYear;
+          const partnerAge = currentYear - partnerYear;
+
+          if (selfAge < 18) {
+            toast.error("Bạn chưa đủ tuổi. Yêu cầu trên 18 tuổi");
+            return;
+          }
+
+          if (partnerAge < 18) {
+            toast.error("Bạn đời chưa đủ tuổi. Yêu cầu trên 18 tuổi");
             return;
           }
 
