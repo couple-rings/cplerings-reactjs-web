@@ -96,7 +96,6 @@ function RefundCreateForm() {
       return;
     }
 
-    // Handle submit logic here
     console.log({
       customerInfo,
       selectedOrder: customerOrders?.find(order => order.id === selectedOrderId),

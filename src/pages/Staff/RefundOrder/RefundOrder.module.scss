@@ -40,67 +40,84 @@
 
     .orderCard {
         margin-bottom: 2rem;
-        padding: 1.5rem;
-        border-radius: 12px;
-        border-width: 2px;
-        box-shadow: $boxShadow;
+        padding: 2rem;
+        border-radius: 16px;
+        border: 1px solid #eee;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 
         .header {
             margin-bottom: 1.5rem;
             padding-bottom: 1rem;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #f0f0f0;
 
             .orderInfo {
                 display: flex;
                 gap: 2rem;
-                color: $grayColor;
-                font-size: 0.95rem;
+                align-items: center;
+
+                .orderId {
+                    font-size: 1.3rem;
+                    font-weight: 600;
+                    margin-bottom: 0;
+                    color: $primaryColor;
+                }
+
+                .date {
+                    padding: 0.4rem 0.8rem;
+                    background: #f8f9fa;
+                    border-radius: 6px;
+                    font-size: 0.9rem;
+                }
             }
         }
 
         .body {
             .productImage {
                 width: 100%;
-                border-radius: 8px;
-                box-shadow: $boxShadow;
+                border-radius: 12px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             }
 
             .middle {
                 .collection {
-                    font-size: 1.3rem;
-                    color: $primaryColor;
-                    font-weight: 500;
-                    margin-bottom: 1rem;
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
+                    font-size: 1.4rem;
+                    margin-bottom: 1.5rem;
 
                     .collectionIcon {
-                        font-size: 1.5rem;
+                        font-size: 1.6rem;
                     }
                 }
 
                 .customerInfo {
-                    margin-bottom: 1.5rem;
+                    padding: 0.8rem 1rem;
+                    background: #f8f9fa;
+                    border-radius: 8px;
+                    margin-bottom: 2rem;
+
+                    .label {
+                        color: $grayColor;
+                        margin-right: 0.8rem;
+                    }
 
                     .value {
                         font-weight: 500;
+                        color: $primaryColor;
                     }
                 }
 
                 .ringsInfo {
                     display: flex;
-                    margin-bottom: 1.5rem;
-                    background: #f8f9fa;
-                    padding: 1.5rem;
-                    border-radius: 8px;
+                    gap: 1rem;
+                    background: #fafbfc;
+                    padding: 2rem;
+                    border-radius: 12px;
 
                     .ringSection {
                         flex: 1;
 
                         .ringTitle {
-                            font-weight: 500;
-                            margin-bottom: 1rem;
+                            font-size: 1.1rem;
+                            margin-bottom: 1.2rem;
                             color: $primaryColor;
                             display: flex;
                             align-items: center;
@@ -111,39 +128,77 @@
                             }
                         }
 
-                        .specs {
+                        .specsCard {
                             display: flex;
                             flex-direction: column;
-                            gap: 0.8rem;
+                            gap: 1rem;
+
+                            .spec {
+                                display: flex;
+                                align-items: center;
+                                padding: 0.5rem 0;
+                                border-bottom: 1px dashed #eee;
+
+                                .label {
+                                    color: $grayColor;
+                                    min-width: 90px;
+                                }
+
+                                .value {
+                                    font-weight: 500;
+                                    color: #2d3748;
+                                }
+
+                                &:last-child {
+                                    border-bottom: none;
+                                }
+                            }
                         }
                     }
                 }
 
                 .reason {
-                    padding: 1rem;
+                    margin-top: 1.5rem;
+                    padding: 1.2rem;
                     background: #fff5f5;
-                    border-radius: 8px;
+                    border: 1px solid #fed7d7;
+                    border-radius: 10px;
+
+                    .label {
+                        color: $grayColor;
+                        margin-right: 0.8rem;
+                    }
 
                     .value {
-                        font-weight: 500;
+                        font-weight: 600;
                         color: #e53e3e;
                     }
                 }
-
-                .label {
-                    color: $grayColor;
-                    margin-right: 0.8rem;
-                }
             }
+        }
 
-            .right {
-                text-align: center;
+        .right {
+            text-align: center;
 
-                .price {
-                    font-size: 1.5rem;
-                    font-weight: 600;
-                    color: $primaryColor;
-                    margin-bottom: 1rem;
+            .price {
+                font-size: 2rem;
+                font-weight: 700;
+                color: $primaryColor;
+                margin-bottom: 1.5rem;
+                padding: 1rem;
+                background: rgba($primaryColor, 0.05);
+                border-radius: 12px;
+                position: relative;
+
+                border: 2px dashed rgba($primaryColor, 0.2);
+
+                &::after {
+                    position: absolute;
+                    bottom: -0.5rem;
+                    right: 0.5rem;
+                    font-size: 0.9rem;
+                    color: rgba($primaryColor, 0.6);
+                    font-weight: 500;
                 }
             }
         }

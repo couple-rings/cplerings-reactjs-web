@@ -76,7 +76,7 @@ function RefundOrder() {
                     <span className={styles.icon}>👨</span>
                     Nhẫn Nam
                   </div>
-                  <div className={styles.specs}>
+                  <div className={styles.specsCard}>
                     <div className={styles.spec}>
                       <span className={styles.label}>Chất liệu:</span>
                       <span className={styles.value}>{order.rings.male.material}</span>
@@ -99,7 +99,7 @@ function RefundOrder() {
                     <span className={styles.icon}>👩</span>
                     Nhẫn Nữ
                   </div>
-                  <div className={styles.specs}>
+                  <div className={styles.specsCard}>
                     <div className={styles.spec}>
                       <span className={styles.label}>Chất liệu:</span>
                       <span className={styles.value}>{order.rings.female.material}</span>
@@ -117,7 +117,7 @@ function RefundOrder() {
               </div>
 
               <div className={styles.reason}>
-                <span className={styles.label}>Lý do hoàn trả:</span>
+                <span className={styles.label}>Lý do hoàn trả: </span>
                 <span className={styles.value}>{order.reason}</span>
               </div>
             </Grid>
