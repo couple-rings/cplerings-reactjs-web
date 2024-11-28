@@ -1,124 +1,151 @@
 @use 'src/index.scss' as *;
 
 .container {
-  padding: 2rem;
-
-  .title {
-    font-size: 2rem;
-    color: $primaryColor;
-    margin-bottom: 2rem;
-    text-align: center;
-    font-weight: 500;
-  }
-
-  .orderCard {
-    margin-bottom: 2rem;
-    padding: 1.5rem;
-    border-radius: 12px;
-    border-width: 2px;
-    box-shadow: $boxShadow;
+    padding: 2rem;
 
     .header {
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid #eee;
-
-      .orderInfo {
         display: flex;
-        gap: 2rem;
-        color: $grayColor;
-        font-size: 0.95rem;
-      }
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+
+        .title {
+            font-size: 2rem;
+            color: $primaryColor;
+            font-weight: 500;
+        }
+
+        .buttonCreate {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            color: white;
+            background-color: black;
+            text-transform: none;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+
+            &:hover {
+                background-color: rgba($primaryColor, 0.1);
+                color: black;
+            }
+
+            svg {
+                font-size: 1.5rem;
+            }
+        }
     }
 
-    .body {
-      .productImage {
-        width: 100%;
-        border-radius: 8px;
+    .orderCard {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border-width: 2px;
         box-shadow: $boxShadow;
-      }
 
-      .middle {
-        .collection {
-          font-size: 1.3rem;
-          color: $primaryColor;
-          font-weight: 500;
-          margin-bottom: 1rem;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
+        .header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
 
-          .collectionIcon {
-            font-size: 1.5rem;
-          }
+            .orderInfo {
+                display: flex;
+                gap: 2rem;
+                color: $grayColor;
+                font-size: 0.95rem;
+            }
         }
 
-        .customerInfo {
-          margin-bottom: 1.5rem;
-          
-          .value {
-            font-weight: 500;
-          }
-        }
-
-        .ringsInfo {
-          display: flex;
-          margin-bottom: 1.5rem;
-          background: #f8f9fa;
-          padding: 1.5rem;
-          border-radius: 8px;
-
-          .ringSection {
-            flex: 1;
-
-            .ringTitle {
-              font-weight: 500;
-              margin-bottom: 1rem;
-              color: $primaryColor;
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-
-              .icon {
-                font-size: 1.2rem;
-              }
+        .body {
+            .productImage {
+                width: 100%;
+                border-radius: 8px;
+                box-shadow: $boxShadow;
             }
 
-            .specs {
-              display: flex;
-              flex-direction: column;
-              gap: 0.8rem;
+            .middle {
+                .collection {
+                    font-size: 1.3rem;
+                    color: $primaryColor;
+                    font-weight: 500;
+                    margin-bottom: 1rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+
+                    .collectionIcon {
+                        font-size: 1.5rem;
+                    }
+                }
+
+                .customerInfo {
+                    margin-bottom: 1.5rem;
+
+                    .value {
+                        font-weight: 500;
+                    }
+                }
+
+                .ringsInfo {
+                    display: flex;
+                    margin-bottom: 1.5rem;
+                    background: #f8f9fa;
+                    padding: 1.5rem;
+                    border-radius: 8px;
+
+                    .ringSection {
+                        flex: 1;
+
+                        .ringTitle {
+                            font-weight: 500;
+                            margin-bottom: 1rem;
+                            color: $primaryColor;
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+
+                            .icon {
+                                font-size: 1.2rem;
+                            }
+                        }
+
+                        .specs {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 0.8rem;
+                        }
+                    }
+                }
+
+                .reason {
+                    padding: 1rem;
+                    background: #fff5f5;
+                    border-radius: 8px;
+
+                    .value {
+                        font-weight: 500;
+                        color: #e53e3e;
+                    }
+                }
+
+                .label {
+                    color: $grayColor;
+                    margin-right: 0.8rem;
+                }
             }
-          }
-        }
 
-        .reason {
-          padding: 1rem;
-          background: #fff5f5;
-          border-radius: 8px;
-          
-          .value {
-            font-weight: 500;
-            color: #e53e3e;
-          }
-        }
+            .right {
+                text-align: center;
 
-        .label {
-          color: $grayColor;
-          margin-right: 0.8rem;
+                .price {
+                    font-size: 1.5rem;
+                    font-weight: 600;
+                    color: $primaryColor;
+                    margin-bottom: 1rem;
+                }
+            }
         }
-      }
-
-      .right {
-        text-align: center;
-
-        .price {
-          font-size: 1.5rem;
-          font-weight: 600;
-          color: $primaryColor;
-          margin-bottom: 1rem;
-        }
-      }
     }
-  }
 }

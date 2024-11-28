@@ -82,6 +82,7 @@ import StaffCustomOrderDetail from "src/pages/Staff/CustomOrderDetail/CustomOrde
 import LoveAgreementDetail from "src/pages/Common/LoveAgreementDetail/LoveAgreementDetail";
 import RefundOrder from "src/pages/Staff/RefundOrder/RefundOrder";
 import RefundOrderDetail from "src/pages/Staff/RefundOrderDetail/RefundOrderDetail";
+import RefundCreateForm from "src/pages/Staff/RefundCreateForm/RefundCreateForm";
 
 const router = createBrowserRouter([
   {
@@ -345,6 +346,10 @@ const router = createBrowserRouter([
       {
         path: "refund-order/detail/:id",
         element: <RefundOrderDetail />,
+      },
+      {
+        path: "refund-create-form",
+        element: <RefundCreateForm />,
       },
     ],
   },

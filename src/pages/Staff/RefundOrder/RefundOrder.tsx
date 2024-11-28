@@ -4,6 +4,7 @@ import styles from "./RefundOrder.module.scss";
 import sample from "src/assets/sampledata/ringdesign.png";
 import { secondaryBtn } from "src/utils/styles";
 import { useNavigate } from "react-router-dom";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 const refundOrders = [
   {
@@ -34,7 +35,15 @@ function RefundOrder() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Danh Sách Đơn Hoàn Trả</div>
+      <div className={styles.header}>
+        <div className={styles.title}>Danh Sách Đơn Hoàn Trả</div>
+        <Button 
+          className={styles.buttonCreate}
+          onClick={() => navigate('/staff/refund-create-form')}
+        >
+          <AddCircleOutlineIcon /> <div>Tạo Đơn</div>
+        </Button>
+      </div>
       
       {refundOrders.map((order) => (
         <Card key={order.id} className={styles.orderCard}>
