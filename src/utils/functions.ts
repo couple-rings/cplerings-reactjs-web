@@ -1,8 +1,8 @@
-import { metalWeightUnit, profitRatio } from "./constants";
+import { ChipColor, metalWeightUnit, profitRatio } from "./constants";
 import white from "src/assets/whitegold.png";
 import rose from "src/assets/rosegold.png";
 import yellow from "src/assets/yellowgold.png";
-import { GoldColor } from "./enums";
+import { CraftingRequestStatus, CustomRequestStatus, GoldColor } from "./enums";
 
 export const showSlides = (minSM: boolean, minMD: boolean, minLG: boolean) => {
   if (minLG) return 5;
@@ -107,4 +107,52 @@ export const toBase64 = (file: File): Promise<string> =>
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const instanceOfMetalSpec = (object: any): object is IMetalSpec => {
   return "pricePerUnit" in object;
+};
+
+export const formatCustomRequestStatus = (
+  status: CustomRequestStatus
+): { text: string; color: ChipColor } => {
+  if (status === CustomRequestStatus.Waiting)
+    return {
+      text: "Đang Chờ Duyệt",
+      color: "warning",
+    };
+
+  if (status === CustomRequestStatus.OnGoing)
+    return {
+      text: "Đang Thiết Kế",
+      color: "warning",
+    };
+
+  if (status === CustomRequestStatus.Canceled)
+    return {
+      text: "Đã Hủy",
+      color: "error",
+    };
+
+  return {
+    text: "Đã Hoàn Thành",
+    color: "success",
+  };
+};
+
+export const formatCraftingRequestStatus = (
+  status: CraftingRequestStatus
+): { text: string; color: ChipColor } => {
+  if (status === CraftingRequestStatus.Pending)
+    return {
+      text: "Chờ duyệt",
+      color: "warning",
+    };
+
+  if (status === CraftingRequestStatus.Rejected)
+    return {
+      text: "Từ chối",
+      color: "error",
+    };
+
+  return {
+    text: "Đã duyệt",
+    color: "success",
+  };
 };

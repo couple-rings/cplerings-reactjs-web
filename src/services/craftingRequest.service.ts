@@ -26,6 +26,10 @@ export const postCreateCraftingRequests = (data: ICreateCraftingRequest) => {
   );
 };
 
+export const postCreateCraftingRing = (data: ICreateCraftingRingRequest) => {
+  return axios.post<unknown, IResponse<object>>(`crafting/rings`, data);
+};
+
 export const putUpdateCraftingRequests = (data: IUpdateCraftingRequest) => {
   return axios.put<unknown, IResponse<IUpdateCraftingRequestResponse>>(
     `crafting-requests/determination`,

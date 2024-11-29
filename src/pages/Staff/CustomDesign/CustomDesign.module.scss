@@ -6,21 +6,20 @@
     padding-bottom: 5rem;
 
     .title {
-        font-size    : 2rem;
+        font-size    : 1.5rem;
         margin-bottom: 3rem;
     }
 
     .left {
         .label {
             text-align   : center;
-            font-size    : 1.2rem;
             margin-top   : 1.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             color        : $grayColor;
 
             img {
-                width       : 20px;
-                margin-right: 1rem;
+                width       : 15px;
+                margin-right: 10px;
             }
         }
     }

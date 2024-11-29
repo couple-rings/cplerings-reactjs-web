@@ -2,9 +2,7 @@ import { Button, Chip, Divider, Grid, Skeleton } from "@mui/material";
 import styles from "./CustomOrderDetail.module.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
-import { currencyFormatter } from "src/utils/functions";
-import male from "src/assets/male-icon.png";
-import female from "src/assets/female-icon.png";
+import { currencyFormatter, getDiamondSpec } from "src/utils/functions";
 import { secondaryBtn } from "src/utils/styles";
 import DownloadForOfflineRoundedIcon from "@mui/icons-material/DownloadForOfflineRounded";
 import { useQuery } from "@tanstack/react-query";
@@ -23,6 +21,7 @@ import { useAppSelector } from "src/utils/hooks";
 import { ChipColor } from "src/utils/constants";
 import DownloadIcon from "@mui/icons-material/Download";
 import { getTransportOrderWithCustomOrder } from "src/services/transportOrder.service";
+import HoverCard from "src/components/product/HoverCard";
 
 function CustomOrderDetail() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
@@ -151,12 +150,12 @@ function CustomOrderDetail() {
 
   return (
     <Grid container className={styles.container} justifyContent={"center"}>
-      <Grid item xs={10}>
+      <Grid item xs={11} md={10}>
         <div className={styles.title}>Chi Tiết Đơn Gia Công</div>
         <Grid container>
-          <Grid container item xs={6}>
+          <Grid container item sm={6}>
             <Grid container item fontSize={"1.2rem"} mt={1} mb={3}>
-              <Grid item xs={3}>
+              <Grid item xs={6} md={3}>
                 Mã Đơn:
               </Grid>
               <Grid item className={styles.info}>
@@ -165,7 +164,7 @@ function CustomOrderDetail() {
             </Grid>
 
             <Grid container item fontSize={"1.2rem"} mb={3}>
-              <Grid item xs={3}>
+              <Grid xs={6} md={3}>
                 Ngày Tạo:
               </Grid>
               <Grid item className={styles.info}>
@@ -174,7 +173,7 @@ function CustomOrderDetail() {
             </Grid>
           </Grid>
 
-          <Grid container item xs={6}>
+          <Grid container item sm={6}>
             <Grid
               container
               item
@@ -182,7 +181,7 @@ function CustomOrderDetail() {
               mb={3}
               alignItems={"center"}
             >
-              <Grid item xs={3}>
+              <Grid item xs={6} md={5}>
                 Trạng Thái:
               </Grid>
               <Grid item>
@@ -194,7 +193,7 @@ function CustomOrderDetail() {
             </Grid>
 
             <Grid container item fontSize={"1.2rem"} mb={2}>
-              <Grid item xs={3}>
+              <Grid item xs={6} md={5}>
                 Thợ Gia Công:
               </Grid>
               <Grid item className={styles.info}>
@@ -206,12 +205,12 @@ function CustomOrderDetail() {
           <Grid
             container
             item
-            xs={6}
+            sm={6}
             fontSize={"1.2rem"}
             mb={2}
             alignItems={"center"}
           >
-            <Grid item xs={3}>
+            <Grid item xs={6} md={3}>
               Tổng Tiền:
             </Grid>
             <Grid item className={styles.total}>
@@ -224,7 +223,7 @@ function CustomOrderDetail() {
             CustomOrderStatus.Delivering,
             CustomOrderStatus.Completed,
           ].includes(order.status) && (
-            <Grid container item xs={6}>
+            <Grid container item sm={6}>
               <Grid container item fontSize={"1.2rem"} mb={2}>
                 <Grid
                   item
@@ -242,18 +241,25 @@ function CustomOrderDetail() {
         </Grid>
 
         <Grid container justifyContent={"center"} mt={5}>
-          <Grid container item xs={8} className={styles.card} py={5}>
-            <Grid container item xs={6} justifyContent={"center"}>
+          <Grid container item lg={10} className={styles.card} py={5}>
+            <Grid
+              container
+              item
+              xs={12}
+              md={6}
+              mb={7}
+              justifyContent={"center"}
+            >
               <Grid item xs={9} mb={3}>
-                <img
-                  src={maleRing.customDesign.designVersion.image.url}
-                  className={styles.ringImage}
+                <HoverCard
+                  shadow={true}
+                  image={maleRing.customDesign.designVersion.image.url}
+                  file={maleRing.customDesign.blueprint.url}
                 />
               </Grid>
 
               <Grid item xs={12} textAlign={"center"} mb={2}>
-                <img src={male} width={15} style={{ marginRight: 8 }} />
-                Nhẫn Nam
+                Nhẫn Của Bạn
               </Grid>
 
               {maleRing.maintenanceDocument && (
@@ -270,20 +276,36 @@ function CustomOrderDetail() {
                 </Grid>
               )}
 
-              <Grid item xs={9} mt={3}>
+              <Grid item xs={10} mt={3}>
                 <Grid container justifyContent={"space-between"}>
                   <Grid item className={styles.label}>
                     Chất Liệu
                   </Grid>
-                  <Grid item>Vàng Trắng 18K</Grid>
+                  <Grid item>{maleRing.metalSpecification.name}</Grid>
                 </Grid>
                 <Divider sx={{ my: 2 }} />
 
                 <Grid container justifyContent={"space-between"}>
                   <Grid item className={styles.label}>
-                    Kim Cương
+                    Kim Cương Chính
                   </Grid>
-                  <Grid item>15PT ,G ,VS1</Grid>
+                  <Grid item>
+                    {`${
+                      maleRing.diamonds[0].diamondSpecification.shape
+                    } ${getDiamondSpec(
+                      maleRing.diamonds[0].diamondSpecification
+                    )}`}
+                  </Grid>
+                </Grid>
+                <Divider sx={{ my: 2 }} />
+
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item className={styles.label}>
+                    Số Kim Cương Phụ
+                  </Grid>
+                  <Grid item>
+                    {maleRing.customDesign.sideDiamondsCount} Viên
+                  </Grid>
                 </Grid>
                 <Divider sx={{ my: 2 }} />
 
@@ -314,17 +336,24 @@ function CustomOrderDetail() {
               </Grid>
             </Grid>
 
-            <Grid container item xs={6} justifyContent={"center"}>
+            <Grid
+              container
+              item
+              xs={12}
+              md={6}
+              mb={7}
+              justifyContent={"center"}
+            >
               <Grid item xs={9} mb={3}>
-                <img
-                  src={femaleRing.customDesign.designVersion.image.url}
-                  className={styles.ringImage}
+                <HoverCard
+                  shadow={true}
+                  image={femaleRing.customDesign.designVersion.image.url}
+                  file={femaleRing.customDesign.blueprint.url}
                 />
               </Grid>
 
               <Grid item xs={12} textAlign={"center"} mb={2}>
-                <img src={female} width={15} style={{ marginRight: 8 }} />
-                Nhẫn Nữ
+                Nhẫn Của Bạn Đời
               </Grid>
 
               {femaleRing.maintenanceDocument && (
@@ -341,20 +370,37 @@ function CustomOrderDetail() {
                 </Grid>
               )}
 
-              <Grid item xs={9} mt={3}>
+              <Grid item xs={10} mt={3}>
                 <Grid container justifyContent={"space-between"}>
                   <Grid item className={styles.label}>
                     Chất Liệu
                   </Grid>
-                  <Grid item>Vàng Trắng 18K</Grid>
+                  <Grid item>{femaleRing.metalSpecification.name}</Grid>
                 </Grid>
                 <Divider sx={{ my: 2 }} />
 
                 <Grid container justifyContent={"space-between"}>
                   <Grid item className={styles.label}>
-                    Kim Cương
+                    Kim Cương Chính
                   </Grid>
-                  <Grid item>15PT ,G ,VS1</Grid>
+                  <Grid item>
+                    {" "}
+                    {`${
+                      femaleRing.diamonds[0].diamondSpecification.shape
+                    } ${getDiamondSpec(
+                      femaleRing.diamonds[0].diamondSpecification
+                    )}`}
+                  </Grid>
+                </Grid>
+                <Divider sx={{ my: 2 }} />
+
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item className={styles.label}>
+                    Số Kim Cương Phụ
+                  </Grid>
+                  <Grid item>
+                    {femaleRing.customDesign.sideDiamondsCount} Viên
+                  </Grid>
                 </Grid>
                 <Divider sx={{ my: 2 }} />
 
@@ -386,14 +432,14 @@ function CustomOrderDetail() {
             </Grid>
 
             {order.contract.document && (
-              <Grid container mt={10} justifyContent={"center"}>
+              <Grid container mt={2} justifyContent={"center"}>
                 <a
                   download={""}
                   href={order.contract.document.url}
                   className={styles.download}
                 >
                   <DownloadForOfflineRoundedIcon />
-                  <span>Tải File PDF</span>
+                  <span>Tải Hợp Đồng</span>
                 </a>
               </Grid>
             )}
