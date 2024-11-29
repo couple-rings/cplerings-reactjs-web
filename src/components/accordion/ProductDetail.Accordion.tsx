@@ -32,25 +32,58 @@ function ProductDetailAccordion(props: IProductDetailAccordionProps) {
             <Divider sx={{ backgroundColor: "#ccc", my: 2 }} />
 
             <Grid container className={styles.section}>
-              <Grid item xs={4} className={styles.label}>
-                <div>Phân loại</div>
-                <div>Chất liệu</div>
-                <div>Bộ sưu tập</div>
+              <Grid container className={styles.label}>
+                <Grid item xs={4}>
+                  <div>Phân loại</div>
+                </Grid>
+
+                <Grid item>
+                  <div>{category ? category : "Nhẫn Cưới"}</div>
+                </Grid>
               </Grid>
-              <Grid item xs={8} className={styles.content}>
-                <div>{category ? category : "Nhẫn Cưới"}</div>
-                <div>
-                  {maleDetail &&
-                    femaleDetail &&
-                    `Nam: ${maleDetail.metalSpec.name} / Nữ: ${femaleDetail.metalSpec.name}`}
-                </div>
-                <div>{collectionName}</div>
+
+              <Grid container className={styles.label}>
+                <Grid item xs={4}>
+                  <div>Chất liệu</div>
+                </Grid>
+
+                <Grid item xs={8}>
+                  <div>
+                    {maleDetail &&
+                      femaleDetail &&
+                      `Nam: ${maleDetail.metalSpec.name} / Nữ: ${femaleDetail.metalSpec.name}`}
+                  </div>
+                </Grid>
+              </Grid>
+
+              <Grid container className={styles.label}>
+                <Grid item xs={4}>
+                  <div>Khối lượng</div>
+                </Grid>
+
+                <Grid item>
+                  <div>
+                    {maleDetail &&
+                      femaleDetail &&
+                      `Nam: ${maleDetail.metalWeight} chỉ / Nữ: ${femaleDetail.metalWeight} chỉ`}
+                  </div>
+                </Grid>
+              </Grid>
+
+              <Grid container className={styles.label}>
+                <Grid item xs={4}>
+                  <div>Bộ sưu tập</div>
+                </Grid>
+
+                <Grid item>
+                  <div>{collectionName}</div>
+                </Grid>
               </Grid>
             </Grid>
           </Box>
 
           <Box sx={{ mb: 2 }}>
-            <div className={styles.title}>Kim Cương</div>
+            <div className={styles.title}>Kim Cương Chính</div>
             <Divider sx={{ backgroundColor: "#ccc", my: 2 }} />
 
             <Grid container className={styles.section}>
@@ -83,11 +116,15 @@ function ProductDetailAccordion(props: IProductDetailAccordionProps) {
                 </div>
               </Grid>
             </Grid>
+          </Box>
 
+          <Box sx={{ mb: 2 }}>
+            <div className={styles.title}>Kim Cương Phụ</div>
             <Divider sx={{ backgroundColor: "#ccc", my: 2 }} />
+
             <Grid container className={styles.section}>
               <Grid item xs={4} className={styles.label}>
-                <div>Số kim cương tấm</div>
+                <div>Số lượng</div>
                 <div>Tổng trọng lượng</div>
               </Grid>
               <Grid item xs={8} className={styles.content}>

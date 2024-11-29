@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import SpouseModal from "src/components/modal/redirect/Spouse.modal";
 import { fetchDesignDetail } from "src/utils/querykey";
 import { getDesignDetail } from "src/services/design.service";
+import { designFee } from "src/utils/constants";
 
 function DesignFee() {
   const [open, setOpen] = useState(false);
@@ -203,7 +204,7 @@ function DesignFee() {
             <Grid item>Thành Tiền</Grid>
 
             <Grid item fontWeight={600} fontSize={"1.3rem"}>
-              {currencyFormatter(500000)}
+              {currencyFormatter(designFee)}
             </Grid>
           </Grid>
         </Grid>

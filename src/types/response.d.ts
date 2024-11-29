@@ -1,4 +1,4 @@
-import { ErrorType, ResponseType, UserRole } from "src/utils/enums";
+import { ErrorType, Gender, ResponseType, UserRole } from "src/utils/enums";
 
 export {};
 
@@ -110,6 +110,8 @@ declare global {
     name: string;
 
     dob: string;
+
+    gender: Gender;
   }
 
   interface IFptResponseV2<T> {

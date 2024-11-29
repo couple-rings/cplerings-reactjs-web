@@ -152,7 +152,7 @@ const router = createBrowserRouter([
         element: <JewelryDetail />,
       },
       {
-        path: "wedding-rings/detail",
+        path: "wedding-rings/detail/:maleId/:femaleId",
         element: <WeddingRingsDetail />,
       },
       {
