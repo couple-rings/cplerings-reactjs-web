@@ -99,9 +99,14 @@
                 }
             }
 
+            .designfee {
+                color        : $primaryColor;
+                margin-bottom: 1rem;
+                margin-top   : 1.5rem;
+            }
+
             .note {
-                color     : $primaryColor;
-                margin-top: 1.5rem;
+                color: $primaryColor;
             }
 
             .policy {

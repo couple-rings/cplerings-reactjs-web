@@ -5,13 +5,27 @@
     padding: 3rem 0;
 
     .title {
-        font-size    : 1.5rem;
-        margin-bottom: 3rem;
+        font-size: 1.5rem;
+    }
+
+    .count {
+        font-size: 1.2rem;
+
+        span {
+            color: $secondaryColor;
+        }
+    }
+
+    .money {
+        color      : $secondaryColor;
+        font-weight: 600;
     }
 
     .subtitle {
-        font-size    : 1.2rem;
-        margin-bottom: 1rem;
+        font-size      : 1.2rem;
+        margin-bottom  : 1rem;
+        align-items    : center;
+        justify-content: space-between;
     }
 
     .designCard {
@@ -36,7 +50,8 @@
         }
 
         .description {
-            line-height: 1.5rem;
+            line-height  : 1.5rem;
+            margin-bottom: 1rem;
         }
     }
 
@@ -50,14 +65,16 @@
         margin-bottom  : 1rem;
         cursor         : pointer;
 
+        .previewImg {
+            width        : 100%;
+            border-radius: 10px;
+        }
+
         &.selected {
             background-color: $secondaryColor;
+            color           : white;
 
             .download {
-                color: white;
-            }
-
-            .versionNo {
                 color: white;
             }
         }
@@ -71,6 +88,7 @@
             text-decoration: none;
             color          : black;
             width          : 50%;
+            margin-bottom  : 1rem;
 
             &:hover {
                 font-weight: 600;

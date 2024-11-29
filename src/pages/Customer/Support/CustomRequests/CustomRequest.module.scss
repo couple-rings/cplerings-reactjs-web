@@ -9,6 +9,24 @@
         margin-bottom: 3rem;
     }
 
+    .tabLabel {
+        text-transform: capitalize;
+    }
+
+    .customTable {
+        border: 1px solid #ccc;
+
+        .headerRow {
+            background-color: $secondaryColor;
+
+            .cell {
+                color: white;
+            }
+        }
+
+    }
+
+
     .viewMore {
         margin-top: 3rem;
         cursor    : pointer;

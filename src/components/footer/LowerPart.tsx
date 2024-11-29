@@ -1,5 +1,10 @@
 import { Grid } from "@mui/material";
 import styles from "./Footer.module.scss";
+import {
+  companyAddress,
+  companyEmail,
+  companyPhone,
+} from "src/utils/constants";
 
 const columnItems1 = [
   {
@@ -74,9 +79,9 @@ const columnItems4 = [
 ];
 
 const columnItems5 = [
-  "Email: Couplerings@gmail.com",
-  "SĐT: 0928226767",
-  "Địa Chỉ: Lô E2a-7, Đường D1, Đ. D1, Long Thạnh Mỹ, Thành Phố Thủ Đức, Hồ Chí Minh",
+  `Email: ${companyEmail}`,
+  `SĐT: ${companyPhone}`,
+  `Địa Chỉ: ${companyAddress}`,
   "Giờ Làm Việc",
   "Thứ Hai - Thứ Sáu: 8:00 - 21:00",
   "Thứ Bảy, Chủ Nhật: 8:00 - 11:00",

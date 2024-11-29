@@ -1,28 +1,49 @@
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./CustomRequestDetail.module.scss";
-import { Grid, Skeleton } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Chip,
+  Divider,
+  FormLabel,
+  Grid,
+  Skeleton,
+} from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import male from "src/assets/male-icon.png";
 import female from "src/assets/female-icon.png";
 import { roundedPrimaryBtn } from "src/utils/styles";
 import HoverCard from "src/components/product/HoverCard";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchCustomRequestDetail } from "src/utils/querykey";
+import {
+  fetchCustomerSpouse,
+  fetchCustomRequestDetail,
+} from "src/utils/querykey";
 import {
   getCustomRequestDetail,
   putUpdateCustomRequest,
 } from "src/services/customRequest.service";
 import { useEffect, useState } from "react";
 import { CustomRequestStatus, DesignCharacteristic } from "src/utils/enums";
-import { getDiamondSpec } from "src/utils/functions";
+import {
+  currencyFormatter,
+  formatCustomRequestStatus,
+  getDiamondSpec,
+} from "src/utils/functions";
 import ArrowRightRoundedIcon from "@mui/icons-material/ArrowRightRounded";
 import { toast } from "react-toastify";
 import { useAppSelector } from "src/utils/hooks";
 import { postCreateConversation } from "src/services/conversation.service";
+import CustomExpandIcon from "src/components/icon/CustomExpandIcon";
+import moment from "moment";
+import { getCustomerSpouse } from "src/services/spouse.service";
 
 function CustomRequestDetail() {
   const [maleDesign, setMaleDesign] = useState<IDesign | null>(null);
   const [femaleDesign, setFemaleDesign] = useState<IDesign | null>(null);
+
+  const [ownerSpouse, setOwnerSpouse] = useState<ISpouse | null>(null);
 
   const { id } = useParams<{ id: string }>();
   const { id: staffId } = useAppSelector((state) => state.auth.userInfo);
@@ -36,6 +57,16 @@ function CustomRequestDetail() {
       if (id) return getCustomRequestDetail(+id);
     },
     enabled: !!id,
+  });
+
+  const { data: spouseResponse } = useQuery({
+    queryKey: [fetchCustomerSpouse, response?.data?.customer.id],
+
+    queryFn: () => {
+      if (response?.data?.customer.id)
+        return getCustomerSpouse(response?.data?.customer.id);
+    },
+    enabled: !!response?.data?.customer.id,
   });
 
   const statusMutation = useMutation({
@@ -109,6 +140,15 @@ function CustomRequestDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [response]);
 
+  useEffect(() => {
+    if (spouseResponse?.data) {
+      const ownerSpouse = spouseResponse.data.spouses.find(
+        (item) => !!item.customerId
+      );
+      if (ownerSpouse) setOwnerSpouse(ownerSpouse);
+    }
+  }, [spouseResponse]);
+
   if (!maleDesign || !femaleDesign)
     return (
       <Grid container justifyContent={"center"} py={5}>
@@ -134,178 +174,348 @@ function CustomRequestDetail() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Bản Thiết Kế {maleDesign.name}</div>
-      <Grid container item xs={12} justifyContent={"center"}>
-        <Grid container className={styles.section}>
-          <Grid item xs={12} md={4}>
-            <HoverCard
-              file={maleDesign.blueprint.url}
-              image={maleDesign.designMetalSpecifications[0].image.url}
-            />
+      <div className={styles.mainTitle}>Yêu Cầu Thiết Kế</div>
+
+      <Grid container justifyContent={"center"} mb={5}>
+        <Grid container item xs={11} lg={9} mb={5}>
+          <Grid container item xs={5.7}>
+            <Grid container>
+              <Grid item xs={5}>
+                Ngày Tạo:
+              </Grid>
+              <FormLabel>
+                {moment(response?.data?.createdAt).format("DD/MM/YYYY HH:mm")}
+              </FormLabel>
+            </Grid>
+
+            <Grid container mt={2}>
+              <Grid item xs={5}>
+                Ngày Cập Nhật:
+              </Grid>
+              <FormLabel>
+                {moment(
+                  response?.data?.customRequestHistories.find(
+                    (item) => item.status === response.data?.status
+                  )?.createdAt
+                ).format("DD/MM/YYYY HH:mm")}
+              </FormLabel>
+            </Grid>
           </Grid>
 
-          <Grid item xs={12} md={7.5} className={styles.right}>
-            <div className={styles.gender}>
-              <img src={male} />
-              <span>Nam Giới</span>
-            </div>
-
-            <Grid container gap={3} alignItems={"baseline"}>
-              <Grid item xs={4} lg={2.5} className={styles.label}>
-                Chất Liệu:
+          <Grid container item xs={5.7}>
+            <Grid container>
+              <Grid item xs={5}>
+                Tiền Thanh Toán:
               </Grid>
-              <div>
-                {maleDesign.designMetalSpecifications.map((item) => {
-                  return (
-                    <div key={item.id} className={styles.item}>
-                      <ArrowRightRoundedIcon />{" "}
-                      <span>{item.metalSpecification.name}</span>
-                    </div>
-                  );
-                })}
-              </div>
+              <FormLabel>{currencyFormatter(500000)}</FormLabel>
             </Grid>
 
-            <Grid container gap={3} my={2} alignItems={"baseline"}>
-              <Grid item xs={4} lg={2.5} className={styles.label}>
-                Kim Cương:
+            <Grid container alignItems={"center"} mt={2}>
+              <Grid item xs={5}>
+                Trạng Thái:
               </Grid>
-              <div>
-                {maleDesign.designDiamondSpecifications.map((item) => {
-                  return (
-                    <div key={item.id} className={styles.item}>
-                      <ArrowRightRoundedIcon />{" "}
-                      <span style={{ marginRight: 8 }}>
-                        {item.diamondSpecification.shape}
-                      </span>
-                      {getDiamondSpec(item.diamondSpecification)}
-                    </div>
-                  );
-                })}
-              </div>
-            </Grid>
-
-            <Grid container gap={3} alignItems={"baseline"}>
-              <Grid item xs={4} lg={2.7} className={styles.label}>
-                Trọng Lượng:
+              <Grid item>
+                <Chip
+                  label={
+                    formatCustomRequestStatus(
+                      response?.data?.status as CustomRequestStatus
+                    ).text
+                  }
+                  color={
+                    formatCustomRequestStatus(
+                      response?.data?.status as CustomRequestStatus
+                    ).color
+                  }
+                />
               </Grid>
-              <div className={styles.item}>{maleDesign.metalWeight} chỉ</div>
             </Grid>
           </Grid>
         </Grid>
 
-        <div className={styles.title}>Bản Thiết Kế {femaleDesign.name}</div>
-        <Grid container className={styles.section}>
-          <Grid item xs={12} md={4}>
-            <HoverCard
-              file={femaleDesign.blueprint.url}
-              image={femaleDesign.designMetalSpecifications[0].image.url}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={7.5} className={styles.right}>
-            <div className={styles.gender}>
-              <img src={female} />
-              <span>Nữ Giới</span>
-            </div>
-
-            <Grid container gap={3} alignItems={"baseline"}>
-              <Grid item xs={4} lg={2.5} className={styles.label}>
-                Chất Liệu:
+        <Grid container item xs={11} lg={9} className={styles.customer}>
+          <fieldset style={{ width: "100%", padding: "1rem" }}>
+            <legend className={styles.title}>Khách Hàng</legend>
+            <Grid container mb={1}>
+              <Grid item xs={3}>
+                Họ Tên:
               </Grid>
-              <div>
-                {femaleDesign.designMetalSpecifications.map((item) => {
-                  return (
-                    <div key={item.id} className={styles.item}>
-                      <ArrowRightRoundedIcon /> {item.metalSpecification.name}
-                    </div>
-                  );
-                })}
-              </div>
+              <Grid item sx={{ textTransform: "capitalize" }}>
+                {ownerSpouse?.fullName.toLowerCase()}
+              </Grid>
             </Grid>
 
-            <Grid container gap={3} my={2} alignItems={"baseline"}>
-              <Grid item xs={4} lg={2.5} className={styles.label}>
-                Kim Cương:
+            <Grid container mb={1}>
+              <Grid item xs={3}>
+                Tên tài khoản:
               </Grid>
-              <div>
-                {femaleDesign.designDiamondSpecifications.map((item) => {
-                  return (
-                    <div key={item.id} className={styles.item}>
-                      <ArrowRightRoundedIcon />{" "}
-                      <span style={{ marginRight: 8 }}>
-                        {item.diamondSpecification.shape}
-                      </span>{" "}
-                      {getDiamondSpec(item.diamondSpecification)}
-                    </div>
-                  );
-                })}
-              </div>
+              <Grid item>{response?.data?.customer.username}</Grid>
             </Grid>
 
-            <Grid container gap={3} alignItems={"baseline"}>
-              <Grid item xs={4} lg={2.7} className={styles.label}>
-                Trọng Lượng:
+            <Grid container mb={1}>
+              <Grid item xs={3}>
+                Email:
               </Grid>
-              <div className={styles.item}>{femaleDesign.metalWeight} chỉ</div>
+              <Grid item>{response?.data?.customer.email}</Grid>
             </Grid>
-          </Grid>
+
+            <Grid container>
+              <Grid item xs={3}>
+                Số điện thoại:
+              </Grid>
+              <Grid item>{response?.data?.customer.phone ?? "--"}</Grid>
+            </Grid>
+          </fieldset>
         </Grid>
+      </Grid>
 
-        <Grid container justifyContent={"center"}>
-          <Grid container item xs={8} md={6} gap={3} justifyContent={"center"}>
-            {response?.data?.status === CustomRequestStatus.OnGoing && (
-              <>
-                <Grid item>
-                  <LoadingButton
-                    loading={chatMutation.isPending}
-                    variant="contained"
-                    fullWidth
-                    sx={roundedPrimaryBtn}
-                    onClick={handleChat}
-                  >
-                    Chat Với Khách Hàng
-                  </LoadingButton>
+      <Grid container justifyContent={"center"}>
+        <Grid container item xs={11} lg={9}>
+          <div className={styles.title}>Thiết Kế Gốc</div>
+        </Grid>
+      </Grid>
+      <Grid container justifyContent={"center"}>
+        <Grid
+          container
+          item
+          xs={11}
+          lg={9}
+          py={6}
+          className={styles.sectionContainer}
+        >
+          <Grid container item xs={5.8} className={styles.section}>
+            <div className={styles.title}>Bản Thiết Kế {maleDesign.name}</div>
+            <Grid item xs={9}>
+              <HoverCard
+                shadow={true}
+                file={maleDesign.blueprint.url}
+                image={maleDesign.designMetalSpecifications[0].image.url}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={9} className={styles.info}>
+              <div className={styles.gender}>
+                <img src={male} />
+                <span>Nam Tính</span>
+              </div>
+
+              <Accordion sx={{ boxShadow: "none" }}>
+                <AccordionSummary
+                  sx={{ p: 0, pt: 1 }}
+                  expandIcon={<CustomExpandIcon />}
+                >
+                  <div>Chất Liệu</div>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid container>
+                    <div>
+                      {maleDesign.designMetalSpecifications.map((item) => {
+                        return (
+                          <div key={item.id} className={styles.item}>
+                            <ArrowRightRoundedIcon />{" "}
+                            <span>{item.metalSpecification.name}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
+
+              <Accordion sx={{ boxShadow: "none" }}>
+                <AccordionSummary
+                  sx={{ p: 0, pt: 1 }}
+                  expandIcon={<CustomExpandIcon />}
+                >
+                  <div>Kim Cương</div>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid container>
+                    <div>
+                      {maleDesign.designDiamondSpecifications.map((item) => {
+                        return (
+                          <div key={item.id} className={styles.item}>
+                            <ArrowRightRoundedIcon />{" "}
+                            <span style={{ marginRight: 8 }}>
+                              {item.diamondSpecification.shape}
+                            </span>
+                            {getDiamondSpec(item.diamondSpecification)}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
+
+              <Divider />
+              <Grid container justifyContent={"space-between"}>
+                <Grid item py={2} className={styles.label}>
+                  Trọng Lượng:
                 </Grid>
+                <div className={styles.item}>{maleDesign.metalWeight} Chỉ</div>
+              </Grid>
 
-                <Grid item>
-                  <LoadingButton
-                    disabled={chatMutation.isPending}
-                    variant="contained"
-                    fullWidth
-                    sx={{ ...roundedPrimaryBtn, px: 3 }}
-                    onClick={() =>
-                      navigate(`/staff/custom-request/${id}/design-version`)
-                    }
-                  >
-                    Qua Thiết Kế
-                  </LoadingButton>
+              <Divider />
+              <Grid container justifyContent={"space-between"}>
+                <Grid item py={2} className={styles.label}>
+                  Kim Cương Phụ:
                 </Grid>
-              </>
-            )}
+                <div className={styles.item}>
+                  {maleDesign.sideDiamondsCount} Viên
+                </div>
+              </Grid>
+            </Grid>
+          </Grid>
 
-            {response?.data?.status === CustomRequestStatus.Canceled && (
-              <LoadingButton
-                variant="contained"
-                fullWidth
-                sx={roundedPrimaryBtn}
-                disabled
-              >
-                Đã Hủy Yêu Cầu
-              </LoadingButton>
-            )}
+          <Grid container item xs={5.8} className={styles.section}>
+            <div className={styles.title}>Bản Thiết Kế {femaleDesign.name}</div>
+            <Grid item xs={9}>
+              <HoverCard
+                shadow={true}
+                file={femaleDesign.blueprint.url}
+                image={femaleDesign.designMetalSpecifications[0].image.url}
+              />
+            </Grid>
 
-            {response?.data?.status === CustomRequestStatus.Waiting && (
-              <LoadingButton
-                loading={statusMutation.isPending}
-                variant="contained"
-                fullWidth
-                sx={{ ...roundedPrimaryBtn, px: 3 }}
-                onClick={handleAccept}
-              >
-                Nhận Yêu Cầu
-              </LoadingButton>
-            )}
+            <Grid item xs={12} md={9} className={styles.info}>
+              <div className={styles.gender}>
+                <img src={female} />
+                <span>Nữ Tính</span>
+              </div>
+
+              <Accordion sx={{ boxShadow: "none" }}>
+                <AccordionSummary
+                  sx={{ p: 0, pt: 1 }}
+                  expandIcon={<CustomExpandIcon />}
+                >
+                  <div>Chất Liệu</div>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid container>
+                    <div>
+                      {femaleDesign.designMetalSpecifications.map((item) => {
+                        return (
+                          <div key={item.id} className={styles.item}>
+                            <ArrowRightRoundedIcon />{" "}
+                            <span>{item.metalSpecification.name}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
+
+              <Accordion sx={{ boxShadow: "none" }}>
+                <AccordionSummary
+                  sx={{ p: 0, pt: 1 }}
+                  expandIcon={<CustomExpandIcon />}
+                >
+                  <div>Kim Cương</div>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid container>
+                    <div>
+                      {femaleDesign.designDiamondSpecifications.map((item) => {
+                        return (
+                          <div key={item.id} className={styles.item}>
+                            <ArrowRightRoundedIcon />{" "}
+                            <span style={{ marginRight: 8 }}>
+                              {item.diamondSpecification.shape}
+                            </span>
+                            {getDiamondSpec(item.diamondSpecification)}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
+
+              <Divider />
+              <Grid container justifyContent={"space-between"}>
+                <Grid item py={2} className={styles.label}>
+                  Trọng Lượng:
+                </Grid>
+                <div className={styles.item}>
+                  {femaleDesign.metalWeight} Chỉ
+                </div>
+              </Grid>
+
+              <Divider />
+              <Grid container justifyContent={"space-between"}>
+                <Grid item py={2} className={styles.label}>
+                  Kim Cương Phụ:
+                </Grid>
+                <div className={styles.item}>
+                  {femaleDesign.sideDiamondsCount} Viên
+                </div>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid container justifyContent={"center"} mt={5}>
+            <Grid
+              container
+              item
+              xs={8}
+              md={6}
+              gap={3}
+              justifyContent={"center"}
+            >
+              {response?.data?.status === CustomRequestStatus.OnGoing && (
+                <>
+                  <Grid item>
+                    <LoadingButton
+                      loading={chatMutation.isPending}
+                      variant="contained"
+                      fullWidth
+                      sx={roundedPrimaryBtn}
+                      onClick={handleChat}
+                    >
+                      Chat Với Khách Hàng
+                    </LoadingButton>
+                  </Grid>
+
+                  <Grid item>
+                    <LoadingButton
+                      disabled={chatMutation.isPending}
+                      variant="contained"
+                      fullWidth
+                      sx={{ ...roundedPrimaryBtn, px: 3 }}
+                      onClick={() =>
+                        navigate(`/staff/custom-request/${id}/design-version`)
+                      }
+                    >
+                      Qua Thiết Kế
+                    </LoadingButton>
+                  </Grid>
+                </>
+              )}
+
+              {response?.data?.status === CustomRequestStatus.Canceled && (
+                <LoadingButton
+                  variant="contained"
+                  fullWidth
+                  sx={roundedPrimaryBtn}
+                  disabled
+                >
+                  Đã Hủy Yêu Cầu
+                </LoadingButton>
+              )}
+
+              {response?.data?.status === CustomRequestStatus.Waiting && (
+                <LoadingButton
+                  loading={statusMutation.isPending}
+                  variant="contained"
+                  fullWidth
+                  sx={{ ...roundedPrimaryBtn, px: 3 }}
+                  onClick={handleAccept}
+                >
+                  Nhận Yêu Cầu
+                </LoadingButton>
+              )}
+            </Grid>
           </Grid>
         </Grid>
       </Grid>

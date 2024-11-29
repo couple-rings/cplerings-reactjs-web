@@ -11,11 +11,11 @@ import {
   Grid,
   Link,
   OutlinedInput,
-  Rating,
+  Skeleton,
   SxProps,
 } from "@mui/material";
 import styles from "./WeddingRingsDetail.module.scss";
-import { Location, useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { menuPaperStyle, primaryBtn, sizeMenuStyle } from "src/utils/styles";
 import {
   currencyFormatter,
@@ -27,7 +27,6 @@ import CustomExpandIcon from "src/components/icon/CustomExpandIcon";
 import {
   CustomOrderStatus,
   CustomRequestStatus,
-  DesignCharacteristic,
   GoldColor,
 } from "src/utils/enums";
 import SizeMenu from "src/components/menu/SizeMenu";
@@ -38,12 +37,17 @@ import ProductDetailAccordion from "src/components/accordion/ProductDetail.Accor
 import Advertisement from "src/components/advertisement/Advertisement";
 import brandIntro from "src/assets/brand-intro.png";
 import FeedbackSection from "src/components/feedback/FeedbackSection";
-import { metalWeightUnit, profitRatio } from "src/utils/constants";
+import { designFee, metalWeightUnit, profitRatio } from "src/utils/constants";
 import { useAppSelector, useScrollTop } from "src/utils/hooks";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCustomOrders, fetchCustomRequests } from "src/utils/querykey";
+import {
+  fetchCustomOrders,
+  fetchCustomRequests,
+  fetchDesignDetail,
+} from "src/utils/querykey";
 import { getCustomRequests } from "src/services/customRequest.service";
 import { getCustomOrders } from "src/services/customOrder.service";
+import { getDesignDetail } from "src/services/design.service";
 
 const sizeMenuPaperStyle: SxProps = {
   ...menuPaperStyle,
@@ -89,24 +93,36 @@ function WeddingRingsDetail() {
   const [secondDiamond, setSecondDiamond] = useState(initDiamond);
 
   const [size, setSize] = useState(0);
-  const [price, setPrice] = useState(0);
+  const [malePrice, setMalePrice] = useState(0);
+  const [femalePrice, setFemalePrice] = useState(0);
 
   const navigate = useNavigate();
 
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const { id: userId } = useAppSelector((state) => state.auth.userInfo);
 
-  const location: Location<{
-    data: ICoupleDesign;
-  }> = useLocation();
+  const { maleId, femaleId } = useParams<{
+    maleId: string;
+    femaleId: string;
+  }>();
 
-  const { data } = location.state || {};
-  const {
-    designs,
-    name: coupleName,
-    description: coupleDescription,
-  } = data || {};
-  const collectionName = designs ? designs[0]?.designCollection?.name : "";
+  const { data: maleResponse } = useQuery({
+    queryKey: [fetchDesignDetail, maleId],
+
+    queryFn: () => {
+      if (maleId) return getDesignDetail(+maleId);
+    },
+    enabled: !!maleId,
+  });
+
+  const { data: femaleResponse } = useQuery({
+    queryKey: [fetchDesignDetail, femaleId],
+
+    queryFn: () => {
+      if (femaleId) return getDesignDetail(+femaleId);
+    },
+    enabled: !!femaleId,
+  });
 
   const { data: customRequestResponse } = useQuery({
     queryKey: [fetchCustomRequests, customRequestFilterObj],
@@ -132,35 +148,21 @@ function WeddingRingsDetail() {
       navigate("/login");
       return;
     }
-
-    const maleDesign = designs.find(
-      (item) => item.characteristic === DesignCharacteristic.Male
-    );
-    const femaleDesign = designs.find(
-      (item) => item.characteristic === DesignCharacteristic.Female
-    );
-
-    navigate(`/customer/design-fee/${maleDesign?.id}/${femaleDesign?.id}`);
+    navigate(`/customer/design-fee/${maleId}/${femaleId}`);
   };
-
-  useEffect(() => {
-    if (!data) navigate("/wedding-rings");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
 
   // Choose default gold and diamond option
   useEffect(() => {
-    if (designs) {
-      const firstMetal = designs[0].designMetalSpecifications.reduce(function (
-        prev,
-        curr
-      ) {
-        return prev.metalSpecification.pricePerUnit <
-          curr.metalSpecification.pricePerUnit
-          ? prev
-          : curr;
-      });
-      const firstDiamond = designs[0].designDiamondSpecifications.reduce(
+    if (maleResponse?.data && femaleResponse?.data) {
+      const firstMetal = maleResponse.data.designMetalSpecifications.reduce(
+        function (prev, curr) {
+          return prev.metalSpecification.pricePerUnit <
+            curr.metalSpecification.pricePerUnit
+            ? prev
+            : curr;
+        }
+      );
+      const firstDiamond = maleResponse.data.designDiamondSpecifications.reduce(
         function (prev, curr) {
           return prev.diamondSpecification.price <
             curr.diamondSpecification.price
@@ -169,53 +171,62 @@ function WeddingRingsDetail() {
         }
       );
 
-      const secondMetal = designs[1].designMetalSpecifications.reduce(function (
-        prev,
-        curr
-      ) {
-        return prev.metalSpecification.pricePerUnit <
-          curr.metalSpecification.pricePerUnit
-          ? prev
-          : curr;
-      });
-      const secondDiamond = designs[1].designDiamondSpecifications.reduce(
+      const secondMetal = femaleResponse.data.designMetalSpecifications.reduce(
         function (prev, curr) {
-          return prev.diamondSpecification.price <
-            curr.diamondSpecification.price
+          return prev.metalSpecification.pricePerUnit <
+            curr.metalSpecification.pricePerUnit
             ? prev
             : curr;
         }
       );
+      const secondDiamond =
+        femaleResponse.data.designDiamondSpecifications.reduce(function (
+          prev,
+          curr
+        ) {
+          return prev.diamondSpecification.price <
+            curr.diamondSpecification.price
+            ? prev
+            : curr;
+        });
 
       setFirstMetal(firstMetal);
       setFirstDiamond(firstDiamond.diamondSpecification);
       setSecondMetal(secondMetal);
       setSecondDiamond(secondDiamond.diamondSpecification);
     }
-  }, [designs]);
+  }, [maleResponse, femaleResponse]);
 
   // calculate price
   useEffect(() => {
-    if (designs) {
+    if (maleResponse?.data && femaleResponse?.data) {
       const firstDesignPrice =
-        (designs[0].metalWeight *
+        (maleResponse.data.metalWeight *
           metalWeightUnit *
           firstMetal.metalSpecification.pricePerUnit +
           firstDiamond.price) *
         profitRatio;
       const secondDesignPrice =
-        (designs[1].metalWeight *
+        (femaleResponse.data.metalWeight *
           metalWeightUnit *
           secondMetal.metalSpecification.pricePerUnit +
           secondDiamond.price) *
         profitRatio;
 
-      const price =
-        Math.round((firstDesignPrice + secondDesignPrice) / 100000) * 100000;
+      const malePrice = Math.round(firstDesignPrice / 100000) * 100000;
+      const femalePrice = Math.round(secondDesignPrice / 100000) * 100000;
 
-      setPrice(price);
+      setMalePrice(malePrice);
+      setFemalePrice(femalePrice);
     }
-  }, [designs, firstDiamond, firstMetal, secondMetal, secondDiamond]);
+  }, [
+    firstDiamond,
+    firstMetal,
+    secondMetal,
+    secondDiamond,
+    maleResponse,
+    femaleResponse,
+  ]);
 
   useEffect(() => {
     if (customRequestResponse?.data && customOrderResponse?.data) {
@@ -268,7 +279,28 @@ function WeddingRingsDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (!maleId || !femaleId) navigate("/wedding-rings");
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [femaleId, maleId]);
+
   useScrollTop();
+
+  if (!maleResponse?.data || !femaleResponse?.data) {
+    return (
+      <Grid container justifyContent={"center"}>
+        <Grid container item xs={10} justifyContent={"space-between"}>
+          <Grid item xs={5}>
+            <Skeleton width={"100%"} height={400} />
+          </Grid>
+          <Grid item xs={6}>
+            <Skeleton width={"100%"} height={600} />
+          </Grid>
+        </Grid>
+      </Grid>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -276,8 +308,6 @@ function WeddingRingsDetail() {
         <Grid container item xs={11} className={styles.content}>
           <Grid item lg={5} sx={{ mb: 2 }}>
             <img src={firstMetal.image.url} />
-            <Divider sx={{ my: 5 }} />
-            <img src={secondMetal.image.url} />
           </Grid>
 
           <Grid item lg={6}>
@@ -304,32 +334,32 @@ function WeddingRingsDetail() {
                 color="inherit"
                 onClick={() => navigate("/wedding-rings")}
               >
-                Bộ Sưu Tập {collectionName}
+                Bộ Sưu Tập {maleResponse.data?.designCollection.name}
               </Link>
             </Breadcrumbs>
 
             <div className={styles.name}>
-              CR {collectionName.toUpperCase()} {coupleName}
+              CR {maleResponse.data?.designCollection.name.toUpperCase()}{" "}
+              {maleResponse.data?.name}
             </div>
 
-            <div className={styles.rate}>
+            {/* <div className={styles.rate}>
               <Rating value={5} readOnly sx={{ color: "#b43620" }} />
               <div className={styles.number}>(50)</div>
-            </div>
+            </div> */}
 
-            <div className={styles.description}>{coupleDescription}</div>
+            <div className={styles.description}>
+              {maleResponse.data?.description}
+            </div>
 
             <Divider sx={{ backgroundColor: "#555", mb: 3 }} />
 
-            <div className={styles.price}>{currencyFormatter(price)}</div>
+            <div className={styles.price}>{currencyFormatter(malePrice)}</div>
 
-            {/* First design start */}
+            {/* Male design start */}
             <Box>
               <Button variant="contained" sx={{ ...primaryBtn, px: 5, py: 1 }}>
-                {designs &&
-                designs[0].characteristic === DesignCharacteristic.Male
-                  ? "Nhẫn Nam"
-                  : "Nhẫn Nữ"}
+                Nam Tính
               </Button>
 
               <div className={styles.options}>
@@ -341,8 +371,8 @@ function WeddingRingsDetail() {
                   </AccordionSummary>
                   <AccordionDetails>
                     <div className={styles.metal}>
-                      {designs &&
-                        designs[0].designMetalSpecifications.map((item) => {
+                      {maleResponse.data?.designMetalSpecifications.map(
+                        (item) => {
                           const selected =
                             firstMetal.id === item.id ? styles.selected : "";
                           return (
@@ -353,7 +383,8 @@ function WeddingRingsDetail() {
                               className={selected}
                             />
                           );
-                        })}
+                        }
+                      )}
                     </div>
                   </AccordionDetails>
                 </Accordion>
@@ -366,8 +397,8 @@ function WeddingRingsDetail() {
                   </AccordionSummary>
                   <AccordionDetails>
                     <Grid container className={styles.diamond}>
-                      {designs &&
-                        designs[0].designDiamondSpecifications.map((item) => {
+                      {maleResponse.data?.designDiamondSpecifications.map(
+                        (item) => {
                           const selected =
                             firstDiamond.id === item.diamondSpecification.id
                               ? styles.selected
@@ -387,7 +418,8 @@ function WeddingRingsDetail() {
                               {getDiamondSpec(item.diamondSpecification)}
                             </Grid>
                           );
-                        })}
+                        }
+                      )}
                     </Grid>
                   </AccordionDetails>
                 </Accordion>
@@ -431,17 +463,35 @@ function WeddingRingsDetail() {
                 </Accordion>
               </div>
             </Box>
-            {/* First design end */}
+            {/* Male design end */}
 
             <Divider sx={{ backgroundColor: "#ccc", mt: 1, mb: 5 }} />
+          </Grid>
+        </Grid>
+
+        <Grid container item xs={11} className={styles.content}>
+          <Grid item lg={5} sx={{ mb: 2 }}>
+            <img src={secondMetal.image.url} />
+          </Grid>
+
+          <Grid item lg={6}>
+            <div className={styles.name}>
+              CR {femaleResponse.data?.designCollection.name.toUpperCase()}{" "}
+              {femaleResponse.data?.name}
+            </div>
+
+            <div className={styles.description}>
+              {femaleResponse.data?.description}
+            </div>
+
+            <Divider sx={{ backgroundColor: "#555", mb: 3 }} />
+
+            <div className={styles.price}>{currencyFormatter(femalePrice)}</div>
 
             {/* Female design start */}
             <Box>
               <Button variant="contained" sx={{ ...primaryBtn, px: 5, py: 1 }}>
-                {designs &&
-                designs[1].characteristic === DesignCharacteristic.Male
-                  ? "Nhẫn Nam"
-                  : "Nhẫn Nữ"}
+                Nữ Tính
               </Button>
 
               <div className={styles.options}>
@@ -453,8 +503,8 @@ function WeddingRingsDetail() {
                   </AccordionSummary>
                   <AccordionDetails>
                     <div className={styles.metal}>
-                      {designs &&
-                        designs[1].designMetalSpecifications.map((item) => {
+                      {femaleResponse.data.designMetalSpecifications.map(
+                        (item) => {
                           const selected =
                             secondMetal.id === item.id ? styles.selected : "";
                           return (
@@ -465,7 +515,8 @@ function WeddingRingsDetail() {
                               className={selected}
                             />
                           );
-                        })}
+                        }
+                      )}
                     </div>
                   </AccordionDetails>
                 </Accordion>
@@ -478,30 +529,29 @@ function WeddingRingsDetail() {
                   </AccordionSummary>
                   <AccordionDetails>
                     <Grid container className={styles.diamond}>
-                      {designs &&
-                        designs[1].designDiamondSpecifications.map(
-                          (item, index) => {
-                            const selected =
-                              secondDiamond.id === item.diamondSpecification.id
-                                ? styles.selected
-                                : "";
-                            return (
-                              <Grid
-                                key={index}
-                                item
-                                xl={2.8}
-                                sm={5}
-                                xs={12}
-                                onClick={() =>
-                                  setSecondDiamond(item.diamondSpecification)
-                                }
-                                className={`${styles.spec} ${selected}`}
-                              >
-                                {getDiamondSpec(item.diamondSpecification)}
-                              </Grid>
-                            );
-                          }
-                        )}
+                      {femaleResponse.data.designDiamondSpecifications.map(
+                        (item, index) => {
+                          const selected =
+                            secondDiamond.id === item.diamondSpecification.id
+                              ? styles.selected
+                              : "";
+                          return (
+                            <Grid
+                              key={index}
+                              item
+                              xl={2.8}
+                              sm={5}
+                              xs={12}
+                              onClick={() =>
+                                setSecondDiamond(item.diamondSpecification)
+                              }
+                              className={`${styles.spec} ${selected}`}
+                            >
+                              {getDiamondSpec(item.diamondSpecification)}
+                            </Grid>
+                          );
+                        }
+                      )}
                     </Grid>
                   </AccordionDetails>
                 </Accordion>
@@ -567,6 +617,10 @@ function WeddingRingsDetail() {
             )}
 
             {/* Note start */}
+            <div className={styles.designfee}>
+              Chi phí thu thêm cho mỗi lần thiết kế là{" "}
+              <b>{currencyFormatter(designFee)}</b>.
+            </div>
             <div className={styles.note}>
               Xin lưu ý: Xác minh danh tính là bắt buộc để sở hữu nhẫn cưới CR.
             </div>
@@ -584,43 +638,19 @@ function WeddingRingsDetail() {
             <Divider sx={{ backgroundColor: "#ccc", mt: 3 }} />
 
             <ProductDetailAccordion
-              collectionName={designs && designs[0].designCollection.name}
-              maleDetail={
-                designs &&
-                designs[0].characteristic === DesignCharacteristic.Male
-                  ? {
-                      metalSpec: firstMetal.metalSpecification,
-                      diamondSpec: firstDiamond,
-                      sideDiamondsCount: designs
-                        ? designs[0].sideDiamondsCount
-                        : 0,
-                    }
-                  : {
-                      metalSpec: secondMetal.metalSpecification,
-                      diamondSpec: secondDiamond,
-                      sideDiamondsCount: designs
-                        ? designs[1].sideDiamondsCount
-                        : 0,
-                    }
-              }
-              femaleDetail={
-                designs &&
-                designs[0].characteristic === DesignCharacteristic.Female
-                  ? {
-                      metalSpec: firstMetal.metalSpecification,
-                      diamondSpec: firstDiamond,
-                      sideDiamondsCount: designs
-                        ? designs[0].sideDiamondsCount
-                        : 0,
-                    }
-                  : {
-                      metalSpec: secondMetal.metalSpecification,
-                      diamondSpec: secondDiamond,
-                      sideDiamondsCount: designs
-                        ? designs[1].sideDiamondsCount
-                        : 0,
-                    }
-              }
+              collectionName={maleResponse.data.designCollection.name}
+              maleDetail={{
+                metalSpec: firstMetal.metalSpecification,
+                diamondSpec: firstDiamond,
+                sideDiamondsCount: maleResponse.data.sideDiamondsCount,
+                metalWeight: maleResponse.data.metalWeight,
+              }}
+              femaleDetail={{
+                metalSpec: secondMetal.metalSpecification,
+                diamondSpec: secondDiamond,
+                sideDiamondsCount: femaleResponse.data.sideDiamondsCount,
+                metalWeight: femaleResponse.data.metalWeight,
+              }}
             />
           </Grid>
         </Grid>
