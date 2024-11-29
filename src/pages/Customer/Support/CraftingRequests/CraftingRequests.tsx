@@ -15,8 +15,11 @@ import {
   Status,
 } from "src/utils/enums";
 import { getCraftingRequests } from "src/services/craftingRequest.service";
-import { getDiamondSpec } from "src/utils/functions";
-import { ChipColor } from "src/utils/constants";
+import {
+  formatCraftingRequestStatus,
+  getDiamondSpec,
+} from "src/utils/functions";
+import moment from "moment";
 
 function CraftingRequests() {
   const [maleDesign, setMaleDesign] = useState<ICustomDesign | null>(null);
@@ -64,27 +67,6 @@ function CraftingRequests() {
       },
       enabled: !!femaleRequestFilterObj,
     });
-
-  const formatStatus = (
-    status: CraftingRequestStatus
-  ): { text: string; color: ChipColor } => {
-    if (status === CraftingRequestStatus.Pending)
-      return {
-        text: "Đang duyệt",
-        color: "warning",
-      };
-
-    if (status === CraftingRequestStatus.Rejected)
-      return {
-        text: "Từ chối",
-        color: "error",
-      };
-
-    return {
-      text: "Đã duyệt",
-      color: "success",
-    };
-  };
 
   const canCreate = () => {
     if (maleRequestResponse?.data && femaleRequestResponse?.data) {
@@ -238,6 +220,17 @@ function CraftingRequests() {
                 mb={2}
                 justifyContent={"space-between"}
               >
+                <Grid item>Ngày tạo:</Grid>
+                <div>{moment(maleDesign.createdAt).format("DD/MM/YYYY")}</div>
+              </Grid>
+
+              <Grid
+                container
+                item
+                md={10}
+                mb={2}
+                justifyContent={"space-between"}
+              >
                 <Grid item>File thiết kế:</Grid>
                 <a
                   download={""}
@@ -282,17 +275,36 @@ function CraftingRequests() {
                     lg={5.8}
                     className={styles.request}
                   >
-                    <Chip
-                      label={formatStatus(item.craftingRequestStatus).text}
-                      color={formatStatus(item.craftingRequestStatus).color}
-                      className={styles.status}
-                    />
+                    <Grid
+                      container
+                      alignItems={"center"}
+                      justifyContent={"space-between"}
+                    >
+                      <Grid item>
+                        Ngày tạo: {moment(item.createdAt).format("DD/MM/YYYY")}
+                      </Grid>
+                      <Chip
+                        label={
+                          formatCraftingRequestStatus(
+                            item.craftingRequestStatus
+                          ).text
+                        }
+                        color={
+                          formatCraftingRequestStatus(
+                            item.craftingRequestStatus
+                          ).color
+                        }
+                        className={styles.status}
+                      />
+                    </Grid>
+
                     <Grid container gap={5} mb={1} alignItems={"center"}>
                       <div className={styles.label}>
                         <ArrowRightRoundedIcon />
                         Kim Cương
                       </div>
                       <div style={{ fontStyle: "italic", fontWeight: 300 }}>
+                        {item.diamondSpecification.shape}{" "}
                         {getDiamondSpec(item.diamondSpecification)}
                       </div>
                     </Grid>
@@ -333,11 +345,6 @@ function CraftingRequests() {
         </>
       )}
 
-      {!maleDesign && !femaleDesign && (
-        <Grid container item xs={10}>
-          Chưa có bản thiết kế nào
-        </Grid>
-      )}
       <Grid container item xs={10}>
         <Divider sx={{ width: "100%", mt: 8, mb: 10 }} />
       </Grid>
@@ -364,6 +371,17 @@ function CraftingRequests() {
                   src={femaleDesign.designVersion.image.url}
                   className={styles.ringImg}
                 />
+              </Grid>
+
+              <Grid
+                container
+                item
+                md={10}
+                mb={2}
+                justifyContent={"space-between"}
+              >
+                <Grid item>Ngày tạo:</Grid>
+                <div>{moment(femaleDesign.createdAt).format("DD/MM/YYYY")}</div>
               </Grid>
 
               <Grid
@@ -417,20 +435,40 @@ function CraftingRequests() {
                     lg={5.8}
                     className={styles.request}
                   >
-                    <Chip
-                      label={formatStatus(item.craftingRequestStatus).text}
-                      color={formatStatus(item.craftingRequestStatus).color}
-                      className={styles.status}
-                    />
+                    <Grid
+                      container
+                      alignItems={"center"}
+                      justifyContent={"space-between"}
+                    >
+                      <Grid item>
+                        Ngày tạo: {moment(item.createdAt).format("DD/MM/YYYY")}
+                      </Grid>
+                      <Chip
+                        label={
+                          formatCraftingRequestStatus(
+                            item.craftingRequestStatus
+                          ).text
+                        }
+                        color={
+                          formatCraftingRequestStatus(
+                            item.craftingRequestStatus
+                          ).color
+                        }
+                        className={styles.status}
+                      />
+                    </Grid>
+
                     <Grid container gap={5} mb={1} alignItems={"center"}>
                       <div className={styles.label}>
                         <ArrowRightRoundedIcon />
                         Kim Cương
                       </div>
                       <div style={{ fontStyle: "italic", fontWeight: 300 }}>
+                        {item.diamondSpecification.shape}{" "}
                         {getDiamondSpec(item.diamondSpecification)}
                       </div>
                     </Grid>
+
                     <Grid container gap={6} mb={1} alignItems={"center"}>
                       <div className={styles.label}>
                         <ArrowRightRoundedIcon />
@@ -440,6 +478,7 @@ function CraftingRequests() {
                         {item.metalSpecification.name}
                       </div>
                     </Grid>
+
                     <Grid container gap={6} mb={1} alignItems={"center"}>
                       <div className={styles.label}>
                         <ArrowRightRoundedIcon />
@@ -449,6 +488,7 @@ function CraftingRequests() {
                         {item.engraving ? item.engraving : "None"}
                       </div>
                     </Grid>
+
                     <Grid container gap={4.5} alignItems={"center"}>
                       <div className={styles.label}>
                         <ArrowRightRoundedIcon />
@@ -466,6 +506,12 @@ function CraftingRequests() {
             </Grid>
           </Grid>
         </>
+      )}
+
+      {!maleDesign && !femaleDesign && (
+        <Grid container item xs={10}>
+          Chưa có bản thiết kế nào
+        </Grid>
       )}
     </Grid>
   );

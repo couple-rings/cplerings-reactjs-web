@@ -51,6 +51,7 @@ import {
 } from "src/services/customDesign.service";
 import { toast } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
+import moment from "moment";
 
 interface IFormInput {
   male: {
@@ -79,6 +80,8 @@ function CustomDesign() {
   const [designFilterObj, setDesignFilterObj] =
     useState<ICustomDesignFilter | null>(null);
 
+  const [ownerSpouse, setOwnSpouse] = useState<ISpouse | null>(null);
+  const [partnerSpouse, setPartnerSpouse] = useState<ISpouse | null>(null);
   const [maleVersion, setMaleVersion] = useState<IDesignVersion | null>(null);
   const [femaleVersion, setFemaleVersion] = useState<IDesignVersion | null>(
     null
@@ -438,6 +441,22 @@ function CustomDesign() {
     }
   }, [femaleVersionResponse]);
 
+  useEffect(() => {
+    if (spouseResponse?.data) {
+      const ownerSpouse = spouseResponse.data.spouses.find(
+        (item) => !!item.customerId
+      );
+      const partnerSpouse = spouseResponse.data.spouses.find(
+        (item) => !item.customerId
+      );
+
+      if (ownerSpouse && partnerSpouse) {
+        setOwnSpouse(ownerSpouse);
+        setPartnerSpouse(partnerSpouse);
+      }
+    }
+  }, [spouseResponse]);
+
   if (
     !response?.data ||
     !maleVersion ||
@@ -461,9 +480,10 @@ function CustomDesign() {
   if (designResponse.data?.items.length === 0)
     return (
       <div className={styles.container}>
-        <div className={styles.title}>Tạo Thiết Kế</div>
+        <div className={styles.title}>Hoàn Chỉnh Thiết Kế</div>
 
         <Grid container justifyContent={"center"}>
+          {/* Male custom design */}
           <Grid
             container
             item
@@ -477,10 +497,40 @@ function CustomDesign() {
                 image={maleVersion?.image.url ?? ""}
                 shadow={true}
               />
-              <div className={styles.label}>
-                <img src={male} />
-                <span>Nhẫn Nam</span>
-              </div>
+
+              <fieldset>
+                <legend>
+                  <div className={styles.label}>
+                    <img src={male} />
+                    <span>Nam Tính</span>
+                  </div>
+                </legend>
+
+                <Grid container justifyContent={"space-between"} mb={1} px={2}>
+                  <div>Bản thiết kế:</div>{" "}
+                  <div>
+                    Version {maleVersion.versionNumber} - Bản{" "}
+                    {maleVersion.design.name}
+                  </div>
+                </Grid>
+
+                <Grid container justifyContent={"space-between"} mb={1} px={2}>
+                  <div>Ngày tạo:</div>{" "}
+                  <div>
+                    {moment(maleVersion.createdAt).format("DD/MM/YYYY")}
+                  </div>
+                </Grid>
+
+                <Grid container justifyContent={"space-between"} px={2}>
+                  <div>Người sở hữu:</div>
+
+                  <div>
+                    {maleVersion.owner === VersionOwner.Self
+                      ? ownerSpouse?.fullName
+                      : partnerSpouse?.fullName}
+                  </div>
+                </Grid>
+              </fieldset>
             </Grid>
 
             <Grid item xs={12} md={7} className={styles.right}>
@@ -733,7 +783,9 @@ function CustomDesign() {
 
             <Divider sx={{ backgroundColor: "#ccc", my: 4, width: "100%" }} />
           </Grid>
+          {/* Male custom design */}
 
+          {/* Female custom design */}
           <Grid
             container
             item
@@ -747,10 +799,40 @@ function CustomDesign() {
                 image={femaleVersion?.image.url ?? ""}
                 shadow={true}
               />
-              <div className={styles.label}>
-                <img src={female} />
-                <span>Nhẫn Nữ</span>
-              </div>
+
+              <fieldset>
+                <legend>
+                  <div className={styles.label}>
+                    <img src={female} />
+                    <span>Nữ Tính</span>
+                  </div>
+                </legend>
+
+                <Grid container justifyContent={"space-between"} mb={1} px={2}>
+                  <div>Bản thiết kế:</div>{" "}
+                  <div>
+                    Version {femaleVersion.versionNumber} - Bản{" "}
+                    {femaleVersion.design.name}
+                  </div>
+                </Grid>
+
+                <Grid container justifyContent={"space-between"} mb={1} px={2}>
+                  <div>Ngày tạo:</div>{" "}
+                  <div>
+                    {moment(femaleVersion.createdAt).format("DD/MM/YYYY")}
+                  </div>
+                </Grid>
+
+                <Grid container justifyContent={"space-between"} px={2}>
+                  <div>Người sở hữu:</div>
+
+                  <div>
+                    {femaleVersion.owner === VersionOwner.Self
+                      ? ownerSpouse?.fullName
+                      : partnerSpouse?.fullName}
+                  </div>
+                </Grid>
+              </fieldset>
             </Grid>
 
             <Grid item xs={12} md={7} className={styles.right}>
@@ -1010,12 +1092,13 @@ function CustomDesign() {
               {/* Female diamond spec end */}
             </Grid>
           </Grid>
+          {/* Female custom design */}
 
-          <Grid item xs={6} mt={5}>
+          <Grid item xs={6} mt={10}>
             <LoadingButton
               loading={mutation.isPending}
               variant="contained"
-              sx={{ ...primaryBtn, borderRadius: 2 }}
+              sx={{ ...primaryBtn, borderRadius: 1 }}
               fullWidth
               onClick={handleSubmit(onSubmit, onError)}
             >
@@ -1025,19 +1108,29 @@ function CustomDesign() {
         </Grid>
       </div>
     );
-  else
+  else if (partnerSpouse && ownerSpouse)
     return (
       <ViewCustomDesign
         customRequestId={response.data.id}
         maleVersion={maleVersion}
         femaleVersion={femaleVersion}
         designs={designResponse.data.items}
+        ownerSpouse={ownerSpouse}
+        partnerSpouse={partnerSpouse}
       />
     );
+  else return <></>;
 }
 
 const ViewCustomDesign = (props: IViewCustomDesignProps) => {
-  const { designs, maleVersion, femaleVersion, customRequestId } = props;
+  const {
+    designs,
+    maleVersion,
+    femaleVersion,
+    customRequestId,
+    ownerSpouse,
+    partnerSpouse,
+  } = props;
 
   const maleDesign = designs.find(
     (item) =>
@@ -1057,6 +1150,7 @@ const ViewCustomDesign = (props: IViewCustomDesignProps) => {
         <div className={styles.title}>Thiết Kế Của Khách Hàng</div>
 
         <Grid container justifyContent={"center"}>
+          {/* Male custom design */}
           <Grid
             container
             item
@@ -1070,10 +1164,39 @@ const ViewCustomDesign = (props: IViewCustomDesignProps) => {
                 image={maleVersion?.image.url ?? ""}
                 shadow={true}
               />
-              <div className={styles.label}>
-                <img src={male} />
-                <span>Nhẫn Nam</span>
-              </div>
+              <fieldset>
+                <legend>
+                  <div className={styles.label}>
+                    <img src={male} />
+                    <span>Nam Tính</span>
+                  </div>
+                </legend>
+
+                <Grid container justifyContent={"space-between"} mb={1} px={2}>
+                  <div>Bản thiết kế:</div>{" "}
+                  <div>
+                    Version {maleVersion.versionNumber} - Bản{" "}
+                    {maleVersion.design.name}
+                  </div>
+                </Grid>
+
+                <Grid container justifyContent={"space-between"} mb={1} px={2}>
+                  <div>Ngày tạo:</div>{" "}
+                  <div>
+                    {moment(maleVersion.createdAt).format("DD/MM/YYYY")}
+                  </div>
+                </Grid>
+
+                <Grid container justifyContent={"space-between"} px={2}>
+                  <div>Người sở hữu:</div>
+
+                  <div>
+                    {maleVersion.owner === VersionOwner.Self
+                      ? ownerSpouse.fullName
+                      : partnerSpouse.fullName}
+                  </div>
+                </Grid>
+              </fieldset>
             </Grid>
 
             <Grid item xs={12} md={7} className={styles.right}>
@@ -1155,7 +1278,9 @@ const ViewCustomDesign = (props: IViewCustomDesignProps) => {
 
             <Divider sx={{ backgroundColor: "#ccc", my: 4, width: "100%" }} />
           </Grid>
+          {/* Male custom design */}
 
+          {/* Female custom design */}
           <Grid
             container
             item
@@ -1169,10 +1294,39 @@ const ViewCustomDesign = (props: IViewCustomDesignProps) => {
                 image={femaleVersion?.image.url ?? ""}
                 shadow={true}
               />
-              <div className={styles.label}>
-                <img src={female} />
-                <span>Nhẫn Nữ</span>
-              </div>
+              <fieldset>
+                <legend>
+                  <div className={styles.label}>
+                    <img src={female} />
+                    <span>Nữ Tính</span>
+                  </div>
+                </legend>
+
+                <Grid container justifyContent={"space-between"} mb={1} px={2}>
+                  <div>Bản thiết kế:</div>{" "}
+                  <div>
+                    Version {femaleVersion.versionNumber} - Bản{" "}
+                    {femaleVersion.design.name}
+                  </div>
+                </Grid>
+
+                <Grid container justifyContent={"space-between"} mb={1} px={2}>
+                  <div>Ngày tạo:</div>{" "}
+                  <div>
+                    {moment(femaleVersion.createdAt).format("DD/MM/YYYY")}
+                  </div>
+                </Grid>
+
+                <Grid container justifyContent={"space-between"} px={2}>
+                  <div>Người sở hữu:</div>
+
+                  <div>
+                    {femaleVersion.owner === VersionOwner.Self
+                      ? ownerSpouse?.fullName
+                      : partnerSpouse?.fullName}
+                  </div>
+                </Grid>
+              </fieldset>
             </Grid>
 
             <Grid item xs={12} md={7} className={styles.right}>
@@ -1250,6 +1404,7 @@ const ViewCustomDesign = (props: IViewCustomDesignProps) => {
               {/* Female diamond spec end */}
             </Grid>
           </Grid>
+          {/* Female custom design */}
 
           <Grid item xs={6} mt={5}>
             <LoadingButton

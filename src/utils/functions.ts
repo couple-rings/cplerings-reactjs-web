@@ -2,7 +2,7 @@ import { ChipColor, metalWeightUnit, profitRatio } from "./constants";
 import white from "src/assets/whitegold.png";
 import rose from "src/assets/rosegold.png";
 import yellow from "src/assets/yellowgold.png";
-import { CustomRequestStatus, GoldColor } from "./enums";
+import { CraftingRequestStatus, CustomRequestStatus, GoldColor } from "./enums";
 
 export const showSlides = (minSM: boolean, minMD: boolean, minLG: boolean) => {
   if (minLG) return 5;
@@ -132,6 +132,27 @@ export const formatCustomRequestStatus = (
 
   return {
     text: "Đã Hoàn Thành",
+    color: "success",
+  };
+};
+
+export const formatCraftingRequestStatus = (
+  status: CraftingRequestStatus
+): { text: string; color: ChipColor } => {
+  if (status === CraftingRequestStatus.Pending)
+    return {
+      text: "Chờ duyệt",
+      color: "warning",
+    };
+
+  if (status === CraftingRequestStatus.Rejected)
+    return {
+      text: "Từ chối",
+      color: "error",
+    };
+
+  return {
+    text: "Đã duyệt",
     color: "success",
   };
 };

@@ -14,9 +14,11 @@ import { useEffect, useState } from "react";
 import { fetchCraftingRequests } from "src/utils/querykey";
 import { CraftingRequestStatus, DesignCharacteristic } from "src/utils/enums";
 import RejectModal from "src/components/modal/craftingRequest/Reject.modal";
-import { getDiamondSpec } from "src/utils/functions";
+import {
+  formatCraftingRequestStatus,
+  getDiamondSpec,
+} from "src/utils/functions";
 import { toast } from "react-toastify";
-import { ChipColor } from "src/utils/constants";
 
 function CraftingRequestDetail() {
   const [needApproval, setNeedApproval] = useState(true);
@@ -309,21 +311,6 @@ function CraftingRequestDetail() {
 const PastRequests = (props: IPastRequestsProps) => {
   const { data } = props;
 
-  const formatStatus = (
-    status: CraftingRequestStatus
-  ): { text: string; color: ChipColor } => {
-    if (status === CraftingRequestStatus.Rejected)
-      return {
-        text: "Từ chối",
-        color: "error",
-      };
-
-    return {
-      text: "Đã duyệt",
-      color: "success",
-    };
-  };
-
   return (
     <Grid container justifyContent={"center"} className={styles.container}>
       <Grid item xs={11} lg={10}>
@@ -398,8 +385,16 @@ const PastRequests = (props: IPastRequestsProps) => {
                       </Grid>
 
                       <Chip
-                        label={formatStatus(item.craftingRequestStatus).text}
-                        color={formatStatus(item.craftingRequestStatus).color}
+                        label={
+                          formatCraftingRequestStatus(
+                            item.craftingRequestStatus
+                          ).text
+                        }
+                        color={
+                          formatCraftingRequestStatus(
+                            item.craftingRequestStatus
+                          ).color
+                        }
                         variant="filled"
                       />
                     </Grid>

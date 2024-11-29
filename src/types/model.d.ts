@@ -308,6 +308,7 @@ declare global {
     diamondSpecifications: IDiamondSpec[];
     metalSpecifications: IMetalSpec[];
     sideDiamondsCount: number;
+    createdAt: string;
   }
 
   interface IBranch {

@@ -11,6 +11,7 @@ import styles from "./CustomRequest.module.scss";
 import {
   Box,
   Button,
+  Chip,
   FormLabel,
   Grid,
   IconButton,
@@ -27,7 +28,10 @@ import { fetchCustomRequests } from "src/utils/querykey";
 import { getCustomRequests } from "src/services/customRequest.service";
 import { designFee, pageSize } from "src/utils/constants";
 import moment from "moment";
-import { currencyFormatter } from "src/utils/functions";
+import {
+  currencyFormatter,
+  formatCustomRequestStatus,
+} from "src/utils/functions";
 import RemoveRedEyeSharpIcon from "@mui/icons-material/RemoveRedEyeSharp";
 
 const boxStyle: SxProps = {
@@ -185,29 +189,12 @@ function CustomRequest() {
         filterOperators,
         sortable: false,
         renderCell: ({ row }) => {
-          let classname = "";
-          let status = "";
-
-          if (row.status === CustomRequestStatus.Completed) {
-            classname = styles.completed;
-            status = "Hoàn Thành";
-          }
-
-          if (row.status === CustomRequestStatus.Canceled) {
-            classname = styles.canceled;
-            status = "Đã Hủy";
-          }
-
-          if (row.status === CustomRequestStatus.OnGoing) {
-            classname = styles.ongoing;
-            status = "Đang Thực Hiện";
-          }
-
-          if (row.status === CustomRequestStatus.Waiting) {
-            classname = styles.ongoing;
-            status = "Chờ Duyệt";
-          }
-          return <div className={classname}>{status}</div>;
+          return (
+            <Chip
+              label={formatCustomRequestStatus(row.status).text}
+              color={formatCustomRequestStatus(row.status).color}
+            />
+          );
         },
       },
       {

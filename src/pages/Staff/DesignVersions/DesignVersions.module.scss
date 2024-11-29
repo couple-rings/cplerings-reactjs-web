@@ -20,10 +20,12 @@
         padding-bottom  : 1rem;
         border-radius   : 15px;
         margin-bottom   : 5rem;
+        justify-content : center;
+        gap             : 1.5rem;
 
         .name {
-            font-size    : 1.5rem;
-            margin-bottom: 3rem;
+            font-size    : 1.3rem;
+            margin-bottom: 1rem;
             text-align   : center;
 
             @media screen and (max-width: 900px) {
@@ -60,8 +62,7 @@
 
         .version {
             background-color: #F5F5F5;
-            padding         : 2rem;
-            padding-bottom  : 0.5rem;
+            padding         : 0.5rem 2rem;
             margin-bottom   : 2rem;
             text-align      : center;
             height          : 100%;

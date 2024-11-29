@@ -10,6 +10,8 @@ import {
   Radio,
   RadioGroup,
   Skeleton,
+  Grid as OldGrid,
+  Chip,
 } from "@mui/material";
 import {
   getCustomRequestDetail,
@@ -45,6 +47,15 @@ import Grid from "@mui/material/Unstable_Grid2";
 import { useAppSelector } from "src/utils/hooks";
 import { getCustomDesigns } from "src/services/customDesign.service";
 import { getOwnSessionCount } from "src/services/designSession.service";
+import moment from "moment";
+import DiamondSharpIcon from "@mui/icons-material/DiamondSharp";
+import ScaleSharpIcon from "@mui/icons-material/ScaleSharp";
+import {
+  currencyFormatter,
+  formatCustomRequestStatus,
+} from "src/utils/functions";
+import { designFee } from "src/utils/constants";
+import { postCreateConversation } from "src/services/conversation.service";
 
 function CustomRequestDetail() {
   const [maleDesign, setMaleDesign] = useState<IDesign | null>(null);
@@ -153,6 +164,30 @@ function CustomRequestDetail() {
     },
   });
 
+  const chatMutation = useMutation({
+    mutationFn: (data: ICreateConversationRequest) => {
+      return postCreateConversation(data);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        navigate("/customer/support", {
+          state: { conversation: response.data },
+        });
+      }
+
+      if (response.error) {
+        toast.error(response.error);
+      }
+    },
+  });
+
+  const handleChat = () => {
+    if (response?.data?.staff)
+      chatMutation.mutate({
+        participants: [userId, response.data.staff.id],
+      });
+  };
+
   const handleChangeMaleOwner = (value: VersionOwner) => {
     setMaleOwner(value);
     if (value === VersionOwner.Self) setFemaleOwner(VersionOwner.Partner);
@@ -200,6 +235,10 @@ function CustomRequestDetail() {
 
       queryClient.invalidateQueries({
         queryKey: [fetchFemaleDesignVersions, femaleFilterObj],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [fetchOwnSessionCount],
       });
 
       setSelected({ ...selected, male: 0, female: 0 });
@@ -356,37 +395,140 @@ function CustomRequestDetail() {
   return (
     <Grid container className={styles.container} justifyContent={"center"}>
       <Grid xs={10}>
-        <div className={styles.title}>Các Phiên Bản Thiết Kế</div>
+        <OldGrid
+          container
+          justifyContent={"space-between"}
+          alignItems={"center"}
+        >
+          <OldGrid container item gap={3} md={6} mb={3}>
+            <div className={styles.title}>Yêu Cầu Thiết Kế</div>
 
+            {response?.data && (
+              <Chip
+                label={formatCustomRequestStatus(response.data.status).text}
+                color={formatCustomRequestStatus(response.data.status).color}
+              />
+            )}
+          </OldGrid>
+
+          <OldGrid item mb={3} className={styles.count}>
+            Còn <span>{sessionResponse.data?.remainingCount} lượt</span> thiết
+            kế
+          </OldGrid>
+        </OldGrid>
+
+        <OldGrid container my={2} gap={2}>
+          <OldGrid container item>
+            <OldGrid item xs={5} sm={4} md={2}>
+              Ngày tạo:{" "}
+            </OldGrid>
+            <OldGrid item>
+              {moment(response?.data?.createdAt).format("DD/MM/YYYY")}
+            </OldGrid>
+          </OldGrid>
+
+          <OldGrid container item>
+            <OldGrid item xs={5} sm={4} md={2}>
+              Tiền Thanh Toán:{" "}
+            </OldGrid>
+            <OldGrid item className={styles.money}>
+              {currencyFormatter(designFee)}
+            </OldGrid>
+          </OldGrid>
+        </OldGrid>
+
+        <OldGrid container mt={3} mb={5}>
+          <OldGrid container item className={styles.subtitle}>
+            <div>Nhân Viên Thiết Kế</div>
+
+            <LoadingButton
+              variant="contained"
+              sx={{ ...secondaryBtn, px: 2 }}
+              onClick={handleChat}
+              loading={chatMutation.isPending}
+            >
+              Chat Với Nhân Viên
+            </LoadingButton>
+          </OldGrid>
+
+          <OldGrid container gap={2}>
+            <OldGrid container item>
+              <OldGrid item xs={5} sm={4} md={2}>
+                Username:{" "}
+              </OldGrid>
+              <OldGrid item>{response?.data?.staff?.username}</OldGrid>
+            </OldGrid>
+
+            <OldGrid container item>
+              <OldGrid item xs={5} sm={4} md={2}>
+                Email:{" "}
+              </OldGrid>
+              <OldGrid item>{response?.data?.staff?.email}</OldGrid>
+            </OldGrid>
+
+            <OldGrid container item>
+              <OldGrid item xs={5} sm={4} md={2}>
+                Số điện thoại:{" "}
+              </OldGrid>
+              <OldGrid item>{response?.data?.staff?.phone ?? "--"}</OldGrid>
+            </OldGrid>
+          </OldGrid>
+        </OldGrid>
+
+        {/* Male design */}
         <div className={styles.subtitle}>Bản Thiết Kế Gốc</div>
         <Card className={styles.designCard}>
-          <Grid container p={3} justifyContent={"space-between"}>
-            <Grid xs={12} sm={4} md={2.5}>
+          <OldGrid container p={3} justifyContent={"space-between"}>
+            <OldGrid item xs={12} sm={6} md={4} lg={2.5}>
               <img
                 src={maleDesign?.designMetalSpecifications[0].image.url}
                 width={"100%"}
                 style={{ border: "1px solid #ccc" }}
               />
-            </Grid>
-            <Grid container xs={12} md={9} py={3}>
-              <Grid flex={1}>
-                <Grid
+            </OldGrid>
+            <OldGrid container item xs={12} md={7} lg={9} alignItems={"center"}>
+              <OldGrid item xs={12} className={styles.name}>
+                Bản Thiết Kế {maleDesign?.name}
+              </OldGrid>
+              <OldGrid item xs={12} className={styles.gender}>
+                <img src={male} width={15} />
+                Nhẫn nam
+              </OldGrid>
+              <OldGrid item xs={12} className={styles.description}>
+                {maleDesign?.description}
+              </OldGrid>
+              <OldGrid container mb={1}>
+                <OldGrid
                   container
-                  className={styles.name}
-                  justifyContent={"space-between"}
+                  item
+                  xs={5}
+                  lg={2.5}
+                  alignItems={"center"}
+                  gap={1}
                 >
-                  <div>Bản Thiết Kế {maleDesign?.name}</div>
-                </Grid>
-                <div className={styles.gender}>
-                  <img src={male} width={15} />
-                  Nhẫn nam
-                </div>
-                <div className={styles.description}>
-                  {maleDesign?.description}
-                </div>
-              </Grid>
-            </Grid>
-          </Grid>
+                  <DiamondSharpIcon fontSize="small" />
+                  Kim cương phụ:
+                </OldGrid>
+
+                <OldGrid item>{maleDesign.sideDiamondsCount} Viên</OldGrid>
+              </OldGrid>
+              <OldGrid container>
+                <OldGrid
+                  container
+                  item
+                  xs={5}
+                  lg={2.5}
+                  alignItems={"center"}
+                  gap={1}
+                >
+                  <ScaleSharpIcon fontSize="small" />
+                  Khối lượng:
+                </OldGrid>
+
+                <OldGrid item>{maleDesign.metalWeight} Chỉ</OldGrid>
+              </OldGrid>
+            </OldGrid>
+          </OldGrid>
         </Card>
 
         <div className={styles.subtitle}>
@@ -420,25 +562,10 @@ function CustomRequestDetail() {
                     handleChooseVersion(DesignCharacteristic.Male, item.id)
                   }
                 >
-                  <Grid
-                    container
-                    columns={12}
+                  <DesignVersion
                     className={`${styles.version} ${selectedVer}`}
-                  >
-                    <Grid xs={3}>
-                      <img src={item.image.url} width={"100%"} />
-                    </Grid>
-                    <Grid xs={8}>
-                      <div className={styles.versionNo}>
-                        <ArticleRoundedIcon />
-                        Version {item.versionNumber}
-                      </div>
-                      <a href={item.designFile.url} className={styles.download}>
-                        <DownloadRoundedIcon />
-                        File PDF
-                      </a>
-                    </Grid>
-                  </Grid>
+                    data={item}
+                  />
                 </Grid>
               );
             })}
@@ -471,32 +598,64 @@ function CustomRequestDetail() {
             </FormControl>
           )}
         </Box>
+        {/* Male design */}
 
         <Box sx={{ mt: 15 }}></Box>
 
+        {/* Female design */}
         <div className={styles.subtitle}>Bản Thiết Kế Gốc</div>
         <Card className={styles.designCard}>
-          <Grid container p={3} justifyContent={"space-between"}>
-            <Grid xs={12} sm={4} md={2.5}>
+          <OldGrid container p={3} justifyContent={"space-between"}>
+            <OldGrid item xs={12} sm={4} md={4} lg={2.5}>
               <img
                 src={femaleDesign?.designMetalSpecifications[0].image.url}
                 width={"100%"}
                 style={{ border: "1px solid #ccc" }}
               />
-            </Grid>
-            <Grid xs={12} md={9} py={3}>
-              <div className={styles.name}>
+            </OldGrid>
+            <OldGrid container item xs={12} md={7} lg={9} alignItems={"center"}>
+              <OldGrid item xs={12} className={styles.name}>
                 Bản Thiết Kế {femaleDesign?.name}
-              </div>
-              <div className={styles.gender}>
+              </OldGrid>
+              <OldGrid item xs={12} className={styles.gender}>
                 <img src={female} width={15} />
                 Nhẫn nữ
-              </div>
-              <div className={styles.description}>
+              </OldGrid>
+              <OldGrid item xs={12} className={styles.description}>
                 {femaleDesign?.description}
-              </div>
-            </Grid>
-          </Grid>
+              </OldGrid>
+              <OldGrid container mb={1}>
+                <OldGrid
+                  container
+                  item
+                  xs={5}
+                  lg={2.5}
+                  alignItems={"center"}
+                  gap={1}
+                >
+                  <DiamondSharpIcon fontSize="small" />
+                  Kim cương phụ:
+                </OldGrid>
+
+                <OldGrid item>{femaleDesign.sideDiamondsCount} Viên</OldGrid>
+              </OldGrid>
+              <OldGrid container>
+                <OldGrid
+                  container
+                  item
+                  xs={5}
+                  lg={2.5}
+                  alignItems={"center"}
+                  gap={1}
+                >
+                  <ScaleSharpIcon fontSize="small" />
+                  Khối lượng:
+                </OldGrid>
+
+                <OldGrid item>{femaleDesign.metalWeight} Chỉ</OldGrid>
+              </OldGrid>
+            </OldGrid>
+          </OldGrid>
         </Card>
 
         <div className={styles.subtitle}>
@@ -514,7 +673,6 @@ function CustomRequestDetail() {
             </span>
           )}
         </div>
-
         <Box sx={{ width: "100%" }}>
           <Grid container rowSpacing={1} columnSpacing={3} mb={5}>
             {femaleVersions.map((item) => {
@@ -530,25 +688,10 @@ function CustomRequestDetail() {
                     handleChooseVersion(DesignCharacteristic.Female, item.id)
                   }
                 >
-                  <Grid
-                    container
-                    columns={12}
+                  <DesignVersion
                     className={`${styles.version} ${selectedVer}`}
-                  >
-                    <Grid xs={3}>
-                      <img src={item.image.url} width={"100%"} />
-                    </Grid>
-                    <Grid xs={8}>
-                      <div className={styles.versionNo}>
-                        <ArticleRoundedIcon />
-                        Version {item.versionNumber}
-                      </div>
-                      <a href={item.designFile.url} className={styles.download}>
-                        <DownloadRoundedIcon />
-                        File PDF
-                      </a>
-                    </Grid>
-                  </Grid>
+                    data={item}
+                  />
                 </Grid>
               );
             })}
@@ -581,6 +724,7 @@ function CustomRequestDetail() {
             </FormControl>
           )}
         </Box>
+        {/* Female design */}
 
         <Grid container justifyContent={"center"} gap={3}>
           {accepted.male === 0 &&
@@ -650,5 +794,28 @@ function CustomRequestDetail() {
     </Grid>
   );
 }
+
+const DesignVersion = (props: IDesignVersionProps) => {
+  const { className, data } = props;
+
+  return (
+    <Grid container columns={12} className={className}>
+      <Grid xs={3}>
+        <img src={data.image.url} className={styles.previewImg} />
+      </Grid>
+      <Grid xs={8}>
+        <div className={styles.versionNo}>
+          <ArticleRoundedIcon />
+          Version {data.versionNumber} {data.isOld && "(Cũ)"}
+        </div>
+        <a href={data.designFile.url} className={styles.download}>
+          <DownloadRoundedIcon />
+          File PDF
+        </a>
+        <div>Ngày tạo: {moment(data.createdAt).format("DD/MM/YYYY")}</div>
+      </Grid>
+    </Grid>
+  );
+};
 
 export default CustomRequestDetail;

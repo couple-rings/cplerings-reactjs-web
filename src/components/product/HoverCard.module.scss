@@ -12,8 +12,8 @@
         font-size       : 2rem;
         border-radius   : 15px;
         top             : 0;
-        left            : 5%;
-        width           : 90%;
+        left            : 0;
+        width           : 100%;
         height          : 99%;
         display         : none;
         cursor          : pointer;
@@ -29,7 +29,7 @@
     }
 
     img {
-        width        : 90%;
+        width        : 100%;
         aspect-ratio : 1 / 1;
         border-radius: 15px;
         object-fit   : cover;

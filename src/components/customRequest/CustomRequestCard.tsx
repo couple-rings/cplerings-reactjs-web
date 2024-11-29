@@ -9,7 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import { postCreateConversation } from "src/services/conversation.service";
 import { toast } from "react-toastify";
 import { useAppSelector } from "src/utils/hooks";
-import { ChipColor } from "src/utils/constants";
+import { formatCustomRequestStatus } from "src/utils/functions";
 
 function CustomRequestCard(props: ICustomRequestCardProps) {
   const { designs, status, id, staffId } = props;
@@ -24,26 +24,6 @@ function CustomRequestCard(props: ICustomRequestCardProps) {
   const femaleDesign = designs.find(
     (item) => item.characteristic === DesignCharacteristic.Female
   );
-
-  let statusLabel = "";
-  let chipColor: ChipColor = "primary";
-
-  if (status === CustomRequestStatus.Waiting) {
-    statusLabel = "Đang chờ duyệt";
-    chipColor = "warning";
-  }
-  if (status === CustomRequestStatus.OnGoing) {
-    statusLabel = "Đang thiết kế";
-    chipColor = "warning";
-  }
-  if (status === CustomRequestStatus.Completed) {
-    statusLabel = "Đã hoàn thành";
-    chipColor = "success";
-  }
-  if (status === CustomRequestStatus.Canceled) {
-    statusLabel = "Đã hủy";
-    chipColor = "error";
-  }
 
   const chatMutation = useMutation({
     mutationFn: (data: ICreateConversationRequest) => {
@@ -88,7 +68,11 @@ function CustomRequestCard(props: ICustomRequestCardProps) {
             >
               <div>Bản Thiết Kế {maleDesign?.name}</div>
 
-              <Chip label={statusLabel} color={chipColor} variant="filled" />
+              <Chip
+                label={formatCustomRequestStatus(status).text}
+                color={formatCustomRequestStatus(status).color}
+                variant="filled"
+              />
             </Grid>
             <div className={styles.gender}>
               <img src={male} width={15} />

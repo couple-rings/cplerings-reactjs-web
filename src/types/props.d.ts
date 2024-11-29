@@ -375,6 +375,8 @@ declare global {
     maleVersion: IDesignVersion;
     femaleVersion: IDesignVersion;
     designs: ICustomDesign[];
+    ownerSpouse: ISpouse;
+    partnerSpouse: ISpouse;
   }
 
   interface IRejectModalProps extends IModalProps {
@@ -426,5 +428,14 @@ declare global {
     data: ICustomRequest;
 
     expandComponent: JSX.Element;
+  }
+
+  interface IDesignVersionProps {
+    data: IDesignVersion;
+    className: string;
+  }
+
+  interface ICustomRequestProps {
+    data: ICustomRequest;
   }
 }
