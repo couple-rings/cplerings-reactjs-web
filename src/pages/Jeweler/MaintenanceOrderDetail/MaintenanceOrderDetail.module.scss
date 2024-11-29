@@ -1,0 +1,125 @@
+@use "src/index.scss" as *;
+
+.container {
+  padding: 2rem;
+
+  .title {
+    font-size: 2rem;
+    color: $primaryColor;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .orderInfo {
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+
+      .orderId {
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+      }
+
+      .date {
+        color: $grayColor;
+      }
+    }
+
+    .productImage {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: $boxShadow;
+    }
+
+    .customerInfo {
+      .section {
+        .sectionTitle {
+          font-size: 1.2rem;
+          font-weight: 500;
+          margin-bottom: 1rem;
+          color: $primaryColor;
+        }
+
+        .info {
+          .name {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+          }
+
+          .phone, .address {
+            color: $grayColor;
+            margin-bottom: 0.5rem;
+          }
+        }
+
+        .serviceItem {
+          margin-bottom: 1.5rem;
+          padding: 1rem;
+          background-color: #f5f5f5;
+          border-radius: 8px;
+
+          .serviceHeader {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+
+            .serviceName {
+              font-weight: 500;
+            }
+
+            .servicePrice {
+              color: $primaryColor;
+              font-weight: 500;
+            }
+          }
+
+          .serviceDesc {
+            color: $grayColor;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+          }
+
+          .serviceRecommend {
+            color: #666;
+            font-style: italic;
+            font-size: 0.9rem;
+          }
+        }
+      }
+
+      .totalSection {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 2rem;
+
+        .totalLabel {
+          font-size: 1.2rem;
+          color: $grayColor;
+        }
+
+        .totalAmount {
+          font-size: 1.5rem;
+          font-weight: 500;
+          color: $primaryColor;
+        }
+      }
+    }
+  }
+
+  .buttonGroup {
+    margin-bottom: 2rem;
+    
+    button {
+      text-transform: none;
+      
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+}
