@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
   FaceMatchResponseCode,
+  Gender,
   IdReadingResponseCode,
   PersonFace,
   ResponseType,
@@ -276,12 +277,22 @@ function VerifyID() {
           const selfAge = currentYear - selfYear;
           const partnerAge = currentYear - partnerYear;
 
-          if (selfAge < 18) {
+          if (selfIdInfo.gender === Gender.Male && selfAge < 20) {
+            toast.error("Bạn chưa đủ tuổi. Yêu cầu trên 20 tuổi");
+            return;
+          }
+
+          if (selfIdInfo.gender === Gender.Female && partnerAge < 18) {
             toast.error("Bạn chưa đủ tuổi. Yêu cầu trên 18 tuổi");
             return;
           }
 
-          if (partnerAge < 18) {
+          if (partnerIdInfo.gender === Gender.Male && partnerAge < 20) {
+            toast.error("Bạn đời chưa đủ tuổi. Yêu cầu trên 20 tuổi");
+            return;
+          }
+
+          if (partnerIdInfo.gender === Gender.Female && selfAge < 18) {
             toast.error("Bạn đời chưa đủ tuổi. Yêu cầu trên 18 tuổi");
             return;
           }

@@ -1,10 +1,10 @@
-import { Card, Divider, Grid, Skeleton } from "@mui/material";
+import { Card, Chip, Divider, Grid, Skeleton } from "@mui/material";
 import styles from "./DesignVersions.module.scss";
 import HoverCard from "src/components/product/HoverCard";
 import male from "src/assets/male-icon.png";
 import female from "src/assets/female-icon.png";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
-import { roundedPrimaryBtn } from "src/utils/styles";
+import { primaryBtn, roundedPrimaryBtn } from "src/utils/styles";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AddModal from "src/components/modal/version/Add.modal";
 import { useEffect, useState } from "react";
@@ -26,6 +26,19 @@ import { postUploadFile } from "src/services/file.service";
 import { toast } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { getCustomerSessionCount } from "src/services/designSession.service";
+import moment from "moment";
+import Timeline from "@mui/lab/Timeline";
+import TimelineItem from "@mui/lab/TimelineItem";
+import TimelineSeparator from "@mui/lab/TimelineSeparator";
+import TimelineConnector from "@mui/lab/TimelineConnector";
+import TimelineContent from "@mui/lab/TimelineContent";
+import TimelineDot from "@mui/lab/TimelineDot";
+import TimelineOppositeContent, {
+  timelineOppositeContentClasses,
+} from "@mui/lab/TimelineOppositeContent";
+import { formatCustomRequestStatus } from "src/utils/functions";
+import { postCreateConversation } from "src/services/conversation.service";
+import { useAppSelector } from "src/utils/hooks";
 
 const initDraft = {
   image: "",
@@ -56,6 +69,8 @@ function DesignVersions() {
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const { id: staffId } = useAppSelector((state) => state.auth.userInfo);
 
   const { data: response } = useQuery({
     queryKey: [fetchCustomRequestDetail, id],
@@ -118,11 +133,33 @@ function DesignVersions() {
     },
   });
 
+  const chatMutation = useMutation({
+    mutationFn: (data: ICreateConversationRequest) => {
+      return postCreateConversation(data);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        navigate("/staff", { state: { conversation: response.data } });
+      }
+
+      if (response.error) {
+        toast.error(response.error);
+      }
+    },
+  });
+
   const isAccepted = () => {
     return !!(
       maleVersionResponse?.data?.items.find((item) => item.isAccepted) &&
       femaleVersionResponse?.data?.items.find((item) => item.isAccepted)
     );
+  };
+
+  const handleChat = () => {
+    if (response?.data?.customer)
+      chatMutation.mutate({
+        participants: [staffId, response.data.customer.id],
+      });
   };
 
   const handleCreateVersion = (image: string, designFile: string) => {
@@ -317,16 +354,35 @@ function DesignVersions() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Thiết Kế Gốc</div>
-      <Grid container justifyContent={"center"}>
-        <Grid
-          container
-          item
-          sm={10}
-          md={8}
-          justifyContent={"center"}
-          className={styles.original}
+      <Grid
+        container
+        mb={2}
+        justifyContent={"space-between"}
+        alignItems={"flex-start"}
+      >
+        <Grid container item md={6} gap={2} mb={3}>
+          <div className={styles.title}> Quy Trình Thiết Kế</div>
+
+          {response?.data && (
+            <Chip
+              label={formatCustomRequestStatus(response.data.status).text}
+              color={formatCustomRequestStatus(response.data.status).color}
+            />
+          )}
+        </Grid>
+
+        <LoadingButton
+          loading={chatMutation.isPending}
+          variant="contained"
+          sx={{ ...primaryBtn, py: 1, mb: 3 }}
+          onClick={handleChat}
         >
+          Chat Với Khách Hàng
+        </LoadingButton>
+      </Grid>
+
+      <Grid container justifyContent={"space-between"}>
+        <Grid container item xs={12} md={6} className={styles.original}>
           <Grid item xs={12} className={styles.name}>
             Bản Thiết Kế {maleDesign?.name} Và {femaleDesign?.name}
           </Grid>
@@ -337,7 +393,7 @@ function DesignVersions() {
             />
             <div className={styles.label}>
               <img src={male} />
-              <span>Nhẫn Nam</span>
+              <span>Nam Tính</span>
             </div>
           </Grid>
           <Grid item md={5}>
@@ -347,13 +403,71 @@ function DesignVersions() {
             />
             <div className={styles.label}>
               <img src={female} />
-              <span>Nhẫn Nữ</span>
+              <span>Nữ Tính</span>
             </div>
           </Grid>
         </Grid>
+
+        <Grid container item xs={12} md={5.7}>
+          <Timeline
+            sx={{
+              [`& .${timelineOppositeContentClasses.root}`]: {
+                flex: 0.2,
+              },
+            }}
+          >
+            <TimelineItem>
+              <TimelineOppositeContent color="textSecondary">
+                {moment(
+                  response?.data?.customRequestHistories.find(
+                    (item) => item.status === CustomRequestStatus.OnGoing
+                  )?.createdAt
+                ).format("DD/MM/YYYY HH:mm")}
+              </TimelineOppositeContent>
+              <TimelineSeparator>
+                <TimelineDot color="info" />
+                <TimelineConnector />
+              </TimelineSeparator>
+              <TimelineContent>Tiếp nhận yêu cầu thiết kế</TimelineContent>
+            </TimelineItem>
+
+            {maleVersionResponse?.data?.items.map((item) => {
+              return (
+                <TimelineItem key={item.id}>
+                  <TimelineOppositeContent color="textSecondary">
+                    {moment(item.createdAt).format("DD/MM/YYYY HH:mm")}
+                  </TimelineOppositeContent>
+                  <TimelineSeparator>
+                    <TimelineDot color="info" />
+                    <TimelineConnector />
+                  </TimelineSeparator>
+                  <TimelineContent>
+                    Hoàn tất bản thiết kế version {item.versionNumber}
+                  </TimelineContent>
+                </TimelineItem>
+              );
+            })}
+          </Timeline>
+        </Grid>
       </Grid>
 
-      <div className={styles.title}>Các Phiên Bản</div>
+      <Grid container justifyContent={"center"}>
+        <Grid
+          container
+          item
+          xs={11}
+          alignItems={"center"}
+          justifyContent={"space-between"}
+        >
+          <Grid item className={styles.title}>
+            Các Phiên Bản
+          </Grid>
+
+          <Grid item className={styles.count}>
+            Còn {sessionResponse?.data?.numOfSessions} lượt thiết kế
+          </Grid>
+        </Grid>
+      </Grid>
 
       <Grid container justifyContent={"center"}>
         <Grid
@@ -365,16 +479,18 @@ function DesignVersions() {
           className={styles.versionList}
         >
           <Grid item xs={12} className={styles.label}>
-            <img src={male} />
-            <span>Nhẫn Nam</span>
+            Dành Cho Bản {maleDesign.name}
           </Grid>
 
           {maleVersionResponse?.data?.items
             ?.sort((a, b) => a.versionNumber - b.versionNumber)
             .map((item) => {
               return (
-                <Grid item md={3} key={item.id}>
+                <Grid item md={3.7} key={item.id}>
                   <Card className={styles.version}>
+                    <div className={styles.date}>
+                      Ngày tạo: {moment(item.createdAt).format("DD/MM/YYYY")}
+                    </div>
                     <HoverCard
                       image={item.image.url}
                       file={item.designFile.url}
@@ -390,7 +506,7 @@ function DesignVersions() {
 
           {/* Male newly created version in draft state */}
           {maleNewVersion.versionNo !== 0 && (
-            <Grid item md={3}>
+            <Grid item md={3.7}>
               <Card className={styles.version}>
                 <HoverCard
                   image={maleNewVersion.image}
@@ -407,7 +523,7 @@ function DesignVersions() {
             <Grid
               item
               xs={12}
-              md={3}
+              md={3.7}
               onClick={() => {
                 setOpen(true);
                 setCreateGender(DesignCharacteristic.Male);
@@ -434,16 +550,18 @@ function DesignVersions() {
           className={styles.versionList}
         >
           <Grid item xs={12} className={styles.label}>
-            <img src={female} />
-            <span>Nhẫn Nữ</span>
+            Dành Cho Bản {femaleDesign.name}
           </Grid>
 
           {femaleVersionResponse?.data?.items
             ?.sort((a, b) => a.versionNumber - b.versionNumber)
             .map((item) => {
               return (
-                <Grid item md={3} key={item.id}>
+                <Grid item md={3.7} key={item.id}>
                   <Card className={styles.version}>
+                    <div className={styles.date}>
+                      Ngày tạo: {moment(item.createdAt).format("DD/MM/YYYY")}
+                    </div>
                     <HoverCard
                       image={item.image.url}
                       file={item.designFile.url}
@@ -459,7 +577,7 @@ function DesignVersions() {
 
           {/* Female newly created version in draft state */}
           {femaleNewVersion.versionNo !== 0 && (
-            <Grid item md={3}>
+            <Grid item md={3.7}>
               <Card className={styles.version}>
                 <HoverCard
                   image={femaleNewVersion.image}
@@ -476,7 +594,7 @@ function DesignVersions() {
             <Grid
               item
               xs={12}
-              md={3}
+              md={3.7}
               onClick={() => {
                 setOpen(true);
                 setCreateGender(DesignCharacteristic.Female);

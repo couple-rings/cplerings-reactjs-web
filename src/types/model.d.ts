@@ -237,6 +237,7 @@ declare global {
     staff?: IUser;
     designs: IDesign[];
     createdAt: string;
+    customRequestHistories: IStatusHistory<CustomRequestStatus>[];
   }
 
   interface IDesignVersion {
@@ -254,6 +255,7 @@ declare global {
     isAccepted: boolean;
     isOld: boolean;
     owner?: VersionOwner;
+    createdAt: string;
   }
 
   interface ICoordinate {
@@ -306,6 +308,7 @@ declare global {
     diamondSpecifications: IDiamondSpec[];
     metalSpecifications: IMetalSpec[];
     sideDiamondsCount: number;
+    createdAt: string;
   }
 
   interface IBranch {
@@ -465,5 +468,10 @@ declare global {
     receiverName: string;
     receiverPhone: string;
     customer: IUser;
+  }
+
+  interface IStatusHistory<T> {
+    status: T;
+    createdAt: string;
   }
 }

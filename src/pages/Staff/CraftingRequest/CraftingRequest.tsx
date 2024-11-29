@@ -11,14 +11,15 @@ import { pageSize } from "src/utils/constants";
 import { useEffect, useMemo, useState } from "react";
 import moment from "moment";
 import { CraftingRequestStatus } from "src/utils/enums";
-import { Button } from "@mui/material";
+import { Button, FormLabel, Grid, IconButton, Popover } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCraftingRequestGroups } from "src/services/craftingRequest.service";
 import { fetchCraftingRequestGroups } from "src/utils/querykey";
-import HideSourceRoundedIcon from "@mui/icons-material/HideSourceRounded";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import ReportProblemRoundedIcon from "@mui/icons-material/ReportProblemRounded";
+import RemoveRedEyeSharpIcon from "@mui/icons-material/RemoveRedEyeSharp";
 
 interface Row extends ICraftingRequestGroup {}
 
@@ -40,6 +41,11 @@ function CraftingRequest() {
     pageSize,
   });
 
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const openPopover = Boolean(anchorEl);
+  const id = openPopover ? "simple-popover" : undefined;
+
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -50,6 +56,14 @@ function CraftingRequest() {
       if (filterObj) return getCraftingRequestGroups(filterObj);
     },
   });
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const columns: GridColDef<Row>[] = useMemo(
     () => [
@@ -73,8 +87,53 @@ function CraftingRequest() {
         align: "center",
         filterOperators,
         sortable: false,
-        valueGetter: (value: Omit<IUser, "hasSpouse">) => {
-          return value.username;
+        renderCell: ({ row }) => {
+          return (
+            <div>
+              {row.customer.username}{" "}
+              <IconButton onClick={handleClick}>
+                <RemoveRedEyeSharpIcon fontSize="small" />
+              </IconButton>
+              <Popover
+                id={id}
+                open={openPopover}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+              >
+                <Grid container width={300} p={3} gap={1}>
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Username:</Grid>
+
+                    <Grid item>{row.customer.username}</Grid>
+                  </Grid>
+
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Email:</Grid>
+
+                    <Grid item>
+                      <FormLabel>{row.customer.email}</FormLabel>
+                    </Grid>
+                  </Grid>
+
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Số điện thoại:</Grid>
+
+                    <Grid item>
+                      {row.customer.phone ? row.customer.phone : "--"}
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Popover>
+            </div>
+          );
         },
       },
       {
@@ -93,7 +152,7 @@ function CraftingRequest() {
       },
       {
         field: "status",
-        headerName: "Đang Cần Duyệt",
+        headerName: "Cần Duyệt",
         width: 200,
         headerAlign: "center",
         align: "center",
@@ -110,7 +169,7 @@ function CraftingRequest() {
               {needApproval ? (
                 <ReportProblemRoundedIcon color="warning" />
               ) : (
-                <HideSourceRoundedIcon color="action" />
+                <CheckCircleRoundedIcon color="success" />
               )}
             </div>
           );
@@ -136,7 +195,7 @@ function CraftingRequest() {
         ),
       },
     ],
-    [navigate]
+    [anchorEl, id, navigate, openPopover]
   );
 
   const handleChangePage = (model: GridPaginationModel) => {

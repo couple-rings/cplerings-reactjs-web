@@ -4,7 +4,7 @@ import { Button, IconButton } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import { useNavigate } from "react-router-dom";
-import { ProductType } from "src/utils/enums";
+import { DesignCharacteristic, ProductType } from "src/utils/enums";
 
 const ProductCard = (props: IProductCardProps) => {
   const { product, data } = props;
@@ -21,10 +21,18 @@ const ProductCard = (props: IProductCardProps) => {
   const handleNavigate = () => {
     if (type === ProductType.Jewelry)
       navigate(`/jewelry/detail`, { state: { id } });
-    if (type === ProductType.Ring)
-      navigate(`/wedding-rings/detail`, {
+    if (type === ProductType.Ring) {
+      const maleDesign = data?.designs.find(
+        (item) => item.characteristic === DesignCharacteristic.Male
+      );
+      const femaleDesign = data?.designs.find(
+        (item) => item.characteristic === DesignCharacteristic.Female
+      );
+
+      navigate(`/wedding-rings/detail/${maleDesign?.id}/${femaleDesign?.id}`, {
         state: { data },
       });
+    }
   };
 
   return (

@@ -227,6 +227,8 @@ declare global {
       diamondSpec: IDiamondSpec;
 
       sideDiamondsCount: number;
+
+      metalWeight: number;
     };
 
     femaleDetail?: {
@@ -235,6 +237,8 @@ declare global {
       diamondSpec: IDiamondSpec;
 
       sideDiamondsCount: number;
+
+      metalWeight: number;
     };
   }
 
@@ -371,6 +375,8 @@ declare global {
     maleVersion: IDesignVersion;
     femaleVersion: IDesignVersion;
     designs: ICustomDesign[];
+    ownerSpouse: ISpouse;
+    partnerSpouse: ISpouse;
   }
 
   interface IRejectModalProps extends IModalProps {
@@ -416,5 +422,20 @@ declare global {
 
   interface ITransportOrderModalProps extends IModalProps {
     order: ITransportOrder;
+  }
+
+  interface ICustomRequestRowProps {
+    data: ICustomRequest;
+
+    expandComponent: JSX.Element;
+  }
+
+  interface IDesignVersionProps {
+    data: IDesignVersion;
+    className: string;
+  }
+
+  interface ICustomRequestProps {
+    data: ICustomRequest;
   }
 }

@@ -49,3 +49,11 @@ $boxShadow     : 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
 .sigCanvas {
   border: 1px solid #ccc;
 }
+
+.myIndicator {
+  background-color: $secondaryColor !important;
+}
+
+.selectedCustomRequestTab {
+  color: $secondaryColor !important;
+}

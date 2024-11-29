@@ -9,30 +9,7 @@
         margin-bottom: 2rem;
     }
 
-    .completed {
-        background-color: #07bc0c;
-        color           : #ffffff;
-        border-radius   : 15px;
-        padding         : 5px 10px;
-        text-transform  : capitalize;
-        width           : 100px;
-    }
-
-    .canceled {
-        background-color: #e74c3c;
-        color           : #ffffff;
-        border-radius   : 15px;
-        padding         : 5px 10px;
-        text-transform  : capitalize;
-        width           : 100px;
-    }
-
-    .ongoing {
-        background-color   : #f1c40f;
-        color              : #ffffff;
-        border-radius      : 15px;
-        padding            : 5px 10px;
-        text-transform     : capitalize;
-        // width           : 120px;
+    .tabLabel {
+        text-transform: capitalize;
     }
 }

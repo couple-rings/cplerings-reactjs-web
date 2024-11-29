@@ -31,6 +31,11 @@ export enum UserRole {
   Transporter = "TRANSPORTER",
 }
 
+export enum Gender {
+  Male = "NAM",
+  Female = "NỮ",
+}
+
 export enum ResponseType {
   Data = "DATA",
   Error = "ERROR",
@@ -161,4 +166,9 @@ export enum TransportOrderStatus {
   Rejected = "REJECTED",
   Completed = "COMPLETED",
   Failed = "FAILED",
+}
+
+export enum TransactionType {
+  ATM = "ATM",
+  QrCode = "QRCODE",
 }
