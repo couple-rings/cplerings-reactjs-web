@@ -1,26 +1,16 @@
 import { Grid } from "@mui/material";
 import styles from "./Index.module.scss";
-import { BarChart } from "@mui/x-charts/BarChart";
 import moneyBag from "./../../assets/moneyBag.png";
 import transactionIcon from "./../../assets/TransactionIcon.png";
 import customerIcon from "./../../assets/CustomerIcon.png";
 import productIcon from "./../../assets/ProductIcon.png";
 import chartArrowRise from "./../../assets/ChartArrowRise.png";
 import chartArrowDescent from "./../../assets/ChartArrowDescent.png";
-import { LineChart, lineElementClasses } from "@mui/x-charts";
 import ManagerChartFinace from "./ManagerChartFinance/ManagerChartFinance";
+import ManagerTopProductTable from "./ManagerTopProductTable/ManagerTopProductTable";
+import ManagerPieChartCategory from "./ManagerPieChartCategory/ManagerPieChartCategory";
 
-const uData = [4000, 3000, 2000, 2780, 1890, 2390, 3490];
-const pData = [2400, 1398, 9800, 3908, 4800, 3800, 4300];
-const xLabels = [
-  "Page A",
-  "Page B",
-  "Page C",
-  "Page D",
-  "Page E",
-  "Page F",
-  "Page G",
-];
+
 
 function Index() {
   return (
@@ -129,53 +119,16 @@ function Index() {
 
           <Grid container justifyContent={"space-between"}>
             <Grid item xs={12} className={styles.section}>
-              
               <ManagerChartFinace/>
             </Grid>
 
-            <Grid item  className={styles.section}>
-              <BarChart
-                xAxis={[
-                  {
-                    scaleType: "band",
-                    data: ["group A", "group B", "group C"],
-                  },
-                ]}
-                series={[
-                  { data: [4, 3, 5] },
-                  { data: [1, 6, 3] },
-                  { data: [2, 5, 6] },
-                ]}
-                height={300}
-              />
-            </Grid>
+            
 
-            <Grid item  className={styles.section} mt={3} p={3}>
-              <LineChart
-                height={300}
-                series={[
-                  {
-                    data: uData,
-                    label: "uv",
-                    area: true,
-                    stack: "total",
-                    showMark: false,
-                  },
-                  {
-                    data: pData,
-                    label: "pv",
-                    area: true,
-                    stack: "total",
-                    showMark: false,
-                  },
-                ]}
-                xAxis={[{ scaleType: "point", data: xLabels }]}
-                sx={{
-                  [`& .${lineElementClasses.root}`]: {
-                    display: "none",
-                  },
-                }}
-              />
+            <Grid item xs={7} className={styles.section} mt={3} p={3}>
+              <ManagerTopProductTable/>
+            </Grid>
+            <Grid item xs={4.8} className={styles.section} mt={3} p={3}>
+              <ManagerPieChartCategory/>
             </Grid>
           </Grid>
         </div>
