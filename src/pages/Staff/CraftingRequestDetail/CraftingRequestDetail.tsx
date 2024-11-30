@@ -19,6 +19,7 @@ import {
   getDiamondSpec,
 } from "src/utils/functions";
 import { toast } from "react-toastify";
+import moment from "moment";
 
 function CraftingRequestDetail() {
   const [needApproval, setNeedApproval] = useState(true);
@@ -161,20 +162,47 @@ function CraftingRequestDetail() {
   if (needApproval && maleRequest && femaleRequest)
     return (
       <div className={styles.container}>
-        <div className={styles.title}>Yêu Cầu Gia Công</div>
+        <Grid container justifyContent={"center"}>
+          <Grid item xs={11} className={styles.title}>
+            Yêu Cầu Gia Công
+          </Grid>
+        </Grid>
 
         <Grid container justifyContent={"center"}>
-          <Grid container item lg={10} justifyContent={"space-between"}>
-            <Grid item md={5}>
-              <HoverCard
-                image={maleRequest.customDesign.designVersion.image.url}
-                file={maleRequest.customDesign.blueprint.url}
-                shadow={true}
-              />
-              <div className={styles.label}>
-                <img src={male} />
-                <span>Nhẫn Nam</span>
-              </div>
+          <Grid container item xs={11} justifyContent={"space-around"}>
+            <Grid item md={5} p={2}>
+              <Grid container justifyContent={"center"}>
+                <Grid item xs={9}>
+                  <HoverCard
+                    image={maleRequest.customDesign.designVersion.image.url}
+                    file={maleRequest.customDesign.blueprint.url}
+                    shadow={true}
+                  />
+                </Grid>
+              </Grid>
+
+              <fieldset style={{ margin: 0 }}>
+                <legend>
+                  <Grid item xs={12} my={2} className={styles.label}>
+                    <img src={male} />
+                    <span>Nhẫn Nam</span>
+                  </Grid>
+                </legend>
+
+                <Grid container justifyContent={"space-between"} mb={1}>
+                  <Grid item>Dành cho:</Grid>
+
+                  <Grid item>{maleRequest.customDesign.spouse.fullName}</Grid>
+                </Grid>
+
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item>Ngày tạo:</Grid>
+
+                  <Grid item>
+                    {moment(maleRequest.createdAt).format("DD/MM/YYYY")}
+                  </Grid>
+                </Grid>
+              </fieldset>
 
               <div className={styles.info}>
                 <div className={styles.row}>
@@ -209,22 +237,53 @@ function CraftingRequestDetail() {
                 <Divider sx={{ backgroundColor: "#ccc", my: 2 }} />
 
                 <div className={styles.row}>
+                  <div className={styles.field}>Kim cương phụ</div>
+                  <div className={styles.value}>
+                    {maleRequest.customDesign.sideDiamondsCount} viên
+                  </div>
+                </div>
+                <Divider sx={{ backgroundColor: "#ccc", my: 2 }} />
+
+                <div className={styles.row}>
                   <div className={styles.field}>Khắc chữ</div>
                   <div className={styles.value}>{maleRequest.engraving}</div>
                 </div>
               </div>
             </Grid>
 
-            <Grid item md={5}>
-              <HoverCard
-                image={femaleRequest.customDesign.designVersion.image.url}
-                file={femaleRequest.customDesign.blueprint.url}
-                shadow={true}
-              />
-              <div className={styles.label}>
-                <img src={female} />
-                <span>Nhẫn Nữ</span>
-              </div>
+            <Grid item md={5} p={2}>
+              <Grid container justifyContent={"center"}>
+                <Grid item xs={9}>
+                  <HoverCard
+                    image={femaleRequest.customDesign.designVersion.image.url}
+                    file={femaleRequest.customDesign.blueprint.url}
+                    shadow={true}
+                  />
+                </Grid>
+              </Grid>
+
+              <fieldset style={{ margin: 0 }}>
+                <legend>
+                  <Grid item xs={12} my={2} className={styles.label}>
+                    <img src={female} />
+                    <span>Nhẫn Nữ</span>
+                  </Grid>
+                </legend>
+
+                <Grid container justifyContent={"space-between"} mb={1}>
+                  <Grid item>Dành cho:</Grid>
+
+                  <Grid item>{femaleRequest.customDesign.spouse.fullName}</Grid>
+                </Grid>
+
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item>Ngày tạo:</Grid>
+
+                  <Grid item>
+                    {moment(femaleRequest.createdAt).format("DD/MM/YYYY")}
+                  </Grid>
+                </Grid>
+              </fieldset>
 
               <div className={styles.info}>
                 <div className={styles.row}>
@@ -259,6 +318,14 @@ function CraftingRequestDetail() {
                 <Divider sx={{ backgroundColor: "#ccc", my: 2 }} />
 
                 <div className={styles.row}>
+                  <div className={styles.field}>Kim cương phụ</div>
+                  <div className={styles.value}>
+                    {femaleRequest.customDesign.sideDiamondsCount} viên
+                  </div>
+                </div>
+                <Divider sx={{ backgroundColor: "#ccc", my: 2 }} />
+
+                <div className={styles.row}>
                   <div className={styles.field}>Khắc chữ</div>
                   <div className={styles.value}>{femaleRequest.engraving}</div>
                 </div>
@@ -278,9 +345,9 @@ function CraftingRequestDetail() {
                   variant="contained"
                   fullWidth
                   sx={roundedPrimaryBtn}
-                  onClick={handleAccept}
+                  onClick={() => setOpenReject(true)}
                 >
-                  Chấp Nhận
+                  Từ Chối
                 </Button>
               </Grid>
 
@@ -289,9 +356,9 @@ function CraftingRequestDetail() {
                   variant="contained"
                   fullWidth
                   sx={roundedPrimaryBtn}
-                  onClick={() => setOpenReject(true)}
+                  onClick={handleAccept}
                 >
-                  Từ Chối
+                  Chấp Nhận
                 </Button>
               </Grid>
             </Grid>
@@ -317,71 +384,76 @@ const PastRequests = (props: IPastRequestsProps) => {
         <div className={styles.title}>Yêu Cầu Gia Công</div>
       </Grid>
 
+      <Grid item xs={11} lg={10} mb={4}>
+        <fieldset style={{ margin: 0 }}>
+          <legend>Khách hàng</legend>
+          <Grid container my={1}>
+            <Grid item xs={3}>
+              Username:
+            </Grid>
+            <Grid item>{data[0].customer.username}</Grid>
+          </Grid>
+
+          <Grid container mb={1}>
+            <Grid item xs={3}>
+              Email:
+            </Grid>
+            <Grid item>{data[0].customer.email}</Grid>
+          </Grid>
+
+          <Grid container mb={1}>
+            <Grid item xs={3}>
+              Phone:
+            </Grid>
+            <Grid item>
+              {data[0].customer.phone ? data[0].customer.phone : "--"}
+            </Grid>
+          </Grid>
+        </fieldset>
+      </Grid>
+
       <Grid item xs={11} lg={10}>
         {data &&
           data.map((item) => {
             const gender =
               item.customDesign.designVersion.design.characteristic;
+            const currentStatus = item.craftingRequestHistories.find(
+              (i) => i.status === item.craftingRequestStatus
+            );
 
             return (
               <Card className={styles.cardContainer} key={item.id}>
-                <Grid container p={3} justifyContent={"space-between"}>
-                  <Grid item xs={12} md={2.5} mb={{ xs: 2, md: 0 }}>
+                <Grid
+                  container
+                  p={3}
+                  justifyContent={"space-between"}
+                  alignItems={"flex-start"}
+                >
+                  <Grid item xs={12} md={3} mb={{ xs: 3, md: 0 }}>
                     <HoverCard
                       file={item.customDesign.blueprint.url}
                       image={item.customDesign.designVersion.image.url}
                       shadow={true}
                     />
+                    <Grid item className={styles.gender} mt={1}>
+                      <img
+                        src={
+                          gender === DesignCharacteristic.Male ? male : female
+                        }
+                        width={15}
+                      />
+                      Nhẫn {gender === DesignCharacteristic.Male ? "nam" : "nữ"}
+                    </Grid>
                   </Grid>
-                  <Grid container item xs={12} lg={9}>
-                    <Grid container item flex={1}>
-                      <Grid
-                        container
-                        item
-                        flex={1}
-                        alignItems={"center"}
-                        py={{ xs: 0, md: 2 }}
-                      >
-                        <Grid
-                          item
-                          xs={12}
-                          className={styles.gender}
-                          my={{ xs: 1, md: 0 }}
-                        >
-                          <img
-                            src={
-                              gender === DesignCharacteristic.Male
-                                ? male
-                                : female
-                            }
-                            width={15}
-                          />
-                          Nhẫn{" "}
-                          {gender === DesignCharacteristic.Male ? "nam" : "nữ"}
-                        </Grid>
 
-                        <Grid item xs={12} mb={{ xs: 1, md: 0 }}>
-                          Trọng lượng: {item.customDesign.metalWeight} chỉ
-                        </Grid>
-
-                        <Grid container>
-                          <Grid item xs={12} md={7} mb={{ xs: 1, md: 0 }}>
-                            Chất liệu: {item.metalSpecification.name}
-                          </Grid>
-                          <Grid item xs={12} md={5} mb={{ xs: 1, md: 0 }}>
-                            Kích thước: {item.fingerSize}
-                          </Grid>
-                        </Grid>
-
-                        <Grid container item xs={12}>
-                          <Grid item xs={12} md={7} mb={{ xs: 1, md: 0 }}>
-                            Kim cương: {item.diamondSpecification.shape}{" "}
-                            {getDiamondSpec(item.diamondSpecification)}
-                          </Grid>
-                          <Grid item xs={12} md={5}>
-                            Khắc chữ: {item.engraving}
-                          </Grid>
-                        </Grid>
+                  <Grid container item xs={12} md={8.5} gap={2}>
+                    <Grid
+                      container
+                      justifyContent={"space-between"}
+                      alignItems={"center"}
+                    >
+                      <Grid item>
+                        Dành cho: {item.customDesign.spouse.fullName}
                       </Grid>
 
                       <Chip
@@ -397,6 +469,45 @@ const PastRequests = (props: IPastRequestsProps) => {
                         }
                         variant="filled"
                       />
+                    </Grid>
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item my={{ xs: 1, md: 0 }}>
+                        Ngày tạo:{" "}
+                        {moment(item.createdAt).format("DD/MM/YYYY HH:mm")}
+                      </Grid>
+
+                      <Grid item>
+                        Cập nhật:{" "}
+                        {moment(currentStatus?.createdAt).format("DD/MM/YYYY")}
+                      </Grid>
+                    </Grid>
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item mb={{ xs: 1, md: 0 }}>
+                        Chất liệu: {item.metalSpecification.name}
+                      </Grid>
+                      <Grid item mb={{ xs: 1, md: 0 }}>
+                        Kích thước: {item.fingerSize}
+                      </Grid>
+                    </Grid>
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item mb={{ xs: 1, md: 0 }}>
+                        Kim cương: {item.diamondSpecification.shape}{" "}
+                        {getDiamondSpec(item.diamondSpecification)}
+                      </Grid>
+                      <Grid item>Khắc chữ: {item.engraving}</Grid>
+                    </Grid>
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item mb={{ xs: 1, md: 0 }}>
+                        Trọng lượng: {item.customDesign.metalWeight} chỉ
+                      </Grid>
+                      <Grid item mb={{ xs: 1, md: 0 }}>
+                        Kim cương phụ: {item.customDesign.sideDiamondsCount}{" "}
+                        viên
+                      </Grid>
                     </Grid>
                   </Grid>
                 </Grid>

@@ -9,9 +9,8 @@ import { useAppSelector } from "src/utils/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { getCustomOrders } from "src/services/customOrder.service";
 import { fetchCustomOrders } from "src/utils/querykey";
-import { CustomOrderStatus, DesignCharacteristic } from "src/utils/enums";
-import { ChipColor } from "src/utils/constants";
-import { getDiamondSpec } from "src/utils/functions";
+import { DesignCharacteristic } from "src/utils/enums";
+import { formatCustomOrderStatus, getDiamondSpec } from "src/utils/functions";
 
 function CustomOrder() {
   const [filterObj, setFilterObj] = useState<ICustomOrderFilter | null>(null);
@@ -28,51 +27,6 @@ function CustomOrder() {
     },
     enabled: !!filterObj,
   });
-
-  const formatStatus = (
-    status: CustomOrderStatus
-  ): { text: string; color: ChipColor } => {
-    if (status === CustomOrderStatus.Pending)
-      return {
-        text: "Chưa Thanh Toán",
-        color: "warning",
-      };
-
-    if (status === CustomOrderStatus.Waiting)
-      return {
-        text: "Đang Chuẩn Bị",
-        color: "warning",
-      };
-
-    if (status === CustomOrderStatus.InProgress)
-      return {
-        text: "Đang Gia Công",
-        color: "secondary",
-      };
-
-    if (status === CustomOrderStatus.Done)
-      return {
-        text: "Chuẩn Bị Giao",
-        color: "primary",
-      };
-
-    if (status === CustomOrderStatus.Delivering)
-      return {
-        text: "Đang Giao",
-        color: "primary",
-      };
-
-    if (status === CustomOrderStatus.Completed)
-      return {
-        text: "Hoàn Thành",
-        color: "success",
-      };
-
-    return {
-      text: "Đã Hủy",
-      color: "error",
-    };
-  };
 
   useEffect(() => {
     setFilterObj({
@@ -140,8 +94,8 @@ function CustomOrder() {
                   Mã Đơn: <span className={styles.orderNo}>{item.orderNo}</span>
                 </Box>
                 <Chip
-                  label={formatStatus(item.status).text}
-                  color={formatStatus(item.status).color}
+                  label={formatCustomOrderStatus(item.status).text}
+                  color={formatCustomOrderStatus(item.status).color}
                 />
               </Grid>
 

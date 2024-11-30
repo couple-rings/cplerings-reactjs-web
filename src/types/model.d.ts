@@ -335,6 +335,7 @@ declare global {
     createdAt: string;
     branch: IBranch;
     customDesign: ICustomDesign;
+    craftingRequestHistories: IStatusHistory<CraftingRequestStatus>[];
   }
 
   interface ICraftingRequestGroup {
@@ -401,6 +402,7 @@ declare global {
     };
     status: CustomOrderStatus;
     createdAt: string;
+    customOrderHistories: IStatusHistory<CustomOrderStatus>[];
   }
 
   interface ICraftingStage {
@@ -414,6 +416,7 @@ declare global {
       url: string;
     };
     status: CraftingStageStatus;
+    craftingStageHistories: IStatusHistory<CraftingStageStatus>[];
   }
 
   interface ITransportOrder {
@@ -471,6 +474,7 @@ declare global {
   }
 
   interface IStatusHistory<T> {
+    id: number;
     status: T;
     createdAt: string;
   }

@@ -14,3 +14,11 @@ export const getTransporters = (queryObj: ITransporterFilter) => {
     `accounts/transporters?${queryUrl}`
   );
 };
+
+export const getJewelers = (queryObj: IJewelerFilter) => {
+  const queryUrl = queryString.stringify(queryObj);
+
+  return axios.get<unknown, IResponse<IListResponse<IUser>>>(
+    `accounts/jewelers?${queryUrl}`
+  );
+};

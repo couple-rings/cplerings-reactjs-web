@@ -2,7 +2,11 @@ import { Button, Chip, Divider, Grid, Skeleton } from "@mui/material";
 import styles from "./CustomOrderDetail.module.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
-import { currencyFormatter, getDiamondSpec } from "src/utils/functions";
+import {
+  currencyFormatter,
+  formatCustomOrderStatus,
+  getDiamondSpec,
+} from "src/utils/functions";
 import { secondaryBtn } from "src/utils/styles";
 import DownloadForOfflineRoundedIcon from "@mui/icons-material/DownloadForOfflineRounded";
 import { useQuery } from "@tanstack/react-query";
@@ -18,7 +22,6 @@ import {
   TransportOrderStatus,
 } from "src/utils/enums";
 import { useAppSelector } from "src/utils/hooks";
-import { ChipColor } from "src/utils/constants";
 import DownloadIcon from "@mui/icons-material/Download";
 import { getTransportOrderWithCustomOrder } from "src/services/transportOrder.service";
 import HoverCard from "src/components/product/HoverCard";
@@ -51,51 +54,6 @@ function CustomOrderDetail() {
     },
     enabled: !!order?.id,
   });
-
-  const formatStatus = (
-    status: CustomOrderStatus
-  ): { text: string; color: ChipColor } => {
-    if (status === CustomOrderStatus.Pending)
-      return {
-        text: "Chưa Thanh Toán",
-        color: "warning",
-      };
-
-    if (status === CustomOrderStatus.Waiting)
-      return {
-        text: "Đang Chuẩn Bị",
-        color: "warning",
-      };
-
-    if (status === CustomOrderStatus.InProgress)
-      return {
-        text: "Đang Gia Công",
-        color: "secondary",
-      };
-
-    if (status === CustomOrderStatus.Done)
-      return {
-        text: "Chuẩn Bị Giao",
-        color: "primary",
-      };
-
-    if (status === CustomOrderStatus.Delivering)
-      return {
-        text: "Đang Giao",
-        color: "primary",
-      };
-
-    if (status === CustomOrderStatus.Completed)
-      return {
-        text: "Hoàn Thành",
-        color: "success",
-      };
-
-    return {
-      text: "Đã Hủy",
-      color: "error",
-    };
-  };
 
   useEffect(() => {
     if (response && response.data) {
@@ -186,8 +144,8 @@ function CustomOrderDetail() {
               </Grid>
               <Grid item>
                 <Chip
-                  label={formatStatus(order.status).text}
-                  color={formatStatus(order.status).color}
+                  label={formatCustomOrderStatus(order.status).text}
+                  color={formatCustomOrderStatus(order.status).color}
                 />
               </Grid>
             </Grid>

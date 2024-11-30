@@ -269,6 +269,8 @@ declare global {
     branchId: number;
   }
 
+  interface IJewelerFilter extends ITransporterFilter {}
+
   interface ITransportOrderFilter {
     page: number;
     pageSize: number;
