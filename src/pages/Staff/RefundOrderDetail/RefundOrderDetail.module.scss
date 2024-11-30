@@ -1,0 +1,178 @@
+@use "src/index.scss" as *;
+
+.container {
+  padding: 2rem;
+
+  .title {
+    font-size: 2rem;
+    color: $primaryColor;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .orderInfo {
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+
+      .orderId {
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+      }
+
+      .date {
+        color: $grayColor;
+      }
+    }
+
+    .mainImage {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: $boxShadow;
+      margin-bottom: 1rem;
+    }
+
+    .evidenceImage {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: $boxShadow;
+    }
+
+    .section {
+      .sectionTitle {
+        font-size: 1.3rem;
+        font-weight: 500;
+        color: $primaryColor;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+
+        .icon {
+          font-size: 1.5rem;
+        }
+      }
+
+      .collection {
+        font-size: 1.4rem;
+        color: $primaryColor;
+        font-weight: 500;
+        margin-bottom: 1rem;
+      }
+
+      .price {
+        font-size: 1.6rem;
+        font-weight: 600;
+        color: $primaryColor;
+        margin-bottom: 2rem;
+      }
+
+      .ringsContainer {
+        display: flex;
+        gap: 2rem;
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-top: 1rem;
+
+        .ringBox {
+          flex: 1;
+          background: white;
+          padding: 1.5rem;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+          .ringHeader {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+
+            .ringIcon {
+              font-size: 1.5rem;
+            }
+
+            .ringTitle {
+              font-size: 1.2rem;
+              font-weight: 500;
+              color: $primaryColor;
+            }
+          }
+
+          .ringSpecs {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+
+            .specItem {
+              .specLabel {
+                color: $grayColor;
+                font-size: 0.9rem;
+                margin-bottom: 0.3rem;
+              }
+
+              .specValue {
+                font-weight: 500;
+                color: #2d3748;
+                font-size: 1.1rem;
+              }
+            }
+          }
+        }
+
+        hr {
+          margin: 0 1rem;
+          background-color: #e2e8f0;
+        }
+      }
+
+      .customerInfo {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 12px;
+        
+        .name {
+          font-size: 1.2rem;
+          font-weight: 500;
+          margin-bottom: 0.8rem;
+        }
+        
+        .phone, .address {
+          color: $grayColor;
+          margin-bottom: 0.5rem;
+        }
+      }
+
+      .reason {
+        font-weight: 500;
+        color: #e53e3e;
+        margin-bottom: 1rem;
+      }
+
+      .description {
+        background: #fff5f5;
+        padding: 1.5rem;
+        border-radius: 12px;
+        color: #e53e3e;
+      }
+    }
+  }
+
+  .buttonGroup {
+    margin-bottom: 2rem;
+    
+    button {
+      text-transform: none;
+      border-radius: 8px;
+      
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+}
