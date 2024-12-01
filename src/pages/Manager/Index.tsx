@@ -1,18 +1,18 @@
 import { Grid } from "@mui/material";
 import styles from "./Index.module.scss";
-import moneyBag from "./../../assets/moneyBag.png";
-import transactionIcon from "./../../assets/TransactionIcon.png";
-import customerIcon from "./../../assets/CustomerIcon.png";
-import productIcon from "./../../assets/ProductIcon.png";
-import chartArrowRise from "./../../assets/ChartArrowRise.png";
-import chartArrowDescent from "./../../assets/ChartArrowDescent.png";
-import ManagerChartFinace from "./ManagerChartFinance/ManagerChartFinance";
+import moneyBag from "src/assets/moneyBag.png";
+import transactionIcon from "src/assets/TransactionIcon.png";
+import customerIcon from "src/assets/CustomerIcon.png";
+import productIcon from "src/assets/ProductIcon.png";
+import chartArrowRise from "src/assets/ChartArrowRise.png";
+import chartArrowDescent from "src/assets/ChartArrowDescent.png";
 import ManagerTopProductTable from "./ManagerTopProductTable/ManagerTopProductTable";
-import ManagerPieChartCategory from "./ManagerPieChartCategory/ManagerPieChartCategory";
-
-
+import ManagerChartFinace from "src/components/chart/ManagerChartFinance/ManagerChartFinance";
+import ManagerPieChartCategory from "src/components/chart/ManagerPieChartCategory/ManagerPieChartCategory";
 
 function Index() {
+
+
   return (
     <div className={styles.container}>
       <div className={styles.content}>
@@ -20,7 +20,7 @@ function Index() {
 
         <div>
           <Grid container justifyContent={"space-between"}>
-            <Grid item  lg={2.8}>
+            <Grid item lg={2.8}>
               <div className={styles.revenueContainer}>
                 <div className={styles.boxTitle}>
                   <div className={styles.boxIcon}>
@@ -118,17 +118,15 @@ function Index() {
           </Grid>
 
           <Grid container justifyContent={"space-between"}>
-            <Grid item xs={12} className={styles.section}>
-              <ManagerChartFinace/>
+            <Grid item xs={12} className={styles.section} >
+              <ManagerChartFinace />
             </Grid>
-
-            
 
             <Grid item xs={7} className={styles.section} mt={3} p={3}>
-              <ManagerTopProductTable/>
+              <ManagerTopProductTable />
             </Grid>
             <Grid item xs={4.8} className={styles.section} mt={3} p={3}>
-              <ManagerPieChartCategory/>
+              <ManagerPieChartCategory />
             </Grid>
           </Grid>
         </div>

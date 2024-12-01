@@ -1,6 +1,7 @@
 import { BarChart } from "@mui/x-charts/BarChart";
 import styles from "./ManagerChartFinance.module.scss";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // const uData = [4000, 3000, 2000, 2780, 1890, 2390, 3490,122222,1222,1222,1222];
 // const xLabels = [
@@ -37,6 +38,7 @@ const initialData = [
 function ManagerChartFinace() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const navigate = useNavigate();
 
   const filteredData = initialData.filter((data) => {
     const dataDate = new Date(data.date);
@@ -56,7 +58,7 @@ function ManagerChartFinace() {
   return (
     <div className={styles.container}>
       <div className={styles.titleChartContainer}>
-        <div className={styles.titleChart}>
+        <div className={styles.titleChart} onClick={() => navigate('/manager/financial')}>
           Doanh Thu <p>(VND)</p>
         </div>
         <div className={styles.numberContainer}>
