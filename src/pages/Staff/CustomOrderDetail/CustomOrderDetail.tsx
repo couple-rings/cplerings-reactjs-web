@@ -6,23 +6,14 @@ import FemaleIcon from "@mui/icons-material/Female";
 import styles from "./CustomOrderDetail.module.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { primaryBtn } from "src/utils/styles";
-import {
-  fetchCraftingStages,
-  fetchCustomOrderDetail,
-  fetchJewelers,
-} from "src/utils/querykey";
+import { fetchCustomOrderDetail, fetchJewelers } from "src/utils/querykey";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getCustomOrderDetail,
   postAssignCustomOrder,
 } from "src/services/customOrder.service";
 import { useEffect, useState } from "react";
-import {
-  CraftingStageStatus,
-  CustomOrderStatus,
-  DesignCharacteristic,
-  StagePercentage,
-} from "src/utils/enums";
+import { CustomOrderStatus, DesignCharacteristic } from "src/utils/enums";
 import {
   currencyFormatter,
   formatCustomOrderStatus,
@@ -33,28 +24,14 @@ import moment from "moment";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { toast } from "react-toastify";
 import { getJewelers } from "src/services/account.service";
-import Timeline from "@mui/lab/Timeline";
-import TimelineItem from "@mui/lab/TimelineItem";
-import TimelineOppositeContent, {
-  timelineOppositeContentClasses,
-} from "@mui/lab/TimelineOppositeContent";
-import TimelineSeparator from "@mui/lab/TimelineSeparator";
-import TimelineDot from "@mui/lab/TimelineDot";
-import TimelineConnector from "@mui/lab/TimelineConnector";
-import TimelineContent from "@mui/lab/TimelineContent";
-import { getCraftingStages } from "src/services/craftingStage.service";
+import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
+import StaffCustomOrderTimeline from "src/components/timeline/staffCustomOrder/StaffCustomOrderTimeline";
 
 function CustomOrderDetail() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
   const [maleRing, setMaleRing] = useState<IRing | null>(null);
   const [femaleRing, setFemaleRing] = useState<IRing | null>(null);
 
-  const [firstStage, setFirstStage] = useState<ICraftingStage | null>(null);
-  const [secondStage, setSecondStage] = useState<ICraftingStage | null>(null);
-  const [thirdStage, setThirdStage] = useState<ICraftingStage | null>(null);
-
-  const [stageFilterObj, setStageFilterObj] =
-    useState<ICraftingStageFilter | null>(null);
   const [jewelerFilterObj, setJewelerFilterObj] =
     useState<IJewelerFilter | null>(null);
   const [selected, setSelected] = useState(0);
@@ -82,15 +59,6 @@ function CustomOrderDetail() {
       if (jewelerFilterObj) return getJewelers(jewelerFilterObj);
     },
     enabled: !!jewelerFilterObj,
-  });
-
-  const { data: stageResponse } = useQuery({
-    queryKey: [fetchCraftingStages, stageFilterObj],
-
-    queryFn: () => {
-      if (stageFilterObj) return getCraftingStages(stageFilterObj);
-    },
-    enabled: !!stageFilterObj,
   });
 
   const assignMutation = useMutation({
@@ -150,43 +118,6 @@ function CustomOrderDetail() {
       });
     }
   }, [branchId]);
-
-  useEffect(() => {
-    if (stageResponse?.data) {
-      const firstStage = stageResponse.data.items.find(
-        (item) => item.progress === StagePercentage.First
-      );
-
-      const secondStage = stageResponse.data.items.find(
-        (item) => item.progress === StagePercentage.Second
-      );
-
-      const thirdStage = stageResponse.data.items.find(
-        (item) => item.progress === StagePercentage.Third
-      );
-
-      if (firstStage && secondStage && thirdStage) {
-        setFirstStage(firstStage);
-        setSecondStage(secondStage);
-        setThirdStage(thirdStage);
-      }
-    }
-
-    if (stageResponse?.errors) {
-      navigate("/staff/custom-order");
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stageResponse]);
-
-  useEffect(() => {
-    if (order)
-      setStageFilterObj({
-        page: 0,
-        pageSize: 100,
-        customOrderId: order.id,
-      });
-  }, [order]);
 
   if (!maleRing || !femaleRing || !order)
     return (
@@ -250,6 +181,26 @@ function CustomOrderDetail() {
                 {currencyFormatter(order.totalPrice.amount)}
               </Grid>
             </Grid>
+
+            <Grid container item sm={6}>
+              <Grid item xs={4} md={3}>
+                Hợp đồng:
+              </Grid>
+
+              <Grid item>
+                {order.contract.document ? (
+                  <a
+                    download={""}
+                    href={order.contract.document.url}
+                    className={styles.contract}
+                  >
+                    <DownloadRoundedIcon fontSize="small" /> <span>Tải về</span>
+                  </a>
+                ) : (
+                  "N/A"
+                )}
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
 
@@ -305,149 +256,7 @@ function CustomOrderDetail() {
           </Grid>
 
           <Grid item md={6.5}>
-            <Timeline
-              sx={{
-                [`& .${timelineOppositeContentClasses.root}`]: {
-                  flex: 0.2,
-                },
-              }}
-            >
-              <TimelineItem>
-                <TimelineOppositeContent color="textSecondary">
-                  {moment(order.createdAt).format("DD/MM/YYYY HH:mm")}
-                </TimelineOppositeContent>
-                <TimelineSeparator>
-                  <TimelineDot color="info" />
-                  <TimelineConnector />
-                </TimelineSeparator>
-                <TimelineContent>Duyệt yêu cầu gia công</TimelineContent>
-              </TimelineItem>
-
-              {order.contract.signedDate && (
-                <TimelineItem>
-                  <TimelineOppositeContent color="textSecondary">
-                    {moment(order.contract.signedDate).format(
-                      "DD/MM/YYYY HH:mm"
-                    )}
-                  </TimelineOppositeContent>
-                  <TimelineSeparator>
-                    <TimelineDot color="info" />
-                    <TimelineConnector />
-                  </TimelineSeparator>
-                  <TimelineContent>Khách hàng ký hợp đồng</TimelineContent>
-                </TimelineItem>
-              )}
-
-              {order.customOrderHistories.find(
-                (item) => item.status === CustomOrderStatus.Waiting
-              ) && (
-                <TimelineItem>
-                  <TimelineOppositeContent color="textSecondary">
-                    {moment(
-                      order.customOrderHistories.find(
-                        (item) => item.status === CustomOrderStatus.Waiting
-                      )?.createdAt
-                    ).format("DD/MM/YYYY HH:mm")}
-                  </TimelineOppositeContent>
-                  <TimelineSeparator>
-                    <TimelineDot color="info" />
-                    <TimelineConnector />
-                  </TimelineSeparator>
-                  <TimelineContent>Đặt cọc giai đoạn 1</TimelineContent>
-                </TimelineItem>
-              )}
-
-              {firstStage?.completionDate && (
-                <TimelineItem>
-                  <TimelineOppositeContent color="textSecondary">
-                    {moment(firstStage.completionDate).format(
-                      "DD/MM/YYYY HH:mm"
-                    )}
-                  </TimelineOppositeContent>
-                  <TimelineSeparator>
-                    <TimelineDot color="info" />
-                    <TimelineConnector />
-                  </TimelineSeparator>
-                  <TimelineContent>
-                    Hoàn tất gia công giai đoạn 1
-                  </TimelineContent>
-                </TimelineItem>
-              )}
-
-              {secondStage?.craftingStageHistories.find(
-                (item) => item.status === CraftingStageStatus.Paid
-              ) && (
-                <TimelineItem>
-                  <TimelineOppositeContent color="textSecondary">
-                    {moment(
-                      secondStage?.craftingStageHistories.find(
-                        (item) => item.status === CraftingStageStatus.Paid
-                      )?.createdAt
-                    ).format("DD/MM/YYYY HH:mm")}
-                  </TimelineOppositeContent>
-                  <TimelineSeparator>
-                    <TimelineDot color="info" />
-                    <TimelineConnector />
-                  </TimelineSeparator>
-                  <TimelineContent>
-                    Hoàn tất đặt cọc giai đoạn 2
-                  </TimelineContent>
-                </TimelineItem>
-              )}
-
-              {secondStage?.completionDate && (
-                <TimelineItem>
-                  <TimelineOppositeContent color="textSecondary">
-                    {moment(secondStage.completionDate).format(
-                      "DD/MM/YYYY HH:mm"
-                    )}
-                  </TimelineOppositeContent>
-                  <TimelineSeparator>
-                    <TimelineDot color="info" />
-                    <TimelineConnector />
-                  </TimelineSeparator>
-                  <TimelineContent>
-                    Hoàn tất gia công giai đoạn 2
-                  </TimelineContent>
-                </TimelineItem>
-              )}
-
-              {thirdStage?.craftingStageHistories.find(
-                (item) => item.status === CraftingStageStatus.Paid
-              ) && (
-                <TimelineItem>
-                  <TimelineOppositeContent color="textSecondary">
-                    {moment(
-                      secondStage?.craftingStageHistories.find(
-                        (item) => item.status === CraftingStageStatus.Paid
-                      )?.createdAt
-                    ).format("DD/MM/YYYY HH:mm")}
-                  </TimelineOppositeContent>
-                  <TimelineSeparator>
-                    <TimelineDot color="info" />
-                    <TimelineConnector />
-                  </TimelineSeparator>
-                  <TimelineContent>
-                    Hoàn tất đặt cọc giai đoạn 3
-                  </TimelineContent>
-                </TimelineItem>
-              )}
-
-              {thirdStage?.completionDate && (
-                <TimelineItem>
-                  <TimelineOppositeContent color="textSecondary">
-                    {moment(thirdStage.completionDate).format(
-                      "DD/MM/YYYY HH:mm"
-                    )}
-                  </TimelineOppositeContent>
-                  <TimelineSeparator>
-                    <TimelineDot color="info" />
-                    <TimelineConnector />
-                  </TimelineSeparator>
-                  <TimelineContent>Hoàn tất quá trình gia công</TimelineContent>
-                </TimelineItem>
-              )}
-            </Timeline>
+            <StaffCustomOrderTimeline order={order} />
           </Grid>
         </Grid>
 
@@ -467,6 +276,7 @@ function CustomOrderDetail() {
           >
             <Grid item xs={12} md={12} pb={3} className="image-item">
               <HoverCard
+                shadow={true}
                 file={maleRing.customDesign.blueprint.url}
                 image={maleRing.customDesign.designVersion.image.url}
               />
@@ -568,10 +378,19 @@ function CustomOrderDetail() {
 
               <Grid container className={styles.infoDetail}>
                 <Grid item className="info-detail-label">
-                  Trọng Lượng
+                  Khối Lượng
                 </Grid>
                 <Grid item className="info-detail-content">
                   {maleRing.customDesign.metalWeight} chỉ
+                </Grid>
+              </Grid>
+
+              <Grid container className={styles.infoDetail}>
+                <Grid item className="info-detail-label">
+                  Giá Tiền
+                </Grid>
+                <Grid item className="info-detail-content">
+                  {currencyFormatter(maleRing.price.amount)}
                 </Grid>
               </Grid>
             </Grid>
@@ -587,6 +406,7 @@ function CustomOrderDetail() {
           >
             <Grid item xs={12} md={12} pb={3} className="image-item">
               <HoverCard
+                shadow={true}
                 file={femaleRing.customDesign.blueprint.url}
                 image={femaleRing.customDesign.designVersion.image.url}
               />
@@ -688,10 +508,19 @@ function CustomOrderDetail() {
 
               <Grid container className={styles.infoDetail}>
                 <Grid item className="info-detail-label">
-                  Trọng Lượng
+                  Khối Lượng
                 </Grid>
                 <Grid item className="info-detail-content">
                   {femaleRing.customDesign.metalWeight} chỉ
+                </Grid>
+              </Grid>
+
+              <Grid container className={styles.infoDetail}>
+                <Grid item className="info-detail-label">
+                  Giá Tiền
+                </Grid>
+                <Grid item className="info-detail-content">
+                  {currencyFormatter(femaleRing.price.amount)}
                 </Grid>
               </Grid>
             </Grid>

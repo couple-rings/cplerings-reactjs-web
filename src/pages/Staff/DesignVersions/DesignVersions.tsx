@@ -27,18 +27,10 @@ import { toast } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { getCustomerSessionCount } from "src/services/designSession.service";
 import moment from "moment";
-import Timeline from "@mui/lab/Timeline";
-import TimelineItem from "@mui/lab/TimelineItem";
-import TimelineSeparator from "@mui/lab/TimelineSeparator";
-import TimelineConnector from "@mui/lab/TimelineConnector";
-import TimelineContent from "@mui/lab/TimelineContent";
-import TimelineDot from "@mui/lab/TimelineDot";
-import TimelineOppositeContent, {
-  timelineOppositeContentClasses,
-} from "@mui/lab/TimelineOppositeContent";
 import { formatCustomRequestStatus } from "src/utils/functions";
 import { postCreateConversation } from "src/services/conversation.service";
 import { useAppSelector } from "src/utils/hooks";
+import DesignTimeline from "src/components/timeline/staffDesign/StaffDesignTimeline";
 
 const initDraft = {
   image: "",
@@ -280,7 +272,7 @@ function DesignVersions() {
 
   useEffect(() => {
     if (response && response.data) {
-      if (response.data.status !== CustomRequestStatus.OnGoing)
+      if (response.data.status === CustomRequestStatus.Waiting)
         navigate("not-found");
 
       const maleDesign = response.data.designs.find(
@@ -409,45 +401,12 @@ function DesignVersions() {
         </Grid>
 
         <Grid container item xs={12} md={5.7}>
-          <Timeline
-            sx={{
-              [`& .${timelineOppositeContentClasses.root}`]: {
-                flex: 0.2,
-              },
-            }}
-          >
-            <TimelineItem>
-              <TimelineOppositeContent color="textSecondary">
-                {moment(
-                  response?.data?.customRequestHistories.find(
-                    (item) => item.status === CustomRequestStatus.OnGoing
-                  )?.createdAt
-                ).format("DD/MM/YYYY HH:mm")}
-              </TimelineOppositeContent>
-              <TimelineSeparator>
-                <TimelineDot color="info" />
-                <TimelineConnector />
-              </TimelineSeparator>
-              <TimelineContent>Tiếp nhận yêu cầu thiết kế</TimelineContent>
-            </TimelineItem>
-
-            {maleVersionResponse?.data?.items.map((item) => {
-              return (
-                <TimelineItem key={item.id}>
-                  <TimelineOppositeContent color="textSecondary">
-                    {moment(item.createdAt).format("DD/MM/YYYY HH:mm")}
-                  </TimelineOppositeContent>
-                  <TimelineSeparator>
-                    <TimelineDot color="info" />
-                    <TimelineConnector />
-                  </TimelineSeparator>
-                  <TimelineContent>
-                    Hoàn tất bản thiết kế version {item.versionNumber}
-                  </TimelineContent>
-                </TimelineItem>
-              );
-            })}
-          </Timeline>
+          {response?.data && maleVersionResponse?.data && (
+            <DesignTimeline
+              customRequest={response.data}
+              designVersions={maleVersionResponse.data.items}
+            />
+          )}
         </Grid>
       </Grid>
 
@@ -474,11 +433,11 @@ function DesignVersions() {
           container
           item
           sm={11}
-          gap={7}
-          justifyContent={"flex-start"}
+          rowGap={3}
+          justifyContent={"space-between"}
           className={styles.versionList}
         >
-          <Grid item xs={12} className={styles.label}>
+          <Grid item xs={12} mb={3} className={styles.label}>
             Dành Cho Bản {maleDesign.name}
           </Grid>
 
@@ -519,24 +478,28 @@ function DesignVersions() {
             </Grid>
           )}
 
-          {maleNewVersion.versionNo === 0 && canCreate && (
-            <Grid
-              item
-              xs={12}
-              md={3.7}
-              onClick={() => {
-                setOpen(true);
-                setCreateGender(DesignCharacteristic.Male);
-              }}
-            >
-              <Card className={`${styles.version} ${styles.addVersion}`}>
-                <AddBoxOutlinedIcon className={styles.addIcon} />
-                <div className={styles.addText}>Tạo Bản Mới</div>
-              </Card>
-            </Grid>
-          )}
+          {maleNewVersion.versionNo === 0 &&
+            canCreate &&
+            response?.data?.status === CustomRequestStatus.OnGoing && (
+              <Grid
+                item
+                xs={12}
+                md={3.7}
+                onClick={() => {
+                  setOpen(true);
+                  setCreateGender(DesignCharacteristic.Male);
+                }}
+              >
+                <Card className={`${styles.version} ${styles.addVersion}`}>
+                  <AddBoxOutlinedIcon className={styles.addIcon} />
+                  <div className={styles.addText}>Tạo Bản Mới</div>
+                </Card>
+              </Grid>
+            )}
 
-          <Divider sx={{ backgroundColor: "#ccc", width: "100%", my: 3 }} />
+          <Divider
+            sx={{ backgroundColor: "#ccc", width: "100%", mb: 3, mt: 6 }}
+          />
         </Grid>
       </Grid>
 
@@ -545,8 +508,8 @@ function DesignVersions() {
           container
           item
           sm={11}
-          gap={7}
-          justifyContent={"flex-start"}
+          rowGap={3}
+          justifyContent={"space-between"}
           className={styles.versionList}
         >
           <Grid item xs={12} className={styles.label}>
@@ -590,22 +553,24 @@ function DesignVersions() {
             </Grid>
           )}
 
-          {femaleNewVersion.versionNo === 0 && canCreate && (
-            <Grid
-              item
-              xs={12}
-              md={3.7}
-              onClick={() => {
-                setOpen(true);
-                setCreateGender(DesignCharacteristic.Female);
-              }}
-            >
-              <Card className={`${styles.version} ${styles.addVersion}`}>
-                <AddBoxOutlinedIcon className={styles.addIcon} />
-                <div className={styles.addText}>Tạo Bản Mới</div>
-              </Card>
-            </Grid>
-          )}
+          {femaleNewVersion.versionNo === 0 &&
+            canCreate &&
+            response?.data?.status === CustomRequestStatus.OnGoing && (
+              <Grid
+                item
+                xs={12}
+                md={3.7}
+                onClick={() => {
+                  setOpen(true);
+                  setCreateGender(DesignCharacteristic.Female);
+                }}
+              >
+                <Card className={`${styles.version} ${styles.addVersion}`}>
+                  <AddBoxOutlinedIcon className={styles.addIcon} />
+                  <div className={styles.addText}>Tạo Bản Mới</div>
+                </Card>
+              </Grid>
+            )}
         </Grid>
       </Grid>
 
@@ -627,16 +592,17 @@ function DesignVersions() {
               </LoadingButton>
             )}
 
-          {isAccepted() && (
-            <LoadingButton
-              variant="contained"
-              sx={roundedPrimaryBtn}
-              fullWidth
-              onClick={handleNavigateCustomDesign}
-            >
-              Hoàn Chỉnh Thiết Kế
-            </LoadingButton>
-          )}
+          {isAccepted() &&
+            response?.data?.status === CustomRequestStatus.OnGoing && (
+              <LoadingButton
+                variant="contained"
+                sx={roundedPrimaryBtn}
+                fullWidth
+                onClick={handleNavigateCustomDesign}
+              >
+                Hoàn Chỉnh Thiết Kế
+              </LoadingButton>
+            )}
         </Grid>
       </Grid>
 

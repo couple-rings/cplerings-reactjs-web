@@ -26,7 +26,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchCustomRequests } from "src/utils/querykey";
 import { getCustomRequests } from "src/services/customRequest.service";
-import { designFee, pageSize } from "src/utils/constants";
+import { pageSize } from "src/utils/constants";
 import moment from "moment";
 import {
   currencyFormatter,
@@ -155,14 +155,14 @@ function CustomRequest() {
         },
       },
       {
-        field: "comment",
+        field: "designFee",
         headerName: "Tiền Thanh Toán",
         width: 150,
         headerAlign: "center",
         align: "center",
         filterable: false,
-        renderCell: () => {
-          return <div>{currencyFormatter(designFee)}</div>;
+        renderCell: ({ row }) => {
+          return <div>{currencyFormatter(row.designFee.amount)}</div>;
         },
       },
       {

@@ -121,12 +121,12 @@ function CustomOrderDetail() {
               </Grid>
             </Grid>
 
-            <Grid container item fontSize={"1.2rem"} mb={3}>
-              <Grid xs={6} md={3}>
+            <Grid container fontSize={"1.2rem"} mb={3}>
+              <Grid item xs={6} md={3}>
                 Ngày Tạo:
               </Grid>
               <Grid item className={styles.info}>
-                {moment(order.createdAt).format("DD/MM/YYYY")}
+                {moment(order.createdAt).format("DD/MM/YYYY HH:mm")}
               </Grid>
             </Grid>
           </Grid>
@@ -198,6 +198,36 @@ function CustomOrderDetail() {
           )}
         </Grid>
 
+        <Grid container mt={3}>
+          <Grid item xs={12} md={6}>
+            <fieldset>
+              <legend>Chi Nhánh</legend>
+              <Grid container my={1}>
+                <Grid item xs={4}>
+                  Tên cửa hàng:
+                </Grid>
+                <Grid item>{maleRing.branch.storeName}</Grid>
+              </Grid>
+
+              <Grid container mb={1}>
+                <Grid item xs={4}>
+                  Địa chỉ:
+                </Grid>
+                <Grid item xs={8}>
+                  {maleRing.branch.address}
+                </Grid>
+              </Grid>
+
+              <Grid container mb={1}>
+                <Grid item xs={4}>
+                  Số điện thoại:
+                </Grid>
+                <Grid item>{maleRing.branch.phone}</Grid>
+              </Grid>
+            </fieldset>
+          </Grid>
+        </Grid>
+
         <Grid container justifyContent={"center"} mt={5}>
           <Grid container item lg={10} className={styles.card} py={5}>
             <Grid
@@ -217,7 +247,9 @@ function CustomOrderDetail() {
               </Grid>
 
               <Grid item xs={12} textAlign={"center"} mb={2}>
-                Nhẫn Của Bạn
+                {maleRing.spouse.customerId
+                  ? "Nhẫn Của Bạn"
+                  : "Nhẫn Của Bạn Đời"}
               </Grid>
 
               {maleRing.maintenanceDocument && (
@@ -291,6 +323,14 @@ function CustomOrderDetail() {
                   </Grid>
                   <Grid item>{maleRing.customDesign.metalWeight} Chỉ</Grid>
                 </Grid>
+
+                <Divider sx={{ my: 2 }} />
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item className={styles.label}>
+                    Giá Tiền
+                  </Grid>
+                  <Grid item>{currencyFormatter(maleRing.price.amount)}</Grid>
+                </Grid>
               </Grid>
             </Grid>
 
@@ -311,7 +351,9 @@ function CustomOrderDetail() {
               </Grid>
 
               <Grid item xs={12} textAlign={"center"} mb={2}>
-                Nhẫn Của Bạn Đời
+                {femaleRing.spouse.customerId
+                  ? "Nhẫn Của Bạn"
+                  : "Nhẫn Của Bạn Đời"}
               </Grid>
 
               {femaleRing.maintenanceDocument && (
@@ -385,6 +427,14 @@ function CustomOrderDetail() {
                     Khối Lượng
                   </Grid>
                   <Grid item>{femaleRing.customDesign.metalWeight} Chỉ</Grid>
+                </Grid>
+
+                <Divider sx={{ my: 2 }} />
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item className={styles.label}>
+                    Giá Tiền
+                  </Grid>
+                  <Grid item>{currencyFormatter(femaleRing.price.amount)}</Grid>
                 </Grid>
               </Grid>
             </Grid>

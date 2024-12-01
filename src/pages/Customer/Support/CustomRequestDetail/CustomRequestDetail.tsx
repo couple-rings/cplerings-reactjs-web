@@ -54,7 +54,6 @@ import {
   currencyFormatter,
   formatCustomRequestStatus,
 } from "src/utils/functions";
-import { designFee } from "src/utils/constants";
 import { postCreateConversation } from "src/services/conversation.service";
 
 function CustomRequestDetail() {
@@ -432,7 +431,8 @@ function CustomRequestDetail() {
               Tiền Thanh Toán:{" "}
             </OldGrid>
             <OldGrid item className={styles.money}>
-              {currencyFormatter(designFee)}
+              {response?.data &&
+                currencyFormatter(response.data.designFee.amount)}
             </OldGrid>
           </OldGrid>
         </OldGrid>
@@ -474,6 +474,21 @@ function CustomRequestDetail() {
             </OldGrid>
           </OldGrid>
         </OldGrid>
+
+        {maleVersionResponse?.data?.items.find((item) => item.isAccepted) && (
+          <OldGrid container mt={3} mb={5}>
+            <OldGrid item xs={12} className={styles.statement}>
+              Bạn đã chốt bản thiết kế
+            </OldGrid>
+            <OldGrid item mt={2}>
+              Ngày chốt:{" "}
+              {moment(
+                maleVersionResponse?.data?.items.find((item) => item.isAccepted)
+                  ?.acceptedAt
+              ).format("DD/MM/YYYY HH:mm")}
+            </OldGrid>
+          </OldGrid>
+        )}
 
         {/* Male design */}
         <div className={styles.subtitle}>Bản Thiết Kế Gốc</div>
@@ -570,7 +585,7 @@ function CustomRequestDetail() {
               );
             })}
             {maleVersions.length === 0 && (
-              <Box sx={{ mt: 3 }}>Chưa có phiên bản nào</Box>
+              <Grid mt={3}>Chưa có phiên bản nào</Grid>
             )}
           </Grid>
 
@@ -696,7 +711,7 @@ function CustomRequestDetail() {
               );
             })}
             {femaleVersions.length === 0 && (
-              <Box sx={{ mt: 3 }}>Chưa có phiên bản nào</Box>
+              <Grid mt={3}>Chưa có phiên bản nào</Grid>
             )}
           </Grid>
 
@@ -812,7 +827,7 @@ const DesignVersion = (props: IDesignVersionProps) => {
           <DownloadRoundedIcon />
           File PDF
         </a>
-        <div>Ngày tạo: {moment(data.createdAt).format("DD/MM/YYYY")}</div>
+        <div>Ngày tạo: {moment(data.createdAt).format("DD/MM/YYYY HH:mm")}</div>
       </Grid>
     </Grid>
   );

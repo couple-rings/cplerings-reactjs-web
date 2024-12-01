@@ -35,6 +35,19 @@
         font-size  : 1.2rem;
     }
 
+    .contract {
+        display        : flex;
+        align-items    : center;
+        gap            : 5px;
+        cursor         : pointer;
+        text-decoration: none;
+        color          : $primaryColor;
+
+        &:hover {
+            color: $secondaryColor
+        }
+    }
+
     .customName {
         text-align    : center;
         font-size     : 30px;

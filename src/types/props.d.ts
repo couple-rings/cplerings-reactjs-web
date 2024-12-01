@@ -381,6 +381,8 @@ declare global {
 
   interface IRejectModalProps extends IModalProps {
     handleReject: (v1: string, v2: string) => void;
+
+    loading: boolean;
   }
 
   interface IPastRequestsProps {
@@ -437,5 +439,24 @@ declare global {
 
   interface ICustomRequestProps {
     data: ICustomRequest;
+  }
+
+  interface ICraftingRequestProps {
+    data: ICraftingRequest;
+  }
+
+  interface IStaffDesignTimelineProps {
+    customRequest: ICustomRequest;
+
+    designVersions: IDesignVersion[];
+  }
+
+  interface IStaffCustomOrderTimelineProps {
+    order: ICustomOrder;
+  }
+
+  interface ICustomerCustomOrderTimelineProps
+    extends IStaffCustomOrderTimelineProps {
+    stages: ICraftingStage[];
   }
 }

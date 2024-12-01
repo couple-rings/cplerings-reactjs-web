@@ -20,6 +20,7 @@ import {
 } from "src/utils/functions";
 import { toast } from "react-toastify";
 import moment from "moment";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 function CraftingRequestDetail() {
   const [needApproval, setNeedApproval] = useState(true);
@@ -162,17 +163,50 @@ function CraftingRequestDetail() {
   if (needApproval && maleRequest && femaleRequest)
     return (
       <div className={styles.container}>
-        <Grid container justifyContent={"center"}>
-          <Grid item xs={11} className={styles.title}>
-            Yêu Cầu Gia Công
+        <Grid container mb={7} justifyContent={"center"}>
+          <Grid container item xs={11} lg={10} gap={5} mb={5}>
+            <Grid item className={styles.title}>
+              Yêu Cầu Gia Công
+            </Grid>
+
+            <Chip label={"Đang chờ duyệt"} color="warning" />
+          </Grid>
+
+          <Grid container item xs={11} lg={10}>
+            <Grid item xs={12} md={5.5}>
+              <fieldset style={{ margin: 0 }}>
+                <legend>Khách Hàng</legend>
+                <Grid container justifyContent={"space-between"} mb={1}>
+                  <Grid item>Username:</Grid>
+
+                  <Grid item>{maleRequest.customer.username}</Grid>
+                </Grid>
+
+                <Grid container justifyContent={"space-between"} mb={1}>
+                  <Grid item>Email:</Grid>
+
+                  <Grid item>{maleRequest.customer.email}</Grid>
+                </Grid>
+
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item>Số điện thoại:</Grid>
+
+                  <Grid item>
+                    {maleRequest.customer.phone
+                      ? maleRequest.customer.phone
+                      : "--"}
+                  </Grid>
+                </Grid>
+              </fieldset>
+            </Grid>
           </Grid>
         </Grid>
 
         <Grid container justifyContent={"center"}>
-          <Grid container item xs={11} justifyContent={"space-around"}>
-            <Grid item md={5} p={2}>
+          <Grid container item xs={11} lg={10} justifyContent={"space-between"}>
+            <Grid item md={5.5}>
               <Grid container justifyContent={"center"}>
-                <Grid item xs={9}>
+                <Grid item>
                   <HoverCard
                     image={maleRequest.customDesign.designVersion.image.url}
                     file={maleRequest.customDesign.blueprint.url}
@@ -229,7 +263,7 @@ function CraftingRequestDetail() {
                 <Divider sx={{ backgroundColor: "#ccc", my: 2 }} />
 
                 <div className={styles.row}>
-                  <div className={styles.field}>Trọng lượng</div>
+                  <div className={styles.field}>Khối lượng</div>
                   <div className={styles.value}>
                     {maleRequest.customDesign.metalWeight} chỉ
                   </div>
@@ -251,9 +285,9 @@ function CraftingRequestDetail() {
               </div>
             </Grid>
 
-            <Grid item md={5} p={2}>
+            <Grid item md={5.5}>
               <Grid container justifyContent={"center"}>
-                <Grid item xs={9}>
+                <Grid item>
                   <HoverCard
                     image={femaleRequest.customDesign.designVersion.image.url}
                     file={femaleRequest.customDesign.blueprint.url}
@@ -310,7 +344,7 @@ function CraftingRequestDetail() {
                 <Divider sx={{ backgroundColor: "#ccc", my: 2 }} />
 
                 <div className={styles.row}>
-                  <div className={styles.field}>Trọng lượng</div>
+                  <div className={styles.field}>Khối lượng</div>
                   <div className={styles.value}>
                     {femaleRequest.customDesign.metalWeight} chỉ
                   </div>
@@ -352,14 +386,15 @@ function CraftingRequestDetail() {
               </Grid>
 
               <Grid item xs={12} sm={4}>
-                <Button
+                <LoadingButton
+                  loading={mutation.isPending}
                   variant="contained"
                   fullWidth
                   sx={roundedPrimaryBtn}
                   onClick={handleAccept}
                 >
                   Chấp Nhận
-                </Button>
+                </LoadingButton>
               </Grid>
             </Grid>
           </Grid>
@@ -369,6 +404,7 @@ function CraftingRequestDetail() {
           open={openReject}
           setOpen={setOpenReject}
           handleReject={handleReject}
+          loading={mutation.isPending}
         />
       </div>
     );
@@ -380,7 +416,7 @@ const PastRequests = (props: IPastRequestsProps) => {
 
   return (
     <Grid container justifyContent={"center"} className={styles.container}>
-      <Grid item xs={11} lg={10}>
+      <Grid item xs={11} lg={10} mb={4}>
         <div className={styles.title}>Yêu Cầu Gia Công</div>
       </Grid>
 
@@ -479,7 +515,9 @@ const PastRequests = (props: IPastRequestsProps) => {
 
                       <Grid item>
                         Cập nhật:{" "}
-                        {moment(currentStatus?.createdAt).format("DD/MM/YYYY")}
+                        {moment(currentStatus?.createdAt).format(
+                          "DD/MM/YYYY HH:mm"
+                        )}
                       </Grid>
                     </Grid>
 
@@ -502,12 +540,16 @@ const PastRequests = (props: IPastRequestsProps) => {
 
                     <Grid container justifyContent={"space-between"}>
                       <Grid item mb={{ xs: 1, md: 0 }}>
-                        Trọng lượng: {item.customDesign.metalWeight} chỉ
+                        Khối lượng: {item.customDesign.metalWeight} chỉ
                       </Grid>
                       <Grid item mb={{ xs: 1, md: 0 }}>
                         Kim cương phụ: {item.customDesign.sideDiamondsCount}{" "}
                         viên
                       </Grid>
+                    </Grid>
+
+                    <Grid container>
+                      <Grid item>Ghi chú: {item.comment}</Grid>
                     </Grid>
                   </Grid>
                 </Grid>

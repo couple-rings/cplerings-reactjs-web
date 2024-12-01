@@ -8,6 +8,7 @@ import {
   FileType,
   GoldColor,
   RingStatus,
+  Status,
   TransportOrderStatus,
   VersionOwner,
 } from "src/utils/enums";
@@ -196,6 +197,10 @@ declare global {
     description: string;
 
     designs: IDesign[];
+
+    createdAt: string;
+
+    state: Status;
   }
 
   interface IJewelryCategory {
@@ -238,6 +243,7 @@ declare global {
     designs: IDesign[];
     createdAt: string;
     customRequestHistories: IStatusHistory<CustomRequestStatus>[];
+    designFee: { amount: number };
   }
 
   interface IDesignVersion {
@@ -256,6 +262,7 @@ declare global {
     isOld: boolean;
     owner?: VersionOwner;
     createdAt: string;
+    acceptedAt: string;
   }
 
   interface ICoordinate {
@@ -372,6 +379,7 @@ declare global {
     metalSpecification: IMetalSpec;
     diamonds: IDiamond[];
     branch: IBranch;
+    price: { amount: number };
   }
 
   interface IContract {

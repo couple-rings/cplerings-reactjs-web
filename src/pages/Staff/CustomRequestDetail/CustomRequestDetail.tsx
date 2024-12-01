@@ -207,7 +207,10 @@ function CustomRequestDetail() {
               <Grid item xs={5}>
                 Tiền Thanh Toán:
               </Grid>
-              <FormLabel>{currencyFormatter(500000)}</FormLabel>
+              <FormLabel>
+                {response?.data &&
+                  currencyFormatter(response.data.designFee.amount)}
+              </FormLabel>
             </Grid>
 
             <Grid container alignItems={"center"} mt={2}>
@@ -350,7 +353,7 @@ function CustomRequestDetail() {
               <Divider />
               <Grid container justifyContent={"space-between"}>
                 <Grid item py={2} className={styles.label}>
-                  Trọng Lượng:
+                  Khối Lượng:
                 </Grid>
                 <div className={styles.item}>{maleDesign.metalWeight} Chỉ</div>
               </Grid>
@@ -435,7 +438,7 @@ function CustomRequestDetail() {
               <Divider />
               <Grid container justifyContent={"space-between"}>
                 <Grid item py={2} className={styles.label}>
-                  Trọng Lượng:
+                  Khối Lượng:
                 </Grid>
                 <div className={styles.item}>
                   {femaleDesign.metalWeight} Chỉ
@@ -464,44 +467,33 @@ function CustomRequestDetail() {
               justifyContent={"center"}
             >
               {response?.data?.status === CustomRequestStatus.OnGoing && (
-                <>
-                  <Grid item>
-                    <LoadingButton
-                      loading={chatMutation.isPending}
-                      variant="contained"
-                      fullWidth
-                      sx={roundedPrimaryBtn}
-                      onClick={handleChat}
-                    >
-                      Chat Với Khách Hàng
-                    </LoadingButton>
-                  </Grid>
-
-                  <Grid item>
-                    <LoadingButton
-                      disabled={chatMutation.isPending}
-                      variant="contained"
-                      fullWidth
-                      sx={{ ...roundedPrimaryBtn, px: 3 }}
-                      onClick={() =>
-                        navigate(`/staff/custom-request/${id}/design-version`)
-                      }
-                    >
-                      Qua Thiết Kế
-                    </LoadingButton>
-                  </Grid>
-                </>
+                <Grid item>
+                  <LoadingButton
+                    loading={chatMutation.isPending}
+                    variant="contained"
+                    fullWidth
+                    sx={roundedPrimaryBtn}
+                    onClick={handleChat}
+                  >
+                    Chat Với Khách Hàng
+                  </LoadingButton>
+                </Grid>
               )}
 
-              {response?.data?.status === CustomRequestStatus.Canceled && (
-                <LoadingButton
-                  variant="contained"
-                  fullWidth
-                  sx={roundedPrimaryBtn}
-                  disabled
-                >
-                  Đã Hủy Yêu Cầu
-                </LoadingButton>
+              {response?.data?.status !== CustomRequestStatus.Waiting && (
+                <Grid item>
+                  <LoadingButton
+                    disabled={chatMutation.isPending}
+                    variant="contained"
+                    fullWidth
+                    sx={{ ...roundedPrimaryBtn, px: 3 }}
+                    onClick={() =>
+                      navigate(`/staff/custom-request/${id}/design-version`)
+                    }
+                  >
+                    Quá Trình Thiết Kế
+                  </LoadingButton>
+                </Grid>
               )}
 
               {response?.data?.status === CustomRequestStatus.Waiting && (
