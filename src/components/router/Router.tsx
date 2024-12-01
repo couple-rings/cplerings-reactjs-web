@@ -85,6 +85,7 @@ import MaintenanceOrderDetail from "src/pages/Jeweler/MaintenanceOrderDetail/Mai
 import RefundOrder from "src/pages/Staff/RefundOrder/RefundOrder";
 import RefundOrderDetail from "src/pages/Staff/RefundOrderDetail/RefundOrderDetail";
 import RefundCreateForm from "src/pages/Staff/RefundCreateForm/RefundCreateForm";
+import ManagerFiancePage from "src/pages/Manager/ManagerFinancePage/ManagerFinancePage";
 
 const router = createBrowserRouter([
   {
@@ -425,6 +426,10 @@ const router = createBrowserRouter([
         path: "campaign",
         element: <ManageCampaign />,
       },
+      {
+        path: "financial",
+        element: <ManagerFiancePage />
+      }
     ],
   },
   {
