@@ -16,6 +16,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCoupleDesigns } from "src/services/design.service";
 import { pageSize } from "src/utils/constants";
 import { fetchCoupleDesigns } from "src/utils/querykey";
+import moment from "moment";
+import { Status } from "src/utils/enums";
 
 interface Row extends ICoupleDesign {}
 
@@ -31,7 +33,8 @@ const initSelected = {
     url: "",
   },
   designs: [],
-  isActive: true,
+  createdAt: "",
+  state: Status.Active,
 };
 
 const initFilter = {
@@ -97,7 +100,18 @@ function WeddingRings() {
         sortable: false,
       },
       {
-        field: "isActive",
+        field: "createdAt",
+        headerName: "Ngày Tạo",
+        width: 200,
+        headerAlign: "center",
+        align: "center",
+        filterable: false,
+        renderCell: ({ row }) => {
+          return <div>{moment(row.createdAt).format("DD/MM/YYYY")}</div>;
+        },
+      },
+      {
+        field: "state",
         headerName: "Status",
         width: 200,
         headerAlign: "center",
@@ -107,7 +121,7 @@ function WeddingRings() {
         disableColumnMenu: true,
         renderCell: ({ row }) => (
           <Switch
-            defaultChecked={true}
+            defaultChecked={row.state === Status.Active ? true : false}
             onChange={() => onChangeStatus(row.id)}
           />
         ),

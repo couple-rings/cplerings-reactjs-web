@@ -9,9 +9,14 @@ import { useAppSelector } from "src/utils/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { getCustomOrders } from "src/services/customOrder.service";
 import { fetchCustomOrders } from "src/utils/querykey";
-import { CustomOrderStatus, DesignCharacteristic } from "src/utils/enums";
-import { ChipColor } from "src/utils/constants";
-import { getDiamondSpec } from "src/utils/functions";
+import { DesignCharacteristic } from "src/utils/enums";
+import {
+  currencyFormatter,
+  formatCustomOrderStatus,
+  getDiamondSpec,
+} from "src/utils/functions";
+import moment from "moment";
+import HoverCard from "src/components/product/HoverCard";
 
 function CustomOrder() {
   const [filterObj, setFilterObj] = useState<ICustomOrderFilter | null>(null);
@@ -28,51 +33,6 @@ function CustomOrder() {
     },
     enabled: !!filterObj,
   });
-
-  const formatStatus = (
-    status: CustomOrderStatus
-  ): { text: string; color: ChipColor } => {
-    if (status === CustomOrderStatus.Pending)
-      return {
-        text: "Chưa Thanh Toán",
-        color: "warning",
-      };
-
-    if (status === CustomOrderStatus.Waiting)
-      return {
-        text: "Đang Chuẩn Bị",
-        color: "warning",
-      };
-
-    if (status === CustomOrderStatus.InProgress)
-      return {
-        text: "Đang Gia Công",
-        color: "secondary",
-      };
-
-    if (status === CustomOrderStatus.Done)
-      return {
-        text: "Chuẩn Bị Giao",
-        color: "primary",
-      };
-
-    if (status === CustomOrderStatus.Delivering)
-      return {
-        text: "Đang Giao",
-        color: "primary",
-      };
-
-    if (status === CustomOrderStatus.Completed)
-      return {
-        text: "Hoàn Thành",
-        color: "success",
-      };
-
-    return {
-      text: "Đã Hủy",
-      color: "error",
-    };
-  };
 
   useEffect(() => {
     setFilterObj({
@@ -132,34 +92,62 @@ function CustomOrder() {
               <Grid
                 container
                 p={2}
-                pb={0}
+                pb={1}
                 justifyContent={"space-between"}
                 alignItems={"center"}
               >
-                <Box sx={{ fontSize: "1.2rem" }}>
-                  Mã Đơn: <span className={styles.orderNo}>{item.orderNo}</span>
-                </Box>
-                <Chip
-                  label={formatStatus(item.status).text}
-                  color={formatStatus(item.status).color}
-                />
+                <Grid container item xs={6}>
+                  <Grid item xs={6} md={3}>
+                    Mã Đơn:
+                  </Grid>
+                  <span className={styles.text}>{item.orderNo}</span>
+                </Grid>
+                <Grid item>
+                  <Chip
+                    label={formatCustomOrderStatus(item.status).text}
+                    color={formatCustomOrderStatus(item.status).color}
+                  />
+                </Grid>
+              </Grid>
+
+              <Grid container px={2} pb={1}>
+                <Grid item xs={3} md={1.5}>
+                  Ngày tạo:
+                </Grid>
+                <div className={styles.text}>
+                  {moment(item.createdAt).format("DD/MM/YYYY HH:mm")}
+                </div>
+              </Grid>
+
+              <Grid container px={2} my={1}>
+                <Grid item xs={3} md={1.5}>
+                  Tổng tiền:
+                </Grid>
+                <div className={styles.text}>
+                  {currencyFormatter(item.totalPrice.amount)}
+                </div>
               </Grid>
 
               <Grid container justifyContent={"space-between"}>
                 <Grid container item sm={5.9} className={styles.section} p={2}>
                   <Grid item lg={4} mb={{ xs: 3, lg: 0 }}>
-                    <img
-                      src={maleRing.customDesign.designVersion.image.url}
-                      className={styles.ringImg}
+                    <HoverCard
+                      shadow={true}
+                      file={maleRing.customDesign.blueprint.url}
+                      image={maleRing.customDesign.designVersion.image.url}
                     />
+
+                    <Box sx={{ textAlign: "center", mt: 2 }}>
+                      <img src={male} width={15} style={{ marginRight: 6 }} />
+                      Nam Tính
+                    </Box>
                   </Grid>
 
                   <Grid container item lg={7} gap={2.5}>
                     <Grid container>
-                      <div>
-                        <img src={male} width={15} style={{ marginRight: 6 }} />
-                        Nhẫn Nam
-                      </div>
+                      {maleRing.spouse.customerId
+                        ? "Nhẫn của bạn"
+                        : "Nhẫn của bạn đời"}
                     </Grid>
 
                     <Grid container>
@@ -185,27 +173,35 @@ function CustomOrder() {
                       </Grid>
                       <div>{maleRing.fingerSize}</div>
                     </Grid>
+
+                    <Grid container>
+                      <Grid item xs={4}>
+                        Khắc Chữ:
+                      </Grid>
+                      <div>{maleRing.engraving}</div>
+                    </Grid>
                   </Grid>
                 </Grid>
 
                 <Grid container item sm={5.9} className={styles.section} p={2}>
                   <Grid item lg={4} mb={{ xs: 3, lg: 0 }}>
-                    <img
-                      src={femaleRing.customDesign.designVersion.image.url}
-                      className={styles.ringImg}
+                    <HoverCard
+                      shadow={true}
+                      file={femaleRing.customDesign.blueprint.url}
+                      image={femaleRing.customDesign.designVersion.image.url}
                     />
+
+                    <Box sx={{ textAlign: "center", mt: 2 }}>
+                      <img src={female} width={15} style={{ marginRight: 6 }} />
+                      Nữ Tính
+                    </Box>
                   </Grid>
 
                   <Grid container item lg={7} gap={2.5}>
                     <Grid container>
-                      <div>
-                        <img
-                          src={female}
-                          width={15}
-                          style={{ marginRight: 6 }}
-                        />
-                        Nhẫn Nữ
-                      </div>
+                      {femaleRing.spouse.customerId
+                        ? "Nhẫn của bạn"
+                        : "Nhẫn của bạn đời"}
                     </Grid>
 
                     <Grid container>
@@ -230,6 +226,13 @@ function CustomOrder() {
                         Kích Thước:
                       </Grid>
                       <div>{femaleRing.fingerSize}</div>
+                    </Grid>
+
+                    <Grid container>
+                      <Grid item xs={4}>
+                        Khắc Chữ:
+                      </Grid>
+                      <div>{femaleRing.engraving}</div>
                     </Grid>
                   </Grid>
                 </Grid>

@@ -14,25 +14,29 @@ function CraftingStage(props: ICraftingStageProps) {
 
   return (
     <Card className={styles.container}>
-      <Grid container p={5} justifyContent={"space-between"}>
-        <Grid item lg={3} mb={{ xs: 5, lg: 0 }}>
+      <Grid
+        container
+        p={3}
+        justifyContent={{ xs: "center", md: "space-between" }}
+      >
+        <Grid item xs={12} sm={6} md={3} mb={{ xs: 5, md: 0 }}>
           <img
             src={image ? image.url : placeholder}
             className={styles.previewImg}
           />
         </Grid>
 
-        <Grid container item lg={8.5} justifyContent={"space-between"}>
+        <Grid container item md={8.5} justifyContent={"space-between"}>
           <Grid
             container
             justifyContent={"space-between"}
             alignItems={"center"}
             mb={2}
           >
-            <Grid item className={styles.title} mb={{ xs: 3, lg: 0 }}>
+            <Grid item sm={8} className={styles.title} mb={{ xs: 3, md: 0 }}>
               {name}
             </Grid>
-            <Grid item mb={{ xs: 3, lg: 0 }}>
+            <Grid item mb={{ xs: 2, md: 0 }}>
               {status === CraftingStageStatus.Paid && !completionDate && (
                 <Chip label={"Đang Tiến Hành"} color="info" />
               )}
@@ -45,15 +49,15 @@ function CraftingStage(props: ICraftingStageProps) {
             </Grid>
           </Grid>
 
-          <Grid container mb={{ xs: 5, lg: 0 }}>
-            <Grid container item md={8}>
+          <Grid container mb={{ xs: 5, md: 0 }}>
+            <Grid container item>
               {steps.map((item, index) => {
                 return (
                   <Grid
                     container
                     alignItems={"flex-start"}
                     gap={2}
-                    mb={3}
+                    mb={2}
                     key={index}
                   >
                     <Grid item mt={"3px"}>

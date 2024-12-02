@@ -38,6 +38,7 @@ import { toast } from "react-toastify";
 import { putUpdateContract } from "src/services/contract.service";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { getCustomerSpouse } from "src/services/spouse.service";
+import { companyEmail, companyPhone } from "src/utils/constants";
 
 function Contract() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
@@ -218,10 +219,10 @@ function Contract() {
           </div>
           <Grid container justifyContent={"space-between"} my={2} px={8}>
             <div className={styles.contact}>
-              <EmailSharpIcon /> <span>couplerings@gmail.com</span>
+              <EmailSharpIcon /> <span>{companyEmail}</span>
             </div>
             <div className={styles.contact}>
-              <PhoneSharpIcon /> <span>0123-456-789</span>
+              <PhoneSharpIcon /> <span>{companyPhone}</span>
             </div>
           </Grid>
           <Grid container sx={{ p: 8 }} className={styles.content}>
@@ -527,7 +528,7 @@ function Contract() {
             <div className={`${styles.title} ${styles.bottom}`}>
               <span className={styles.item}>
                 <EmailSharpIcon />
-                <span>couplerings@gmail.com</span>
+                <span>{companyEmail}</span>
               </span>
 
               <span className={styles.item}>
@@ -537,7 +538,7 @@ function Contract() {
 
               <span className={styles.item}>
                 <PhoneSharpIcon />
-                <span>0123-456-789</span>
+                <span>{companyPhone}</span>
               </span>
             </div>
           </Grid>

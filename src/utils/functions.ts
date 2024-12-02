@@ -2,7 +2,12 @@ import { ChipColor, metalWeightUnit, profitRatio } from "./constants";
 import white from "src/assets/whitegold.png";
 import rose from "src/assets/rosegold.png";
 import yellow from "src/assets/yellowgold.png";
-import { CraftingRequestStatus, CustomRequestStatus, GoldColor } from "./enums";
+import {
+  CraftingRequestStatus,
+  CustomOrderStatus,
+  CustomRequestStatus,
+  GoldColor,
+} from "./enums";
 
 export const showSlides = (minSM: boolean, minMD: boolean, minLG: boolean) => {
   if (minLG) return 5;
@@ -154,5 +159,50 @@ export const formatCraftingRequestStatus = (
   return {
     text: "Đã duyệt",
     color: "success",
+  };
+};
+
+export const formatCustomOrderStatus = (
+  status: CustomOrderStatus
+): { text: string; color: ChipColor } => {
+  if (status === CustomOrderStatus.Pending)
+    return {
+      text: "Chưa Thanh Toán",
+      color: "warning",
+    };
+
+  if (status === CustomOrderStatus.Waiting)
+    return {
+      text: "Đang Chuẩn Bị",
+      color: "warning",
+    };
+
+  if (status === CustomOrderStatus.InProgress)
+    return {
+      text: "Đang Gia Công",
+      color: "secondary",
+    };
+
+  if (status === CustomOrderStatus.Done)
+    return {
+      text: "Hoàn Tất Gia Công",
+      color: "primary",
+    };
+
+  if (status === CustomOrderStatus.Delivering)
+    return {
+      text: "Đang Giao",
+      color: "primary",
+    };
+
+  if (status === CustomOrderStatus.Completed)
+    return {
+      text: "Hoàn Thành",
+      color: "success",
+    };
+
+  return {
+    text: "Đã Hủy",
+    color: "error",
   };
 };

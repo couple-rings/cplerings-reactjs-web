@@ -193,7 +193,11 @@ function CraftingRequests() {
         <>
           <Grid container item xs={11} lg={10}>
             <Box sx={{ marginBottom: "2.5rem" }}>
-              <span className={styles.subtitle}>Thiết Kế Của Bạn</span>
+              <span className={styles.subtitle}>
+                {maleDesign.spouse.customerId
+                  ? "Thiết Kế Của Bạn"
+                  : "Thiết Kế Của Bạn Đời"}
+              </span>
             </Box>
           </Grid>
 
@@ -205,32 +209,20 @@ function CraftingRequests() {
             alignItems={"flex-start"}
             justifyContent={"space-between"}
           >
-            <Grid container item md={3.9} mb={3}>
-              <Grid container item md={10} mb={5}>
+            <Grid container item md={3} mb={3}>
+              <Grid container item mb={5}>
                 <img
                   src={maleDesign.designVersion.image.url}
                   className={styles.ringImg}
                 />
               </Grid>
 
-              <Grid
-                container
-                item
-                md={10}
-                mb={2}
-                justifyContent={"space-between"}
-              >
+              <Grid container item mb={2} justifyContent={"space-between"}>
                 <Grid item>Ngày tạo:</Grid>
                 <div>{moment(maleDesign.createdAt).format("DD/MM/YYYY")}</div>
               </Grid>
 
-              <Grid
-                container
-                item
-                md={10}
-                mb={2}
-                justifyContent={"space-between"}
-              >
+              <Grid container item mb={2} justifyContent={"space-between"}>
                 <Grid item>File thiết kế:</Grid>
                 <a
                   download={""}
@@ -242,99 +234,20 @@ function CraftingRequests() {
                 </a>
               </Grid>
 
-              <Grid
-                container
-                item
-                md={10}
-                mb={2}
-                justifyContent={"space-between"}
-              >
-                <Grid item>Trọng lượng:</Grid>
+              <Grid container item mb={2} justifyContent={"space-between"}>
+                <Grid item>Khối lượng:</Grid>
                 <div>{maleDesign.metalWeight} Chỉ</div>
               </Grid>
 
-              <Grid
-                container
-                item
-                md={10}
-                mb={2}
-                justifyContent={"space-between"}
-              >
+              <Grid container item mb={2} justifyContent={"space-between"}>
                 <Grid item>Số kim cương phụ:</Grid>
                 <div>{maleDesign.sideDiamondsCount} Viên</div>
               </Grid>
             </Grid>
 
-            <Grid container item md={8}>
+            <Grid container item md={8.5} justifyContent={"space-between"}>
               {maleRequestResponse?.data?.items.map((item) => {
-                return (
-                  <Grid
-                    key={item.id}
-                    item
-                    xs={12}
-                    lg={5.8}
-                    className={styles.request}
-                  >
-                    <Grid
-                      container
-                      alignItems={"center"}
-                      justifyContent={"space-between"}
-                    >
-                      <Grid item>
-                        Ngày tạo: {moment(item.createdAt).format("DD/MM/YYYY")}
-                      </Grid>
-                      <Chip
-                        label={
-                          formatCraftingRequestStatus(
-                            item.craftingRequestStatus
-                          ).text
-                        }
-                        color={
-                          formatCraftingRequestStatus(
-                            item.craftingRequestStatus
-                          ).color
-                        }
-                        className={styles.status}
-                      />
-                    </Grid>
-
-                    <Grid container gap={5} mb={1} alignItems={"center"}>
-                      <div className={styles.label}>
-                        <ArrowRightRoundedIcon />
-                        Kim Cương
-                      </div>
-                      <div style={{ fontStyle: "italic", fontWeight: 300 }}>
-                        {item.diamondSpecification.shape}{" "}
-                        {getDiamondSpec(item.diamondSpecification)}
-                      </div>
-                    </Grid>
-                    <Grid container gap={6} mb={1} alignItems={"center"}>
-                      <div className={styles.label}>
-                        <ArrowRightRoundedIcon />
-                        Chất Liệu
-                      </div>
-                      <div style={{ fontStyle: "italic", fontWeight: 300 }}>
-                        {item.metalSpecification.name}
-                      </div>
-                    </Grid>
-                    <Grid container gap={6} mb={1} alignItems={"center"}>
-                      <div className={styles.label}>
-                        <ArrowRightRoundedIcon />
-                        Khắc Chữ
-                      </div>
-                      <div style={{ fontWeight: 300 }}>
-                        {item.engraving ? item.engraving : "None"}
-                      </div>
-                    </Grid>
-                    <Grid container gap={4.5} alignItems={"center"}>
-                      <div className={styles.label}>
-                        <ArrowRightRoundedIcon />
-                        Kích Thước
-                      </div>
-                      <div style={{ fontWeight: 300 }}>{item.fingerSize}</div>
-                    </Grid>
-                  </Grid>
-                );
+                return <CraftingRequest data={item} key={item.id} />;
               })}
 
               {maleRequestResponse?.data?.items.length === 0 && (
@@ -345,15 +258,21 @@ function CraftingRequests() {
         </>
       )}
 
-      <Grid container item xs={10}>
-        <Divider sx={{ width: "100%", mt: 8, mb: 10 }} />
-      </Grid>
+      {maleDesign && femaleDesign && (
+        <Grid container item xs={10}>
+          <Divider sx={{ width: "100%", mt: 8, mb: 10 }} />
+        </Grid>
+      )}
 
       {femaleDesign && (
         <>
           <Grid container item xs={11} lg={10}>
             <Box sx={{ marginBottom: "2.5rem" }}>
-              <span className={styles.subtitle}>Thiết Kế Của Bạn Đời</span>
+              <span className={styles.subtitle}>
+                {femaleDesign.spouse.customerId
+                  ? "Thiết Kế Của Bạn"
+                  : "Thiết Kế Của Bạn Đời"}
+              </span>
             </Box>
           </Grid>
 
@@ -365,32 +284,20 @@ function CraftingRequests() {
             alignItems={"flex-start"}
             justifyContent={"space-between"}
           >
-            <Grid container item md={3.9} mb={3}>
-              <Grid container item md={10} mb={5}>
+            <Grid container item md={3} mb={3}>
+              <Grid container item mb={5}>
                 <img
                   src={femaleDesign.designVersion.image.url}
                   className={styles.ringImg}
                 />
               </Grid>
 
-              <Grid
-                container
-                item
-                md={10}
-                mb={2}
-                justifyContent={"space-between"}
-              >
+              <Grid container item mb={2} justifyContent={"space-between"}>
                 <Grid item>Ngày tạo:</Grid>
                 <div>{moment(femaleDesign.createdAt).format("DD/MM/YYYY")}</div>
               </Grid>
 
-              <Grid
-                container
-                item
-                md={10}
-                mb={2}
-                justifyContent={"space-between"}
-              >
+              <Grid container item mb={2} justifyContent={"space-between"}>
                 <Grid item>File thiết kế:</Grid>
                 <a
                   download={""}
@@ -402,102 +309,20 @@ function CraftingRequests() {
                 </a>
               </Grid>
 
-              <Grid
-                container
-                item
-                md={10}
-                mb={2}
-                justifyContent={"space-between"}
-              >
-                <Grid item>Trọng lượng:</Grid>
+              <Grid container item mb={2} justifyContent={"space-between"}>
+                <Grid item>Khối lượng:</Grid>
                 <div>{femaleDesign.metalWeight} Chỉ</div>
               </Grid>
 
-              <Grid
-                container
-                item
-                md={10}
-                mb={2}
-                justifyContent={"space-between"}
-              >
+              <Grid container item mb={2} justifyContent={"space-between"}>
                 <Grid item>Số kim cương phụ:</Grid>
                 <div>{femaleDesign.sideDiamondsCount} Viên</div>
               </Grid>
             </Grid>
 
-            <Grid container item md={8}>
+            <Grid container item md={8.5} justifyContent={"space-between"}>
               {femaleRequestResponse?.data?.items.map((item) => {
-                return (
-                  <Grid
-                    key={item.id}
-                    item
-                    xs={12}
-                    lg={5.8}
-                    className={styles.request}
-                  >
-                    <Grid
-                      container
-                      alignItems={"center"}
-                      justifyContent={"space-between"}
-                    >
-                      <Grid item>
-                        Ngày tạo: {moment(item.createdAt).format("DD/MM/YYYY")}
-                      </Grid>
-                      <Chip
-                        label={
-                          formatCraftingRequestStatus(
-                            item.craftingRequestStatus
-                          ).text
-                        }
-                        color={
-                          formatCraftingRequestStatus(
-                            item.craftingRequestStatus
-                          ).color
-                        }
-                        className={styles.status}
-                      />
-                    </Grid>
-
-                    <Grid container gap={5} mb={1} alignItems={"center"}>
-                      <div className={styles.label}>
-                        <ArrowRightRoundedIcon />
-                        Kim Cương
-                      </div>
-                      <div style={{ fontStyle: "italic", fontWeight: 300 }}>
-                        {item.diamondSpecification.shape}{" "}
-                        {getDiamondSpec(item.diamondSpecification)}
-                      </div>
-                    </Grid>
-
-                    <Grid container gap={6} mb={1} alignItems={"center"}>
-                      <div className={styles.label}>
-                        <ArrowRightRoundedIcon />
-                        Chất Liệu
-                      </div>
-                      <div style={{ fontStyle: "italic", fontWeight: 300 }}>
-                        {item.metalSpecification.name}
-                      </div>
-                    </Grid>
-
-                    <Grid container gap={6} mb={1} alignItems={"center"}>
-                      <div className={styles.label}>
-                        <ArrowRightRoundedIcon />
-                        Khắc Chữ
-                      </div>
-                      <div style={{ fontWeight: 300 }}>
-                        {item.engraving ? item.engraving : "None"}
-                      </div>
-                    </Grid>
-
-                    <Grid container gap={4.5} alignItems={"center"}>
-                      <div className={styles.label}>
-                        <ArrowRightRoundedIcon />
-                        Kích Thước
-                      </div>
-                      <div style={{ fontWeight: 300 }}>{item.fingerSize}</div>
-                    </Grid>
-                  </Grid>
-                );
+                return <CraftingRequest data={item} key={item.id} />;
               })}
 
               {femaleRequestResponse?.data?.items.length === 0 && (
@@ -516,5 +341,67 @@ function CraftingRequests() {
     </Grid>
   );
 }
+
+const CraftingRequest = (props: ICraftingRequestProps) => {
+  const { data } = props;
+
+  return (
+    <Grid item xs={12} lg={5.8} className={styles.request}>
+      <Grid container alignItems={"center"} justifyContent={"space-between"}>
+        <Grid item>
+          Ngày tạo: {moment(data.createdAt).format("DD/MM/YYYY")}
+        </Grid>
+        <Chip
+          label={formatCraftingRequestStatus(data.craftingRequestStatus).text}
+          color={formatCraftingRequestStatus(data.craftingRequestStatus).color}
+          className={styles.status}
+        />
+      </Grid>
+
+      <Grid container gap={5} mb={1} alignItems={"center"}>
+        <div className={styles.label}>
+          <ArrowRightRoundedIcon />
+          Kim Cương
+        </div>
+        <div style={{ fontStyle: "italic", fontWeight: 300 }}>
+          {data.diamondSpecification.shape}{" "}
+          {getDiamondSpec(data.diamondSpecification)}
+        </div>
+      </Grid>
+      <Grid container gap={6} mb={1} alignItems={"center"}>
+        <div className={styles.label}>
+          <ArrowRightRoundedIcon />
+          Chất Liệu
+        </div>
+        <div style={{ fontStyle: "italic", fontWeight: 300 }}>
+          {data.metalSpecification.name}
+        </div>
+      </Grid>
+      <Grid container gap={6} mb={1} alignItems={"center"}>
+        <div className={styles.label}>
+          <ArrowRightRoundedIcon />
+          Khắc Chữ
+        </div>
+        <div style={{ fontWeight: 300 }}>
+          {data.engraving ? data.engraving : "None"}
+        </div>
+      </Grid>
+      <Grid container gap={4.5} mb={1} alignItems={"center"}>
+        <div className={styles.label}>
+          <ArrowRightRoundedIcon />
+          Kích Thước
+        </div>
+        <div style={{ fontWeight: 300 }}>{data.fingerSize}</div>
+      </Grid>
+      <Grid container gap={5.7} alignItems={"center"}>
+        <div className={styles.label}>
+          <ArrowRightRoundedIcon />
+          Chi nhánh
+        </div>
+        <div style={{ fontWeight: 300 }}>{data.branch.storeName}</div>
+      </Grid>
+    </Grid>
+  );
+};
 
 export default CraftingRequests;

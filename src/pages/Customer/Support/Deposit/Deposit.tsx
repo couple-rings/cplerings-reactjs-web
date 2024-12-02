@@ -2,6 +2,7 @@ import {
   Divider,
   FormControl,
   FormControlLabel,
+  FormHelperText,
   Grid,
   Radio,
   RadioGroup,
@@ -48,6 +49,7 @@ import AddModal from "src/components/modal/address/Add.modal";
 import DeleteModal from "src/components/modal/address/Delete.modal";
 import UpdateModal from "src/components/modal/address/Update.modal";
 import _ from "lodash";
+import moment from "moment";
 
 const initSelected: ITransportAddress = {
   id: 0,
@@ -75,6 +77,7 @@ const initSelected: ITransportAddress = {
         url: "",
       },
     },
+    staffPosition: null,
   },
 };
 
@@ -366,6 +369,23 @@ function Deposit() {
           Thanh Toán Tiền Đặt Cọc
         </Grid>
 
+        <Grid container item xs={4} mt={3}>
+          <fieldset style={{ width: "100%" }}>
+            <legend>Đơn Hàng</legend>
+            <Grid container mb={1} mt={2} justifyContent={"space-between"}>
+              <Grid item>Mã đơn:</Grid>
+
+              <Grid item>{order.orderNo}</Grid>
+            </Grid>
+            <Grid container mb={1} justifyContent={"space-between"}>
+              <Grid item>Ngày tạo:</Grid>
+
+              <Grid item>
+                {moment(order.createdAt).format("DD/MM/YYYY HH:mm")}
+              </Grid>
+            </Grid>
+          </fieldset>
+        </Grid>
         <Divider sx={{ backgroundColor: "#ccc", width: "100%", my: 4 }} />
 
         <Grid item md={4} className={styles.paymentMethod}>
@@ -477,7 +497,7 @@ function Deposit() {
             Thanh Toán
           </LoadingButton>
         </Grid>
-        <Grid item md={7} className={styles.summary}>
+        <Grid item md={7} className={styles.summary} p={{ xs: 2, sm: 6 }}>
           <div className={styles.title}>Thông Tin Thanh Toán</div>
 
           <Divider sx={{ backgroundColor: "#ccc", my: 3 }} />
@@ -487,45 +507,55 @@ function Deposit() {
             <Grid container className={styles.design} gap={3}>
               <Grid item sm={3} className={styles.left}>
                 <img src={maleRing.customDesign.designVersion.image.url} />
+                <FormHelperText className={styles.gender}>
+                  <img src={male} />
+                  Nam Tính
+                </FormHelperText>
               </Grid>
               <Grid container item sm={8} gap={2}>
-                <Grid container>
-                  <Grid item xs={4}>
-                    Chất liệu:
-                  </Grid>
+                <div>
+                  {maleRing.spouse.customerId
+                    ? "Nhẫn của bạn"
+                    : "Nhẫn của bạn đời"}
+                </div>
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item>Chất liệu:</Grid>
                   <Grid item>{maleRing.metalSpecification.name}</Grid>
                 </Grid>
-                <Grid container>
-                  <Grid item xs={4}>
-                    Kim cương:
-                  </Grid>
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item>Kim cương:</Grid>
                   <Grid item>
                     {maleRing.diamonds[0].diamondSpecification.shape}{" "}
                     {getDiamondSpec(maleRing.diamonds[0].diamondSpecification)}
                   </Grid>
                 </Grid>
-                <div className={styles.gender}>
-                  <img src={male} />
-                  Nhẫn nam
-                </div>
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item>Kích thước:</Grid>
+                  <Grid item>{maleRing.fingerSize}</Grid>
+                </Grid>
               </Grid>
             </Grid>
 
             <Grid container className={styles.design} gap={3}>
               <Grid item sm={3} className={styles.left}>
                 <img src={femaleRing.customDesign.designVersion.image.url} />
+                <FormHelperText className={styles.gender}>
+                  <img src={female} />
+                  Nữ Tính
+                </FormHelperText>
               </Grid>
               <Grid container item sm={8} gap={2}>
-                <Grid container>
-                  <Grid item xs={4}>
-                    Chất liệu:
-                  </Grid>
+                <div>
+                  {femaleRing.spouse.customerId
+                    ? "Nhẫn của bạn"
+                    : "Nhẫn của bạn đời"}
+                </div>
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item>Chất liệu:</Grid>
                   <Grid item>{femaleRing.metalSpecification.name}</Grid>
                 </Grid>
-                <Grid container>
-                  <Grid item xs={4}>
-                    Kim cương:
-                  </Grid>
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item>Kim cương:</Grid>
                   <Grid item>
                     {femaleRing.diamonds[0].diamondSpecification.shape}{" "}
                     {getDiamondSpec(
@@ -533,10 +563,10 @@ function Deposit() {
                     )}
                   </Grid>
                 </Grid>
-                <div className={styles.gender}>
-                  <img src={female} />
-                  Nhẫn nữ
-                </div>
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item>Kích thước:</Grid>
+                  <Grid item>{femaleRing.fingerSize}</Grid>
+                </Grid>
               </Grid>
             </Grid>
 
@@ -545,6 +575,20 @@ function Deposit() {
             </div>
             <div className={styles.note}>{getStageFormat().stageName}</div>
           </div>
+
+          <Divider sx={{ backgroundColor: "#ccc", my: 3 }} />
+
+          <Grid
+            container
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <Grid item>Tổng Tiền Đơn Hàng</Grid>
+
+            <Grid item fontSize={"1.2rem"}>
+              {currencyFormatter(order.totalPrice.amount)}
+            </Grid>
+          </Grid>
 
           <Divider sx={{ backgroundColor: "#ccc", my: 3 }} />
 

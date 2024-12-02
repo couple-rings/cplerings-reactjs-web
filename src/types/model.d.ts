@@ -8,6 +8,7 @@ import {
   FileType,
   GoldColor,
   RingStatus,
+  Status,
   TransportOrderStatus,
   VersionOwner,
 } from "src/utils/enums";
@@ -110,6 +111,8 @@ declare global {
     role: UserRole;
 
     branch: IBranch | null;
+
+    staffPosition: StaffPosition | null;
   }
 
   interface IMetalSpec {
@@ -196,6 +199,10 @@ declare global {
     description: string;
 
     designs: IDesign[];
+
+    createdAt: string;
+
+    state: Status;
   }
 
   interface IJewelryCategory {
@@ -238,6 +245,7 @@ declare global {
     designs: IDesign[];
     createdAt: string;
     customRequestHistories: IStatusHistory<CustomRequestStatus>[];
+    designFee: { amount: number };
   }
 
   interface IDesignVersion {
@@ -256,6 +264,7 @@ declare global {
     isOld: boolean;
     owner?: VersionOwner;
     createdAt: string;
+    acceptedAt: string;
   }
 
   interface ICoordinate {
@@ -335,6 +344,7 @@ declare global {
     createdAt: string;
     branch: IBranch;
     customDesign: ICustomDesign;
+    craftingRequestHistories: IStatusHistory<CraftingRequestStatus>[];
   }
 
   interface ICraftingRequestGroup {
@@ -371,6 +381,7 @@ declare global {
     metalSpecification: IMetalSpec;
     diamonds: IDiamond[];
     branch: IBranch;
+    price: { amount: number };
   }
 
   interface IContract {
@@ -401,6 +412,7 @@ declare global {
     };
     status: CustomOrderStatus;
     createdAt: string;
+    customOrderHistories: IStatusHistory<CustomOrderStatus>[];
   }
 
   interface ICraftingStage {
@@ -414,6 +426,7 @@ declare global {
       url: string;
     };
     status: CraftingStageStatus;
+    craftingStageHistories: IStatusHistory<CraftingStageStatus>[];
   }
 
   interface ITransportOrder {
@@ -471,6 +484,7 @@ declare global {
   }
 
   interface IStatusHistory<T> {
+    id: number;
     status: T;
     createdAt: string;
   }
