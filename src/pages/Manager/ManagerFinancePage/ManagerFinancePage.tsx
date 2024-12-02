@@ -1,13 +1,52 @@
-import { Grid } from "@mui/material";
+import { Divider, Grid } from "@mui/material";
 import moneyBag from "src/assets/moneyBag.png";
 import chartArrowRise from "src/assets/ChartArrowRise.png";
 import styles from "./ManagerFinancePage.module.scss";
+import ManagerChartFinace from "src/components/chart/ManagerChartFinance/ManagerChartFinance";
+
+const transaction = [
+  {
+    id: 1,
+    title: "dịch vụ bảo trì, bảo dưỡng trang sức",
+    date: "2024-01-21",
+    value: 10000000,
+  },
+  {
+    id: 2,
+    title: "dịch vụ bảo trì, bảo dưỡng trang sức",
+    date: "2024-01-21",
+    value: 10000000,
+  },
+  {
+    id: 3,
+    title: "dịch vụ bảo trì, bảo dưỡng trang sức",
+    date: "2024-01-21",
+    value: 10000000,
+  },
+  {
+    id: 4,
+    title: "dịch vụ bảo trì, bảo dưỡng trang sức",
+    date: "2024-01-21",
+    value: 10000000,
+  },
+  {
+    id: 5,
+    title: "dịch vụ bảo trì, bảo dưỡng trang sức",
+    date: "2024-01-21",
+    value: 10000000,
+  },
+  {
+    id: 6,
+    title: "dịch vụ bảo trì, bảo dưỡng trang sức",
+    date: "2024-01-21",
+    value: 10000000,
+  },
+];
 
 function ManagerFiancePage() {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        Hello mother fucker
         <div>
           <Grid container>
             <Grid lg={12} item>
@@ -20,7 +59,9 @@ function ManagerFiancePage() {
                     <p>Tổng doanh thu</p>
                   </div>
                 </div>
-                <div style={{display:"flex", alignItems:"center", gap:"20px"}}>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "20px" }}
+                >
                   <div className={styles.numberContainer}>
                     <p>280,012,003</p>₫
                   </div>
@@ -33,6 +74,31 @@ function ManagerFiancePage() {
                   </div>
                 </div>
               </div>
+            </Grid>
+            <Grid container>
+              <Grid lg={12} item className={styles.section}>
+                <ManagerChartFinace />
+
+                <div className={styles.transactionContainer}>
+                  {transaction.map((item) => (
+                    <>
+                      <div className={styles.itemContainer} key={item.id}>
+                        <div className={styles.itemTitle}>
+                          <p className={styles.title}>
+                            Đơn hàng {item.id}, {item.title}
+                          </p>
+                          <p className={styles.date}>{item.date}</p>
+                        </div>
+                        <div className={styles.itemPrice}>+ {item.value} ₫</div>
+                      </div>
+
+                      <Divider />
+                    </>
+                  ))}
+                </div>
+              </Grid>
+
+              <Grid lg={12} item className=""></Grid>
             </Grid>
           </Grid>
         </div>
