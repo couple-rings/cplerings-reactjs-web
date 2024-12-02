@@ -21,7 +21,7 @@ import {
   Tabs,
 } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
-import { CustomRequestStatus } from "src/utils/enums";
+import { CustomRequestStatus, StaffPosition } from "src/utils/enums";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchCustomRequests } from "src/utils/querykey";
@@ -33,6 +33,7 @@ import {
   formatCustomRequestStatus,
 } from "src/utils/functions";
 import RemoveRedEyeSharpIcon from "@mui/icons-material/RemoveRedEyeSharp";
+import { useAppSelector } from "src/utils/hooks";
 
 const boxStyle: SxProps = {
   borderBottom: 1,
@@ -59,13 +60,17 @@ function CustomRequest() {
   const [filterObj, setFilterObj] = useState<ICustomRequestFilter>({
     page: 0,
     pageSize,
-    status: CustomRequestStatus.Waiting,
   });
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const openPopover = Boolean(anchorEl);
   const id = openPopover ? "simple-popover" : undefined;
+
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const { staffPosition } = useAppSelector((state) => state.auth.userInfo);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -74,9 +79,6 @@ function CustomRequest() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const { data: response, isLoading } = useQuery({
     queryKey: [fetchCustomRequests, filterObj],
@@ -259,6 +261,22 @@ function CustomRequest() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterObj]);
 
+  useEffect(() => {
+    if (staffPosition === StaffPosition.Sales) {
+      setFilterObj((current) => ({
+        ...current,
+        status: CustomRequestStatus.Waiting,
+      }));
+    }
+
+    if (staffPosition === StaffPosition.Designer) {
+      setFilterObj((current) => ({
+        ...current,
+        status: CustomRequestStatus.OnGoing,
+      }));
+    }
+  }, [staffPosition]);
+
   return (
     <div className={styles.container}>
       <div className={styles.title}>Yêu Cầu Thiết Kế</div>
@@ -273,14 +291,16 @@ function CustomRequest() {
             handleChangeStatus(value)
           }
         >
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Đang chờ duyệt"
-            value={CustomRequestStatus.Waiting}
-          />
+          {staffPosition === StaffPosition.Sales && (
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Đang chờ duyệt"
+              value={CustomRequestStatus.Waiting}
+            />
+          )}
           <Tab
             classes={{
               selected: "selectedCustomRequestTab",

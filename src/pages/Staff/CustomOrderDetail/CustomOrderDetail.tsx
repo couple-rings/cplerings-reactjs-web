@@ -541,7 +541,8 @@ function CustomOrderDetail() {
                 {jewelerResponse?.data?.items.map((item) => {
                   return (
                     <MenuItem value={item.id} key={item.id}>
-                      {item.username}
+                      {item.username} - Đang làm{" "}
+                      {item.numberOfHandleCustomOrder} đơn
                     </MenuItem>
                   );
                 })}

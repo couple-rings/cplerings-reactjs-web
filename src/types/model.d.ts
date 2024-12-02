@@ -111,6 +111,8 @@ declare global {
     role: UserRole;
 
     branch: IBranch | null;
+
+    staffPosition: StaffPosition | null;
   }
 
   interface IMetalSpec {

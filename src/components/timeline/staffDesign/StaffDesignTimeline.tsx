@@ -11,7 +11,8 @@ import { useQuery } from "@tanstack/react-query";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { getCustomDesigns } from "src/services/customDesign.service";
-import { CustomRequestStatus } from "src/utils/enums";
+import { CustomRequestStatus, StaffPosition } from "src/utils/enums";
+import { useAppSelector } from "src/utils/hooks";
 import { fetchCustomDesigns } from "src/utils/querykey";
 
 function DesignTimeline(props: IStaffDesignTimelineProps) {
@@ -19,6 +20,8 @@ function DesignTimeline(props: IStaffDesignTimelineProps) {
 
   const [designFilterObj, setDesignFilterObj] =
     useState<ICustomDesignFilter | null>(null);
+
+  const { staffPosition } = useAppSelector((state) => state.auth.userInfo);
 
   const { data: designResponse } = useQuery({
     queryKey: [fetchCustomDesigns, designFilterObj],
@@ -70,7 +73,12 @@ function DesignTimeline(props: IStaffDesignTimelineProps) {
           <TimelineDot color="info" />
           <TimelineConnector />
         </TimelineSeparator>
-        <TimelineContent>Tiếp nhận yêu cầu thiết kế</TimelineContent>
+        <TimelineContent>
+          {staffPosition === StaffPosition.Designer &&
+            "Tiếp nhận yêu cầu thiết kế"}{" "}
+          {staffPosition === StaffPosition.Sales &&
+            "Giao yêu cầu cho nhân viên thiết kế"}
+        </TimelineContent>
       </TimelineItem>
 
       {/* Completed versions */}

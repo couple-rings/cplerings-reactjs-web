@@ -145,4 +145,12 @@ declare global {
 
     secondCraftingRequest: ICraftingRequest;
   }
+
+  interface IJewelerResponse extends IUser {
+    numberOfHandleCustomOrder: number;
+  }
+
+  interface IDesignStaffResponse extends IUser {
+    numberOfHandledCustomRequest: number;
+  }
 }

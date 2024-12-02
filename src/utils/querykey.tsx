@@ -47,6 +47,7 @@ export const fetchTransportOrderDetail = "fetchTransportOrderDetail";
 
 export const fetchTransporters = "fetchTransporters";
 export const fetchJewelers = "fetchJewelers";
+export const fetchDesigners = "fetchDesigners";
 
 export const fetchFingerSizes = "fetchFingerSizes";
 

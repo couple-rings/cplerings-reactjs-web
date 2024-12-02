@@ -18,7 +18,15 @@ export const getTransporters = (queryObj: ITransporterFilter) => {
 export const getJewelers = (queryObj: IJewelerFilter) => {
   const queryUrl = queryString.stringify(queryObj);
 
-  return axios.get<unknown, IResponse<IListResponse<IUser>>>(
+  return axios.get<unknown, IResponse<IListResponse<IJewelerResponse>>>(
     `accounts/jewelers?${queryUrl}`
+  );
+};
+
+export const getDesignStaffs = (queryObj: IDesignStaffFilter) => {
+  const queryUrl = queryString.stringify(queryObj);
+
+  return axios.get<unknown, IResponse<IListResponse<IDesignStaffResponse>>>(
+    `accounts/staffs/designers?${queryUrl}`
   );
 };

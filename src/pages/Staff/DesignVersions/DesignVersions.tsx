@@ -11,13 +11,19 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  fetchCustomDesigns,
   fetchCustomerSessionCount,
   fetchCustomRequestDetail,
   fetchFemaleDesignVersions,
   fetchMaleDesignVersions,
 } from "src/utils/querykey";
 import { getCustomRequestDetail } from "src/services/customRequest.service";
-import { CustomRequestStatus, DesignCharacteristic } from "src/utils/enums";
+import {
+  CustomRequestStatus,
+  DesignCharacteristic,
+  StaffPosition,
+  Status,
+} from "src/utils/enums";
 import {
   getDesignVersions,
   postCreateDesignVersion,
@@ -31,6 +37,7 @@ import { formatCustomRequestStatus } from "src/utils/functions";
 import { postCreateConversation } from "src/services/conversation.service";
 import { useAppSelector } from "src/utils/hooks";
 import DesignTimeline from "src/components/timeline/staffDesign/StaffDesignTimeline";
+import { getCustomDesigns } from "src/services/customDesign.service";
 
 const initDraft = {
   image: "",
@@ -53,16 +60,20 @@ function DesignVersions() {
 
   const [maleFilterObj, setMaleFilterObj] =
     useState<IDesignVersionFilter | null>(null);
-
   const [femaleFilterObj, setFemaleFilterObj] =
     useState<IDesignVersionFilter | null>(null);
+
+  const [designFilterObj, setDesignFilterObj] =
+    useState<ICustomDesignFilter | null>(null);
 
   const { id } = useParams<{ id: string }>();
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { id: staffId } = useAppSelector((state) => state.auth.userInfo);
+  const { id: staffId, staffPosition } = useAppSelector(
+    (state) => state.auth.userInfo
+  );
 
   const { data: response } = useQuery({
     queryKey: [fetchCustomRequestDetail, id],
@@ -101,6 +112,15 @@ function DesignVersions() {
     },
 
     enabled: !!femaleFilterObj,
+  });
+
+  const { data: designResponse } = useQuery({
+    queryKey: [fetchCustomDesigns, designFilterObj],
+
+    queryFn: () => {
+      if (designFilterObj) return getCustomDesigns(designFilterObj);
+    },
+    enabled: !!designFilterObj,
   });
 
   const uploadMutation = useMutation({
@@ -286,6 +306,13 @@ function DesignVersions() {
         setMaleDesign(maleDesign);
         setFemaleDesign(femaleDesign);
       }
+
+      setDesignFilterObj({
+        page: 0,
+        pageSize: 100,
+        state: Status.Active,
+        customerId: response.data.customer.id,
+      });
     }
 
     if (response && response.errors) {
@@ -433,13 +460,18 @@ function DesignVersions() {
           container
           item
           sm={11}
-          rowGap={3}
-          justifyContent={"space-between"}
+          gap={3}
+          justifyContent={"flex-start"}
           className={styles.versionList}
         >
-          <Grid item xs={12} mb={3} className={styles.label}>
+          <Grid item xs={12} className={styles.label}>
             Dành Cho Bản {maleDesign.name}
           </Grid>
+
+          {maleVersionResponse?.data?.items.length === 0 &&
+            staffPosition === StaffPosition.Sales && (
+              <div>Chưa có phiên bản nào</div>
+            )}
 
           {maleVersionResponse?.data?.items
             ?.sort((a, b) => a.versionNumber - b.versionNumber)
@@ -480,6 +512,7 @@ function DesignVersions() {
 
           {maleNewVersion.versionNo === 0 &&
             canCreate &&
+            staffPosition === StaffPosition.Designer &&
             response?.data?.status === CustomRequestStatus.OnGoing && (
               <Grid
                 item
@@ -508,13 +541,18 @@ function DesignVersions() {
           container
           item
           sm={11}
-          rowGap={3}
-          justifyContent={"space-between"}
+          gap={3}
+          justifyContent={"flex-start"}
           className={styles.versionList}
         >
           <Grid item xs={12} className={styles.label}>
             Dành Cho Bản {femaleDesign.name}
           </Grid>
+
+          {femaleVersionResponse?.data?.items.length === 0 &&
+            staffPosition === StaffPosition.Sales && (
+              <div>Chưa có phiên bản nào</div>
+            )}
 
           {femaleVersionResponse?.data?.items
             ?.sort((a, b) => a.versionNumber - b.versionNumber)
@@ -555,6 +593,7 @@ function DesignVersions() {
 
           {femaleNewVersion.versionNo === 0 &&
             canCreate &&
+            staffPosition === StaffPosition.Designer &&
             response?.data?.status === CustomRequestStatus.OnGoing && (
               <Grid
                 item
@@ -577,7 +616,8 @@ function DesignVersions() {
       <Grid container justifyContent={"center"} mt={10}>
         <Grid item xs={11} md={4}>
           {response?.data?.status === CustomRequestStatus.OnGoing &&
-            !isAccepted() && (
+            !isAccepted() &&
+            staffPosition === StaffPosition.Designer && (
               <LoadingButton
                 disabled={!maleNewVersion.image || !femaleNewVersion.image}
                 loading={
@@ -592,8 +632,12 @@ function DesignVersions() {
               </LoadingButton>
             )}
 
+          {/* version accepted and request on going, design staff can always access, sale staff must wait until custom design is available */}
           {isAccepted() &&
-            response?.data?.status === CustomRequestStatus.OnGoing && (
+            response?.data?.status === CustomRequestStatus.OnGoing &&
+            (staffPosition === StaffPosition.Designer ||
+              (staffPosition === StaffPosition.Sales &&
+                designResponse?.data?.items.length !== 0)) && (
               <LoadingButton
                 variant="contained"
                 sx={roundedPrimaryBtn}

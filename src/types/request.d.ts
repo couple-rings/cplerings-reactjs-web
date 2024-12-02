@@ -271,6 +271,8 @@ declare global {
 
   interface IJewelerFilter extends ITransporterFilter {}
 
+  interface IDesignStaffFilter extends ITransporterFilter {}
+
   interface ITransportOrderFilter {
     page: number;
     pageSize: number;
