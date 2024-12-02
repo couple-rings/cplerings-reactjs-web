@@ -1,16 +1,16 @@
 .container {
     padding: 1.5rem;
     .content {
-        background-color: #F5F5F5;
+        background-color: #f5f5f5;
         border-radius: 10px;
         padding: 1.5rem;
-.revenueContainer {
+        .revenueContainer {
             background-color: #f3fdf4;
             border-radius: 10px;
             padding: 10px 25px;
             padding-bottom: 10px;
-            display: flex; 
-            flex-direction: column; 
+            display: flex;
+            flex-direction: column;
             margin-bottom: 20px;
 
             .boxTitle {
@@ -60,7 +60,7 @@
                 }
 
                 .numberTrendDown {
-                    color: #BB271A;
+                    color: #bb271a;
                     display: flex;
                     gap: 5px;
                     font-size: 12px;
@@ -73,5 +73,45 @@
             }
         }
 
+        .section {
+            border-radius: 10px;
+            background-color: white;
+
+            .transactionContainer {
+                margin-left: 30px;
+                margin-right: 30px;
+                margin-top: 5px;
+                margin-bottom: 30px;
+                box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+
+                
+            }
+
+            .itemContainer {
+                padding: 10px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                .itemTitle {
+                    .title {
+                        font-size: 12px;
+                        font-weight: 500;
+                        padding: 0;
+                        margin: 0;
+                    }
+                    .date {
+                        font-size: 11px;
+                        margin: 0;
+                        padding: 0;
+                    }
+                }
+
+                .itemPrice {
+                    color: #35714E;
+                    font-size: 14px;
+                }
+            }
+        }
     }
 }
