@@ -5,6 +5,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Box, FormHelperText, FormLabel, TextField } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 interface IFormInput {
   maleReason: string;
@@ -12,7 +13,7 @@ interface IFormInput {
 }
 
 function RejectModal(props: IRejectModalProps) {
-  const { open, setOpen, handleReject } = props;
+  const { open, setOpen, handleReject, loading } = props;
 
   const {
     reset,
@@ -95,9 +96,9 @@ function RejectModal(props: IRejectModalProps) {
         <Button variant="outlined" onClick={handleClose}>
           Hủy
         </Button>
-        <Button variant="contained" type="submit">
+        <LoadingButton loading={loading} variant="contained" type="submit">
           Xác Nhận
-        </Button>
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );

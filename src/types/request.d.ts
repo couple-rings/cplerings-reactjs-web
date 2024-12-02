@@ -173,7 +173,7 @@ declare global {
   interface ICustomDesignFilter {
     page: number;
     pageSize: number;
-    state: Status;
+    state?: Status;
     customerId: number;
   }
 
@@ -268,6 +268,10 @@ declare global {
     pageSize: number;
     branchId: number;
   }
+
+  interface IJewelerFilter extends ITransporterFilter {}
+
+  interface IDesignStaffFilter extends ITransporterFilter {}
 
   interface ITransportOrderFilter {
     page: number;

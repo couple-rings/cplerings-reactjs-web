@@ -172,3 +172,8 @@ export enum TransactionType {
   ATM = "ATM",
   QrCode = "QRCODE",
 }
+
+export enum StaffPosition {
+  Designer = "DESIGNER",
+  Sales = "SALES",
+}

@@ -37,6 +37,7 @@ import UploadImgChip from "src/components/chip/UploadImgChip";
 
 interface IFormInput {
   collectionId: number;
+  jewelryCategoryId: number;
   blueprint: File;
   metalWeight: number;
   sideDiamondsCount: number;
@@ -45,6 +46,15 @@ interface IFormInput {
   size: number;
   characteristic: DesignCharacteristic;
 }
+
+const category = [
+  {
+    id: 1,
+    name: "Dây chuyền",
+    description: "",
+  },
+  { id: 2, name: "Vòng tay", description: "" },
+];
 
 const collections = [
   {
@@ -288,7 +298,46 @@ function AddModal(props: IModalProps) {
       </AppBar>
       <Container sx={{ mt: 3 }}>
         <Grid container mb={5} justifyContent={"space-between"}>
-          <Grid item xs={12} sm={4} mt={3}>
+          <Grid item xs={5} mb={2}>
+            <InputLabel error={!!errors.jewelryCategoryId} sx={{ mb: 1 }}>
+              Category
+            </InputLabel>
+            <Controller
+              defaultValue={0}
+              name="jewelryCategoryId"
+              rules={{
+                required: "* Must select category",
+                min: { value: 1, message: "* Must select category" },
+              }}
+              control={control}
+              render={({ field }) => (
+                <Select
+                  fullWidth
+                  {...field}
+                  error={!!errors.jewelryCategoryId}
+                  variant="standard"
+                >
+                  <MenuItem value={0} disabled>
+                    <em>Select category</em>
+                  </MenuItem>
+                  {category.map((item) => {
+                    return (
+                      <MenuItem value={item.id} key={item.id}>
+                        {item.name}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              )}
+            />
+            {errors.jewelryCategoryId && (
+              <FormHelperText error>
+                {errors.jewelryCategoryId.message}
+              </FormHelperText>
+            )}
+          </Grid>
+
+          <Grid item xs={5} mb={2}>
             <InputLabel error={!!errors.collectionId} sx={{ mb: 1 }}>
               Collection
             </InputLabel>
@@ -327,7 +376,7 @@ function AddModal(props: IModalProps) {
             )}
           </Grid>
 
-          <Grid item xs={5.5} sm={4} mt={3}>
+          <Grid item xs={5}>
             <InputLabel error={!!errors.collectionId} sx={{ mb: 1 }}>
               Characteristic
             </InputLabel>
@@ -367,7 +416,7 @@ function AddModal(props: IModalProps) {
             )}
           </Grid>
 
-          <Grid item xs={5.5} sm={3} mt={3}>
+          <Grid item xs={5}>
             <InputLabel error={!!errors.size} sx={{ mb: 1 }}>
               Size
             </InputLabel>

@@ -22,7 +22,9 @@ function SideBar(props: ISideBarProps) {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const { role } = useAppSelector((state) => state.auth.userInfo);
+  const { role, staffPosition } = useAppSelector(
+    (state) => state.auth.userInfo
+  );
 
   return (
     <Drawer
@@ -41,6 +43,8 @@ function SideBar(props: ISideBarProps) {
     >
       <DrawerHeader>
         <Box sx={{ fontWeight: 600, fontSize: "1.2rem" }}>
+          {staffPosition !== null &&
+            capitalizeFirstLetter((staffPosition as string).toLowerCase())}{" "}
           {capitalizeFirstLetter((role as string).toLowerCase())}
         </Box>
         <IconButton onClick={() => setOpen(false)}>

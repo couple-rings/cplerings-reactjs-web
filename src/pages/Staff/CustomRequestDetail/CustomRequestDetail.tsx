@@ -8,6 +8,8 @@ import {
   Divider,
   FormLabel,
   Grid,
+  MenuItem,
+  Select,
   Skeleton,
 } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -19,13 +21,18 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   fetchCustomerSpouse,
   fetchCustomRequestDetail,
+  fetchDesigners,
 } from "src/utils/querykey";
 import {
   getCustomRequestDetail,
   putUpdateCustomRequest,
 } from "src/services/customRequest.service";
 import { useEffect, useState } from "react";
-import { CustomRequestStatus, DesignCharacteristic } from "src/utils/enums";
+import {
+  CustomRequestStatus,
+  DesignCharacteristic,
+  StaffPosition,
+} from "src/utils/enums";
 import {
   currencyFormatter,
   formatCustomRequestStatus,
@@ -38,6 +45,7 @@ import { postCreateConversation } from "src/services/conversation.service";
 import CustomExpandIcon from "src/components/icon/CustomExpandIcon";
 import moment from "moment";
 import { getCustomerSpouse } from "src/services/spouse.service";
+import { getDesignStaffs } from "src/services/account.service";
 
 function CustomRequestDetail() {
   const [maleDesign, setMaleDesign] = useState<IDesign | null>(null);
@@ -45,10 +53,27 @@ function CustomRequestDetail() {
 
   const [ownerSpouse, setOwnerSpouse] = useState<ISpouse | null>(null);
 
+  const [selected, setSelected] = useState(0);
+  const [designerFilterObj, setDesignerFilterObj] =
+    useState<IDesignStaffFilter | null>(null);
+
   const { id } = useParams<{ id: string }>();
-  const { id: staffId } = useAppSelector((state) => state.auth.userInfo);
+  const {
+    id: staffId,
+    branchId,
+    staffPosition,
+  } = useAppSelector((state) => state.auth.userInfo);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  const { data: designerResponse } = useQuery({
+    queryKey: [fetchDesigners, designerFilterObj],
+
+    queryFn: () => {
+      if (designerFilterObj) return getDesignStaffs(designerFilterObj);
+    },
+    enabled: !!designerFilterObj,
+  });
 
   const { data: response } = useQuery({
     queryKey: [fetchCustomRequestDetail, id],
@@ -75,7 +100,7 @@ function CustomRequestDetail() {
     },
     onSuccess: (response) => {
       if (response.data) {
-        toast.success("Đã nhận yêu cầu");
+        toast.success("Đã giao yêu cầu");
         queryClient.invalidateQueries({
           queryKey: [fetchCustomRequestDetail, id],
         });
@@ -117,6 +142,16 @@ function CustomRequestDetail() {
         participants: [staffId, response.data.customer.id],
       });
   };
+
+  useEffect(() => {
+    if (branchId !== 0) {
+      setDesignerFilterObj({
+        page: 0,
+        pageSize: 100,
+        branchId,
+      });
+    }
+  }, [branchId]);
 
   useEffect(() => {
     if (response && response.data) {
@@ -207,7 +242,10 @@ function CustomRequestDetail() {
               <Grid item xs={5}>
                 Tiền Thanh Toán:
               </Grid>
-              <FormLabel>{currencyFormatter(500000)}</FormLabel>
+              <FormLabel>
+                {response?.data &&
+                  currencyFormatter(response.data.designFee.amount)}
+              </FormLabel>
             </Grid>
 
             <Grid container alignItems={"center"} mt={2}>
@@ -350,7 +388,7 @@ function CustomRequestDetail() {
               <Divider />
               <Grid container justifyContent={"space-between"}>
                 <Grid item py={2} className={styles.label}>
-                  Trọng Lượng:
+                  Khối Lượng:
                 </Grid>
                 <div className={styles.item}>{maleDesign.metalWeight} Chỉ</div>
               </Grid>
@@ -435,7 +473,7 @@ function CustomRequestDetail() {
               <Divider />
               <Grid container justifyContent={"space-between"}>
                 <Grid item py={2} className={styles.label}>
-                  Trọng Lượng:
+                  Khối Lượng:
                 </Grid>
                 <div className={styles.item}>
                   {femaleDesign.metalWeight} Chỉ
@@ -464,58 +502,72 @@ function CustomRequestDetail() {
               justifyContent={"center"}
             >
               {response?.data?.status === CustomRequestStatus.OnGoing && (
-                <>
-                  <Grid item>
-                    <LoadingButton
-                      loading={chatMutation.isPending}
-                      variant="contained"
+                <Grid item>
+                  <LoadingButton
+                    loading={chatMutation.isPending}
+                    variant="contained"
+                    fullWidth
+                    sx={roundedPrimaryBtn}
+                    onClick={handleChat}
+                  >
+                    Chat Với Khách Hàng
+                  </LoadingButton>
+                </Grid>
+              )}
+
+              {response?.data?.status !== CustomRequestStatus.Waiting && (
+                <Grid item>
+                  <LoadingButton
+                    disabled={chatMutation.isPending}
+                    variant="contained"
+                    fullWidth
+                    sx={{ ...roundedPrimaryBtn, px: 3 }}
+                    onClick={() =>
+                      navigate(`/staff/custom-request/${id}/design-version`)
+                    }
+                  >
+                    Quá Trình Thiết Kế
+                  </LoadingButton>
+                </Grid>
+              )}
+            </Grid>
+
+            {response?.data?.status === CustomRequestStatus.Waiting &&
+              staffPosition === StaffPosition.Sales && (
+                <Grid container justifyContent={"center"} gap={3}>
+                  <Grid item xs={6}>
+                    <Select
                       fullWidth
-                      sx={roundedPrimaryBtn}
-                      onClick={handleChat}
+                      value={selected}
+                      onChange={(e) => setSelected(+e.target.value)}
                     >
-                      Chat Với Khách Hàng
-                    </LoadingButton>
+                      <MenuItem value={0} disabled>
+                        <em>Chọn nhân viên thiết kế</em>
+                      </MenuItem>
+                      {designerResponse?.data?.items.map((item) => {
+                        return (
+                          <MenuItem value={item.id} key={item.id}>
+                            {item.username} - Đang nhận{" "}
+                            {item.numberOfHandledCustomRequest} yêu cầu
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
                   </Grid>
 
                   <Grid item>
                     <LoadingButton
-                      disabled={chatMutation.isPending}
+                      loading={statusMutation.isPending}
                       variant="contained"
                       fullWidth
                       sx={{ ...roundedPrimaryBtn, px: 3 }}
-                      onClick={() =>
-                        navigate(`/staff/custom-request/${id}/design-version`)
-                      }
+                      onClick={handleAccept}
                     >
-                      Qua Thiết Kế
+                      Giao Yêu Cầu
                     </LoadingButton>
                   </Grid>
-                </>
+                </Grid>
               )}
-
-              {response?.data?.status === CustomRequestStatus.Canceled && (
-                <LoadingButton
-                  variant="contained"
-                  fullWidth
-                  sx={roundedPrimaryBtn}
-                  disabled
-                >
-                  Đã Hủy Yêu Cầu
-                </LoadingButton>
-              )}
-
-              {response?.data?.status === CustomRequestStatus.Waiting && (
-                <LoadingButton
-                  loading={statusMutation.isPending}
-                  variant="contained"
-                  fullWidth
-                  sx={{ ...roundedPrimaryBtn, px: 3 }}
-                  onClick={handleAccept}
-                >
-                  Nhận Yêu Cầu
-                </LoadingButton>
-              )}
-            </Grid>
           </Grid>
         </Grid>
       </Grid>

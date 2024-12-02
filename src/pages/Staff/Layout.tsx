@@ -13,9 +13,11 @@ import ArticleIcon from "@mui/icons-material/Article";
 import HardwareRoundedIcon from "@mui/icons-material/HardwareRounded";
 import LocalShippingRoundedIcon from "@mui/icons-material/LocalShippingRounded";
 import TaskRoundedIcon from "@mui/icons-material/TaskRounded";
-import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
+import { useAppSelector } from "src/utils/hooks";
+import { StaffPosition } from "src/utils/enums";
 
-const sidebarList = [
+const saleStaffSidebarList = [
   {
     text: "Chat",
     icon: <QuestionAnswerIcon />,
@@ -58,8 +60,23 @@ const sidebarList = [
   },
 ];
 
+const designStaffSidebarList = [
+  {
+    text: "Chat",
+    icon: <QuestionAnswerIcon />,
+    path: "/staff",
+  },
+  {
+    text: "Yêu Cầu Thiết Kế",
+    icon: <PaletteIcon />,
+    path: "/staff/custom-request",
+  },
+];
+
 function Layout() {
   const [open, setOpen] = useState(true);
+
+  const { staffPosition } = useAppSelector((state) => state.auth.userInfo);
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -67,7 +84,15 @@ function Layout() {
 
       <Header open={open} setOpen={setOpen} />
 
-      <SideBar open={open} setOpen={setOpen} itemsList={sidebarList} />
+      <SideBar
+        open={open}
+        setOpen={setOpen}
+        itemsList={
+          staffPosition === StaffPosition.Sales
+            ? saleStaffSidebarList
+            : designStaffSidebarList
+        }
+      />
 
       <Main open={open}>
         <DrawerHeader />

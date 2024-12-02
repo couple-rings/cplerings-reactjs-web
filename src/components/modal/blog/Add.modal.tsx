@@ -2,6 +2,7 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import {
   AppBar,
+  Autocomplete,
   Container,
   FormHelperText,
   Grid,
@@ -34,7 +35,7 @@ interface IFormInput {
   summary: string;
   content: string;
   topicId: number;
-  tagId: number;
+  tags: ITag[];
 }
 
 const topics = [
@@ -327,64 +328,68 @@ function AddModal(props: IModalProps) {
                   )}
                 />
                 {errors.topicId && (
-                  <FormHelperText error>
+                  <FormHelperText error sx={{ mt: 1 }}>
                     {errors.topicId.message}
                   </FormHelperText>
                 )}
               </Grid>
 
-              <Grid item xs={5.8} mb={3}>
-                <InputLabel error={!!errors.tagId} sx={{ mb: 1 }}>
-                  Tag
+              <Grid item xs={5.8}>
+                <InputLabel error={!!errors.title} sx={{ mb: 1 }}>
+                  Tiêu Đề
                 </InputLabel>
-                <Controller
-                  defaultValue={0}
-                  name="tagId"
-                  rules={{
-                    required: "* Vui lòng chọn tag",
-                    min: { value: 1, message: "* Vui lòng chọn tag" },
-                  }}
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      fullWidth
-                      {...field}
-                      error={!!errors.tagId}
-                      variant="outlined"
-                    >
-                      <MenuItem value={0} disabled>
-                        <em>Chọn tag</em>
-                      </MenuItem>
-                      {tags.map((item) => {
-                        return (
-                          <MenuItem value={item.id} key={item.id}>
-                            {item.name}
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
-                  )}
+                <TextField
+                  autoFocus
+                  type="text"
+                  fullWidth
+                  variant="outlined"
+                  error={!!errors.title}
+                  {...register("title", {
+                    required: "* Tiêu đề không được trống",
+                  })}
                 />
-                {errors.tagId && (
-                  <FormHelperText error>{errors.tagId.message}</FormHelperText>
+                {errors.title && (
+                  <FormHelperText error sx={{ mt: 1 }}>
+                    {errors.title.message}
+                  </FormHelperText>
                 )}
               </Grid>
             </Grid>
 
-            <TextField
-              autoFocus
-              label="Tiêu Đề"
-              type="text"
-              fullWidth
-              variant="outlined"
-              error={!!errors.title}
-              {...register("title", {
-                required: "* Tiêu đề không được trống",
-              })}
+            <InputLabel error={!!errors.tags} sx={{ mb: 1 }}>
+              Tag
+            </InputLabel>
+            <Controller
+              defaultValue={[]}
+              name="tags"
+              rules={{
+                required: "* Vui lòng chọn tag",
+              }}
+              control={control}
+              render={({ field }) => {
+                return (
+                  <Autocomplete
+                    {...field}
+                    onChange={(event, newValue) => {
+                      return field.onChange(newValue);
+                    }}
+                    multiple={true}
+                    options={tags}
+                    filterSelectedOptions
+                    getOptionLabel={(option) => option.name}
+                    isOptionEqualToValue={(option, value) =>
+                      option.id === value.id
+                    }
+                    renderInput={(params) => (
+                      <TextField {...params} error={!!errors.tags} />
+                    )}
+                  />
+                );
+              }}
             />
-            {errors.title && (
+            {errors.tags && (
               <FormHelperText error sx={{ mt: 1 }}>
-                {errors.title.message}
+                {errors.tags.message}
               </FormHelperText>
             )}
 
@@ -403,7 +408,9 @@ function AddModal(props: IModalProps) {
               })}
             />
             {errors.summary && (
-              <FormHelperText error>{errors.summary.message}</FormHelperText>
+              <FormHelperText error sx={{ mt: 1 }}>
+                {errors.summary.message}
+              </FormHelperText>
             )}
           </Grid>
         </Grid>

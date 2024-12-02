@@ -3,11 +3,11 @@
 .container {
     display        : flex;
     justify-content: center;
-    padding        : 3rem;
     color          : $primaryColor;
+    margin         : 3rem 0;
 
     .title {
-        font-size  : 2rem;
+        font-size  : 1.5rem;
         font-weight: 600;
     }
 
@@ -107,8 +107,7 @@
     }
 
     .summary {
-        border : 1px solid #B43620;
-        padding: 3rem 4rem;
+        border: 1px solid #B43620;
 
         @media screen and (max-width: 500px) {
             padding: 2rem;
@@ -133,7 +132,7 @@
             }
 
             .design {
-                align-items  : center;
+                align-items  : flex-start;
                 margin-bottom: 2.5rem;
 
                 .left {
@@ -144,11 +143,14 @@
                 }
 
                 .gender {
-                    color: #888;
+                    color      : #888;
+                    font-weight: 300;
+                    text-align : center;
 
                     img {
-                        width       : 1rem;
-                        margin-right: 0.5rem;
+                        width       : 10px;
+                        margin-right: 7px;
+                        border      : none;
                     }
                 }
             }

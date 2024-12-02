@@ -317,8 +317,11 @@ function CreateCraftingRequest() {
             <Grid item md={6} p={{ xs: 1, sm: 5 }}>
               <div className={styles.design}>
                 <Box sx={{ marginBottom: "1.5rem", textAlign: "center" }}>
-                  <img src={male} width={18} />
-                  <span className={styles.subtitle}>Thiết Kế Của Nam</span>
+                  <span className={styles.subtitle}>
+                    {maleDesign?.spouse.customerId
+                      ? "Thiết Kế Của Bạn"
+                      : "Thiết Kế Của Bạn Đời"}
+                  </span>
                 </Box>
 
                 <Grid container justifyContent={"center"} mb={3}>
@@ -330,8 +333,13 @@ function CreateCraftingRequest() {
                   </Grid>
                 </Grid>
 
+                <Box sx={{ marginBottom: "1.5rem", textAlign: "center" }}>
+                  <img src={male} width={15} />
+                  <span className={styles.subtitle}>Nam Tính</span>
+                </Box>
+
                 <Grid container justifyContent={"center"} gap={11.9} mb={2}>
-                  <div>Trọng lượng:</div>
+                  <div>Khối lượng:</div>
                   <div>{maleDesign?.metalWeight} Chỉ</div>
                 </Grid>
 
@@ -485,8 +493,11 @@ function CreateCraftingRequest() {
             <Grid item md={6} p={{ xs: 1, sm: 5 }}>
               <div className={styles.design}>
                 <Box sx={{ marginBottom: "1.5rem", textAlign: "center" }}>
-                  <img src={female} width={18} />
-                  <span className={styles.subtitle}>Thiết Kế Của Nữ</span>
+                  <span className={styles.subtitle}>
+                    {femaleDesign?.spouse.customerId
+                      ? "Thiết Kế Của Bạn"
+                      : "Thiết Kế Của Bạn Đời"}
+                  </span>
                 </Box>
 
                 <Grid container justifyContent={"center"} mb={3}>
@@ -498,8 +509,13 @@ function CreateCraftingRequest() {
                   </Grid>
                 </Grid>
 
+                <Box sx={{ marginBottom: "1.5rem", textAlign: "center" }}>
+                  <img src={female} width={15} />
+                  <span className={styles.subtitle}>Nữ Tính</span>
+                </Box>
+
                 <Grid container justifyContent={"center"} gap={11.9} mb={2}>
-                  <div>Trọng lượng:</div>
+                  <div>Khối lượng:</div>
                   <div>{femaleDesign?.metalWeight} Chỉ</div>
                 </Grid>
 
