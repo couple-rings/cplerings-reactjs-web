@@ -20,6 +20,7 @@ import ringBlack from "src/assets/One Ring Black.png";
 import { currencyFormatter } from "src/utils/functions";
 import moment from "moment";
 import sampleSignature from "src/assets/sampledata/signature.png";
+import { companyEmail, companyPhone } from "src/utils/constants";
 
 Font.register({
   family: "Be Vietnam Pro",
@@ -59,12 +60,12 @@ function ContractFile(props: IContractFileProps) {
           <View style={styles.contactContainer}>
             <View style={styles.contact}>
               <Image src={emailIcon} style={styles.icon} />
-              <Text>couplerings@gmail.com</Text>
+              <Text>{companyEmail}</Text>
             </View>
 
             <View style={styles.contact}>
               <Image src={phoneIcon} style={styles.icon} />
-              <Text>0123-456-789</Text>
+              <Text>{companyPhone}</Text>
             </View>
           </View>
 

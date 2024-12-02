@@ -18,7 +18,7 @@ import AddModal from "src/components/modal/account/Add.modal";
 import { Button, Grid } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 
-interface Row {
+interface Row extends IUser {
   id: number;
   avatar: string | null;
   email: string;
@@ -43,6 +43,7 @@ const rows: Row[] = [
     status: AccountStatus.Active,
     phone: "0987654321",
     branch: null,
+    staffPosition: null,
   },
   {
     id: 2,
@@ -53,6 +54,7 @@ const rows: Row[] = [
     status: AccountStatus.Active,
     phone: "0987654321",
     branch: null,
+    staffPosition: null,
   },
   {
     id: 3,
@@ -63,6 +65,7 @@ const rows: Row[] = [
     status: AccountStatus.Inactive,
     phone: "0987654321",
     branch: null,
+    staffPosition: null,
   },
   {
     id: 4,
@@ -73,6 +76,7 @@ const rows: Row[] = [
     status: AccountStatus.Verifying,
     phone: "0987654321",
     branch: null,
+    staffPosition: null,
   },
   {
     id: 5,
@@ -83,6 +87,7 @@ const rows: Row[] = [
     status: AccountStatus.Verifying,
     phone: "0987654321",
     branch: null,
+    staffPosition: null,
   },
 ];
 
@@ -95,6 +100,7 @@ const initSelected: Row = {
   role: UserRole.Default,
   status: AccountStatus.Active,
   branch: null,
+  staffPosition: null,
 };
 
 function ManageAccount() {

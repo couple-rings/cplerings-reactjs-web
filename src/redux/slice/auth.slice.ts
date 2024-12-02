@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { UserRole } from "src/utils/enums";
+import { StaffPosition, UserRole } from "src/utils/enums";
 
 export interface IInitState {
   isAuthenticated: boolean;
@@ -14,6 +14,7 @@ export interface IInitState {
     branchId: number;
     hasSpouse: boolean;
     role: UserRole;
+    staffPosition: StaffPosition | null;
   };
 
   accessToken: string;
@@ -47,6 +48,7 @@ const initialState: IInitState = {
     branchId: 0,
     hasSpouse: false,
     role: UserRole.Default,
+    staffPosition: null,
   },
 
   accessToken: "",

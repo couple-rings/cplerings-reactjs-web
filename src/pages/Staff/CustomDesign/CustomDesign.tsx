@@ -482,16 +482,48 @@ function CustomDesign() {
       <div className={styles.container}>
         <div className={styles.title}>Hoàn Chỉnh Thiết Kế</div>
 
+        <Grid container item xs={6} mb={5}>
+          <fieldset style={{ width: "100%" }}>
+            <legend>Khách Hàng</legend>
+            <Grid container mb={1}>
+              <Grid item xs={4}>
+                Username:
+              </Grid>
+
+              <Grid item>{response.data.customer.username}</Grid>
+            </Grid>
+
+            <Grid container mb={1}>
+              <Grid item xs={4}>
+                Email:
+              </Grid>
+
+              <Grid item>{response.data.customer.email}</Grid>
+            </Grid>
+
+            <Grid container>
+              <Grid item xs={4}>
+                Số điện thoại:
+              </Grid>
+
+              <Grid item>
+                {response.data.customer.phone
+                  ? response.data.customer.phone
+                  : "--"}
+              </Grid>
+            </Grid>
+          </fieldset>
+        </Grid>
+
         <Grid container justifyContent={"center"}>
           {/* Male custom design */}
           <Grid
             container
             item
-            lg={11}
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            <Grid item md={4} className={styles.left}>
+            <Grid item md={4.5} className={styles.left}>
               <HoverCard
                 file={maleVersion?.designFile.url ?? ""}
                 image={maleVersion?.image.url ?? ""}
@@ -517,7 +549,14 @@ function CustomDesign() {
                 <Grid container justifyContent={"space-between"} mb={1} px={2}>
                   <div>Ngày tạo:</div>{" "}
                   <div>
-                    {moment(maleVersion.createdAt).format("DD/MM/YYYY")}
+                    {moment(maleVersion.createdAt).format("DD/MM/YYYY HH:mm")}
+                  </div>
+                </Grid>
+
+                <Grid container justifyContent={"space-between"} mb={1} px={2}>
+                  <div>Ngày chốt:</div>{" "}
+                  <div>
+                    {moment(maleVersion.acceptedAt).format("DD/MM/YYYY HH:mm")}
                   </div>
                 </Grid>
 
@@ -533,11 +572,11 @@ function CustomDesign() {
               </fieldset>
             </Grid>
 
-            <Grid item xs={12} md={7} className={styles.right}>
+            <Grid item xs={12} md={6.5} className={styles.right}>
               <Grid container justifyContent={"space-between"}>
                 <Grid item xs={7} md={5} mb={3}>
                   <FormLabel error={!!errors.male?.metalWeight}>
-                    Trọng lượng nhẫn:
+                    Khối lượng nhẫn:
                   </FormLabel>
                   <OutlinedInput
                     fullWidth
@@ -789,11 +828,10 @@ function CustomDesign() {
           <Grid
             container
             item
-            lg={11}
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            <Grid item md={4} className={styles.left}>
+            <Grid item md={4.5} className={styles.left}>
               <HoverCard
                 file={femaleVersion?.designFile.url ?? ""}
                 image={femaleVersion?.image.url ?? ""}
@@ -819,7 +857,16 @@ function CustomDesign() {
                 <Grid container justifyContent={"space-between"} mb={1} px={2}>
                   <div>Ngày tạo:</div>{" "}
                   <div>
-                    {moment(femaleVersion.createdAt).format("DD/MM/YYYY")}
+                    {moment(femaleVersion.createdAt).format("DD/MM/YYYY HH:mm")}
+                  </div>
+                </Grid>
+
+                <Grid container justifyContent={"space-between"} mb={1} px={2}>
+                  <div>Ngày chốt:</div>{" "}
+                  <div>
+                    {moment(femaleVersion.acceptedAt).format(
+                      "DD/MM/YYYY HH:mm"
+                    )}
                   </div>
                 </Grid>
 
@@ -835,11 +882,11 @@ function CustomDesign() {
               </fieldset>
             </Grid>
 
-            <Grid item xs={12} md={7} className={styles.right}>
+            <Grid item xs={12} md={6.5} className={styles.right}>
               <Grid container justifyContent={"space-between"}>
                 <Grid item xs={7} md={5}>
                   <FormLabel error={!!errors.female?.metalWeight}>
-                    Trọng lượng nhẫn:
+                    Khối lượng nhẫn:
                   </FormLabel>
                   <OutlinedInput
                     error={!!errors.female?.metalWeight}
@@ -1149,16 +1196,46 @@ const ViewCustomDesign = (props: IViewCustomDesignProps) => {
       <div className={styles.container}>
         <div className={styles.title}>Thiết Kế Của Khách Hàng</div>
 
+        <Grid container item xs={6} mb={5}>
+          <fieldset style={{ width: "100%" }}>
+            <legend>Khách Hàng</legend>
+            <Grid container mb={1}>
+              <Grid item xs={4}>
+                Username:
+              </Grid>
+
+              <Grid item>{maleVersion.customer.username}</Grid>
+            </Grid>
+
+            <Grid container mb={1}>
+              <Grid item xs={4}>
+                Email:
+              </Grid>
+
+              <Grid item>{maleVersion.customer.email}</Grid>
+            </Grid>
+
+            <Grid container>
+              <Grid item xs={4}>
+                Số điện thoại:
+              </Grid>
+
+              <Grid item>
+                {maleVersion.customer.phone ? maleVersion.customer.phone : "--"}
+              </Grid>
+            </Grid>
+          </fieldset>
+        </Grid>
+
         <Grid container justifyContent={"center"}>
           {/* Male custom design */}
           <Grid
             container
             item
-            lg={11}
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            <Grid item md={4} className={styles.left}>
+            <Grid item md={4.5} className={styles.left}>
               <HoverCard
                 file={maleVersion?.designFile.url ?? ""}
                 image={maleVersion?.image.url ?? ""}
@@ -1199,10 +1276,10 @@ const ViewCustomDesign = (props: IViewCustomDesignProps) => {
               </fieldset>
             </Grid>
 
-            <Grid item xs={12} md={7} className={styles.right}>
+            <Grid item xs={12} md={6.5} className={styles.right}>
               <Grid container justifyContent={"space-between"}>
                 <Grid item xs={7} md={5} mb={3}>
-                  <FormLabel>Trọng lượng nhẫn:</FormLabel>
+                  <FormLabel>Khối lượng nhẫn:</FormLabel>
                   <OutlinedInput
                     fullWidth
                     sx={{ borderRadius: 2, mt: 2 }}
@@ -1284,11 +1361,10 @@ const ViewCustomDesign = (props: IViewCustomDesignProps) => {
           <Grid
             container
             item
-            lg={11}
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            <Grid item md={4} className={styles.left}>
+            <Grid item md={4.5} className={styles.left}>
               <HoverCard
                 file={femaleVersion?.designFile.url ?? ""}
                 image={femaleVersion?.image.url ?? ""}
@@ -1329,10 +1405,10 @@ const ViewCustomDesign = (props: IViewCustomDesignProps) => {
               </fieldset>
             </Grid>
 
-            <Grid item xs={12} md={7} className={styles.right}>
+            <Grid item xs={12} md={6.5} className={styles.right}>
               <Grid container justifyContent={"space-between"}>
                 <Grid item xs={7} md={5}>
-                  <FormLabel>Trọng lượng nhẫn:</FormLabel>
+                  <FormLabel>Khối lượng nhẫn:</FormLabel>
                   <OutlinedInput
                     fullWidth
                     sx={{ borderRadius: 2, mt: 2 }}

@@ -88,7 +88,7 @@ function ProductDetailAccordion(props: IProductDetailAccordionProps) {
 
             <Grid container className={styles.section}>
               <Grid item xs={4} className={styles.label}>
-                <div>Trọng lượng</div>
+                <div>Khối lượng</div>
                 <div>Hình dáng</div>
                 <div>Màu sắc</div>
                 <div>Độ tinh khiết</div>
@@ -125,7 +125,7 @@ function ProductDetailAccordion(props: IProductDetailAccordionProps) {
             <Grid container className={styles.section}>
               <Grid item xs={4} className={styles.label}>
                 <div>Số lượng</div>
-                <div>Tổng trọng lượng</div>
+                <div>Tổng Khối lượng</div>
               </Grid>
               <Grid item xs={8} className={styles.content}>
                 <div>

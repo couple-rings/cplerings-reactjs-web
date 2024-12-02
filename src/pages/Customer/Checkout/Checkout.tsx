@@ -57,6 +57,7 @@ const initSelected: ITransportAddress = {
         url: "",
       },
     },
+    staffPosition: null,
   },
 };
 

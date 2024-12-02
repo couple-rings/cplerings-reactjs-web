@@ -2,7 +2,11 @@ import { Button, Chip, Divider, Grid, Skeleton } from "@mui/material";
 import styles from "./CustomOrderDetail.module.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
-import { currencyFormatter, getDiamondSpec } from "src/utils/functions";
+import {
+  currencyFormatter,
+  formatCustomOrderStatus,
+  getDiamondSpec,
+} from "src/utils/functions";
 import { secondaryBtn } from "src/utils/styles";
 import DownloadForOfflineRoundedIcon from "@mui/icons-material/DownloadForOfflineRounded";
 import { useQuery } from "@tanstack/react-query";
@@ -18,7 +22,6 @@ import {
   TransportOrderStatus,
 } from "src/utils/enums";
 import { useAppSelector } from "src/utils/hooks";
-import { ChipColor } from "src/utils/constants";
 import DownloadIcon from "@mui/icons-material/Download";
 import { getTransportOrderWithCustomOrder } from "src/services/transportOrder.service";
 import HoverCard from "src/components/product/HoverCard";
@@ -51,51 +54,6 @@ function CustomOrderDetail() {
     },
     enabled: !!order?.id,
   });
-
-  const formatStatus = (
-    status: CustomOrderStatus
-  ): { text: string; color: ChipColor } => {
-    if (status === CustomOrderStatus.Pending)
-      return {
-        text: "Chưa Thanh Toán",
-        color: "warning",
-      };
-
-    if (status === CustomOrderStatus.Waiting)
-      return {
-        text: "Đang Chuẩn Bị",
-        color: "warning",
-      };
-
-    if (status === CustomOrderStatus.InProgress)
-      return {
-        text: "Đang Gia Công",
-        color: "secondary",
-      };
-
-    if (status === CustomOrderStatus.Done)
-      return {
-        text: "Chuẩn Bị Giao",
-        color: "primary",
-      };
-
-    if (status === CustomOrderStatus.Delivering)
-      return {
-        text: "Đang Giao",
-        color: "primary",
-      };
-
-    if (status === CustomOrderStatus.Completed)
-      return {
-        text: "Hoàn Thành",
-        color: "success",
-      };
-
-    return {
-      text: "Đã Hủy",
-      color: "error",
-    };
-  };
 
   useEffect(() => {
     if (response && response.data) {
@@ -163,12 +121,12 @@ function CustomOrderDetail() {
               </Grid>
             </Grid>
 
-            <Grid container item fontSize={"1.2rem"} mb={3}>
-              <Grid xs={6} md={3}>
+            <Grid container fontSize={"1.2rem"} mb={3}>
+              <Grid item xs={6} md={3}>
                 Ngày Tạo:
               </Grid>
               <Grid item className={styles.info}>
-                {moment(order.createdAt).format("DD/MM/YYYY")}
+                {moment(order.createdAt).format("DD/MM/YYYY HH:mm")}
               </Grid>
             </Grid>
           </Grid>
@@ -186,8 +144,8 @@ function CustomOrderDetail() {
               </Grid>
               <Grid item>
                 <Chip
-                  label={formatStatus(order.status).text}
-                  color={formatStatus(order.status).color}
+                  label={formatCustomOrderStatus(order.status).text}
+                  color={formatCustomOrderStatus(order.status).color}
                 />
               </Grid>
             </Grid>
@@ -240,6 +198,36 @@ function CustomOrderDetail() {
           )}
         </Grid>
 
+        <Grid container mt={3}>
+          <Grid item xs={12} md={6}>
+            <fieldset>
+              <legend>Chi Nhánh</legend>
+              <Grid container my={1}>
+                <Grid item xs={4}>
+                  Tên cửa hàng:
+                </Grid>
+                <Grid item>{maleRing.branch.storeName}</Grid>
+              </Grid>
+
+              <Grid container mb={1}>
+                <Grid item xs={4}>
+                  Địa chỉ:
+                </Grid>
+                <Grid item xs={8}>
+                  {maleRing.branch.address}
+                </Grid>
+              </Grid>
+
+              <Grid container mb={1}>
+                <Grid item xs={4}>
+                  Số điện thoại:
+                </Grid>
+                <Grid item>{maleRing.branch.phone}</Grid>
+              </Grid>
+            </fieldset>
+          </Grid>
+        </Grid>
+
         <Grid container justifyContent={"center"} mt={5}>
           <Grid container item lg={10} className={styles.card} py={5}>
             <Grid
@@ -259,7 +247,9 @@ function CustomOrderDetail() {
               </Grid>
 
               <Grid item xs={12} textAlign={"center"} mb={2}>
-                Nhẫn Của Bạn
+                {maleRing.spouse.customerId
+                  ? "Nhẫn Của Bạn"
+                  : "Nhẫn Của Bạn Đời"}
               </Grid>
 
               {maleRing.maintenanceDocument && (
@@ -333,6 +323,14 @@ function CustomOrderDetail() {
                   </Grid>
                   <Grid item>{maleRing.customDesign.metalWeight} Chỉ</Grid>
                 </Grid>
+
+                <Divider sx={{ my: 2 }} />
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item className={styles.label}>
+                    Giá Tiền
+                  </Grid>
+                  <Grid item>{currencyFormatter(maleRing.price.amount)}</Grid>
+                </Grid>
               </Grid>
             </Grid>
 
@@ -353,7 +351,9 @@ function CustomOrderDetail() {
               </Grid>
 
               <Grid item xs={12} textAlign={"center"} mb={2}>
-                Nhẫn Của Bạn Đời
+                {femaleRing.spouse.customerId
+                  ? "Nhẫn Của Bạn"
+                  : "Nhẫn Của Bạn Đời"}
               </Grid>
 
               {femaleRing.maintenanceDocument && (
@@ -427,6 +427,14 @@ function CustomOrderDetail() {
                     Khối Lượng
                   </Grid>
                   <Grid item>{femaleRing.customDesign.metalWeight} Chỉ</Grid>
+                </Grid>
+
+                <Divider sx={{ my: 2 }} />
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item className={styles.label}>
+                    Giá Tiền
+                  </Grid>
+                  <Grid item>{currencyFormatter(femaleRing.price.amount)}</Grid>
                 </Grid>
               </Grid>
             </Grid>

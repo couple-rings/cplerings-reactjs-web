@@ -12,17 +12,19 @@
     .order {
         border: 1px solid $secondaryColor;
 
-        .orderNo {
-            color: #888
+        .text {
+            color      : #555;
+            font-weight: 300;
         }
 
         .section {
             justify-content: space-between;
-            align-items    : center;
+            align-items    : flex-start;
 
             .ringImg {
-                border: 1px solid #ccc;
-                width : 100%;
+                border       : 1px solid #ccc;
+                width        : 100%;
+                margin-bottom: 1rem;
             }
         }
     }

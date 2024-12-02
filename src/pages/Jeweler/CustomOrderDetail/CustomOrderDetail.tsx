@@ -207,7 +207,7 @@ function CustomOrderDetail() {
 
             <Grid container className={styles.infoDetail}>
               <Grid item className="info-detail-label">
-                Trọng Lượng
+                Khối Lượng
               </Grid>
               <Grid item className="info-detail-content">
                 {maleRing.customDesign.metalWeight} chỉ
@@ -301,7 +301,7 @@ function CustomOrderDetail() {
 
             <Grid container className={styles.infoDetail}>
               <Grid item className="info-detail-label">
-                Trọng Lượng
+                Khối Lượng
               </Grid>
               <Grid item className="info-detail-content">
                 {femaleRing.customDesign.metalWeight} chỉ

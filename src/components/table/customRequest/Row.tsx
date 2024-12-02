@@ -13,7 +13,6 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import moment from "moment";
 import { currencyFormatter } from "src/utils/functions";
-import { designFee } from "src/utils/constants";
 import { CustomRequestStatus } from "src/utils/enums";
 import RemoveRedEyeSharpIcon from "@mui/icons-material/RemoveRedEyeSharp";
 
@@ -79,8 +78,12 @@ function Row(props: ICustomRequestRowProps) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell align="center">{moment().format("DD/MM/YYYY")}</TableCell>
-        <TableCell align="center">{currencyFormatter(designFee)}</TableCell>
+        <TableCell align="center">
+          {moment(data.createdAt).format("DD/MM/YYYY")}
+        </TableCell>
+        <TableCell align="center">
+          {currencyFormatter(data.designFee.amount)}
+        </TableCell>
         <TableCell
           align="center"
           sx={{ color: formatStatus(data.status).color }}
@@ -88,7 +91,6 @@ function Row(props: ICustomRequestRowProps) {
           {formatStatus(data.status).text}
         </TableCell>
         <TableCell align="center">
-          {" "}
           {moment(currentStatus?.createdAt).format("DD/MM/YYYY")}
         </TableCell>
         <TableCell align="center">
