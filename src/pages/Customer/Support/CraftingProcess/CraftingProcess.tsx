@@ -2,7 +2,7 @@ import { Grid, Skeleton } from "@mui/material";
 import styles from "./CraftingProcess.module.scss";
 import CraftingStage from "src/components/craftingStage/CraftingStage";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAppSelector } from "src/utils/hooks";
+import { useAppSelector, useScrollTop } from "src/utils/hooks";
 import { useQuery } from "@tanstack/react-query";
 import {
   fetchCraftingStages,
@@ -12,6 +12,8 @@ import { getCustomOrderDetail } from "src/services/customOrder.service";
 import { useEffect, useState } from "react";
 import { getCraftingStages } from "src/services/craftingStage.service";
 import { stages } from "src/utils/constants";
+import CustomerCustomOrderTimeline from "src/components/timeline/customerCustomOrder/CustomerCustomOrderTimeline";
+import LabelImportantSharpIcon from "@mui/icons-material/LabelImportantSharp";
 
 function CraftingProcess() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
@@ -73,6 +75,8 @@ function CraftingProcess() {
       });
   }, [orderId]);
 
+  useScrollTop();
+
   if (!order || !stageResponse)
     return (
       <Grid container justifyContent={"center"} mt={5}>
@@ -86,29 +90,47 @@ function CraftingProcess() {
 
   return (
     <Grid container className={styles.container} justifyContent={"center"}>
-      <Grid container item xs={10}>
+      <Grid container item xs={11}>
         <div className={styles.title}>Quá Trình Gia Công</div>
 
-        {stageResponse.data?.items.map((item, index, list) => {
-          const steps = stages.find(
-            (stage) => stage.progress === item.progress
-          )?.steps;
+        <Grid container>
+          <Grid item md={4} mb={{ xs: 5, md: 0 }}>
+            {stageResponse.data && stageResponse.data.items.length > 0 && (
+              <CustomerCustomOrderTimeline
+                order={order}
+                stages={stageResponse.data.items}
+              />
+            )}
+          </Grid>
 
-          const name = stages.find(
-            (stage) => stage.progress === item.progress
-          )?.name;
+          <Grid item md={8}>
+            {stageResponse.data?.items.map((item, index, list) => {
+              const steps = stages.find(
+                (stage) => stage.progress === item.progress
+              )?.steps;
 
-          return (
-            <CraftingStage
-              key={item.id}
-              data={item}
-              steps={steps ? steps : []}
-              name={name ? name : item.name}
-              orderId={order.id}
-              previousStage={index !== 0 ? list[index - 1] : undefined}
-            />
-          );
-        })}
+              const name = stages.find(
+                (stage) => stage.progress === item.progress
+              )?.name;
+
+              return (
+                <div key={item.id}>
+                  <Grid container className={styles.label} gap={1} mb={2}>
+                    <LabelImportantSharpIcon />
+                    Giai đoạn {index + 1}
+                  </Grid>
+                  <CraftingStage
+                    data={item}
+                    steps={steps ? steps : []}
+                    name={name ? name : item.name}
+                    orderId={order.id}
+                    previousStage={index !== 0 ? list[index - 1] : undefined}
+                  />
+                </div>
+              );
+            })}
+          </Grid>
+        </Grid>
       </Grid>
     </Grid>
   );

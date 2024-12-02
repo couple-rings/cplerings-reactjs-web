@@ -21,6 +21,26 @@
         font-weight: 600;
     }
 
+    .statement {
+        animation: blink-animation 1s infinite;
+        color    : $secondaryColor;
+        font-size: 1.3rem;
+    }
+
+    @keyframes blink-animation {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.1;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
     .subtitle {
         font-size      : 1.2rem;
         margin-bottom  : 1rem;

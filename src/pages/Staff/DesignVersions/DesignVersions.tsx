@@ -11,13 +11,19 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  fetchCustomDesigns,
   fetchCustomerSessionCount,
   fetchCustomRequestDetail,
   fetchFemaleDesignVersions,
   fetchMaleDesignVersions,
 } from "src/utils/querykey";
 import { getCustomRequestDetail } from "src/services/customRequest.service";
-import { CustomRequestStatus, DesignCharacteristic } from "src/utils/enums";
+import {
+  CustomRequestStatus,
+  DesignCharacteristic,
+  StaffPosition,
+  Status,
+} from "src/utils/enums";
 import {
   getDesignVersions,
   postCreateDesignVersion,
@@ -27,18 +33,11 @@ import { toast } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { getCustomerSessionCount } from "src/services/designSession.service";
 import moment from "moment";
-import Timeline from "@mui/lab/Timeline";
-import TimelineItem from "@mui/lab/TimelineItem";
-import TimelineSeparator from "@mui/lab/TimelineSeparator";
-import TimelineConnector from "@mui/lab/TimelineConnector";
-import TimelineContent from "@mui/lab/TimelineContent";
-import TimelineDot from "@mui/lab/TimelineDot";
-import TimelineOppositeContent, {
-  timelineOppositeContentClasses,
-} from "@mui/lab/TimelineOppositeContent";
 import { formatCustomRequestStatus } from "src/utils/functions";
 import { postCreateConversation } from "src/services/conversation.service";
 import { useAppSelector } from "src/utils/hooks";
+import DesignTimeline from "src/components/timeline/staffDesign/StaffDesignTimeline";
+import { getCustomDesigns } from "src/services/customDesign.service";
 
 const initDraft = {
   image: "",
@@ -61,16 +60,20 @@ function DesignVersions() {
 
   const [maleFilterObj, setMaleFilterObj] =
     useState<IDesignVersionFilter | null>(null);
-
   const [femaleFilterObj, setFemaleFilterObj] =
     useState<IDesignVersionFilter | null>(null);
+
+  const [designFilterObj, setDesignFilterObj] =
+    useState<ICustomDesignFilter | null>(null);
 
   const { id } = useParams<{ id: string }>();
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { id: staffId } = useAppSelector((state) => state.auth.userInfo);
+  const { id: staffId, staffPosition } = useAppSelector(
+    (state) => state.auth.userInfo
+  );
 
   const { data: response } = useQuery({
     queryKey: [fetchCustomRequestDetail, id],
@@ -109,6 +112,15 @@ function DesignVersions() {
     },
 
     enabled: !!femaleFilterObj,
+  });
+
+  const { data: designResponse } = useQuery({
+    queryKey: [fetchCustomDesigns, designFilterObj],
+
+    queryFn: () => {
+      if (designFilterObj) return getCustomDesigns(designFilterObj);
+    },
+    enabled: !!designFilterObj,
   });
 
   const uploadMutation = useMutation({
@@ -280,7 +292,7 @@ function DesignVersions() {
 
   useEffect(() => {
     if (response && response.data) {
-      if (response.data.status !== CustomRequestStatus.OnGoing)
+      if (response.data.status === CustomRequestStatus.Waiting)
         navigate("not-found");
 
       const maleDesign = response.data.designs.find(
@@ -294,6 +306,13 @@ function DesignVersions() {
         setMaleDesign(maleDesign);
         setFemaleDesign(femaleDesign);
       }
+
+      setDesignFilterObj({
+        page: 0,
+        pageSize: 100,
+        state: Status.Active,
+        customerId: response.data.customer.id,
+      });
     }
 
     if (response && response.errors) {
@@ -409,45 +428,12 @@ function DesignVersions() {
         </Grid>
 
         <Grid container item xs={12} md={5.7}>
-          <Timeline
-            sx={{
-              [`& .${timelineOppositeContentClasses.root}`]: {
-                flex: 0.2,
-              },
-            }}
-          >
-            <TimelineItem>
-              <TimelineOppositeContent color="textSecondary">
-                {moment(
-                  response?.data?.customRequestHistories.find(
-                    (item) => item.status === CustomRequestStatus.OnGoing
-                  )?.createdAt
-                ).format("DD/MM/YYYY HH:mm")}
-              </TimelineOppositeContent>
-              <TimelineSeparator>
-                <TimelineDot color="info" />
-                <TimelineConnector />
-              </TimelineSeparator>
-              <TimelineContent>Tiếp nhận yêu cầu thiết kế</TimelineContent>
-            </TimelineItem>
-
-            {maleVersionResponse?.data?.items.map((item) => {
-              return (
-                <TimelineItem key={item.id}>
-                  <TimelineOppositeContent color="textSecondary">
-                    {moment(item.createdAt).format("DD/MM/YYYY HH:mm")}
-                  </TimelineOppositeContent>
-                  <TimelineSeparator>
-                    <TimelineDot color="info" />
-                    <TimelineConnector />
-                  </TimelineSeparator>
-                  <TimelineContent>
-                    Hoàn tất bản thiết kế version {item.versionNumber}
-                  </TimelineContent>
-                </TimelineItem>
-              );
-            })}
-          </Timeline>
+          {response?.data && maleVersionResponse?.data && (
+            <DesignTimeline
+              customRequest={response.data}
+              designVersions={maleVersionResponse.data.items}
+            />
+          )}
         </Grid>
       </Grid>
 
@@ -474,13 +460,18 @@ function DesignVersions() {
           container
           item
           sm={11}
-          gap={7}
+          gap={3}
           justifyContent={"flex-start"}
           className={styles.versionList}
         >
           <Grid item xs={12} className={styles.label}>
             Dành Cho Bản {maleDesign.name}
           </Grid>
+
+          {maleVersionResponse?.data?.items.length === 0 &&
+            staffPosition === StaffPosition.Sales && (
+              <div>Chưa có phiên bản nào</div>
+            )}
 
           {maleVersionResponse?.data?.items
             ?.sort((a, b) => a.versionNumber - b.versionNumber)
@@ -519,24 +510,29 @@ function DesignVersions() {
             </Grid>
           )}
 
-          {maleNewVersion.versionNo === 0 && canCreate && (
-            <Grid
-              item
-              xs={12}
-              md={3.7}
-              onClick={() => {
-                setOpen(true);
-                setCreateGender(DesignCharacteristic.Male);
-              }}
-            >
-              <Card className={`${styles.version} ${styles.addVersion}`}>
-                <AddBoxOutlinedIcon className={styles.addIcon} />
-                <div className={styles.addText}>Tạo Bản Mới</div>
-              </Card>
-            </Grid>
-          )}
+          {maleNewVersion.versionNo === 0 &&
+            canCreate &&
+            staffPosition === StaffPosition.Designer &&
+            response?.data?.status === CustomRequestStatus.OnGoing && (
+              <Grid
+                item
+                xs={12}
+                md={3.7}
+                onClick={() => {
+                  setOpen(true);
+                  setCreateGender(DesignCharacteristic.Male);
+                }}
+              >
+                <Card className={`${styles.version} ${styles.addVersion}`}>
+                  <AddBoxOutlinedIcon className={styles.addIcon} />
+                  <div className={styles.addText}>Tạo Bản Mới</div>
+                </Card>
+              </Grid>
+            )}
 
-          <Divider sx={{ backgroundColor: "#ccc", width: "100%", my: 3 }} />
+          <Divider
+            sx={{ backgroundColor: "#ccc", width: "100%", mb: 3, mt: 6 }}
+          />
         </Grid>
       </Grid>
 
@@ -545,13 +541,18 @@ function DesignVersions() {
           container
           item
           sm={11}
-          gap={7}
+          gap={3}
           justifyContent={"flex-start"}
           className={styles.versionList}
         >
           <Grid item xs={12} className={styles.label}>
             Dành Cho Bản {femaleDesign.name}
           </Grid>
+
+          {femaleVersionResponse?.data?.items.length === 0 &&
+            staffPosition === StaffPosition.Sales && (
+              <div>Chưa có phiên bản nào</div>
+            )}
 
           {femaleVersionResponse?.data?.items
             ?.sort((a, b) => a.versionNumber - b.versionNumber)
@@ -590,29 +591,33 @@ function DesignVersions() {
             </Grid>
           )}
 
-          {femaleNewVersion.versionNo === 0 && canCreate && (
-            <Grid
-              item
-              xs={12}
-              md={3.7}
-              onClick={() => {
-                setOpen(true);
-                setCreateGender(DesignCharacteristic.Female);
-              }}
-            >
-              <Card className={`${styles.version} ${styles.addVersion}`}>
-                <AddBoxOutlinedIcon className={styles.addIcon} />
-                <div className={styles.addText}>Tạo Bản Mới</div>
-              </Card>
-            </Grid>
-          )}
+          {femaleNewVersion.versionNo === 0 &&
+            canCreate &&
+            staffPosition === StaffPosition.Designer &&
+            response?.data?.status === CustomRequestStatus.OnGoing && (
+              <Grid
+                item
+                xs={12}
+                md={3.7}
+                onClick={() => {
+                  setOpen(true);
+                  setCreateGender(DesignCharacteristic.Female);
+                }}
+              >
+                <Card className={`${styles.version} ${styles.addVersion}`}>
+                  <AddBoxOutlinedIcon className={styles.addIcon} />
+                  <div className={styles.addText}>Tạo Bản Mới</div>
+                </Card>
+              </Grid>
+            )}
         </Grid>
       </Grid>
 
       <Grid container justifyContent={"center"} mt={10}>
         <Grid item xs={11} md={4}>
           {response?.data?.status === CustomRequestStatus.OnGoing &&
-            !isAccepted() && (
+            !isAccepted() &&
+            staffPosition === StaffPosition.Designer && (
               <LoadingButton
                 disabled={!maleNewVersion.image || !femaleNewVersion.image}
                 loading={
@@ -627,16 +632,21 @@ function DesignVersions() {
               </LoadingButton>
             )}
 
-          {isAccepted() && (
-            <LoadingButton
-              variant="contained"
-              sx={roundedPrimaryBtn}
-              fullWidth
-              onClick={handleNavigateCustomDesign}
-            >
-              Hoàn Chỉnh Thiết Kế
-            </LoadingButton>
-          )}
+          {/* version accepted and request on going, design staff can always access, sale staff must wait until custom design is available */}
+          {isAccepted() &&
+            response?.data?.status === CustomRequestStatus.OnGoing &&
+            (staffPosition === StaffPosition.Designer ||
+              (staffPosition === StaffPosition.Sales &&
+                designResponse?.data?.items.length !== 0)) && (
+              <LoadingButton
+                variant="contained"
+                sx={roundedPrimaryBtn}
+                fullWidth
+                onClick={handleNavigateCustomDesign}
+              >
+                Hoàn Chỉnh Thiết Kế
+              </LoadingButton>
+            )}
         </Grid>
       </Grid>
 

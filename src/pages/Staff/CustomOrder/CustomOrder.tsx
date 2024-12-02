@@ -15,10 +15,31 @@ import { getCustomOrders } from "src/services/customOrder.service";
 import { fetchCustomOrders } from "src/utils/querykey";
 import moment from "moment";
 import { CustomOrderStatus } from "src/utils/enums";
-import { Button, Link } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  FormLabel,
+  Grid,
+  IconButton,
+  Link,
+  Popover,
+  SxProps,
+  Tab,
+  Tabs,
+} from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 import FileDownloadSharpIcon from "@mui/icons-material/FileDownloadSharp";
 import { useNavigate } from "react-router-dom";
+import { formatCustomOrderStatus } from "src/utils/functions";
+import RemoveRedEyeSharpIcon from "@mui/icons-material/RemoveRedEyeSharp";
+
+const boxStyle: SxProps = {
+  borderBottom: 1,
+  borderColor: "divider",
+  width: "100%",
+  mb: 6,
+};
 
 interface Row extends ICustomOrder {}
 
@@ -37,6 +58,11 @@ function CustomOrder() {
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
   const [filterObj, setFilterObj] = useState<ICustomOrderFilter | null>(null);
 
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const openPopover = Boolean(anchorEl);
+  const id = openPopover ? "simple-popover" : undefined;
+
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -51,6 +77,14 @@ function CustomOrder() {
 
     enabled: !!filterObj,
   });
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const columns: GridColDef<Row>[] = useMemo(
     () => [
@@ -71,8 +105,53 @@ function CustomOrder() {
         align: "center",
         filterOperators,
         sortable: false,
-        valueGetter: (value: IUser) => {
-          return value.username;
+        renderCell: ({ row }) => {
+          return (
+            <div>
+              {row.customer.username}{" "}
+              <IconButton onClick={handleClick}>
+                <RemoveRedEyeSharpIcon fontSize="small" />
+              </IconButton>
+              <Popover
+                id={id}
+                open={openPopover}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+              >
+                <Grid container width={300} p={3} gap={1}>
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Username:</Grid>
+
+                    <Grid item>{row.customer.username}</Grid>
+                  </Grid>
+
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Email:</Grid>
+
+                    <Grid item>
+                      <FormLabel>{row.customer.email}</FormLabel>
+                    </Grid>
+                  </Grid>
+
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Số điện thoại:</Grid>
+
+                    <Grid item>
+                      {row.customer.phone ? row.customer.phone : "--"}
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Popover>
+            </div>
+          );
         },
       },
       {
@@ -94,8 +173,55 @@ function CustomOrder() {
         align: "center",
         filterOperators,
         sortable: false,
-        valueGetter: (value: IUser) => {
-          return value ? value.username : "----";
+        renderCell: ({ row }) => {
+          if (row.jeweler)
+            return (
+              <div>
+                {row.jeweler.username}{" "}
+                <IconButton onClick={handleClick}>
+                  <RemoveRedEyeSharpIcon fontSize="small" />
+                </IconButton>
+                <Popover
+                  id={id}
+                  open={openPopover}
+                  anchorEl={anchorEl}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}
+                >
+                  <Grid container width={300} p={3} gap={1}>
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item>Username:</Grid>
+
+                      <Grid item>{row.jeweler.username}</Grid>
+                    </Grid>
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item>Email:</Grid>
+
+                      <Grid item>
+                        <FormLabel>{row.jeweler.email}</FormLabel>
+                      </Grid>
+                    </Grid>
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item>Số điện thoại:</Grid>
+
+                      <Grid item>
+                        {row.jeweler.phone ? row.jeweler.phone : "--"}
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Popover>
+              </div>
+            );
+          else return <div>--</div>;
         },
       },
       {
@@ -107,45 +233,12 @@ function CustomOrder() {
         filterOperators,
         sortable: false,
         renderCell: ({ row }) => {
-          let classname = "";
-          let status = "";
-
-          if (row.status === CustomOrderStatus.Pending) {
-            classname = styles.pending;
-            status = "Chưa Bắt Đầu";
-          }
-
-          if (row.status === CustomOrderStatus.Waiting) {
-            classname = styles.waiting;
-            status = "Chờ Nhận";
-          }
-
-          if (row.status === CustomOrderStatus.InProgress) {
-            classname = styles.ongoing;
-            status = "Đang Làm";
-          }
-
-          if (row.status === CustomOrderStatus.Done) {
-            classname = styles.done;
-            status = "Chờ Vận Chuyển";
-          }
-
-          if (row.status === CustomOrderStatus.Delivering) {
-            classname = styles.delivering;
-            status = "Đang Giao";
-          }
-
-          if (row.status === CustomOrderStatus.Completed) {
-            classname = styles.completed;
-            status = "Hoàn Thành";
-          }
-
-          if (row.status === CustomOrderStatus.Canceled) {
-            classname = styles.canceled;
-            status = "Đã Hủy";
-          }
-
-          return <div className={classname}>{status.toLocaleLowerCase()}</div>;
+          return (
+            <Chip
+              label={formatCustomOrderStatus(row.status).text}
+              color={formatCustomOrderStatus(row.status).color}
+            />
+          );
         },
       },
       {
@@ -194,7 +287,7 @@ function CustomOrder() {
         ),
       },
     ],
-    [navigate]
+    [anchorEl, id, navigate, openPopover]
   );
 
   const handleChangePage = (model: GridPaginationModel) => {
@@ -208,6 +301,16 @@ function CustomOrder() {
 
   const handleFilter = (model: GridFilterModel) => {
     console.log(model);
+  };
+
+  const handleFilterStatus = (status: CustomOrderStatus) => {
+    if (filterObj)
+      setFilterObj({
+        ...filterObj,
+        page: 0,
+        pageSize,
+        status,
+      });
   };
 
   const handleSort = (model: GridSortModel) => {
@@ -237,12 +340,80 @@ function CustomOrder() {
         page: 0,
         pageSize,
         branchId,
+        status: CustomOrderStatus.Pending,
       });
   }, [branchId]);
 
   return (
     <div className={styles.container}>
       <div className={styles.title}>Đơn Gia Công</div>
+
+      <Box sx={boxStyle}>
+        <Tabs
+          classes={{
+            indicator: "myIndicator",
+          }}
+          value={filterObj?.status}
+          onChange={(e, value: CustomOrderStatus) => handleFilterStatus(value)}
+        >
+          <Tab
+            classes={{
+              selected: "selectedCustomRequestTab",
+            }}
+            className={styles.tabLabel}
+            label="Chưa thanh toán"
+            value={CustomOrderStatus.Pending}
+          />
+          <Tab
+            classes={{
+              selected: "selectedCustomRequestTab",
+            }}
+            className={styles.tabLabel}
+            label="Đang chuẩn bị"
+            value={CustomOrderStatus.Waiting}
+          />
+          <Tab
+            classes={{
+              selected: "selectedCustomRequestTab",
+            }}
+            className={styles.tabLabel}
+            label="Đang Gia Công"
+            value={CustomOrderStatus.InProgress}
+          />
+          <Tab
+            classes={{
+              selected: "selectedCustomRequestTab",
+            }}
+            className={styles.tabLabel}
+            label="Hoàn Tất Gia Công"
+            value={CustomOrderStatus.Done}
+          />
+          <Tab
+            classes={{
+              selected: "selectedCustomRequestTab",
+            }}
+            className={styles.tabLabel}
+            label="Đang Giao"
+            value={CustomOrderStatus.Delivering}
+          />
+          <Tab
+            classes={{
+              selected: "selectedCustomRequestTab",
+            }}
+            className={styles.tabLabel}
+            label="Hoàn Thành"
+            value={CustomOrderStatus.Completed}
+          />
+          <Tab
+            classes={{
+              selected: "selectedCustomRequestTab",
+            }}
+            className={styles.tabLabel}
+            label="Đã Hủy"
+            value={CustomOrderStatus.Canceled}
+          />
+        </Tabs>
+      </Box>
 
       <DataGrid
         loading={isLoading}
