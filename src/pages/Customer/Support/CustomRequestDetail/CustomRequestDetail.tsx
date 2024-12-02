@@ -55,6 +55,7 @@ import {
   formatCustomRequestStatus,
 } from "src/utils/functions";
 import { postCreateConversation } from "src/services/conversation.service";
+import CustomerDesignTimeline from "src/components/timeline/customerDesign/CustomerDesignTimeline";
 
 function CustomRequestDetail() {
   const [maleDesign, setMaleDesign] = useState<IDesign | null>(null);
@@ -393,7 +394,7 @@ function CustomRequestDetail() {
 
   return (
     <Grid container className={styles.container} justifyContent={"center"}>
-      <Grid xs={10}>
+      <Grid xs={11} lg={10}>
         <OldGrid
           container
           justifyContent={"space-between"}
@@ -416,79 +417,95 @@ function CustomRequestDetail() {
           </OldGrid>
         </OldGrid>
 
-        <OldGrid container my={2} gap={2}>
-          <OldGrid container item>
-            <OldGrid item xs={5} sm={4} md={2}>
-              Ngày tạo:{" "}
+        <OldGrid container justifyContent={"space-between"}>
+          <OldGrid item md={6}>
+            <OldGrid container my={2} gap={2}>
+              <OldGrid container item>
+                <OldGrid item xs={6}>
+                  Ngày tạo:{" "}
+                </OldGrid>
+                <OldGrid item>
+                  {moment(response?.data?.createdAt).format("DD/MM/YYYY")}
+                </OldGrid>
+              </OldGrid>
+
+              <OldGrid container item>
+                <OldGrid item xs={6}>
+                  Tiền Thanh Toán:{" "}
+                </OldGrid>
+                <OldGrid item className={styles.money}>
+                  {response?.data &&
+                    currencyFormatter(response.data.designFee.amount)}
+                </OldGrid>
+              </OldGrid>
             </OldGrid>
-            <OldGrid item>
-              {moment(response?.data?.createdAt).format("DD/MM/YYYY")}
+
+            <OldGrid container mt={3} mb={5}>
+              <OldGrid container item className={styles.subtitle}>
+                Nhân Viên Thiết Kế
+              </OldGrid>
+
+              <OldGrid container gap={2}>
+                <OldGrid container item>
+                  <OldGrid item xs={6}>
+                    Username:
+                  </OldGrid>
+                  <OldGrid item>{response?.data?.staff?.username}</OldGrid>
+                </OldGrid>
+
+                <OldGrid container item>
+                  <OldGrid item xs={6}>
+                    Email:
+                  </OldGrid>
+                  <OldGrid item>{response?.data?.staff?.email}</OldGrid>
+                </OldGrid>
+
+                <OldGrid container item>
+                  <OldGrid item xs={6}>
+                    Số điện thoại:
+                  </OldGrid>
+                  <OldGrid item>{response?.data?.staff?.phone ?? "--"}</OldGrid>
+                </OldGrid>
+
+                <LoadingButton
+                  variant="contained"
+                  sx={{ ...secondaryBtn, px: 2, mt: 1 }}
+                  onClick={handleChat}
+                  loading={chatMutation.isPending}
+                >
+                  Chat Với Nhân Viên
+                </LoadingButton>
+              </OldGrid>
             </OldGrid>
+
+            {maleVersionResponse?.data?.items.find(
+              (item) => item.isAccepted
+            ) && (
+              <OldGrid container mt={3} mb={5}>
+                <OldGrid item xs={12} className={styles.statement}>
+                  Bạn đã chốt bản thiết kế
+                </OldGrid>
+                <OldGrid item mt={2}>
+                  Ngày chốt:{" "}
+                  {moment(
+                    maleVersionResponse?.data?.items.find(
+                      (item) => item.isAccepted
+                    )?.acceptedAt
+                  ).format("DD/MM/YYYY HH:mm")}
+                </OldGrid>
+              </OldGrid>
+            )}
           </OldGrid>
 
-          <OldGrid container item>
-            <OldGrid item xs={5} sm={4} md={2}>
-              Tiền Thanh Toán:{" "}
-            </OldGrid>
-            <OldGrid item className={styles.money}>
-              {response?.data &&
-                currencyFormatter(response.data.designFee.amount)}
-            </OldGrid>
+          <OldGrid item md={6}>
+            {response?.data && (
+              <CustomerDesignTimeline
+                customRequest={response.data}
+                designVersions={maleVersions}
+              />
+            )}
           </OldGrid>
         </OldGrid>
-
-        <OldGrid container mt={3} mb={5}>
-          <OldGrid container item className={styles.subtitle}>
-            <div>Nhân Viên Thiết Kế</div>
-
-            <LoadingButton
-              variant="contained"
-              sx={{ ...secondaryBtn, px: 2 }}
-              onClick={handleChat}
-              loading={chatMutation.isPending}
-            >
-              Chat Với Nhân Viên
-            </LoadingButton>
-          </OldGrid>
-
-          <OldGrid container gap={2}>
-            <OldGrid container item>
-              <OldGrid item xs={5} sm={4} md={2}>
-                Username:{" "}
-              </OldGrid>
-              <OldGrid item>{response?.data?.staff?.username}</OldGrid>
-            </OldGrid>
-
-            <OldGrid container item>
-              <OldGrid item xs={5} sm={4} md={2}>
-                Email:{" "}
-              </OldGrid>
-              <OldGrid item>{response?.data?.staff?.email}</OldGrid>
-            </OldGrid>
-
-            <OldGrid container item>
-              <OldGrid item xs={5} sm={4} md={2}>
-                Số điện thoại:{" "}
-              </OldGrid>
-              <OldGrid item>{response?.data?.staff?.phone ?? "--"}</OldGrid>
-            </OldGrid>
-          </OldGrid>
-        </OldGrid>
-
-        {maleVersionResponse?.data?.items.find((item) => item.isAccepted) && (
-          <OldGrid container mt={3} mb={5}>
-            <OldGrid item xs={12} className={styles.statement}>
-              Bạn đã chốt bản thiết kế
-            </OldGrid>
-            <OldGrid item mt={2}>
-              Ngày chốt:{" "}
-              {moment(
-                maleVersionResponse?.data?.items.find((item) => item.isAccepted)
-                  ?.acceptedAt
-              ).format("DD/MM/YYYY HH:mm")}
-            </OldGrid>
-          </OldGrid>
-        )}
 
         {/* Male design */}
         <div className={styles.subtitle}>Bản Thiết Kế Gốc</div>

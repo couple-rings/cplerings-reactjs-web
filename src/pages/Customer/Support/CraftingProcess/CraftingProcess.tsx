@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { getCraftingStages } from "src/services/craftingStage.service";
 import { stages } from "src/utils/constants";
 import CustomerCustomOrderTimeline from "src/components/timeline/customerCustomOrder/CustomerCustomOrderTimeline";
+import LabelImportantSharpIcon from "@mui/icons-material/LabelImportantSharp";
 
 function CraftingProcess() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
@@ -113,14 +114,19 @@ function CraftingProcess() {
               )?.name;
 
               return (
-                <CraftingStage
-                  key={item.id}
-                  data={item}
-                  steps={steps ? steps : []}
-                  name={name ? name : item.name}
-                  orderId={order.id}
-                  previousStage={index !== 0 ? list[index - 1] : undefined}
-                />
+                <div key={item.id}>
+                  <Grid container className={styles.label} gap={1} mb={2}>
+                    <LabelImportantSharpIcon />
+                    Giai đoạn {index + 1}
+                  </Grid>
+                  <CraftingStage
+                    data={item}
+                    steps={steps ? steps : []}
+                    name={name ? name : item.name}
+                    orderId={order.id}
+                    previousStage={index !== 0 ? list[index - 1] : undefined}
+                  />
+                </div>
               );
             })}
           </Grid>

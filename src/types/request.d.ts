@@ -173,7 +173,7 @@ declare global {
   interface ICustomDesignFilter {
     page: number;
     pageSize: number;
-    state: Status;
+    state?: Status;
     customerId: number;
   }
 

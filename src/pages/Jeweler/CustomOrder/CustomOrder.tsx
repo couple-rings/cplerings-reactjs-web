@@ -1,4 +1,4 @@
-import { Button, Divider } from "@mui/material";
+import { Box, Button, SxProps, Tab, Tabs } from "@mui/material";
 import {
   DataGrid,
   getGridStringOperators,
@@ -19,6 +19,13 @@ import { fetchCustomOrders } from "src/utils/querykey";
 import { useAppSelector } from "src/utils/hooks";
 import moment from "moment";
 
+const boxStyle: SxProps = {
+  borderBottom: 1,
+  borderColor: "divider",
+  width: "100%",
+  mb: 6,
+};
+
 interface Row extends ICustomOrder {}
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
@@ -33,9 +40,6 @@ const initMetaData = {
 };
 
 function CustomOrder() {
-  const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
-  const [filterObj, setFilterObj] = useState<ICustomOrderFilter | null>(null);
-
   const [ownMetaData, setOwnMetaData] = useState<IListMetaData>(initMetaData);
   const [ownFilterObj, setOwnFilterObj] = useState<ICustomOrderFilter | null>(
     null
@@ -44,19 +48,7 @@ function CustomOrder() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { branchId, id: userId } = useAppSelector(
-    (state) => state.auth.userInfo
-  );
-
-  const { data: response, isLoading } = useQuery({
-    queryKey: [fetchCustomOrders, filterObj],
-
-    queryFn: () => {
-      if (filterObj) return getCustomOrders(filterObj);
-    },
-
-    enabled: !!filterObj,
-  });
+  const { id: userId } = useAppSelector((state) => state.auth.userInfo);
 
   const { data: ownResponse, isLoading: ownLoading } = useQuery({
     queryKey: [fetchCustomOrders, ownFilterObj],
@@ -170,29 +162,22 @@ function CustomOrder() {
     [navigate]
   );
 
-  const handleChangePage = (model: GridPaginationModel) => {
-    // model.page is the page to fetch and starts at 0
-    if (filterObj)
-      setFilterObj({
-        ...filterObj,
-        page: model.page,
-      });
-  };
-
-  const handleFilter = (model: GridFilterModel) => {
-    console.log(model);
-  };
-
-  const handleSort = (model: GridSortModel) => {
-    console.log(model);
-  };
-
   const handleOwnChangePage = (model: GridPaginationModel) => {
     // model.page is the page to fetch and starts at 0
     if (ownFilterObj)
       setOwnFilterObj({
         ...ownFilterObj,
         page: model.page,
+      });
+  };
+
+  const handleFilterStatus = (status: CustomOrderStatus) => {
+    if (ownFilterObj)
+      setOwnFilterObj({
+        ...ownFilterObj,
+        page: 0,
+        pageSize,
+        status,
       });
   };
 
@@ -203,33 +188,6 @@ function CustomOrder() {
   const handleOwnSort = (model: GridSortModel) => {
     console.log(model);
   };
-
-  useEffect(() => {
-    if (response && response.data) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { items, ...rest } = response.data;
-      setMetaData(rest);
-    }
-  }, [response]);
-
-  useEffect(() => {
-    if (filterObj)
-      queryClient.invalidateQueries({
-        queryKey: [fetchCustomOrders, filterObj],
-      });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
-
-  useEffect(() => {
-    if (branchId !== 0)
-      setFilterObj({
-        page: 0,
-        pageSize,
-        branchId,
-        status: CustomOrderStatus.Waiting,
-      });
-  }, [branchId]);
 
   useEffect(() => {
     if (ownResponse && ownResponse.data) {
@@ -253,36 +211,49 @@ function CustomOrder() {
       page: 0,
       pageSize,
       jewelerId: userId,
+      status: CustomOrderStatus.InProgress,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Đơn Hiện Tại</div>
+      <div className={styles.title}>Đơn Gia Công</div>
 
-      <DataGrid
-        loading={isLoading}
-        getRowHeight={() => "auto"}
-        rows={response?.data?.items ? response.data.items : []}
-        columns={columns}
-        onFilterModelChange={handleFilter}
-        onSortModelChange={handleSort}
-        pageSizeOptions={[pageSize]}
-        disableColumnSelector
-        disableRowSelectionOnClick
-        autoHeight
-        paginationMode="server"
-        paginationModel={{
-          page: filterObj?.page ? filterObj.page : 0,
-          pageSize: filterObj?.pageSize ? filterObj.pageSize : pageSize,
-        }}
-        onPaginationModelChange={handleChangePage}
-        rowCount={metaData.count}
-      />
-
-      <Divider sx={{ my: 10 }} />
-      <div className={styles.title}>Đơn Của Tôi</div>
+      <Box sx={boxStyle}>
+        <Tabs
+          classes={{
+            indicator: "myIndicator",
+          }}
+          value={ownFilterObj?.status}
+          onChange={(e, value: CustomOrderStatus) => handleFilterStatus(value)}
+        >
+          <Tab
+            classes={{
+              selected: "selectedCustomRequestTab",
+            }}
+            className={styles.tabLabel}
+            label="Đang Gia Công"
+            value={CustomOrderStatus.InProgress}
+          />
+          <Tab
+            classes={{
+              selected: "selectedCustomRequestTab",
+            }}
+            className={styles.tabLabel}
+            label="Hoàn Tất Gia Công"
+            value={CustomOrderStatus.Done}
+          />
+          <Tab
+            classes={{
+              selected: "selectedCustomRequestTab",
+            }}
+            className={styles.tabLabel}
+            label="Đã Hủy"
+            value={CustomOrderStatus.Canceled}
+          />
+        </Tabs>
+      </Box>
 
       <DataGrid
         loading={ownLoading}

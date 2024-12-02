@@ -14,7 +14,7 @@ import { getCustomDesigns } from "src/services/customDesign.service";
 import { CustomRequestStatus } from "src/utils/enums";
 import { fetchCustomDesigns } from "src/utils/querykey";
 
-function DesignTimeline(props: IStaffDesignTimelineProps) {
+function CustomerDesignTimeline(props: ICustomerDesignTimelineProps) {
   const { customRequest, designVersions } = props;
 
   const [designFilterObj, setDesignFilterObj] =
@@ -54,7 +54,7 @@ function DesignTimeline(props: IStaffDesignTimelineProps) {
           <TimelineDot color="warning" />
           <TimelineConnector />
         </TimelineSeparator>
-        <TimelineContent>Khách hàng thanh toán tiền thiết kế</TimelineContent>
+        <TimelineContent>Hoàn tất thanh toán tiền thiết kế</TimelineContent>
       </TimelineItem>
 
       {/* Accept custom request */}
@@ -70,7 +70,7 @@ function DesignTimeline(props: IStaffDesignTimelineProps) {
           <TimelineDot color="info" />
           <TimelineConnector />
         </TimelineSeparator>
-        <TimelineContent>Tiếp nhận yêu cầu thiết kế</TimelineContent>
+        <TimelineContent>Yêu cầu thiết kế được tiếp nhận</TimelineContent>
       </TimelineItem>
 
       {/* Completed versions */}
@@ -104,7 +104,7 @@ function DesignTimeline(props: IStaffDesignTimelineProps) {
             <TimelineDot color="info" />
             <TimelineConnector />
           </TimelineSeparator>
-          <TimelineContent>Khách Hàng chốt bản thiết kế</TimelineContent>
+          <TimelineContent>Xác nhận chốt bản thiết kế</TimelineContent>
         </TimelineItem>
       )}
 
@@ -164,11 +164,11 @@ function DesignTimeline(props: IStaffDesignTimelineProps) {
           <TimelineSeparator>
             <TimelineDot color="error" />
           </TimelineSeparator>
-          <TimelineContent>Khách hàng hủy thiết kế</TimelineContent>
+          <TimelineContent>Xác nhận hủy thiết kế</TimelineContent>
         </TimelineItem>
       )}
     </Timeline>
   );
 }
 
-export default DesignTimeline;
+export default CustomerDesignTimeline;

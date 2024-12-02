@@ -459,4 +459,6 @@ declare global {
     extends IStaffCustomOrderTimelineProps {
     stages: ICraftingStage[];
   }
+
+  interface ICustomerDesignTimelineProps extends IStaffDesignTimelineProps {}
 }
