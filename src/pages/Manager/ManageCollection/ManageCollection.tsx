@@ -4,9 +4,10 @@ import {
   GridActionsCellItem,
   GridColDef,
   GridFilterModel,
+  GridPaginationModel,
   getGridStringOperators,
 } from "@mui/x-data-grid";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
 import { Button, Grid, Switch } from "@mui/material";
@@ -16,48 +17,28 @@ import ViewModal from "src/components/modal/collection/View.modal";
 import UpdateModal from "src/components/modal/collection/Update.modal";
 import AddModal from "src/components/modal/collection/Add.modal";
 import DeleteModal from "src/components/modal/collection/Delete.modal";
+import { pageSize } from "src/utils/constants";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getCollections } from "src/services/collection.service";
+import { fetchCollections } from "src/utils/querykey";
 
-interface Row {
-  id: number;
-  name: string;
-  description: string;
-  isActive: boolean;
-}
+interface Row extends ICollection {}
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
   ["contains" /* add more over time */].includes(value)
 );
 
-const rows = [
-  {
-    id: 1,
-    name: "Eternal Bond",
-    description:
-      "'Eternal Bond' symbolizes the lasting connection between two souls. With designs that reflect harmony and unity, these rings are crafted to honor the beauty of commitment. Each couple is carefully paired to complement each other, representing the perfect balance of love and partnership, making these rings a timeless choice for couples who value tradition and elegance.",
-    isActive: true,
-  },
+const initMetaData = {
+  page: 0,
+  pageSize,
+  totalPages: 0,
+  count: 0,
+};
 
-  {
-    id: 2,
-    name: "Timeless Elegance",
-    description:
-      "'Timeless Elegance' is inspired by the stars and celestial beauty, offering designs that capture the infinite nature of love. These rings feature graceful, refined details, perfect for couples who want a touch of sophistication. Each design pair is a unique representation of the bond that stands the test of time, bringing both style and meaning to your special day.",
-    isActive: false,
-  },
-  {
-    id: 3,
-    name: "Infinity Love",
-    description:
-      "'Infinity Love' celebrates the boundless nature of love. With each design couple symbolizing the everlasting devotion between two partners, these rings are crafted to convey both grace and strength. Perfect for modern couples, the collection combines contemporary aesthetics with timeless sentiments, making it a beautiful testament to love that knows no limits.",
-    isActive: false,
-  },
-];
-
-const initSelected = {
+const initSelected: Row = {
   id: 0,
   name: "",
   description: "",
-  isActive: true,
 };
 
 function ManageCollection() {
@@ -67,24 +48,28 @@ function ManageCollection() {
   const [openDelete, setOpenDelete] = useState(false);
   const [selected, setSelected] = useState<Row>(initSelected);
 
+  const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
+  const [filterObj, setFilterObj] = useState<ICollectionFilter>({
+    page: 0,
+    pageSize,
+  });
+
+  const queryClient = useQueryClient();
+
+  const { data: response, isLoading } = useQuery({
+    queryKey: [fetchCollections, filterObj],
+
+    queryFn: () => {
+      return getCollections(filterObj);
+    },
+  });
+
   const onChangeStatus = (id: number) => {
     console.log(id);
   };
 
   const columns: GridColDef<Row>[] = useMemo(
     () => [
-      {
-        field: "index",
-        headerName: "No",
-        width: 200,
-        headerAlign: "center",
-        align: "center",
-        sortable: false,
-        filterable: false,
-        disableColumnMenu: true,
-        renderCell: (index) =>
-          index.api.getRowIndexRelativeToVisibleRows(index.row.id) + 1,
-      },
       {
         field: "name",
         headerName: "Name",
@@ -95,16 +80,28 @@ function ManageCollection() {
         sortable: false,
       },
       {
+        field: "description",
+        headerName: "Description",
+        width: 500,
+        headerAlign: "center",
+        align: "center",
+        filterOperators,
+        sortable: false,
+        renderCell: ({ row }) => (
+          <div className={styles.description}>{row.description}</div>
+        ),
+      },
+      {
         field: "isActive",
         headerName: "Status",
-        width: 250,
+        width: 150,
         headerAlign: "center",
         align: "center",
         filterable: false,
         sortable: false,
         renderCell: ({ row }) => (
           <Switch
-            defaultChecked={row.isActive}
+            defaultChecked={true}
             onChange={() => onChangeStatus(row.id)}
           />
         ),
@@ -113,7 +110,7 @@ function ManageCollection() {
         field: "actions",
         headerName: "Action",
         type: "actions",
-        width: 300,
+        width: 200,
         headerAlign: "center",
         align: "center",
         getActions: ({ row }) => [
@@ -154,9 +151,33 @@ function ManageCollection() {
     setSelected(initSelected);
   };
 
+  const handleChangePage = (model: GridPaginationModel) => {
+    // model.page is the page to fetch and starts at 0
+    setFilterObj({
+      ...filterObj,
+      page: model.page,
+    });
+  };
+
   const handleFilter = (model: GridFilterModel) => {
     console.log(model);
   };
+
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: [fetchCollections, filterObj],
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterObj]);
+
+  useEffect(() => {
+    if (response && response.data) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { items, ...rest } = response.data;
+      setMetaData(rest);
+    }
+  }, [response]);
 
   return (
     <div className={styles.container}>
@@ -173,14 +194,22 @@ function ManageCollection() {
       </Grid>
 
       <DataGrid
+        loading={isLoading}
         getRowHeight={() => "auto"}
-        rows={rows}
+        rows={response?.data?.items ? response.data.items : []}
         columns={columns}
         onFilterModelChange={handleFilter}
-        pageSizeOptions={[100]}
+        pageSizeOptions={[pageSize]}
         disableColumnSelector
         disableRowSelectionOnClick
         autoHeight
+        paginationMode="server"
+        paginationModel={{
+          page: filterObj?.page ? filterObj.page : 0,
+          pageSize: filterObj?.pageSize ? filterObj.pageSize : pageSize,
+        }}
+        onPaginationModelChange={handleChangePage}
+        rowCount={metaData.count}
       />
 
       <AddModal open={openAdd} setOpen={setOpenAdd} />

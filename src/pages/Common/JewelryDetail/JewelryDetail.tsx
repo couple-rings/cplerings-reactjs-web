@@ -5,18 +5,14 @@ import {
   Breadcrumbs,
   Button,
   Divider,
-  FormControl,
-  FormHelperText,
   Grid,
   Link,
-  OutlinedInput,
   Rating,
-  SxProps,
 } from "@mui/material";
 import styles from "./JewelryDetail.module.scss";
 import ringDesign from "src/assets/sampledata/ringdesign.png";
-import { Location, useLocation, useNavigate } from "react-router-dom";
-import { menuPaperStyle, primaryBtn, sizeMenuStyle } from "src/utils/styles";
+import { useNavigate, useParams } from "react-router-dom";
+import { primaryBtn } from "src/utils/styles";
 import { currencyFormatter } from "src/utils/functions";
 import { useEffect, useState } from "react";
 import CustomExpandIcon from "src/components/icon/CustomExpandIcon";
@@ -24,7 +20,6 @@ import white from "src/assets/whitegold.png";
 import rose from "src/assets/rosegold.png";
 import yellow from "src/assets/yellowgold.png";
 import { GoldColor } from "src/utils/enums";
-import SizeMenu from "src/components/menu/SizeMenu";
 import GuideDialog from "src/components/dialog/GuideDialog";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import AssignmentReturnOutlinedIcon from "@mui/icons-material/AssignmentReturnOutlined";
@@ -52,33 +47,17 @@ const metals = [
   },
 ];
 
-const diamondSpecs = [
-  "5PT ,F ,SI1",
-  "5PT ,H ,VS1",
-  "10PT ,F ,VS2",
-  "15PT ,G ,SI1",
-];
-
-const sizeMenuPaperStyle: SxProps = {
-  ...menuPaperStyle,
-  boxShadow: "none",
-  border: "1px solid",
-  borderTop: "none",
-};
-
 function JewelryDetail() {
   const [metal, setMetal] = useState({
     img: white,
     name: "Vàng Trắng 18K",
     color: GoldColor.White,
   });
-  const [diamond, setDiamond] = useState("5PT ,F ,SI1");
-  const [size, setSize] = useState(0);
+  // const [diamond, setDiamond] = useState("5PT ,F ,SI1");
 
   const navigate = useNavigate();
 
-  const location: Location<{ id: number }> = useLocation();
-  const { id } = location.state;
+  const { id } = useParams<{ id: string }>();
   console.log(id);
 
   useEffect(() => {
@@ -107,15 +86,23 @@ function JewelryDetail() {
                 sx={{ cursor: "pointer" }}
                 underline="hover"
                 color="inherit"
-                onClick={() => navigate("/wedding-rings")}
+                onClick={() => navigate("/jewelry")}
               >
-                Nhẫn Cưới
+                Trang Sức
               </Link>
               <Link
                 sx={{ cursor: "pointer" }}
                 underline="hover"
                 color="inherit"
-                onClick={() => navigate("/wedding-rings")}
+                onClick={() => navigate("/jewelry")}
+              >
+                Dây Chuyền
+              </Link>
+              <Link
+                sx={{ cursor: "pointer" }}
+                underline="hover"
+                color="inherit"
+                onClick={() => navigate("/jewelry")}
               >
                 Bộ Sưu Tập FOREVER
               </Link>
@@ -145,7 +132,7 @@ function JewelryDetail() {
             <div className={styles.price}>{currencyFormatter(12000000)}</div>
 
             <Button variant="contained" sx={{ ...primaryBtn, px: 5 }}>
-              Nhẫm Nam
+              Nữ Tính
             </Button>
 
             <div className={styles.options}>
@@ -171,7 +158,7 @@ function JewelryDetail() {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion sx={{ boxShadow: "none" }}>
+              {/* <Accordion sx={{ boxShadow: "none" }}>
                 <AccordionSummary expandIcon={<CustomExpandIcon />}>
                   <div className={styles.title}>Kim Cương: {diamond}</div>
                 </AccordionSummary>
@@ -195,7 +182,7 @@ function JewelryDetail() {
                     })}
                   </Grid>
                 </AccordionDetails>
-              </Accordion>
+              </Accordion> */}
 
               <Accordion sx={{ boxShadow: "none" }}>
                 <AccordionSummary expandIcon={<CustomExpandIcon />}>
@@ -204,13 +191,9 @@ function JewelryDetail() {
                 <AccordionDetails>
                   <Grid container className={styles.size}>
                     <Grid item sm={7} sx={{ mb: 2 }}>
-                      <SizeMenu
-                        size={size}
-                        setSize={setSize}
-                        label={true}
-                        sx={sizeMenuStyle}
-                        paperStyle={sizeMenuPaperStyle}
-                      />
+                      <Button sx={{ ...primaryBtn, p: 1 }} variant="contained">
+                        50
+                      </Button>
                     </Grid>
 
                     <Grid item sm={3} sx={{ mb: 2 }}>
@@ -220,7 +203,7 @@ function JewelryDetail() {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion sx={{ boxShadow: "none" }}>
+              {/* <Accordion sx={{ boxShadow: "none" }}>
                 <AccordionSummary expandIcon={<CustomExpandIcon />}>
                   <div className={styles.title}>Khắc Chữ</div>
                 </AccordionSummary>
@@ -233,7 +216,7 @@ function JewelryDetail() {
                     <FormHelperText>0/10 ký tự</FormHelperText>
                   </FormControl>
                 </AccordionDetails>
-              </Accordion>
+              </Accordion> */}
             </div>
 
             <Divider sx={{ backgroundColor: "#ccc", mt: 1, mb: 5 }} />
@@ -249,9 +232,6 @@ function JewelryDetail() {
             </div>
 
             {/* Note start */}
-            <div className={styles.note}>
-              Xin lưu ý: Xác minh danh tính là bắt buộc để sở hữu trang sức CR.
-            </div>
             <div className={styles.policy}>
               <AssignmentReturnOutlinedIcon />
               <div>Đổi trả trong vòng 15 ngày.</div>
@@ -265,7 +245,10 @@ function JewelryDetail() {
 
             <Divider sx={{ backgroundColor: "#ccc", mt: 3 }} />
 
-            <ProductDetailAccordion collectionName="FOREVER" />
+            <ProductDetailAccordion
+              collectionName="FOREVER"
+              category="Dây chuyền"
+            />
           </Grid>
         </Grid>
       </Grid>

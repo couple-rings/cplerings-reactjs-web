@@ -285,12 +285,12 @@ declare global {
     resetSelected?: () => void;
   }
 
-  interface IDiamondModalProps extends IModalProps {
+  interface IUpdateDiamondModalProps extends IModalProps {
     resetSelected?: () => void;
 
-    giaReportNumber: string;
+    selected: IDiamond;
 
-    diamondSpecId: number;
+    filterObj: IDiamondFilter;
   }
 
   interface ICollectionModalProps extends IModalProps, ICollection {
@@ -312,6 +312,8 @@ declare global {
   interface IDesignModalProps extends IModalProps {
     resetSelected?: () => void;
     design: IDesign;
+    collections: ICollection[];
+    metalSpecs: IMetalSpec[];
   }
 
   interface IImageModalProps extends IModalProps {
@@ -461,4 +463,18 @@ declare global {
   }
 
   interface ICustomerDesignTimelineProps extends IStaffDesignTimelineProps {}
+
+  interface IAddDesignModalProps extends IModalProps {
+    collections: ICollection[];
+
+    metalSpecs: IMetalSpec[];
+
+    categories: IJewelryCategory[];
+
+    filterObj: IDesignFilter;
+  }
+
+  interface IAddJewelryModalProps extends IModalProps {
+    filterObj: IJewelryFilter;
+  }
 }

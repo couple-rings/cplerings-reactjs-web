@@ -174,6 +174,13 @@ export enum TransactionType {
 }
 
 export enum StaffPosition {
+  Default = "",
   Designer = "DESIGNER",
   Sales = "SALES",
+}
+
+export enum JewelryStatus {
+  Available = "AVAILABLE",
+  Unavailable = "UNAVAILABLE",
+  Purchased = "PURCHASED",
 }

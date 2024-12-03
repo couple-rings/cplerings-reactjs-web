@@ -12,3 +12,15 @@ export const getCoupleDesigns = (queryObj: ICoupleDesignFilter) => {
 export const getDesignDetail = (id: number) => {
   return axios.get<unknown, IResponse<IDesign>>(`designs/${id}`);
 };
+
+export const getDesigns = (queryObj: IDesignFilter) => {
+  const queryUrl = queryString.stringify(queryObj);
+
+  return axios.get<unknown, IResponse<IListResponse<IDesign>>>(
+    `designs?${queryUrl}`
+  );
+};
+
+export const postCreateDesign = (data: ICreateDesignRequest) => {
+  return axios.post<unknown, IResponse<IDesign>>(`designs`, data);
+};

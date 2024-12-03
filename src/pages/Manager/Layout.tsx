@@ -13,6 +13,7 @@ import CollectionsBookmarkRoundedIcon from "@mui/icons-material/CollectionsBookm
 import TopicRoundedIcon from "@mui/icons-material/TopicRounded";
 import LocalOfferRoundedIcon from "@mui/icons-material/LocalOfferRounded";
 import DesignServicesRoundedIcon from "@mui/icons-material/DesignServicesRounded";
+import necklace from "src/assets/necklace.png";
 
 const sidebarList = [
   {
@@ -39,6 +40,11 @@ const sidebarList = [
     text: "Manage Design",
     icon: <DesignServicesRoundedIcon />,
     path: "/manager/design",
+  },
+  {
+    text: "Manage Jewelry",
+    icon: <img src={necklace} width={25} />,
+    path: "/manager/jewelry",
   },
   {
     text: "Topic & Tag",

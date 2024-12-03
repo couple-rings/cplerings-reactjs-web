@@ -16,9 +16,13 @@ import {
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useEffect, useMemo } from "react";
 import { toBase64 } from "src/utils/functions";
-import { fetchDiamondSpecs } from "src/utils/querykey";
-import { useQuery } from "@tanstack/react-query";
+import { fetchDiamonds, fetchDiamondSpecs } from "src/utils/querykey";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getDiamondSpecs } from "src/services/diamondSpec.service";
+import { postUploadFile } from "src/services/file.service";
+import { toast } from "react-toastify";
+import { putUpdateDiamond } from "src/services/diamond.service";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 interface IFormInput {
   giaReportNumber: string;
@@ -31,15 +35,48 @@ const specFilter = {
   pageSize: 100,
 };
 
-function UpdateModal(props: IDiamondModalProps) {
-  const { open, setOpen, giaReportNumber, diamondSpecId, resetSelected } =
-    props;
+function UpdateModal(props: IUpdateDiamondModalProps) {
+  const { open, setOpen, resetSelected, selected, filterObj } = props;
+
+  const queryClient = useQueryClient();
 
   const { data: specResponse } = useQuery({
     queryKey: [fetchDiamondSpecs, specFilter],
 
     queryFn: () => {
       return getDiamondSpecs(specFilter);
+    },
+  });
+
+  const uploadMutation = useMutation({
+    mutationFn: (base64: string) => {
+      return postUploadFile(base64);
+    },
+    onSuccess: (response) => {
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: { id: number; payload: IUpdateDiamondRequest }) => {
+      return putUpdateDiamond(data.id, data.payload);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        toast.success("Cập nhật thành công");
+
+        queryClient.invalidateQueries({
+          queryKey: [fetchDiamonds, filterObj],
+        });
+
+        handleClose();
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
     },
   });
 
@@ -52,15 +89,32 @@ function UpdateModal(props: IDiamondModalProps) {
   } = useForm<IFormInput>({
     defaultValues: useMemo(() => {
       return {
-        giaReportNumber,
-        diamondSpecId,
+        giaReportNumber: selected.giaReportNumber,
+        diamondSpecId: selected.diamondSpecification.id,
       };
-    }, [diamondSpecId, giaReportNumber]),
+    }, [selected]),
   });
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    if (data.giaDocument) console.log(await toBase64(data.giaDocument));
-    console.log(data);
+    let documentId = selected.giaDocument.id;
+
+    if (data.giaDocument) {
+      const base64 = await toBase64(data.giaDocument);
+      const uploadRes = await uploadMutation.mutateAsync(base64);
+
+      if (uploadRes.data) {
+        documentId = uploadRes.data.id;
+      }
+    }
+
+    updateMutation.mutate({
+      id: selected.id,
+      payload: {
+        diamondSpecificationId: data.diamondSpecId,
+        giaDocumentId: documentId,
+        giaReportNumber: data.giaReportNumber,
+      },
+    });
   };
 
   const handleClose = (
@@ -74,12 +128,12 @@ function UpdateModal(props: IDiamondModalProps) {
 
   useEffect(() => {
     reset({
-      giaReportNumber,
-      diamondSpecId,
+      giaReportNumber: selected.giaReportNumber,
+      diamondSpecId: selected.diamondSpecification.id,
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [giaReportNumber, diamondSpecId]);
+  }, [selected]);
 
   return (
     <Dialog
@@ -93,6 +147,7 @@ function UpdateModal(props: IDiamondModalProps) {
       onSubmit={handleSubmit(onSubmit)}
     >
       <DialogTitle>Update Diamond</DialogTitle>
+
       <DialogContent>
         <Grid container mb={3} justifyContent={"space-between"}>
           <Grid item xs={5.5} mb={1}>
@@ -169,13 +224,18 @@ function UpdateModal(props: IDiamondModalProps) {
           </Grid>
         </Grid>
       </DialogContent>
+
       <DialogActions>
         <Button variant="outlined" onClick={handleClose}>
           Close
         </Button>
-        <Button variant="contained" type="submit">
+        <LoadingButton
+          loading={uploadMutation.isPending || updateMutation.isPending}
+          variant="contained"
+          type="submit"
+        >
           Confirm
-        </Button>
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );

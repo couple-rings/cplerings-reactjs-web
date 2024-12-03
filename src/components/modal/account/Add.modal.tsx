@@ -20,7 +20,8 @@ import { emailPattern, passwordPattern } from "src/utils/constants";
 import { useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { UserRole } from "src/utils/enums";
+import { StaffPosition, UserRole } from "src/utils/enums";
+import { capitalizeFirstLetter } from "src/utils/functions";
 
 interface IFormInput {
   email: string;
@@ -28,6 +29,7 @@ interface IFormInput {
   role: UserRole;
   password: string;
   cfnPassword: string;
+  staffPosition: StaffPosition;
 }
 
 function AddModal(props: IModalProps) {
@@ -41,12 +43,15 @@ function AddModal(props: IModalProps) {
     register,
     getValues,
     control,
+    watch,
     formState: { errors },
     handleSubmit,
   } = useForm<IFormInput>();
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     console.log(data);
   };
+
+  const role = watch("role");
 
   const handleClose = (
     event?: object,
@@ -114,40 +119,77 @@ function AddModal(props: IModalProps) {
           </Grid>
         </Grid>
 
-        <Grid container item xs={5.5} mt={3}>
-          <FormControl variant="standard" fullWidth>
-            <InputLabel error={!!errors.role}>Role</InputLabel>
-            <Controller
-              defaultValue={UserRole.Default}
-              name="role"
-              rules={{ required: "* Must select role" }}
-              control={control}
-              render={({ field }) => (
-                <Select {...field} error={!!errors.role}>
-                  <MenuItem value={""} disabled>
-                    <em>Select role</em>
-                  </MenuItem>
-                  {[
-                    UserRole.Admin,
-                    UserRole.Customer,
-                    UserRole.Jeweler,
-                    UserRole.Manager,
-                    UserRole.Staff,
-                    UserRole.Transporter,
-                  ].map((role) => {
-                    return (
-                      <MenuItem value={role} key={role}>
-                        {role.toLowerCase()}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
+        <Grid container justifyContent={"space-between"}>
+          <Grid container item xs={5.5} mt={3}>
+            <FormControl variant="standard" fullWidth>
+              <InputLabel error={!!errors.role}>Role</InputLabel>
+              <Controller
+                defaultValue={UserRole.Default}
+                name="role"
+                rules={{ required: "* Must select role" }}
+                control={control}
+                render={({ field }) => (
+                  <Select {...field} error={!!errors.role}>
+                    <MenuItem value={""} disabled>
+                      <em>Select role</em>
+                    </MenuItem>
+                    {[
+                      UserRole.Admin,
+                      UserRole.Customer,
+                      UserRole.Jeweler,
+                      UserRole.Manager,
+                      UserRole.Staff,
+                      UserRole.Transporter,
+                    ].map((role) => {
+                      return (
+                        <MenuItem value={role} key={role}>
+                          {capitalizeFirstLetter(role.toLowerCase())}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                )}
+              />
+              {errors.role && (
+                <FormHelperText error>{errors.role.message}</FormHelperText>
               )}
-            />
-            {errors.role && (
-              <FormHelperText error>{errors.role.message}</FormHelperText>
-            )}
-          </FormControl>
+            </FormControl>
+          </Grid>
+
+          {role === UserRole.Staff && (
+            <Grid container item xs={5.5} mt={3}>
+              <FormControl variant="standard" fullWidth>
+                <InputLabel error={!!errors.staffPosition}>Position</InputLabel>
+                <Controller
+                  defaultValue={StaffPosition.Default}
+                  name="staffPosition"
+                  rules={{ required: "* Must select staff position" }}
+                  control={control}
+                  render={({ field }) => (
+                    <Select {...field} error={!!errors.staffPosition}>
+                      <MenuItem value={""} disabled>
+                        <em>Select position</em>
+                      </MenuItem>
+                      {[StaffPosition.Sales, StaffPosition.Designer].map(
+                        (position) => {
+                          return (
+                            <MenuItem value={position} key={position}>
+                              {capitalizeFirstLetter(position.toLowerCase())}
+                            </MenuItem>
+                          );
+                        }
+                      )}
+                    </Select>
+                  )}
+                />
+                {errors.staffPosition && (
+                  <FormHelperText error>
+                    {errors.staffPosition.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+          )}
         </Grid>
 
         <FormControl variant="standard" fullWidth sx={{ mt: 3 }}>

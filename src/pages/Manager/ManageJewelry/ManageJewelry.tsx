@@ -1,32 +1,31 @@
-import styles from "./ManageDiamond.module.scss";
+import { Button, Chip, Grid, Link } from "@mui/material";
+import styles from "./ManageJewelry.module.scss";
+import { primaryBtn } from "src/utils/styles";
 import {
   DataGrid,
+  getGridStringOperators,
   GridActionsCellItem,
   GridColDef,
   GridFilterModel,
   GridPaginationModel,
   GridSortModel,
-  getGridStringOperators,
 } from "@mui/x-data-grid";
 import { useEffect, useMemo, useState } from "react";
-import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
-import { Button, Grid, Link } from "@mui/material";
-import { primaryBtn } from "src/utils/styles";
 import FileDownloadSharpIcon from "@mui/icons-material/FileDownloadSharp";
-import UpdateModal from "src/components/modal/diamond/Update.modal";
-import AddModal from "src/components/modal/diamond/Add.modal";
+import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import DeleteModal from "src/components/modal/diamond/Delete.modal";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import AddModal from "src/components/modal/jewelryItem/Add.modal";
 import { pageSize } from "src/utils/constants";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAppSelector } from "src/utils/hooks";
-import { fetchDiamonds } from "src/utils/querykey";
-import { getDiamonds } from "src/services/diamond.service";
+import { fetchJewelries } from "src/utils/querykey";
+import { getJewelries } from "src/services/jewelry.service";
+import { formatJewelryStatus } from "src/utils/functions";
 
-interface Row extends IDiamond {}
+interface Row extends IJewelry {}
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
-  ["contains", "equals" /* add more over time */].includes(value)
+  ["contains" /* add more over time */].includes(value)
 );
 
 const initMetaData = {
@@ -36,54 +35,21 @@ const initMetaData = {
   count: 0,
 };
 
-const initSelected: IDiamond = {
-  id: 0,
-  giaReportNumber: "",
-  giaDocument: {
-    id: 0,
-    url: "",
-  },
-  branch: {
-    id: 0,
-    address: "",
-    phone: "",
-    storeName: "",
-    coverImage: {
-      id: 0,
-      url: "",
-    },
-  },
-  diamondSpecification: {
-    id: 0,
-    clarity: "",
-    color: "",
-    name: "",
-    price: 0,
-    shape: "",
-    weight: 0,
-    createdAt: "",
-  },
-  createdAt: "",
-};
-
-function ManageDiamond() {
-  const [openUpdate, setOpenUpdate] = useState(false);
+function ManageJewelry() {
   const [openAdd, setOpenAdd] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
-  const [selected, setSelected] = useState(initSelected);
 
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
-  const [filterObj, setFilterObj] = useState<IDiamondFilter | null>(null);
+  const [filterObj, setFilterObj] = useState<IJewelryFilter | null>(null);
 
   const queryClient = useQueryClient();
 
   const { branchId } = useAppSelector((state) => state.auth.userInfo);
 
   const { data: response, isLoading } = useQuery({
-    queryKey: [fetchDiamonds, filterObj],
+    queryKey: [fetchJewelries, filterObj],
 
     queryFn: () => {
-      if (filterObj) return getDiamonds(filterObj);
+      if (filterObj) return getJewelries(filterObj);
     },
     enabled: !!filterObj,
   });
@@ -91,73 +57,83 @@ function ManageDiamond() {
   const columns: GridColDef<Row>[] = useMemo(
     () => [
       {
-        field: "giaReportNumber",
-        headerName: "GIA Report No",
-        width: 250,
+        field: "productNo",
+        headerName: "Product No",
+        width: 200,
         headerAlign: "center",
         align: "center",
         filterOperators,
         sortable: false,
       },
       {
-        field: "shape",
-        headerName: "Shape",
-        width: 150,
+        field: "jewelryCategory",
+        headerName: "Category",
+        width: 200,
         headerAlign: "center",
         align: "center",
         filterOperators,
         sortable: false,
-        renderCell: ({ row }) => <div>{row.diamondSpecification.shape}</div>,
+        renderCell: ({ row }) => <div>{row.design.jewelryCategory.name}</div>,
       },
       {
-        field: "weight",
-        headerName: "Carat Weight",
-        width: 120,
-        headerAlign: "center",
-        align: "center",
-        filterable: false,
-        renderCell: ({ row }) => <div>{row.diamondSpecification.weight}</div>,
-      },
-      {
-        field: "color",
-        headerName: "Color",
-        width: 120,
+        field: "design",
+        headerName: "Design",
+        width: 200,
         headerAlign: "center",
         align: "center",
         filterOperators,
         sortable: false,
-        renderCell: ({ row }) => <div>{row.diamondSpecification.color}</div>,
+        renderCell: ({ row }) => <div>{row.design.name}</div>,
       },
       {
-        field: "clarity",
-        headerName: "Clarity",
-        width: 120,
+        field: "metalSpec",
+        headerName: "Material",
+        width: 200,
         headerAlign: "center",
         align: "center",
         filterOperators,
         sortable: false,
-        renderCell: ({ row }) => <div>{row.diamondSpecification.clarity}</div>,
+        renderCell: ({ row }) => <div>{row.metalSpecification.name}</div>,
       },
       {
-        field: "giaDocument",
-        headerName: "GIA Document",
-        width: 150,
+        field: "maintenanceDocument",
+        headerName: "Warranty Document",
+        width: 200,
         headerAlign: "center",
         align: "center",
         filterable: false,
         sortable: false,
         disableColumnMenu: true,
+        renderCell: ({ row }) => {
+          if (row.maintenanceDocument)
+            return (
+              <Link
+                py={3}
+                alignItems={"center"}
+                display={"flex"}
+                gap={1}
+                sx={{ textDecoration: "none" }}
+              >
+                <FileDownloadSharpIcon fontSize="small" /> <span>Download</span>
+              </Link>
+            );
+          else return <div>N/A</div>;
+        },
+      },
+      {
+        field: "status",
+        headerName: "Status",
+        width: 150,
+        headerAlign: "center",
+        align: "center",
+        filterOperators,
+        sortable: false,
         renderCell: ({ row }) => (
-          <Link
-            href={row.giaDocument.url}
-            py={3}
-            alignItems={"center"}
-            display={"flex"}
-            gap={1}
-            sx={{ textDecoration: "none" }}
-          >
-            <FileDownloadSharpIcon fontSize="small" /> <span>Download</span>
-          </Link>
+          <Chip
+            sx={{ my: 3 }}
+            label={formatJewelryStatus(row.status).text}
+            color={formatJewelryStatus(row.status).color}
+          />
         ),
       },
       {
@@ -172,16 +148,18 @@ function ManageDiamond() {
             icon={<DeleteRoundedIcon color="action" />}
             label="Delete"
             onClick={() => {
-              setOpenDelete(true);
-              setSelected(row);
+              // setOpenDelete(true);
+              // setSelected(row);
+              console.log(row);
             }}
           />,
           <GridActionsCellItem
             icon={<BorderColorSharpIcon color="action" />}
             label="Update"
             onClick={() => {
-              setOpenUpdate(true);
-              setSelected(row);
+              // setOpenUpdate(true);
+              // setSelected(row);
+              console.log(row);
             }}
           />,
         ],
@@ -189,10 +167,6 @@ function ManageDiamond() {
     ],
     []
   );
-
-  const resetSelected = () => {
-    setSelected(initSelected);
-  };
 
   const handleChangePage = (model: GridPaginationModel) => {
     // model.page is the page to fetch and starts at 0
@@ -204,16 +178,7 @@ function ManageDiamond() {
   };
 
   const handleFilter = (model: GridFilterModel) => {
-    if (model.items.length > 0) {
-      const field = model.items[0].field;
-      const value = model.items[0].value;
-
-      if (filterObj)
-        setFilterObj({
-          ...filterObj,
-          [`${field}`]: value,
-        });
-    }
+    console.log(model);
   };
 
   const handleSort = (model: GridSortModel) => {
@@ -222,7 +187,7 @@ function ManageDiamond() {
 
   useEffect(() => {
     queryClient.invalidateQueries({
-      queryKey: [fetchDiamonds, filterObj],
+      queryKey: [fetchJewelries, filterObj],
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -249,7 +214,7 @@ function ManageDiamond() {
   return (
     <div className={styles.container}>
       <Grid container justifyContent={"space-between"} alignItems={"center"}>
-        <div className={styles.title}>Diamonds</div>
+        <div className={styles.title}>Jewelry</div>
 
         <Button
           variant="contained"
@@ -280,24 +245,11 @@ function ManageDiamond() {
         rowCount={metaData.count}
       />
 
-      <AddModal
-        open={openAdd}
-        setOpen={setOpenAdd}
-        filterObj={filterObj as IDiamondFilter}
-      />
-
       {filterObj && (
-        <UpdateModal
-          open={openUpdate}
-          setOpen={setOpenUpdate}
-          selected={selected}
-          filterObj={filterObj}
-          resetSelected={resetSelected}
-        />
+        <AddModal open={openAdd} setOpen={setOpenAdd} filterObj={filterObj} />
       )}
-      <DeleteModal open={openDelete} setOpen={setOpenDelete} />
     </div>
   );
 }
 
-export default ManageDiamond;
+export default ManageJewelry;

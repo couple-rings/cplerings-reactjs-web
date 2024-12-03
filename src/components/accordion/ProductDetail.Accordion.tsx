@@ -82,41 +82,43 @@ function ProductDetailAccordion(props: IProductDetailAccordionProps) {
             </Grid>
           </Box>
 
-          <Box sx={{ mb: 2 }}>
-            <div className={styles.title}>Kim Cương Chính</div>
-            <Divider sx={{ backgroundColor: "#ccc", my: 2 }} />
+          {!category && (
+            <Box sx={{ mb: 2 }}>
+              <div className={styles.title}>Kim Cương Chính</div>
+              <Divider sx={{ backgroundColor: "#ccc", my: 2 }} />
 
-            <Grid container className={styles.section}>
-              <Grid item xs={4} className={styles.label}>
-                <div>Khối lượng</div>
-                <div>Hình dáng</div>
-                <div>Màu sắc</div>
-                <div>Độ tinh khiết</div>
+              <Grid container className={styles.section}>
+                <Grid item xs={4} className={styles.label}>
+                  <div>Khối lượng</div>
+                  <div>Hình dáng</div>
+                  <div>Màu sắc</div>
+                  <div>Độ tinh khiết</div>
+                </Grid>
+                <Grid item xs={8} className={styles.content}>
+                  <div>
+                    {maleDetail &&
+                      femaleDetail &&
+                      `Nam: ${maleDetail.diamondSpec.weight} / Nữ: ${femaleDetail.diamondSpec.weight}`}
+                  </div>
+                  <div>
+                    {maleDetail &&
+                      femaleDetail &&
+                      `Nam: ${maleDetail.diamondSpec.shape} / Nữ: ${femaleDetail.diamondSpec.shape}`}
+                  </div>
+                  <div>
+                    {maleDetail &&
+                      femaleDetail &&
+                      `Nam: ${maleDetail.diamondSpec.color} / Nữ: ${femaleDetail.diamondSpec.color}`}
+                  </div>
+                  <div>
+                    {maleDetail &&
+                      femaleDetail &&
+                      `Nam: ${maleDetail.diamondSpec.clarity} / Nữ: ${femaleDetail.diamondSpec.clarity}`}
+                  </div>
+                </Grid>
               </Grid>
-              <Grid item xs={8} className={styles.content}>
-                <div>
-                  {maleDetail &&
-                    femaleDetail &&
-                    `Nam: ${maleDetail.diamondSpec.weight} / Nữ: ${femaleDetail.diamondSpec.weight}`}
-                </div>
-                <div>
-                  {maleDetail &&
-                    femaleDetail &&
-                    `Nam: ${maleDetail.diamondSpec.shape} / Nữ: ${femaleDetail.diamondSpec.shape}`}
-                </div>
-                <div>
-                  {maleDetail &&
-                    femaleDetail &&
-                    `Nam: ${maleDetail.diamondSpec.color} / Nữ: ${femaleDetail.diamondSpec.color}`}
-                </div>
-                <div>
-                  {maleDetail &&
-                    femaleDetail &&
-                    `Nam: ${maleDetail.diamondSpec.clarity} / Nữ: ${femaleDetail.diamondSpec.clarity}`}
-                </div>
-              </Grid>
-            </Grid>
-          </Box>
+            </Box>
+          )}
 
           <Box sx={{ mb: 2 }}>
             <div className={styles.title}>Kim Cương Phụ</div>

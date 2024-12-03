@@ -123,6 +123,8 @@ declare global {
     pricePerUnit: number;
 
     color: GoldColor;
+
+    createdAt: string;
   }
 
   interface IDiamondSpec {
@@ -139,6 +141,8 @@ declare global {
     shape: string;
 
     price: number;
+
+    createdAt: string;
   }
 
   interface ICollection {
@@ -161,6 +165,8 @@ declare global {
     blueprint: {
       url: string;
     };
+
+    jewelryCategory: IJewelryCategory;
 
     characteristic: DesignCharacteristic;
 
@@ -185,6 +191,10 @@ declare global {
     }[];
 
     designCollection: ICollection;
+
+    createdAt: string;
+
+    state: Status;
   }
 
   interface ICoupleDesign {
@@ -487,5 +497,37 @@ declare global {
     id: number;
     status: T;
     createdAt: string;
+  }
+
+  interface ICartItem {
+    id: string;
+
+    design: Omit<IDesign, "designDiamondSpecifications">;
+
+    metalSpec: {
+      id: number;
+
+      metalSpecification: IMetalSpec;
+
+      image: {
+        url: string;
+      };
+    };
+
+    branch: IBranch;
+  }
+
+  interface IJewelry {
+    id: number;
+    metalSpecification: IMetalSpec;
+    design: IDesign;
+    branch: IBranch;
+    purchaseDate: string;
+    status: JewelryStatus;
+    maintenanceDocument: {
+      id: number;
+      url: string;
+      createdAt: string;
+    };
   }
 }

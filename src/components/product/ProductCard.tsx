@@ -19,8 +19,7 @@ const ProductCard = (props: IProductCardProps) => {
   };
 
   const handleNavigate = () => {
-    if (type === ProductType.Jewelry)
-      navigate(`/jewelry/detail`, { state: { id } });
+    if (type === ProductType.Jewelry) navigate(`/jewelry/detail/${id}`);
     if (type === ProductType.Ring) {
       const maleDesign = data?.designs.find(
         (item) => item.characteristic === DesignCharacteristic.Male

@@ -10,10 +10,19 @@ import styles from "./Jewelry.module.scss";
 import jewelry from "src/assets/jewelryheader.png";
 import { useNavigate } from "react-router-dom";
 import HoverMenu from "src/components/menu/HoverMenu";
-import { HoverMenuPurpose, ProductType } from "src/utils/enums";
-import jewelryDesign from "src/assets/sampledata/sampleJewelry.png";
+import {
+  DesignCharacteristic,
+  DesignStatus,
+  HoverMenuPurpose,
+  ProductType,
+} from "src/utils/enums";
 import ProductCard from "src/components/product/ProductCard";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { pageSize } from "src/utils/constants";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchDesigns } from "src/utils/querykey";
+import { getDesigns } from "src/services/design.service";
+import LoadingProduct from "src/components/product/LoadingProduct";
 
 const collections = [
   "DR Heart",
@@ -38,42 +47,66 @@ const prices = [
   "Trên 50 Triệu",
 ];
 
-const characteristics = ["Trang Sức Nam", "Trang Sức Nữ"];
-
 const categories = ["Dây Chuyền", "Vòng Tay"];
 
 const sorts = ["Mới nhất", "Giá - Thấp đến Cao", "Giá - Cao đến Thấp"];
 
-const designs = [
-  {
-    coverImg: jewelryDesign,
-    name: "CR HEART Pulsating Two-tone Halo Pavé Bypass Necklace",
-    price: 120000000,
-  },
-  {
-    coverImg: jewelryDesign,
-    name: "CR HEART Pulsating Two-tone Halo Pavé Bypass Necklace",
-    price: 120000000,
-  },
-  {
-    coverImg: jewelryDesign,
-    name: "CR HEART Pulsating Two-tone Halo Pavé Bypass Necklace",
-    price: 120000000,
-  },
-  {
-    coverImg: jewelryDesign,
-    name: "CR HEART Pulsating Two-tone Halo Pavé Bypass Necklace",
-    price: 120000000,
-  },
-];
+const initFilter: IDesignFilter = {
+  page: 0,
+  pageSize: pageSize,
+  status: DesignStatus.Available,
+};
+
+const initMetaData = {
+  page: 0,
+  pageSize,
+  totalPages: 0,
+  count: 0,
+};
 
 function Jewelry() {
-  const [page, setPage] = useState(1);
-  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
-  };
+  const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
+  const [filterObj, setFilterObj] = useState<IDesignFilter>(initFilter);
 
   const navigate = useNavigate();
+  const ref = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
+
+  const { data: response, isLoading } = useQuery({
+    queryKey: [fetchDesigns, filterObj],
+    queryFn: () => {
+      return getDesigns(filterObj);
+    },
+  });
+
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setFilterObj({
+      ...filterObj,
+      page: value - 1,
+    });
+  };
+
+  useEffect(() => {
+    if (response && response.data) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { items, ...rest } = response.data;
+      setMetaData(rest);
+
+      window.scrollTo({
+        top: ref.current?.offsetTop,
+        left: 0,
+        behavior: "smooth",
+      });
+    }
+  }, [response]);
+
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: [fetchDesigns, filterObj],
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterObj]);
 
   return (
     <div className={styles.container}>
@@ -95,7 +128,7 @@ function Jewelry() {
         </Grid>
       </div>
 
-      <Grid container item xs={10}>
+      <Grid container item xs={10} ref={ref}>
         <Breadcrumbs sx={{ mb: 2 }}>
           <Link
             sx={{ cursor: "pointer" }}
@@ -131,7 +164,7 @@ function Jewelry() {
             <HoverMenu
               purpose={HoverMenuPurpose.Filter}
               title="Giới Tính"
-              lists={characteristics}
+              lists={[DesignCharacteristic.Female, DesignCharacteristic.Male]}
             />
             <HoverMenu
               purpose={HoverMenuPurpose.Filter}
@@ -154,20 +187,43 @@ function Jewelry() {
       {/* Filter - Sort bar End */}
 
       <Grid container item xs={10} spacing={3} className={styles.list}>
-        {designs.map((item, index) => {
-          return (
+        {isLoading &&
+          new Array(8).fill(0).map((item, index) => (
             <Grid item sm={6} md={4} lg={3} key={index}>
-              <ProductCard
-                product={{ ...item, type: ProductType.Jewelry, id: 1 }}
-              />
+              <LoadingProduct />
             </Grid>
-          );
-        })}
+          ))}
+
+        {response &&
+          response.data &&
+          response.data.items.length > 0 &&
+          response.data.items.map((item) => {
+            const product: IProduct = {
+              id: item.id,
+              coverImg: item.designMetalSpecifications[0].image.url,
+              name: item.name,
+              price: 10000000,
+              type: ProductType.Jewelry,
+            };
+            return (
+              <Grid item sm={6} md={4} lg={3} key={item.id}>
+                <ProductCard product={product} />
+              </Grid>
+            );
+          })}
       </Grid>
 
-      <div>
-        <Pagination count={10} page={page} onChange={handleChange} />
-      </div>
+      {response && response.data && response.data.items.length > 0 && (
+        <Pagination
+          count={metaData.totalPages}
+          page={metaData.page + 1}
+          onChange={handleChange}
+        />
+      )}
+
+      {response && response.data && response.data.items.length === 0 && (
+        <div className={styles.empty}>Không tìm thấy sản phẩm nào...</div>
+      )}
     </div>
   );
 }
