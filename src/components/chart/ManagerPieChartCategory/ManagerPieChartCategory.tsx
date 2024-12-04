@@ -1,11 +1,14 @@
 import { PieChart } from "@mui/x-charts/PieChart";
 import { mobileOS } from "./webUsageStats";
 import styles from "./ManagerPieChartCategory.module.scss";
+import { useNavigate } from "react-router-dom";
 
 function ManagerPieChartCategory() {
+  const navigate = useNavigate();
   return (
     <>
       <div className={styles.container}>
+        <div className="title" style={{fontSize:"30px"}} onClick={() => navigate('/manager/product')}>Thể loại</div>
         <PieChart
           sx={{ marginLeft: "100px" }}
           series={[

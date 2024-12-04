@@ -88,6 +88,7 @@ import RefundCreateForm from "src/pages/Staff/RefundCreateForm/RefundCreateForm"
 import ManagerFiancePage from "src/pages/Manager/ManagerFinancePage/ManagerFinancePage";
 import RequestCrafting from "src/pages/Customer/RequestCrafting/RequestCrafting";
 import ManageJewelry from "src/pages/Manager/ManageJewelry/ManageJewelry";
+import ManagerProductPage from "src/pages/Manager/ManagerProductPage/ManagerProductPage";
 
 const router = createBrowserRouter([
   {
@@ -439,6 +440,10 @@ const router = createBrowserRouter([
       {
         path: "financial",
         element: <ManagerFiancePage />,
+      },
+      {
+        path: "product",
+        element: <ManagerProductPage />,
       },
     ],
   },
