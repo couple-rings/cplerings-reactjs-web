@@ -5,6 +5,7 @@ import {
   companyEmail,
   companyPhone,
 } from "src/utils/constants";
+import { useNavigate } from "react-router-dom";
 
 const columnItems1 = [
   {
@@ -55,11 +56,11 @@ const columnItems3 = [
   },
   {
     text: "Thỏa Thuận Tình Yêu",
-    path: "",
+    path: "/love-agreement",
   },
   {
     text: "Tìm Cửa Hàng",
-    path: "",
+    path: "/stores",
   },
   {
     text: "Gửi Email",
@@ -70,11 +71,11 @@ const columnItems3 = [
 const columnItems4 = [
   {
     text: "Nhẫn Cưới",
-    path: "",
+    path: "/wedding-rings",
   },
   {
     text: "Trang Sức",
-    path: "",
+    path: "/jewelry",
   },
 ];
 
@@ -88,6 +89,8 @@ const columnItems5 = [
 ];
 
 const LowerPart = () => {
+  const navigate = useNavigate();
+
   return (
     <div className={styles.lower}>
       <Grid container className={styles.columnContainer}>
@@ -117,7 +120,11 @@ const LowerPart = () => {
           <div className={styles.title}>Về Couple Rings</div>
           {columnItems3.map((item, index) => {
             return (
-              <div key={index} className={styles.item}>
+              <div
+                key={index}
+                className={styles.item}
+                onClick={() => navigate(item.path)}
+              >
                 {item.text}
               </div>
             );
@@ -128,7 +135,11 @@ const LowerPart = () => {
           <div className={styles.title}>Sản Phẩm</div>
           {columnItems4.map((item, index) => {
             return (
-              <div key={index} className={styles.item}>
+              <div
+                key={index}
+                className={styles.item}
+                onClick={() => navigate(item.path)}
+              >
                 {item.text}
               </div>
             );

@@ -5,6 +5,7 @@ import BranchCard from "src/components/branch/BranchCard";
 import { useQuery } from "@tanstack/react-query";
 import { fetchBranches } from "src/utils/querykey";
 import { getBranches } from "src/services/branch.service";
+import { useScrollTop } from "src/utils/hooks";
 
 const branchFilter: IBranchFilter = {
   page: 0,
@@ -21,6 +22,8 @@ const StoresBranches = () => {
       return getBranches(branchFilter);
     },
   });
+
+  useScrollTop();
 
   if (isLoading)
     return (
@@ -43,7 +46,7 @@ const StoresBranches = () => {
 
   return (
     <div className={styles.container}>
-      <Grid container item xs={10}>
+      <Grid container item xs={11} lg={10}>
         <Breadcrumbs sx={{ mb: 2 }}>
           <Link
             sx={{ cursor: "pointer" }}
@@ -68,7 +71,8 @@ const StoresBranches = () => {
       <Grid
         container
         item
-        xs={10}
+        xs={11}
+        lg={10}
         spacing={3}
         justifyContent={"center"}
         className="list"

@@ -56,6 +56,7 @@ function Invoice() {
   const customer = searchParams.get("vnp_OrderInfo");
   const date = searchParams.get("vnp_PayDate");
 
+  const paymentId = searchParams.get("vnp_TxnRef");
   const bankCode = searchParams.get("vnp_BankCode");
   const cardType = searchParams.get("vnp_CardType");
   const transNo = searchParams.get("vnp_TransactionNo");
@@ -107,13 +108,15 @@ function Invoice() {
       !date ||
       !bankCode ||
       !cardType ||
-      !transNo
+      !transNo ||
+      !paymentId
     )
       navigate("/");
     else if (requestedDesigns.length > 0) {
       mutation.mutate({
         customerId: id,
         designIds: requestedDesigns,
+        paymentId: +paymentId,
       });
       dispatch(removeRequestedDesigns());
     }
@@ -302,7 +305,7 @@ function Invoice() {
               </Grid>
               <Grid container mb={1}>
                 <Grid item xs={4}>
-                  Mã giao dịch:
+                  Mã giao dịch VNPAY:
                 </Grid>
                 <Grid item>{transNo}</Grid>
               </Grid>

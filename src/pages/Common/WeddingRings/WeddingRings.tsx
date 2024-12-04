@@ -10,7 +10,7 @@ import {
 import styles from "./WeddingRings.module.scss";
 import wedding1 from "src/assets/wedding1.png";
 import wedding2 from "src/assets/wedding2.png";
-import { useNavigate } from "react-router-dom";
+import { Location, useLocation, useNavigate } from "react-router-dom";
 import HoverMenu from "src/components/menu/HoverMenu";
 import { DesignStatus, HoverMenuPurpose, ProductType } from "src/utils/enums";
 import ProductCard from "src/components/product/ProductCard";
@@ -18,27 +18,13 @@ import { useEffect, useRef, useState } from "react";
 import WeddingRingsAccordian from "src/components/accordion/WeddingRings.Accordion";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCoupleDesigns } from "src/services/design.service";
-import { pageSize } from "src/utils/constants";
+import { pageSize, prices } from "src/utils/constants";
 import { calculateDefaultPrice } from "src/utils/functions";
 import LoadingProduct from "src/components/product/LoadingProduct";
 import { fetchCoupleDesigns, fetchMetalSpecs } from "src/utils/querykey";
 import { getMetalSpecs } from "src/services/metalSpec.service";
-
-const collections = [
-  "DR Heart",
-  "Believe",
-  "Love Mark",
-  "Eternal Love",
-  "Love Line",
-  "Love Palace",
-];
-
-const prices = [
-  "Dưới 20 Triệu",
-  "20 - 40 Triệu",
-  "40 - 50 Triệu",
-  "Trên 50 Triệu",
-];
+import MetalSpecHoverMenu from "src/components/menu/hover/MetalSpecMenu";
+import CollectionHoverMenu from "src/components/menu/hover/CollectionMenu";
 
 const sorts = ["Mới nhất", "Giá - Thấp đến Cao", "Giá - Cao đến Thấp"];
 
@@ -68,6 +54,11 @@ function WeddingRings() {
   const ref = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 
+  const location: Location<{
+    collectionId?: number;
+    metalSpecificationId?: number;
+  }> = useLocation();
+
   const { data: response, isLoading } = useQuery({
     queryKey: [fetchCoupleDesigns, filterObj],
     queryFn: () => {
@@ -87,13 +78,6 @@ function WeddingRings() {
     setFilterObj({
       ...filterObj,
       page: value - 1,
-    });
-  };
-
-  const handleFilter = (metalSpecId?: number) => {
-    setFilterObj({
-      ...filterObj,
-      metalSpecificationId: metalSpecId,
     });
   };
 
@@ -118,6 +102,22 @@ function WeddingRings() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterObj]);
+
+  useEffect(() => {
+    if (location.state?.collectionId) {
+      setFilterObj((current) => ({
+        ...current,
+        collectionId: location.state.collectionId,
+      }));
+    }
+
+    if (location.state?.metalSpecificationId) {
+      setFilterObj((current) => ({
+        ...current,
+        metalSpecificationId: location.state.metalSpecificationId,
+      }));
+    }
+  }, [location]);
 
   if (!metalSpecResponse?.data)
     return (
@@ -171,23 +171,20 @@ function WeddingRings() {
       <Grid container item xs={10}>
         <Grid container item xs={12} className={styles.filterSortBar}>
           <Grid item lg={7} className={styles.filter}>
-            <HoverMenu
-              purpose={HoverMenuPurpose.Filter}
-              title="Bộ Sưu Tập"
-              lists={collections}
-              handleFilter={handleFilter}
+            <CollectionHoverMenu
+              setCoupleFilterObj={setFilterObj}
+              designCollectionId={location.state?.collectionId ?? undefined}
+              type={ProductType.Ring}
             />
             <HoverMenu
               purpose={HoverMenuPurpose.Filter}
               title="Mức Giá"
               lists={prices}
-              handleFilter={handleFilter}
             />
-            <HoverMenu
-              purpose={HoverMenuPurpose.Filter}
-              title="Loại Vàng"
-              lists={metalSpecResponse.data.items}
-              handleFilter={handleFilter}
+            <MetalSpecHoverMenu
+              setCoupleFilterObj={setFilterObj}
+              metalSpecId={location.state?.metalSpecificationId ?? undefined}
+              type={ProductType.Ring}
             />
           </Grid>
 

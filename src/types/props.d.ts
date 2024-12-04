@@ -3,6 +3,7 @@ import {
   AccountStatus,
   CustomRequestStatus,
   DesignCharacteristic,
+  ProductType,
   StagePercentage,
 } from "src/utils/enums";
 
@@ -68,6 +69,32 @@ declare global {
     lists: string[] | IMetalSpec[];
 
     handleFilter?: (v1?: number) => void;
+  }
+
+  interface IBaseHoverMenuProps {
+    setFilterObj?: React.Dispatch<React.SetStateAction<IDesignFilter>>;
+
+    setCoupleFilterObj?: React.Dispatch<
+      React.SetStateAction<ICoupleDesignFilter>
+    >;
+
+    type?: ProductType;
+  }
+
+  interface ICollectionHoverMenuProps extends IBaseHoverMenuProps {
+    designCollectionId?: number;
+  }
+
+  interface IJewelryCategoryHoverMenuProps extends IBaseHoverMenuProps {
+    categoryId?: number;
+  }
+
+  interface IMetalSpecHoverMenuProps extends IBaseHoverMenuProps {
+    metalSpecId?: number;
+  }
+
+  interface IGenderSpecHoverMenuProps extends IBaseHoverMenuProps {
+    characteristic?: DesignCharacteristic;
   }
 
   interface ISizeMenuProps {
@@ -235,6 +262,14 @@ declare global {
       metalSpec: IMetalSpec;
 
       diamondSpec: IDiamondSpec;
+
+      sideDiamondsCount: number;
+
+      metalWeight: number;
+    };
+
+    jewelryDetail?: {
+      metalSpec: IMetalSpec;
 
       sideDiamondsCount: number;
 
@@ -476,5 +511,17 @@ declare global {
 
   interface IAddJewelryModalProps extends IModalProps {
     filterObj: IJewelryFilter;
+  }
+
+  interface IBagItemProps {
+    data: ICartItem;
+
+    checkedItem: string[];
+
+    setCheckedItem: (v: string[]) => void;
+  }
+
+  interface ICheckoutCardProps {
+    data: ICartItem;
   }
 }

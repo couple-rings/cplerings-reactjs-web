@@ -89,6 +89,7 @@ declare global {
   interface ICreateCRRequest {
     customerId: number;
     designIds: number[];
+    paymentId: number;
   }
 
   interface IUpdateCRRequest {

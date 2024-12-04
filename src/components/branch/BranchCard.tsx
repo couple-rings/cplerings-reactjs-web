@@ -1,6 +1,7 @@
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
-import { Button } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import styles from "./BranchCard.module.scss";
+import { primaryBtn } from "src/utils/styles";
 
 const BranchCard = (props: IBranchCardProps) => {
   const { data } = props;
@@ -13,10 +14,14 @@ const BranchCard = (props: IBranchCardProps) => {
         <div className={styles.content}>
           <p className={styles.branchName}>{storeName}</p>
           <p className={styles.adr}>{address}</p>
-          <p className={styles.contact}>
+          <div className={styles.contact}>
             <LocalPhoneIcon sx={{ fontSize: 20, color: "gray" }} /> {phone}
-          </p>
-          <Button>Liên hệ với chúng tôi</Button>
+          </div>
+          <Grid container justifyContent={"center"} px={2}>
+            <Button variant="contained" sx={primaryBtn} fullWidth>
+              Liên hệ với chúng tôi
+            </Button>
+          </Grid>
         </div>
       </div>
     </div>

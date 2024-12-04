@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import styles from "./Jewelry.module.scss";
 import jewelry from "src/assets/jewelryheader.png";
-import { useNavigate } from "react-router-dom";
+import { Location, useLocation, useNavigate } from "react-router-dom";
 import HoverMenu from "src/components/menu/HoverMenu";
 import {
   DesignCharacteristic,
@@ -23,22 +23,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchDesigns } from "src/utils/querykey";
 import { getDesigns } from "src/services/design.service";
 import LoadingProduct from "src/components/product/LoadingProduct";
-
-const collections = [
-  "DR Heart",
-  "Believe",
-  "Love Mark",
-  "Eternal Love",
-  "Love Line",
-  "Love Palace",
-];
-
-const metals = [
-  "Vàng Trắng 14K",
-  "Vàng Trắng 18K",
-  "Vàng Thường 18K",
-  "Vàng Hồng 18K",
-];
+import CollectionHoverMenu from "src/components/menu/hover/CollectionMenu";
+import JewelryCategoryHoverMenu from "src/components/menu/hover/JewelryCategoryMenu";
+import MetalSpecHoverMenu from "src/components/menu/hover/MetalSpecMenu";
+import GenderHoverMenu from "src/components/menu/hover/GenderMenu";
 
 const prices = [
   "Dưới 20 Triệu",
@@ -46,8 +34,6 @@ const prices = [
   "40 - 50 Triệu",
   "Trên 50 Triệu",
 ];
-
-const categories = ["Dây Chuyền", "Vòng Tay"];
 
 const sorts = ["Mới nhất", "Giá - Thấp đến Cao", "Giá - Cao đến Thấp"];
 
@@ -71,6 +57,13 @@ function Jewelry() {
   const navigate = useNavigate();
   const ref = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
+
+  const location: Location<{
+    categoryId?: number;
+    designCollectionId?: number;
+    characteristic?: DesignCharacteristic;
+    metalSpecId?: number;
+  }> = useLocation();
 
   const { data: response, isLoading } = useQuery({
     queryKey: [fetchDesigns, filterObj],
@@ -107,6 +100,36 @@ function Jewelry() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterObj]);
+
+  useEffect(() => {
+    if (location.state?.categoryId) {
+      setFilterObj((current) => ({
+        ...current,
+        categoryId: location.state.categoryId,
+      }));
+    }
+
+    if (location.state?.designCollectionId) {
+      setFilterObj((current) => ({
+        ...current,
+        designCollectionId: location.state.designCollectionId,
+      }));
+    }
+
+    if (location.state?.characteristic) {
+      setFilterObj((current) => ({
+        ...current,
+        characteristic: location.state.characteristic,
+      }));
+    }
+
+    if (location.state?.metalSpecId) {
+      setFilterObj((current) => ({
+        ...current,
+        metalSpecId: location.state.metalSpecId,
+      }));
+    }
+  }, [location]);
 
   return (
     <div className={styles.container}>
@@ -145,35 +168,35 @@ function Jewelry() {
       {/* Filter - Sort bar Start */}
       <Grid container item xs={11} md={10}>
         <Grid container item xs={12} className={styles.filterSortBar}>
-          <Grid item lg={9} className={styles.filter}>
-            <HoverMenu
-              purpose={HoverMenuPurpose.Filter}
-              title="Bộ Sưu Tập"
-              lists={collections}
+          <Grid container item lg={9} className={styles.filter}>
+            <CollectionHoverMenu
+              setFilterObj={setFilterObj}
+              designCollectionId={
+                location.state?.designCollectionId ?? undefined
+              }
+              type={ProductType.Jewelry}
             />
-            <HoverMenu
-              purpose={HoverMenuPurpose.Filter}
-              title="Loại Trang Sức"
-              lists={categories}
+            <JewelryCategoryHoverMenu
+              setFilterObj={setFilterObj}
+              categoryId={location.state?.categoryId ?? undefined}
             />
             <HoverMenu
               purpose={HoverMenuPurpose.Filter}
               title="Mức Giá"
               lists={prices}
             />
-            <HoverMenu
-              purpose={HoverMenuPurpose.Filter}
-              title="Giới Tính"
-              lists={[DesignCharacteristic.Female, DesignCharacteristic.Male]}
+            <GenderHoverMenu
+              setFilterObj={setFilterObj}
+              characteristic={location.state?.characteristic ?? undefined}
             />
-            <HoverMenu
-              purpose={HoverMenuPurpose.Filter}
-              title="Loại Vàng"
-              lists={metals}
+            <MetalSpecHoverMenu
+              setFilterObj={setFilterObj}
+              metalSpecId={location.state?.metalSpecId ?? undefined}
+              type={ProductType.Jewelry}
             />
           </Grid>
 
-          <Grid item>
+          <Grid item mt={{ xs: 3, lg: 0 }}>
             <HoverMenu
               purpose={HoverMenuPurpose.Sort}
               title="Sắp Xếp"

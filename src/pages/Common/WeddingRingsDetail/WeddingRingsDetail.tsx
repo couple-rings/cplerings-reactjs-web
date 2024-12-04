@@ -236,6 +236,12 @@ function WeddingRingsDetail() {
       setSecondMetal(secondMetal);
       setSecondDiamond(secondDiamond.diamondSpecification);
     }
+
+    if (maleResponse?.errors || femaleResponse?.errors) {
+      navigate("/wedding-rings");
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maleResponse, femaleResponse]);
 
   // calculate price

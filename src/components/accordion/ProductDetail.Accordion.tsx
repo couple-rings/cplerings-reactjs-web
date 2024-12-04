@@ -16,7 +16,8 @@ import PinterestIcon from "@mui/icons-material/Pinterest";
 import { meleeDiamondCarat } from "src/utils/constants";
 
 function ProductDetailAccordion(props: IProductDetailAccordionProps) {
-  const { collectionName, category, maleDetail, femaleDetail } = props;
+  const { collectionName, category, maleDetail, femaleDetail, jewelryDetail } =
+    props;
 
   return (
     <div className={styles.container}>
@@ -52,6 +53,8 @@ function ProductDetailAccordion(props: IProductDetailAccordionProps) {
                     {maleDetail &&
                       femaleDetail &&
                       `Nam: ${maleDetail.metalSpec.name} / Nữ: ${femaleDetail.metalSpec.name}`}
+
+                    {jewelryDetail?.metalSpec.name}
                   </div>
                 </Grid>
               </Grid>
@@ -66,6 +69,8 @@ function ProductDetailAccordion(props: IProductDetailAccordionProps) {
                     {maleDetail &&
                       femaleDetail &&
                       `Nam: ${maleDetail.metalWeight} chỉ / Nữ: ${femaleDetail.metalWeight} chỉ`}
+
+                    {jewelryDetail && `${jewelryDetail.metalWeight} chỉ`}
                   </div>
                 </Grid>
               </Grid>
@@ -134,16 +139,22 @@ function ProductDetailAccordion(props: IProductDetailAccordionProps) {
                   {maleDetail &&
                     femaleDetail &&
                     `Nam: ${maleDetail.sideDiamondsCount} viên / Nữ: ${femaleDetail.sideDiamondsCount} viên`}
+
+                  {jewelryDetail && `${jewelryDetail.sideDiamondsCount} viên`}
                 </div>
                 <div>
-                  {" "}
                   {maleDetail &&
                     femaleDetail &&
                     `Nam: ${
                       maleDetail.sideDiamondsCount * meleeDiamondCarat
-                    } / Nữ: ${
+                    } Carat / Nữ: ${
                       femaleDetail.sideDiamondsCount * meleeDiamondCarat
-                    }`}
+                    } Carat`}
+
+                  {jewelryDetail &&
+                    `${
+                      jewelryDetail.sideDiamondsCount * meleeDiamondCarat
+                    } Carat`}
                 </div>
               </Grid>
             </Grid>

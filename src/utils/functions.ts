@@ -18,6 +18,13 @@ export const showSlides = (minSM: boolean, minMD: boolean, minLG: boolean) => {
   return 1;
 };
 
+export const numberFormatter = (value: number) => {
+  return value.toLocaleString("vi-VN", {
+    minimumIntegerDigits: 2,
+    useGrouping: false,
+  });
+};
+
 export const currencyFormatter = (price: number) => {
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",

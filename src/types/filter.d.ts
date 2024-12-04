@@ -38,6 +38,7 @@ declare global {
   interface ICustomRequestFilter extends IPaginationFilter {
     status?: CustomRequestStatus;
     customerId?: number;
+    staffId?: number;
   }
 
   interface IDesignVersionFilter extends IPaginationFilter {
