@@ -169,9 +169,7 @@ function ManageTopic() {
 
   return (
     <div className={styles.container}>
-      <Grid container justifyContent={"space-between"} alignItems={"center"}>
-        <div className={styles.title}>Topic</div>
-
+      <Grid container justifyContent={"flex-end"} alignItems={"center"}>
         <Button
           variant="contained"
           sx={{ ...primaryBtn, py: 1, mb: 3 }}

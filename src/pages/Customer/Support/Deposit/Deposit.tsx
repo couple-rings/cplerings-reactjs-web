@@ -225,11 +225,12 @@ function Deposit() {
           mutation.mutate({ craftingStageId: depositStage.id });
         else {
           const checkedItem = arrayCheck.find((item) => item.checked);
-
-          mutation.mutate({
-            craftingStageId: depositStage.id,
-            transportationAddressId: checkedItem?.id,
-          });
+          if (checkedItem) {
+            mutation.mutate({
+              craftingStageId: depositStage.id,
+              transportationAddressId: checkedItem.id,
+            });
+          }
         }
       } else mutation.mutate({ craftingStageId: depositStage.id });
     }
@@ -488,6 +489,11 @@ function Deposit() {
           )}
 
           <LoadingButton
+            disabled={
+              depositStage.progress === StagePercentage.Third &&
+              deliveryMethod === DeliveryMethod.Shipping &&
+              addressResponse?.data?.items.length === 0
+            }
             loading={mutation.isPending}
             variant="contained"
             sx={{ ...secondaryBtn, my: 3 }}

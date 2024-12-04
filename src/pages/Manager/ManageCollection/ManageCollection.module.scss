@@ -5,7 +5,13 @@
 
     .title {
         color        : $primaryColor;
-        font-size    : 2rem;
+        font-size    : 1.5rem;
         margin-bottom: 2rem;
+    }
+
+    .description {
+        text-overflow: ellipsis;
+        overflow     : hidden;
+        white-space  : nowrap;
     }
 }

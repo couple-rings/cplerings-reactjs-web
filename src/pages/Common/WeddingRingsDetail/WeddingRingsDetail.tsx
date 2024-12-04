@@ -48,6 +48,8 @@ import {
 import { getCustomRequests } from "src/services/customRequest.service";
 import { getCustomOrders } from "src/services/customOrder.service";
 import { getDesignDetail } from "src/services/design.service";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { toast } from "react-toastify";
 
 const sizeMenuPaperStyle: SxProps = {
   ...menuPaperStyle,
@@ -63,13 +65,14 @@ const initMetal = {
     name: "",
     pricePerUnit: 0,
     color: GoldColor.Yellow,
+    createdAt: "",
   },
   image: {
     url: "",
   },
 };
 
-const initDiamond = {
+const initDiamond: IDiamondSpec = {
   id: 0,
   name: "",
   weight: 0,
@@ -77,6 +80,7 @@ const initDiamond = {
   clarity: "",
   shape: "",
   price: 0,
+  createdAt: "",
 };
 
 function WeddingRingsDetail() {
@@ -92,7 +96,12 @@ function WeddingRingsDetail() {
   const [secondMetal, setSecondMetal] = useState(initMetal);
   const [secondDiamond, setSecondDiamond] = useState(initDiamond);
 
-  const [size, setSize] = useState(0);
+  const [maleSize, setMaleSize] = useState(0);
+  const [femaleSize, setFemaleSize] = useState(0);
+
+  const [maleEngraving, setMaleEngraving] = useState("");
+  const [femaleEngraving, setFemaleEngraving] = useState("");
+
   const [malePrice, setMalePrice] = useState(0);
   const [femalePrice, setFemalePrice] = useState(0);
 
@@ -151,6 +160,38 @@ function WeddingRingsDetail() {
     navigate(`/customer/design-fee/${maleId}/${femaleId}`);
   };
 
+  const handleRequestCrafting = () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    if (maleSize === 0 || femaleSize === 0) {
+      toast.error("Vui lòng chọn kích thước ngón tay");
+      return;
+    }
+
+    const maleRequest = {
+      designId: maleId,
+      size: maleSize,
+      engraving: maleEngraving,
+      metalSpec: firstMetal,
+      diamondSpec: firstDiamond,
+    };
+
+    const femaleRequest = {
+      designId: femaleId,
+      size: femaleSize,
+      engraving: femaleEngraving,
+      metalSpec: secondMetal,
+      diamondSpec: secondDiamond,
+    };
+
+    navigate(`/customer/request-crafting`, {
+      state: { maleRequest, femaleRequest },
+    });
+  };
+
   // Choose default gold and diamond option
   useEffect(() => {
     if (maleResponse?.data && femaleResponse?.data) {
@@ -195,6 +236,12 @@ function WeddingRingsDetail() {
       setSecondMetal(secondMetal);
       setSecondDiamond(secondDiamond.diamondSpecification);
     }
+
+    if (maleResponse?.errors || femaleResponse?.errors) {
+      navigate("/wedding-rings");
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maleResponse, femaleResponse]);
 
   // calculate price
@@ -305,6 +352,7 @@ function WeddingRingsDetail() {
   return (
     <div className={styles.container}>
       <Grid container className={styles.productInfo}>
+        {/* Male Design  */}
         <Grid container item xs={11} className={styles.content}>
           <Grid item lg={5} sx={{ mb: 2 }}>
             <img src={firstMetal.image.url} />
@@ -354,9 +402,11 @@ function WeddingRingsDetail() {
 
             <Divider sx={{ backgroundColor: "#555", mb: 3 }} />
 
-            <div className={styles.price}>{currencyFormatter(malePrice)}</div>
+            <div className={styles.price}>
+              {currencyFormatter(malePrice)}
+              <FormHelperText>* Giá chỉ mang tính tham khảo</FormHelperText>
+            </div>
 
-            {/* Male design start */}
             <Box>
               <Button variant="contained" sx={{ ...primaryBtn, px: 5, py: 1 }}>
                 Nam Tính
@@ -432,8 +482,8 @@ function WeddingRingsDetail() {
                     <Grid container className={styles.size}>
                       <Grid item sm={7} sx={{ mb: 2 }}>
                         <SizeMenu
-                          size={size}
-                          setSize={setSize}
+                          size={maleSize}
+                          setSize={setMaleSize}
                           label={true}
                           sx={sizeMenuStyle}
                           paperStyle={sizeMenuPaperStyle}
@@ -456,19 +506,26 @@ function WeddingRingsDetail() {
                       <OutlinedInput
                         sx={{ borderRadius: 0 }}
                         placeholder="Tối đa 10 ký tự"
+                        value={maleEngraving}
+                        onChange={(e) => {
+                          if (e.target.value.length <= 10)
+                            setMaleEngraving(e.target.value);
+                        }}
                       />
-                      <FormHelperText>0/10 ký tự</FormHelperText>
+                      <FormHelperText>
+                        {maleEngraving.length}/10 ký tự
+                      </FormHelperText>
                     </FormControl>
                   </AccordionDetails>
                 </Accordion>
               </div>
             </Box>
-            {/* Male design end */}
-
             <Divider sx={{ backgroundColor: "#ccc", mt: 1, mb: 5 }} />
           </Grid>
         </Grid>
+        {/* Male Design  */}
 
+        {/* Female Design  */}
         <Grid container item xs={11} className={styles.content}>
           <Grid item lg={5} sx={{ mb: 2 }}>
             <img src={secondMetal.image.url} />
@@ -486,9 +543,11 @@ function WeddingRingsDetail() {
 
             <Divider sx={{ backgroundColor: "#555", mb: 3 }} />
 
-            <div className={styles.price}>{currencyFormatter(femalePrice)}</div>
+            <div className={styles.price}>
+              {currencyFormatter(femalePrice)}
+              <FormHelperText>* Giá chỉ mang tính tham khảo</FormHelperText>
+            </div>
 
-            {/* Female design start */}
             <Box>
               <Button variant="contained" sx={{ ...primaryBtn, px: 5, py: 1 }}>
                 Nữ Tính
@@ -564,8 +623,8 @@ function WeddingRingsDetail() {
                     <Grid container className={styles.size}>
                       <Grid item sm={7} sx={{ mb: 2 }}>
                         <SizeMenu
-                          size={size}
-                          setSize={setSize}
+                          size={femaleSize}
+                          setSize={setFemaleSize}
                           label={true}
                           sx={sizeMenuStyle}
                           paperStyle={sizeMenuPaperStyle}
@@ -588,22 +647,33 @@ function WeddingRingsDetail() {
                       <OutlinedInput
                         sx={{ borderRadius: 0 }}
                         placeholder="Tối đa 10 ký tự"
+                        value={femaleEngraving}
+                        onChange={(e) => {
+                          if (e.target.value.length <= 10)
+                            setFemaleEngraving(e.target.value);
+                        }}
                       />
-                      <FormHelperText>0/10 ký tự</FormHelperText>
+                      <FormHelperText>
+                        {femaleEngraving.length}/10 ký tự
+                      </FormHelperText>
                     </FormControl>
                   </AccordionDetails>
                 </Accordion>
               </div>
             </Box>
-            {/* Female design end */}
 
             <Divider sx={{ backgroundColor: "#ccc", mt: 1, mb: 5 }} />
 
             {allow && (
               <div className={styles.btnGroup}>
-                <Button variant="contained" sx={primaryBtn} fullWidth>
+                <LoadingButton
+                  variant="contained"
+                  sx={primaryBtn}
+                  fullWidth
+                  onClick={handleRequestCrafting}
+                >
                   Bắt Đầu Gia Công
-                </Button>
+                </LoadingButton>
                 <div className={styles.text}>Hoặc</div>
                 <Button
                   variant="contained"
@@ -654,6 +724,7 @@ function WeddingRingsDetail() {
             />
           </Grid>
         </Grid>
+        {/* Female Design  */}
       </Grid>
 
       <FeedbackSection />

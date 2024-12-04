@@ -9,6 +9,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
 import { secondaryBtn } from "src/utils/styles";
 import { useNavigate } from "react-router-dom";
+import { useScrollTop } from "src/utils/hooks";
 
 const initMetaData = {
   page: 0,
@@ -62,6 +63,8 @@ function LoveAgreement() {
       }
     }
   }, [response]);
+
+  useScrollTop();
 
   if (isLoading)
     return (

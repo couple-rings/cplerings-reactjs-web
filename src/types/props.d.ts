@@ -3,6 +3,7 @@ import {
   AccountStatus,
   CustomRequestStatus,
   DesignCharacteristic,
+  ProductType,
   StagePercentage,
 } from "src/utils/enums";
 
@@ -68,6 +69,32 @@ declare global {
     lists: string[] | IMetalSpec[];
 
     handleFilter?: (v1?: number) => void;
+  }
+
+  interface IBaseHoverMenuProps {
+    setFilterObj?: React.Dispatch<React.SetStateAction<IDesignFilter>>;
+
+    setCoupleFilterObj?: React.Dispatch<
+      React.SetStateAction<ICoupleDesignFilter>
+    >;
+
+    type?: ProductType;
+  }
+
+  interface ICollectionHoverMenuProps extends IBaseHoverMenuProps {
+    designCollectionId?: number;
+  }
+
+  interface IJewelryCategoryHoverMenuProps extends IBaseHoverMenuProps {
+    categoryId?: number;
+  }
+
+  interface IMetalSpecHoverMenuProps extends IBaseHoverMenuProps {
+    metalSpecId?: number;
+  }
+
+  interface IGenderSpecHoverMenuProps extends IBaseHoverMenuProps {
+    characteristic?: DesignCharacteristic;
   }
 
   interface ISizeMenuProps {
@@ -240,6 +267,14 @@ declare global {
 
       metalWeight: number;
     };
+
+    jewelryDetail?: {
+      metalSpec: IMetalSpec;
+
+      sideDiamondsCount: number;
+
+      metalWeight: number;
+    };
   }
 
   interface IImageProcessProps {
@@ -285,12 +320,12 @@ declare global {
     resetSelected?: () => void;
   }
 
-  interface IDiamondModalProps extends IModalProps {
+  interface IUpdateDiamondModalProps extends IModalProps {
     resetSelected?: () => void;
 
-    giaReportNumber: string;
+    selected: IDiamond;
 
-    diamondSpecId: number;
+    filterObj: IDiamondFilter;
   }
 
   interface ICollectionModalProps extends IModalProps, ICollection {
@@ -312,6 +347,8 @@ declare global {
   interface IDesignModalProps extends IModalProps {
     resetSelected?: () => void;
     design: IDesign;
+    collections: ICollection[];
+    metalSpecs: IMetalSpec[];
   }
 
   interface IImageModalProps extends IModalProps {
@@ -461,4 +498,30 @@ declare global {
   }
 
   interface ICustomerDesignTimelineProps extends IStaffDesignTimelineProps {}
+
+  interface IAddDesignModalProps extends IModalProps {
+    collections: ICollection[];
+
+    metalSpecs: IMetalSpec[];
+
+    categories: IJewelryCategory[];
+
+    filterObj: IDesignFilter;
+  }
+
+  interface IAddJewelryModalProps extends IModalProps {
+    filterObj: IJewelryFilter;
+  }
+
+  interface IBagItemProps {
+    data: ICartItem;
+
+    checkedItem: string[];
+
+    setCheckedItem: (v: string[]) => void;
+  }
+
+  interface ICheckoutCardProps {
+    data: ICartItem;
+  }
 }

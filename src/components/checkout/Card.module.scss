@@ -8,14 +8,12 @@
     }
 
     .name {
-        font-size    : 1.3rem;
+        font-size    : 1.2rem;
         color        : $primaryColor;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
     }
 
     .spec {
-        font-size: 1.1rem;
-
         .label {
             color        : $grayColor;
             margin-bottom: 0.5rem;
@@ -25,7 +23,7 @@
     .price {
         display        : flex;
         justify-content: space-between;
-        font-size      : 1.3rem;
+        font-size      : 1.2rem;
         color          : $primaryColor;
         margin-top     : 2rem;
     }

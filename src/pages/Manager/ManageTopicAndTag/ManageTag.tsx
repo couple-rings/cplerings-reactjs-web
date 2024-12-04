@@ -225,9 +225,7 @@ function ManageTag() {
 
   return (
     <div className={styles.container} style={{ paddingBottom: "5rem" }}>
-      <Grid container justifyContent={"space-between"} alignItems={"center"}>
-        <div className={styles.title}>Tag</div>
-
+      <Grid container justifyContent={"flex-end"} alignItems={"center"}>
         <Button
           variant="contained"
           sx={{ ...primaryBtn, py: 1, mb: 3 }}

@@ -5,6 +5,7 @@ import {
   GridColDef,
   GridEventListener,
   GridFilterModel,
+  GridPaginationModel,
   GridRowEditStopReasons,
   GridRowId,
   GridRowModes,
@@ -12,7 +13,7 @@ import {
   GridSortModel,
   getGridStringOperators,
 } from "@mui/x-data-grid";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
 import { currencyFormatter } from "src/utils/functions";
 import SaveIcon from "@mui/icons-material/Save";
@@ -23,44 +24,31 @@ import { primaryBtn } from "src/utils/styles";
 import AddModal from "src/components/modal/metalSpecification/Add.modal";
 import DeleteModal from "src/components/modal/metalSpecification/Delete.modal";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import { pageSize } from "src/utils/constants";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getMetalSpecs } from "src/services/metalSpec.service";
+import { fetchMetalSpecs } from "src/utils/querykey";
+import moment from "moment";
 
-interface Row {
-  id: number;
-  color: GoldColor;
-  name: string;
-  pricePerUnit: number;
-}
+interface Row extends IMetalSpec {}
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
   ["contains" /* add more over time */].includes(value)
 );
 
-const rows = [
-  {
-    id: 1,
-    name: "Gold 14K - Yellow",
-    color: GoldColor.Yellow,
-    pricePerUnit: 860000,
-  },
-  {
-    id: 2,
-    name: "Gold 18K - White",
-    color: GoldColor.White,
-    pricePerUnit: 1152000,
-  },
-  {
-    id: 3,
-    name: "Gold 18K - Rose",
-    color: GoldColor.Rose,
-    pricePerUnit: 1104000,
-  },
-];
-
-const initSelected = {
+const initSelected: Row = {
   id: 0,
   name: "",
   color: GoldColor.Yellow,
   pricePerUnit: 0,
+  createdAt: "",
+};
+
+const initMetaData = {
+  page: 0,
+  pageSize,
+  totalPages: 0,
+  count: 0,
 };
 
 function ManageMetalSpec() {
@@ -69,6 +57,22 @@ function ManageMetalSpec() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selected, setSelected] = useState<Row>(initSelected);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+
+  const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
+  const [filterObj, setFilterObj] = useState<IMetalSpecFilter>({
+    page: 0,
+    pageSize,
+  });
+
+  const queryClient = useQueryClient();
+
+  const { data: response, isLoading } = useQuery({
+    queryKey: [fetchMetalSpecs, filterObj],
+
+    queryFn: () => {
+      return getMetalSpecs(filterObj);
+    },
+  });
 
   const handleEditClick = useCallback(
     (id: GridRowId) => () => {
@@ -80,7 +84,6 @@ function ManageMetalSpec() {
   const handleSaveClick = useCallback(
     (id: GridRowId) => () => {
       setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-      console.log("call api update");
     },
     [rowModesModel]
   );
@@ -91,9 +94,6 @@ function ManageMetalSpec() {
         ...rowModesModel,
         [id]: { mode: GridRowModes.View, ignoreModifications: true },
       });
-
-      const editedRow = rows.find((row) => row.id === id);
-      console.log(editedRow);
     },
     [rowModesModel]
   );
@@ -103,7 +103,7 @@ function ManageMetalSpec() {
       {
         field: "name",
         headerName: "Name",
-        width: 200,
+        width: 250,
         headerAlign: "center",
         align: "center",
         filterOperators,
@@ -112,7 +112,7 @@ function ManageMetalSpec() {
       {
         field: "color",
         headerName: "Color",
-        width: 100,
+        width: 200,
         headerAlign: "center",
         align: "center",
         sortable: false,
@@ -138,6 +138,17 @@ function ManageMetalSpec() {
           return <div>{currencyFormatter(row.pricePerUnit)}</div>;
         },
         editable: true,
+      },
+      {
+        field: "createdAt",
+        headerName: "Ngày Tạo",
+        width: 200,
+        headerAlign: "center",
+        align: "center",
+        filterable: false,
+        renderCell: ({ row }) => {
+          return <div>{moment(row.createdAt).format("DD/MM/YYYY")}</div>;
+        },
       },
       {
         field: "actions",
@@ -205,14 +216,24 @@ function ManageMetalSpec() {
         [id]: { mode: GridRowModes.View, ignoreModifications: true },
       });
     }
-
-    if (params.reason === GridRowEditStopReasons.enterKeyDown) {
-      console.log("call api update");
-    }
   };
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
     setRowModesModel(newRowModesModel);
+  };
+
+  const handleProcessRowUpdate = (row: Row) => {
+    console.log(row);
+
+    return row;
+  };
+
+  const handleChangePage = (model: GridPaginationModel) => {
+    // model.page is the page to fetch and starts at 0
+    setFilterObj({
+      ...filterObj,
+      page: model.page,
+    });
   };
 
   const handleFilter = (model: GridFilterModel) => {
@@ -222,6 +243,22 @@ function ManageMetalSpec() {
   const handleSort = (model: GridSortModel) => {
     console.log(model);
   };
+
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: [fetchMetalSpecs, filterObj],
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterObj]);
+
+  useEffect(() => {
+    if (response && response.data) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { items, ...rest } = response.data;
+      setMetaData(rest);
+    }
+  }, [response]);
 
   return (
     <div className={styles.container}>
@@ -238,19 +275,28 @@ function ManageMetalSpec() {
       </Grid>
 
       <DataGrid
+        processRowUpdate={handleProcessRowUpdate}
+        loading={isLoading}
         getRowHeight={() => "auto"}
-        rows={rows}
+        rows={response?.data?.items ? response.data.items : []}
         columns={columns}
         editMode="row"
         onFilterModelChange={handleFilter}
         onSortModelChange={handleSort}
-        pageSizeOptions={[100]}
+        pageSizeOptions={[pageSize]}
         disableColumnSelector
         disableRowSelectionOnClick
         autoHeight
         onRowEditStop={handleRowEditStop}
         rowModesModel={rowModesModel}
         onRowModesModelChange={handleRowModesModelChange}
+        paginationMode="server"
+        paginationModel={{
+          page: filterObj?.page ? filterObj.page : 0,
+          pageSize: filterObj?.pageSize ? filterObj.pageSize : pageSize,
+        }}
+        onPaginationModelChange={handleChangePage}
+        rowCount={metaData.count}
       />
 
       <AddModal open={openAdd} setOpen={setOpenAdd} />

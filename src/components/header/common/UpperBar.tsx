@@ -87,6 +87,7 @@ const UpperBar = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
 
+  const { cartItems } = useAppSelector((state) => state.cart);
   const { isAuthenticated, userInfo } = useAppSelector((state) => state.auth);
   const { hasSpouse } = userInfo;
 
@@ -116,14 +117,14 @@ const UpperBar = () => {
       },
       {
         icon: (
-          <Badge badgeContent={3} color="error">
+          <Badge badgeContent={cartItems.length} color="error">
             <ShoppingBagOutlinedIcon className={styles.icon} />
           </Badge>
         ),
         path: "/customer/bag",
       },
     ];
-  }, []);
+  }, [cartItems]);
 
   useEffect(() => {
     setAnchorElUser(null);
@@ -274,7 +275,7 @@ const UpperBar = () => {
                 sx={{ my: 2 }}
                 onClick={() => navigate("/customer/bag")}
               >
-                <Badge badgeContent={3} color="error">
+                <Badge badgeContent={cartItems.length} color="error">
                   <ShoppingBagOutlinedIcon fontSize="large" />
                 </Badge>
               </IconButton>

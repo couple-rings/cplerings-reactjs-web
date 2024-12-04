@@ -113,6 +113,12 @@ export const stages = [
     progress: StagePercentage.Third,
   },
 ];
+export const prices = [
+  "Dưới 20 Triệu",
+  "20 - 40 Triệu",
+  "40 - 50 Triệu",
+  "Trên 50 Triệu",
+];
 
 export const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 export const passwordPattern =

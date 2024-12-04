@@ -1,0 +1,45 @@
+@use 'src/index.scss'as *;
+
+.container {
+    display        : flex;
+    padding        : 3rem 0;
+    color          : $primaryColor;
+    justify-content: center;
+
+    .title {
+        font-size    : 1.5rem;
+        font-weight  : 500;
+        margin-bottom: 2rem;
+    }
+
+    .note {
+        margin-bottom: 3rem;
+        color        : #888;
+        font-weight  : 300;
+    }
+
+    .content {
+        margin-bottom: 5rem;
+
+        .previewImg {
+            width        : 100%;
+            box-shadow   : $boxShadow;
+            margin-bottom: 1.5rem;
+        }
+
+        .info {
+            margin: 2rem 0;
+
+            .label {
+                font-size    : 1.2rem;
+                margin-bottom: 1rem;
+            }
+        }
+
+        .name {
+            font-size    : 1.5rem;
+            color        : $primaryColor;
+            margin-bottom: 1rem;
+        }
+    }
+}
