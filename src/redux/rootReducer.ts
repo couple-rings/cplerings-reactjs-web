@@ -5,6 +5,7 @@ import routeReducer from "./slice/route.slice";
 import conversationReducer from "./slice/conversation.slice";
 import messageReducer from "./slice/message.slice";
 import designReducer from "./slice/design.slice";
+import cartReducer from "./slice/cart.slice";
 
 export const rootReducer = combineReducers({
   auth: authReducer,
@@ -13,4 +14,5 @@ export const rootReducer = combineReducers({
   conversation: conversationReducer,
   message: messageReducer,
   design: designReducer,
+  cart: cartReducer,
 });

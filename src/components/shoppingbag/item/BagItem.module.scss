@@ -2,6 +2,7 @@
 
 .container {
     margin: 2rem 0;
+    color : $primaryColor;
 
     .info {
         display        : flex;
@@ -9,7 +10,8 @@
         justify-content: space-between;
 
         img {
-            width: 20%;
+            width : 20%;
+            border: 1px solid #ccc;
         }
 
         .detail {
@@ -20,16 +22,12 @@
                 margin-bottom: 0.5rem;
 
                 @media screen and (min-width: 600px) {
-                    font-size: 1.4rem;
+                    font-size: 1.2rem;
                 }
             }
 
             .gender {
                 margin-bottom: 2rem;
-
-                @media screen and (min-width: 600px) {
-                    font-size: 1.4rem;
-                }
             }
 
             .label {
@@ -37,7 +35,7 @@
                 color    : $grayColor;
 
                 @media screen and (min-width: 600px) {
-                    margin-bottom: 0.3rem;
+                    margin-bottom: 0.5rem;
                 }
             }
         }

@@ -1,5 +1,4 @@
 import {
-  Button,
   Divider,
   FormControl,
   FormControlLabel,
@@ -30,6 +29,9 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useQuery } from "@tanstack/react-query";
 import { fetchDistricts, fetchTransportAddresses } from "src/utils/querykey";
 import { getTransportAddresses } from "src/services/transportAddress.service";
+import _ from "lodash";
+import { useNavigate } from "react-router-dom";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 const initSelected: ITransportAddress = {
   id: 0,
@@ -66,12 +68,16 @@ function Checkout() {
     useState<ITransportationAddressFilter | null>(null);
 
   const [deliveryMethod, setDeliveryMethod] = useState(DeliveryMethod.Shipping);
+  const [arrayCheck, setArrayCheck] = useState<
+    { id: number; checked: boolean }[]
+  >([]);
 
   const [selected, setSelected] = useState<ITransportAddress>(initSelected);
   const [openAdd, setOpenAdd] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
 
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const theme = useTheme();
 
@@ -79,6 +85,7 @@ function Checkout() {
 
   const { districts } = useAppSelector((state) => state.district);
   const { id } = useAppSelector((state) => state.auth.userInfo);
+  const { cartItems } = useAppSelector((state) => state.cart);
 
   const { data: response, isLoading } = useQuery({
     queryKey: [fetchTransportAddresses, filterObj],
@@ -102,6 +109,29 @@ function Checkout() {
     setSelected(initSelected);
   };
 
+  const handleCheck = (id: number, value: boolean) => {
+    if (value === true) {
+      const clone = _.cloneDeep(arrayCheck);
+      clone.forEach((item) => {
+        if (item.id === id) {
+          item.checked = true;
+        } else item.checked = false;
+      });
+
+      setArrayCheck(clone);
+    }
+  };
+
+  const handlePayment = () => {
+    if (deliveryMethod === DeliveryMethod.Pickup) console.log("call api");
+    else {
+      const checkedItem = arrayCheck.find((item) => item.checked);
+      if (checkedItem) {
+        console.log(checkedItem);
+      }
+    }
+  };
+
   useEffect(() => {
     if (districtsResponse?.districts) {
       dispatch(saveList(districtsResponse.districts));
@@ -109,6 +139,26 @@ function Checkout() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [districtsResponse]);
+
+  useEffect(() => {
+    if (response?.data) {
+      const arrayCheck = response.data.items.map((item) => {
+        return {
+          id: item.id,
+          checked: false,
+        };
+      });
+
+      if (arrayCheck.length > 0) arrayCheck[0].checked = true;
+      setArrayCheck(arrayCheck);
+    }
+  }, [response]);
+
+  useEffect(() => {
+    if (cartItems.length === 0) navigate("/jewelry");
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cartItems]);
 
   useEffect(() => {
     setFilterObj({
@@ -146,11 +196,13 @@ function Checkout() {
         justifyContent={"space-between"}
       >
         {!minLarge && (
-          <Grid item xs={12} lg={5} className={styles.right}>
-            <div className={styles.title}>Chi Tiết Đơn (2)</div>
-            <Card />
-            <Card />
-            <Card />
+          <Grid item xs={12} lg={6} className={styles.right}>
+            <div className={styles.title}>
+              Chi Tiết Đơn ({cartItems.length})
+            </div>
+            {cartItems.map((item) => {
+              return <Card key={item.id} data={item} />;
+            })}
 
             <div className={styles.summary}>
               <Grid container justifyContent={"space-between"} marginBottom={3}>
@@ -208,6 +260,8 @@ function Checkout() {
 
               <div>
                 {response?.data?.items.map((item) => {
+                  const checkItem = arrayCheck.find((i) => i.id === item.id);
+
                   return (
                     <AddressCard
                       key={item.id}
@@ -215,6 +269,8 @@ function Checkout() {
                       setOpenDelete={setOpenDelete}
                       setOpenUpdate={setOpenUpdate}
                       setSelected={setSelected}
+                      handleCheck={handleCheck}
+                      checked={checkItem?.checked}
                     />
                   );
                 })}
@@ -222,15 +278,18 @@ function Checkout() {
             </div>
           )}
 
-          {deliveryMethod === DeliveryMethod.Pickup && (
+          {deliveryMethod === DeliveryMethod.Pickup && cartItems.length > 0 && (
             <div className={styles.pickup}>
               <div className={styles.title}>Địa chỉ cửa hàng</div>
               <div className={styles.address}>
-                No.6B Store, i SQUARE International Plaza, No.63 Nathan Road,
-                Tsim Sha Tsui, Kowloon, Hong Kong (H exit, Tsim Sha Tsui metro
-                station)
+                {cartItems[0].branch.storeName}
               </div>
-              <div className={styles.phone}>Tel:00852-23677389</div>
+              <div className={styles.address}>
+                {cartItems[0].branch.address}
+              </div>
+              <div className={styles.phone}>
+                Tel:{cartItems[0].branch.phone}
+              </div>
               <Divider sx={{ backgroundColor: "#555" }} />
             </div>
           )}
@@ -256,21 +315,28 @@ function Checkout() {
             </div>
           </div>
 
-          <Button
+          <LoadingButton
+            disabled={
+              deliveryMethod === DeliveryMethod.Shipping &&
+              response?.data?.items.length === 0
+            }
             variant="contained"
             sx={{ ...primaryBtn, marginBottom: 3 }}
             fullWidth
+            onClick={handlePayment}
           >
             Thanh Toán
-          </Button>
+          </LoadingButton>
         </Grid>
 
         {minLarge && (
-          <Grid item xs={12} lg={5} className={styles.right}>
-            <div className={styles.title}>Chi Tiết Đơn (2)</div>
-            <Card />
-            <Card />
-            <Card />
+          <Grid item xs={12} lg={6} className={styles.right}>
+            <div className={styles.title}>
+              Chi Tiết Đơn ({cartItems.length})
+            </div>
+            {cartItems.map((item) => {
+              return <Card key={item.id} data={item} />;
+            })}
 
             <div className={styles.summary}>
               <Grid container justifyContent={"space-between"} marginBottom={3}>

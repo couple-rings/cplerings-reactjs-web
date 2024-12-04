@@ -70,7 +70,9 @@ function CustomRequest() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { staffPosition } = useAppSelector((state) => state.auth.userInfo);
+  const { staffPosition, id: staffId } = useAppSelector(
+    (state) => state.auth.userInfo
+  );
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -273,9 +275,10 @@ function CustomRequest() {
       setFilterObj((current) => ({
         ...current,
         status: CustomRequestStatus.OnGoing,
+        staffId,
       }));
     }
-  }, [staffPosition]);
+  }, [staffId, staffPosition]);
 
   return (
     <div className={styles.container}>

@@ -61,6 +61,7 @@ const initSelected: IDiamond = {
     price: 0,
     shape: "",
     weight: 0,
+    createdAt: "",
   },
   createdAt: "",
 };
@@ -284,13 +285,16 @@ function ManageDiamond() {
         setOpen={setOpenAdd}
         filterObj={filterObj as IDiamondFilter}
       />
-      <UpdateModal
-        open={openUpdate}
-        setOpen={setOpenUpdate}
-        giaReportNumber={selected.giaReportNumber}
-        diamondSpecId={selected.diamondSpecification.id}
-        resetSelected={resetSelected}
-      />
+
+      {filterObj && (
+        <UpdateModal
+          open={openUpdate}
+          setOpen={setOpenUpdate}
+          selected={selected}
+          filterObj={filterObj}
+          resetSelected={resetSelected}
+        />
+      )}
       <DeleteModal open={openDelete} setOpen={setOpenDelete} />
     </div>
   );

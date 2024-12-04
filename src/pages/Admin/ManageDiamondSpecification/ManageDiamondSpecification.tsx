@@ -5,6 +5,8 @@ import {
   GridColDef,
   GridEventListener,
   GridFilterModel,
+  GridPaginationModel,
+  GridRowEditStopParams,
   GridRowEditStopReasons,
   GridRowId,
   GridRowModes,
@@ -12,7 +14,7 @@ import {
   GridSortModel,
   getGridStringOperators,
 } from "@mui/x-data-grid";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
 import { currencyFormatter } from "src/utils/functions";
 import SaveIcon from "@mui/icons-material/Save";
@@ -22,52 +24,19 @@ import { Button, Grid } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 import DeleteModal from "src/components/modal/diamondSpecification/Delete.modal";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getDiamondSpecs } from "src/services/diamondSpec.service";
+import { pageSize } from "src/utils/constants";
+import { fetchDiamondSpecs } from "src/utils/querykey";
+import moment from "moment";
 
-interface Row {
-  id: number;
-  name: string;
-  weight: number;
-  color: string;
-  clarity: string;
-  shape: string;
-  price: number;
-}
+interface Row extends IDiamondSpec {}
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
   ["contains", "equals" /* add more over time */].includes(value)
 );
 
-const rows = [
-  {
-    id: 1,
-    name: "Pure Heart",
-    weight: 0.05,
-    color: "D",
-    clarity: "VS2",
-    shape: "HEART",
-    price: 3600000,
-  },
-  {
-    id: 2,
-    name: "Graceful Oval",
-    weight: 0.05,
-    color: "G",
-    clarity: "SI1",
-    shape: "OVAL",
-    price: 3120000,
-  },
-  {
-    id: 3,
-    name: "Dazzling Round",
-    weight: 0.15,
-    color: "G",
-    clarity: "VS2",
-    shape: "HEART",
-    price: 3600000,
-  },
-];
-
-const initSelected = {
+const initSelected: Row = {
   id: 0,
   name: "",
   weight: 0,
@@ -75,6 +44,14 @@ const initSelected = {
   clarity: "",
   shape: "",
   price: 0,
+  createdAt: "",
+};
+
+const initMetaData = {
+  page: 0,
+  pageSize,
+  totalPages: 0,
+  count: 0,
 };
 
 function ManageDiamondSpecification() {
@@ -83,6 +60,22 @@ function ManageDiamondSpecification() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selected, setSelected] = useState<Row>(initSelected);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+
+  const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
+  const [filterObj, setFilterObj] = useState<IDiamondSpecFilter>({
+    page: 0,
+    pageSize,
+  });
+
+  const queryClient = useQueryClient();
+
+  const { data: response, isLoading } = useQuery({
+    queryKey: [fetchDiamondSpecs, filterObj],
+
+    queryFn: () => {
+      return getDiamondSpecs(filterObj);
+    },
+  });
 
   const handleEditClick = useCallback(
     (id: GridRowId) => () => {
@@ -94,7 +87,6 @@ function ManageDiamondSpecification() {
   const handleSaveClick = useCallback(
     (id: GridRowId) => () => {
       setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-      console.log("call api update");
     },
     [rowModesModel]
   );
@@ -105,9 +97,6 @@ function ManageDiamondSpecification() {
         ...rowModesModel,
         [id]: { mode: GridRowModes.View, ignoreModifications: true },
       });
-
-      const editedRow = rows.find((row) => row.id === id);
-      console.log(editedRow);
     },
     [rowModesModel]
   );
@@ -172,6 +161,17 @@ function ManageDiamondSpecification() {
         editable: true,
       },
       {
+        field: "createdAt",
+        headerName: "Ngày Tạo",
+        width: 200,
+        headerAlign: "center",
+        align: "center",
+        filterable: false,
+        renderCell: ({ row }) => {
+          return <div>{moment(row.createdAt).format("DD/MM/YYYY")}</div>;
+        },
+      },
+      {
         field: "actions",
         headerName: "Action",
         type: "actions",
@@ -221,7 +221,7 @@ function ManageDiamondSpecification() {
   );
 
   const handleRowEditStop: GridEventListener<"rowEditStop"> = (
-    params,
+    params: GridRowEditStopParams<Row>,
     event
   ) => {
     const { id } = params;
@@ -237,14 +237,24 @@ function ManageDiamondSpecification() {
         [id]: { mode: GridRowModes.View, ignoreModifications: true },
       });
     }
-
-    if (params.reason === GridRowEditStopReasons.enterKeyDown) {
-      console.log("call api update");
-    }
   };
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
     setRowModesModel(newRowModesModel);
+  };
+
+  const handleProcessRowUpdate = (row: Row) => {
+    console.log(row);
+
+    return row;
+  };
+
+  const handleChangePage = (model: GridPaginationModel) => {
+    // model.page is the page to fetch and starts at 0
+    setFilterObj({
+      ...filterObj,
+      page: model.page,
+    });
   };
 
   const handleFilter = (model: GridFilterModel) => {
@@ -254,6 +264,22 @@ function ManageDiamondSpecification() {
   const handleSort = (model: GridSortModel) => {
     console.log(model);
   };
+
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: [fetchDiamondSpecs, filterObj],
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterObj]);
+
+  useEffect(() => {
+    if (response && response.data) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { items, ...rest } = response.data;
+      setMetaData(rest);
+    }
+  }, [response]);
 
   return (
     <div className={styles.container}>
@@ -270,19 +296,28 @@ function ManageDiamondSpecification() {
       </Grid>
 
       <DataGrid
+        processRowUpdate={handleProcessRowUpdate}
+        loading={isLoading}
         getRowHeight={() => "auto"}
-        rows={rows}
+        rows={response?.data?.items ? response.data.items : []}
         columns={columns}
         editMode="row"
         onFilterModelChange={handleFilter}
         onSortModelChange={handleSort}
-        pageSizeOptions={[100]}
+        pageSizeOptions={[pageSize]}
         disableColumnSelector
         disableRowSelectionOnClick
         autoHeight
         onRowEditStop={handleRowEditStop}
         rowModesModel={rowModesModel}
         onRowModesModelChange={handleRowModesModelChange}
+        paginationMode="server"
+        paginationModel={{
+          page: filterObj?.page ? filterObj.page : 0,
+          pageSize: filterObj?.pageSize ? filterObj.pageSize : pageSize,
+        }}
+        onPaginationModelChange={handleChangePage}
+        rowCount={metaData.count}
       />
 
       <AddModal open={openAdd} setOpen={setOpenAdd} />

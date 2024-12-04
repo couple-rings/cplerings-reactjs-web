@@ -4,10 +4,11 @@ import {
   GridActionsCellItem,
   GridColDef,
   GridFilterModel,
+  GridPaginationModel,
   GridSortModel,
   getGridStringOperators,
 } from "@mui/x-data-grid";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
 import ViewModal from "src/components/modal/jewelryCategory/View.modal";
@@ -17,41 +18,28 @@ import { primaryBtn } from "src/utils/styles";
 import AddModal from "src/components/modal/jewelryCategory/Add.modal";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import DeleteModal from "src/components/modal/jewelryCategory/Delete.modal";
+import { pageSize } from "src/utils/constants";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getJewelryCategories } from "src/services/jewelryCategory.service";
+import { fetchJewelryCategories } from "src/utils/querykey";
 
-interface Row {
-  id: number;
-  name: string;
-  description: string;
-  isActive: boolean;
-}
+interface Row extends IJewelryCategory {}
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
   ["contains" /* add more over time */].includes(value)
 );
 
-const rows = [
-  {
-    id: 1,
-    name: "Necklace",
-    description:
-      "Necklaces are versatile jewelry pieces worn around the neck, ranging from simple chains to statement designs with gemstones or pendants. Crafted in materials like gold, silver, and beads, they suit various styles and occasions. From elegant chokers to long chains, necklaces can add sophistication, sentiment, or bold flair, making them essential in any jewelry collection.",
-    isActive: true,
-  },
-
-  {
-    id: 2,
-    name: "Bracelet",
-    description:
-      "Bracelets are versatile jewelry worn around the wrist, available in styles from simple bands to intricate, embellished pieces. Made from materials like gold, silver, leather, or beads, they suit both casual and formal wear. Whether as delicate chains, bangles, or charm bracelets, they add elegance, personality, or a touch of flair, making them a staple in any jewelry collection.",
-    isActive: false,
-  },
-];
-
-const initSelected = {
+const initSelected: Row = {
   id: 0,
   name: "",
   description: "",
-  isActive: true,
+};
+
+const initMetaData = {
+  page: 0,
+  pageSize,
+  totalPages: 0,
+  count: 0,
 };
 
 function ManageJewelryCategory() {
@@ -60,6 +48,21 @@ function ManageJewelryCategory() {
   const [openUpdate, setOpenUpdate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [selected, setSelected] = useState<Row>(initSelected);
+
+  const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
+  const [filterObj, setFilterObj] = useState<IJewelryCategoriesFilter>({
+    page: 0,
+    pageSize,
+  });
+
+  const queryClient = useQueryClient();
+
+  const { data: response, isLoading } = useQuery({
+    queryKey: [fetchJewelryCategories],
+    queryFn: () => {
+      return getJewelryCategories(filterObj);
+    },
+  });
 
   const onChangeStatus = (id: number) => {
     console.log(id);
@@ -70,7 +73,7 @@ function ManageJewelryCategory() {
       {
         field: "index",
         headerName: "No",
-        width: 200,
+        width: 150,
         headerAlign: "center",
         align: "center",
         sortable: false,
@@ -82,23 +85,35 @@ function ManageJewelryCategory() {
       {
         field: "name",
         headerName: "Name",
-        width: 300,
+        width: 200,
         headerAlign: "center",
         align: "center",
         filterOperators,
         sortable: false,
       },
       {
+        field: "description",
+        headerName: "Description",
+        width: 500,
+        headerAlign: "center",
+        align: "center",
+        filterOperators,
+        sortable: false,
+        renderCell: ({ row }) => (
+          <div className={styles.description}>{row.description}</div>
+        ),
+      },
+      {
         field: "isActive",
         headerName: "Status",
-        width: 250,
+        width: 200,
         headerAlign: "center",
         align: "center",
         filterable: false,
         sortable: false,
         renderCell: ({ row }) => (
           <Switch
-            defaultChecked={row.isActive}
+            defaultChecked={true}
             onChange={() => onChangeStatus(row.id)}
           />
         ),
@@ -107,7 +122,7 @@ function ManageJewelryCategory() {
         field: "actions",
         headerName: "Action",
         type: "actions",
-        width: 300,
+        width: 200,
         headerAlign: "center",
         align: "center",
         getActions: ({ row }) => [
@@ -148,6 +163,14 @@ function ManageJewelryCategory() {
     setSelected(initSelected);
   };
 
+  const handleChangePage = (model: GridPaginationModel) => {
+    // model.page is the page to fetch and starts at 0
+    setFilterObj({
+      ...filterObj,
+      page: model.page,
+    });
+  };
+
   const handleFilter = (model: GridFilterModel) => {
     console.log(model);
   };
@@ -155,6 +178,22 @@ function ManageJewelryCategory() {
   const handleSort = (model: GridSortModel) => {
     console.log(model);
   };
+
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: [fetchJewelryCategories, filterObj],
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterObj]);
+
+  useEffect(() => {
+    if (response && response.data) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { items, ...rest } = response.data;
+      setMetaData(rest);
+    }
+  }, [response]);
 
   return (
     <div className={styles.container}>
@@ -171,15 +210,23 @@ function ManageJewelryCategory() {
       </Grid>
 
       <DataGrid
+        loading={isLoading}
         getRowHeight={() => "auto"}
-        rows={rows}
+        rows={response?.data?.items ? response.data.items : []}
         columns={columns}
         onFilterModelChange={handleFilter}
         onSortModelChange={handleSort}
-        pageSizeOptions={[100]}
+        pageSizeOptions={[pageSize]}
         disableColumnSelector
         disableRowSelectionOnClick
         autoHeight
+        paginationMode="server"
+        paginationModel={{
+          page: filterObj?.page ? filterObj.page : 0,
+          pageSize: filterObj?.pageSize ? filterObj.pageSize : pageSize,
+        }}
+        onPaginationModelChange={handleChangePage}
+        rowCount={metaData.count}
       />
 
       <AddModal open={openAdd} setOpen={setOpenAdd} />

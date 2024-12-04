@@ -35,7 +35,7 @@
         justify-content: center;
 
         .title {
-            font-size    : 2.3rem;
+            font-size    : 2rem;
             color        : $primaryColor;
             margin-bottom: 2rem;
         }
@@ -56,6 +56,11 @@
                 left    : 45%;
                 right   : 5%;
             }
+        }
+
+        .empty {
+            color        : #555;
+            margin-bottom: 2rem;
         }
     }
 }

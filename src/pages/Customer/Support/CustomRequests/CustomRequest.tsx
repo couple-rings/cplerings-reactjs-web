@@ -174,7 +174,7 @@ function CustomRequest() {
                   Ngày Cập Nhật
                 </TableCell>
                 <TableCell className={styles.cell} align="center">
-                  Nhân Viên Duyệt
+                  Nhân Viên
                 </TableCell>
               </TableRow>
             </TableHead>

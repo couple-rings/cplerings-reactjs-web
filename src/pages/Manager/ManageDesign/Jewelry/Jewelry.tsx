@@ -3,209 +3,44 @@ import {
   GridActionsCellItem,
   GridColDef,
   GridFilterModel,
+  GridPaginationModel,
+  GridSortModel,
   getGridStringOperators,
 } from "@mui/x-data-grid";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Box, Button, Grid, Link, Switch } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
-import { DesignCharacteristic, GoldColor } from "src/utils/enums";
+import { DesignCharacteristic, Status } from "src/utils/enums";
 import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
 import FileDownloadSharpIcon from "@mui/icons-material/FileDownloadSharp";
 import AddModal from "src/components/modal/jewelry/Add.modal";
 import UpdateModal from "src/components/modal/jewelry/Update.modal";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getCollections } from "src/services/collection.service";
+import {
+  fetchCollections,
+  fetchDesigns,
+  fetchJewelryCategories,
+  fetchMetalSpecs,
+} from "src/utils/querykey";
+import { getMetalSpecs } from "src/services/metalSpec.service";
+import { pageSize } from "src/utils/constants";
+import { getDesigns } from "src/services/design.service";
+import moment from "moment";
+import { getJewelryCategories } from "src/services/jewelryCategory.service";
 
 interface Row extends IDesign {}
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
-  ["contains", "equals" /* add more over time */].includes(value)
+  ["contains" /* add more over time */].includes(value)
 );
 
-const rows: Row[] = [
-  {
-    id: 1,
-    name: "Harmonia",
-    description:
-      "Harmonia is a symbol of balance and grace, designed for brides who embody harmony in their relationship. Its elegant and refined details represent the peace and unity a loving partner brings to their union, making it a timeless choice for brides seeking beauty and poise.",
-    characteristic: DesignCharacteristic.Female,
-    size: 16,
-    sideDiamondsCount: 0,
-    metalWeight: 2,
-    designCollection: {
-      id: 1,
-      name: "Eternal Bond",
-      description: "",
-    },
-    blueprint: {
-      url: "https://cplerings-bucket.s3.ap-southeast-1.amazonaws.com/static/static_design-blueprint-harmonia_1729022431708.pdf",
-    },
-    designDiamondSpecifications: [
-      {
-        id: 1,
-        diamondSpecification: {
-          id: 1,
-          name: "Pure Heart",
-          weight: 0.05,
-          color: "D",
-          clarity: "VS2",
-          shape: "HEART",
-          price: 3600000,
-        },
-      },
-    ],
-    designMetalSpecifications: [
-      {
-        id: 1,
-        image: {
-          url: "https://cplerings-bucket.s3.ap-southeast-1.amazonaws.com/static/static_design-metal-spec-harmonia-1_1729022431708.jpg",
-        },
-        metalSpecification: {
-          id: 1,
-          name: "Gold 14K - Yellow",
-          color: GoldColor.Yellow,
-          pricePerUnit: 860000,
-        },
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Harmonia",
-    description:
-      "Harmonia is a symbol of balance and grace, designed for brides who embody harmony in their relationship. Its elegant and refined details represent the peace and unity a loving partner brings to their union, making it a timeless choice for brides seeking beauty and poise.",
-    characteristic: DesignCharacteristic.Female,
-    size: 16,
-    sideDiamondsCount: 0,
-    metalWeight: 2,
-    designCollection: {
-      id: 1,
-      name: "Eternal Bond",
-      description: "",
-    },
-    blueprint: {
-      url: "https://cplerings-bucket.s3.ap-southeast-1.amazonaws.com/static/static_design-blueprint-harmonia_1729022431708.pdf",
-    },
-    designDiamondSpecifications: [
-      {
-        id: 2,
-        diamondSpecification: {
-          id: 1,
-          name: "Pure Heart",
-          weight: 0.05,
-          color: "D",
-          clarity: "VS2",
-          shape: "HEART",
-          price: 3600000,
-        },
-      },
-    ],
-    designMetalSpecifications: [
-      {
-        id: 2,
-        image: {
-          url: "https://cplerings-bucket.s3.ap-southeast-1.amazonaws.com/static/static_design-metal-spec-harmonia-1_1729022431708.jpg",
-        },
-        metalSpecification: {
-          id: 1,
-          name: "Gold 14K - Yellow",
-          color: GoldColor.Yellow,
-          pricePerUnit: 860000,
-        },
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: "Harmonia",
-    description:
-      "Harmonia is a symbol of balance and grace, designed for brides who embody harmony in their relationship. Its elegant and refined details represent the peace and unity a loving partner brings to their union, making it a timeless choice for brides seeking beauty and poise.",
-    characteristic: DesignCharacteristic.Female,
-    size: 16,
-    sideDiamondsCount: 0,
-    metalWeight: 2,
-    designCollection: {
-      id: 1,
-      name: "Eternal Bond",
-      description: "",
-    },
-    blueprint: {
-      url: "https://cplerings-bucket.s3.ap-southeast-1.amazonaws.com/static/static_design-blueprint-harmonia_1729022431708.pdf",
-    },
-    designDiamondSpecifications: [
-      {
-        id: 3,
-        diamondSpecification: {
-          id: 1,
-          name: "Pure Heart",
-          weight: 0.05,
-          color: "D",
-          clarity: "VS2",
-          shape: "HEART",
-          price: 3600000,
-        },
-      },
-    ],
-    designMetalSpecifications: [
-      {
-        id: 3,
-        image: {
-          url: "https://cplerings-bucket.s3.ap-southeast-1.amazonaws.com/static/static_design-metal-spec-harmonia-1_1729022431708.jpg",
-        },
-        metalSpecification: {
-          id: 1,
-          name: "Gold 14K - Yellow",
-          color: GoldColor.Yellow,
-          pricePerUnit: 860000,
-        },
-      },
-    ],
-  },
-  {
-    id: 4,
-    name: "Harmonia",
-    description:
-      "Harmonia is a symbol of balance and grace, designed for brides who embody harmony in their relationship. Its elegant and refined details represent the peace and unity a loving partner brings to their union, making it a timeless choice for brides seeking beauty and poise.",
-    characteristic: DesignCharacteristic.Female,
-    size: 16,
-    sideDiamondsCount: 0,
-    metalWeight: 2,
-    designCollection: {
-      id: 1,
-      name: "Eternal Bond",
-      description: "",
-    },
-    blueprint: {
-      url: "https://cplerings-bucket.s3.ap-southeast-1.amazonaws.com/static/static_design-blueprint-harmonia_1729022431708.pdf",
-    },
-    designDiamondSpecifications: [
-      {
-        id: 4,
-        diamondSpecification: {
-          id: 1,
-          name: "Pure Heart",
-          weight: 0.05,
-          color: "D",
-          clarity: "VS2",
-          shape: "HEART",
-          price: 3600000,
-        },
-      },
-    ],
-    designMetalSpecifications: [
-      {
-        id: 4,
-        image: {
-          url: "https://cplerings-bucket.s3.ap-southeast-1.amazonaws.com/static/static_design-metal-spec-harmonia-1_1729022431708.jpg",
-        },
-        metalSpecification: {
-          id: 1,
-          name: "Gold 14K - Yellow",
-          color: GoldColor.Yellow,
-          pricePerUnit: 860000,
-        },
-      },
-    ],
-  },
-];
+const initMetaData = {
+  page: 0,
+  pageSize,
+  totalPages: 0,
+  count: 0,
+};
 
 const initSelected: Row = {
   id: 0,
@@ -221,12 +56,64 @@ const initSelected: Row = {
   designMetalSpecifications: [],
   designDiamondSpecifications: [],
   designCollection: { id: 0, description: "", name: "" },
+  createdAt: "",
+  state: Status.Active,
+  jewelryCategory: {
+    id: 0,
+    name: "",
+    description: "",
+  },
+};
+
+const generalFilter = {
+  page: 0,
+  pageSize: 100,
 };
 
 function Jewelry() {
   const [openAdd, setOpenAdd] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [selected, setSelected] = useState<Row>(initSelected);
+
+  const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
+  const [filterObj, setFilterObj] = useState<IDesignFilter>({
+    page: 0,
+    pageSize,
+  });
+
+  const queryClient = useQueryClient();
+
+  const { data: designResponse, isLoading } = useQuery({
+    queryKey: [fetchDesigns, filterObj],
+
+    queryFn: () => {
+      return getDesigns(filterObj);
+    },
+  });
+
+  const { data: response } = useQuery({
+    queryKey: [fetchCollections, generalFilter],
+
+    queryFn: () => {
+      return getCollections(generalFilter);
+    },
+  });
+
+  const { data: metalSpecResponse } = useQuery({
+    queryKey: [fetchMetalSpecs, generalFilter],
+
+    queryFn: () => {
+      return getMetalSpecs(generalFilter);
+    },
+  });
+
+  const { data: categoryResponse } = useQuery({
+    queryKey: [fetchJewelryCategories, generalFilter],
+
+    queryFn: () => {
+      return getJewelryCategories(generalFilter);
+    },
+  });
 
   const onChangeStatus = (id: number) => {
     console.log(id);
@@ -242,6 +129,16 @@ function Jewelry() {
         align: "center",
         filterOperators,
         sortable: false,
+      },
+      {
+        field: "category",
+        headerName: "Category",
+        width: 170,
+        headerAlign: "center",
+        align: "center",
+        filterOperators,
+        sortable: false,
+        renderCell: () => <div>--</div>,
       },
       {
         field: "designCollection",
@@ -267,7 +164,7 @@ function Jewelry() {
       {
         field: "metalWeight",
         headerName: "Metal Weight",
-        width: 200,
+        width: 150,
         headerAlign: "center",
         align: "center",
         filterable: false,
@@ -295,9 +192,9 @@ function Jewelry() {
         ),
       },
       {
-        field: "isActive",
+        field: "state",
         headerName: "Status",
-        width: 200,
+        width: 150,
         headerAlign: "center",
         align: "center",
         filterable: false,
@@ -305,10 +202,21 @@ function Jewelry() {
         disableColumnMenu: true,
         renderCell: ({ row }) => (
           <Switch
-            defaultChecked={true}
+            defaultChecked={row.state === Status.Active ? true : false}
             onChange={() => onChangeStatus(row.id)}
           />
         ),
+      },
+      {
+        field: "createdAt",
+        headerName: "Ngày Tạo",
+        width: 200,
+        headerAlign: "center",
+        align: "center",
+        filterable: false,
+        renderCell: ({ row }) => {
+          return <div>{moment(row.createdAt).format("DD/MM/YYYY")}</div>;
+        },
       },
       {
         field: "actions",
@@ -336,9 +244,37 @@ function Jewelry() {
     setSelected(initSelected);
   };
 
+  const handleChangePage = (model: GridPaginationModel) => {
+    // model.page is the page to fetch and starts at 0
+    setFilterObj({
+      ...filterObj,
+      page: model.page,
+    });
+  };
+
   const handleFilter = (model: GridFilterModel) => {
     console.log(model);
   };
+
+  const handleSort = (model: GridSortModel) => {
+    console.log(model);
+  };
+
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: [fetchDesigns, filterObj],
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterObj]);
+
+  useEffect(() => {
+    if (designResponse && designResponse.data) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { items, ...rest } = designResponse.data;
+      setMetaData(rest);
+    }
+  }, [designResponse]);
 
   return (
     <Box>
@@ -353,24 +289,47 @@ function Jewelry() {
       </Grid>
 
       <DataGrid
+        loading={isLoading}
         getRowHeight={() => "auto"}
-        rows={rows}
+        rows={designResponse?.data?.items ? designResponse.data.items : []}
         columns={columns}
         onFilterModelChange={handleFilter}
-        pageSizeOptions={[100]}
+        onSortModelChange={handleSort}
+        pageSizeOptions={[pageSize]}
         disableColumnSelector
         disableRowSelectionOnClick
         autoHeight
+        paginationMode="server"
+        paginationModel={{
+          page: filterObj?.page ? filterObj.page : 0,
+          pageSize: filterObj?.pageSize ? filterObj.pageSize : pageSize,
+        }}
+        onPaginationModelChange={handleChangePage}
+        rowCount={metaData.count}
       />
 
-      <AddModal open={openAdd} setOpen={setOpenAdd} />
-      <UpdateModal
-        open={openUpdate}
-        setOpen={setOpenUpdate}
-        {...selected}
-        resetSelected={resetSelected}
-        design={selected}
-      />
+      {response?.data && metalSpecResponse?.data && categoryResponse?.data && (
+        <AddModal
+          open={openAdd}
+          setOpen={setOpenAdd}
+          collections={response.data.items}
+          metalSpecs={metalSpecResponse.data.items}
+          categories={categoryResponse.data.items}
+          filterObj={filterObj}
+        />
+      )}
+
+      {response?.data && metalSpecResponse?.data && (
+        <UpdateModal
+          open={openUpdate}
+          setOpen={setOpenUpdate}
+          {...selected}
+          resetSelected={resetSelected}
+          design={selected}
+          collections={response.data.items}
+          metalSpecs={metalSpecResponse.data.items}
+        />
+      )}
     </Box>
   );
 }

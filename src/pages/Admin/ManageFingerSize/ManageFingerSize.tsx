@@ -4,13 +4,14 @@ import {
   GridActionsCellItem,
   GridColDef,
   GridEventListener,
+  GridPaginationModel,
   GridRowEditStopReasons,
   GridRowId,
   GridRowModes,
   GridRowModesModel,
   GridSortModel,
 } from "@mui/x-data-grid";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
 import { Button, Grid } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
@@ -19,45 +20,24 @@ import CancelIcon from "@mui/icons-material/Close";
 import AddModal from "src/components/modal/fingerSize/Add.modal";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import DeleteModal from "src/components/modal/fingerSize/Delete.modal";
+import { pageSize } from "src/utils/constants";
+import { fetchFingerSizes } from "src/utils/querykey";
+import { getFingerSize } from "src/services/fingerSize.service";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-interface Row {
-  id: number;
-  diameter: number;
-  size: number;
-}
-
-const rows = [
-  {
-    id: 1,
-    size: 4,
-    diameter: 14,
-  },
-  {
-    id: 2,
-    size: 5,
-    diameter: 14.3,
-  },
-  {
-    id: 3,
-    size: 6,
-    diameter: 14.6,
-  },
-  {
-    id: 4,
-    size: 7,
-    diameter: 15,
-  },
-  {
-    id: 5,
-    size: 8,
-    diameter: 15.3,
-  },
-];
+interface Row extends IFingerSize {}
 
 const initSelected = {
   id: 0,
   size: 0,
   diameter: 0,
+};
+
+const initMetaData = {
+  page: 0,
+  pageSize,
+  totalPages: 0,
+  count: 0,
 };
 
 function ManageFingerSize() {
@@ -66,6 +46,22 @@ function ManageFingerSize() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selected, setSelected] = useState<Row>(initSelected);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+
+  const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
+  const [filterObj, setFilterObj] = useState<IFingerSizeFilter>({
+    page: 0,
+    pageSize,
+  });
+
+  const queryClient = useQueryClient();
+
+  const { data: response, isLoading } = useQuery({
+    queryKey: [fetchFingerSizes, filterObj],
+
+    queryFn: () => {
+      return getFingerSize(filterObj);
+    },
+  });
 
   const handleEditClick = useCallback(
     (id: GridRowId) => () => {
@@ -77,7 +73,6 @@ function ManageFingerSize() {
   const handleSaveClick = useCallback(
     (id: GridRowId) => () => {
       setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-      console.log("call api update");
     },
     [rowModesModel]
   );
@@ -88,27 +83,12 @@ function ManageFingerSize() {
         ...rowModesModel,
         [id]: { mode: GridRowModes.View, ignoreModifications: true },
       });
-
-      const editedRow = rows.find((row) => row.id === id);
-      console.log(editedRow);
     },
     [rowModesModel]
   );
 
   const columns: GridColDef<Row>[] = useMemo(
     () => [
-      {
-        field: "index",
-        headerName: "No",
-        width: 200,
-        headerAlign: "center",
-        align: "center",
-        sortable: false,
-        filterable: false,
-        disableColumnMenu: true,
-        renderCell: (index) =>
-          index.api.getRowIndexRelativeToVisibleRows(index.row.id) + 1,
-      },
       {
         field: "size",
         headerName: "Size",
@@ -193,19 +173,45 @@ function ManageFingerSize() {
         [id]: { mode: GridRowModes.View, ignoreModifications: true },
       });
     }
-
-    if (params.reason === GridRowEditStopReasons.enterKeyDown) {
-      console.log("call api update");
-    }
   };
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
     setRowModesModel(newRowModesModel);
   };
 
+  const handleProcessRowUpdate = (row: Row) => {
+    console.log(row);
+
+    return row;
+  };
+
+  const handleChangePage = (model: GridPaginationModel) => {
+    // model.page is the page to fetch and starts at 0
+    setFilterObj({
+      ...filterObj,
+      page: model.page,
+    });
+  };
+
   const handleSort = (model: GridSortModel) => {
     console.log(model);
   };
+
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: [fetchFingerSizes, filterObj],
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterObj]);
+
+  useEffect(() => {
+    if (response && response.data) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { items, ...rest } = response.data;
+      setMetaData(rest);
+    }
+  }, [response]);
 
   return (
     <div className={styles.container}>
@@ -222,18 +228,27 @@ function ManageFingerSize() {
       </Grid>
 
       <DataGrid
+        processRowUpdate={handleProcessRowUpdate}
+        loading={isLoading}
         getRowHeight={() => "auto"}
-        rows={rows}
+        rows={response?.data?.items ? response.data.items : []}
         columns={columns}
         editMode="row"
         onSortModelChange={handleSort}
-        pageSizeOptions={[100]}
+        pageSizeOptions={[pageSize]}
         disableColumnSelector
         disableRowSelectionOnClick
         autoHeight
         onRowEditStop={handleRowEditStop}
         rowModesModel={rowModesModel}
         onRowModesModelChange={handleRowModesModelChange}
+        paginationMode="server"
+        paginationModel={{
+          page: filterObj?.page ? filterObj.page : 0,
+          pageSize: filterObj?.pageSize ? filterObj.pageSize : pageSize,
+        }}
+        onPaginationModelChange={handleChangePage}
+        rowCount={metaData.count}
       />
 
       <AddModal open={openAdd} setOpen={setOpenAdd} />

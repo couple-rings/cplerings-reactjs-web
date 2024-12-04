@@ -131,7 +131,7 @@ function CustomRequestDetail() {
 
   const handleAccept = () => {
     statusMutation.mutate({
-      staffId,
+      staffId: selected,
       customRequestStatus: CustomRequestStatus.OnGoing,
     });
   };
@@ -304,6 +304,34 @@ function CustomRequestDetail() {
             </Grid>
           </fieldset>
         </Grid>
+
+        {staffPosition === StaffPosition.Sales && response?.data?.staff && (
+          <Grid container item xs={11} lg={9} mt={4} className={styles.staff}>
+            <fieldset style={{ width: "100%", padding: "1rem" }}>
+              <legend className={styles.title}>Nhân Viên Thiết Kế</legend>
+              <Grid container mb={1}>
+                <Grid item xs={3}>
+                  Tên tài khoản:
+                </Grid>
+                <Grid item>{response.data.staff.username}</Grid>
+              </Grid>
+
+              <Grid container mb={1}>
+                <Grid item xs={3}>
+                  Email:
+                </Grid>
+                <Grid item>{response.data.staff.email}</Grid>
+              </Grid>
+
+              <Grid container>
+                <Grid item xs={3}>
+                  Số điện thoại:
+                </Grid>
+                <Grid item>{response.data.staff.phone ?? "--"}</Grid>
+              </Grid>
+            </fieldset>
+          </Grid>
+        )}
       </Grid>
 
       <Grid container justifyContent={"center"}>

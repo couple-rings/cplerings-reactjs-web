@@ -1,16 +1,20 @@
+@use 'src/index.scss'as *;
+
 .container {
-    display: flex;
-    align-items: center;
+    display       : flex;
+    align-items   : center;
     flex-direction: column;
-    margin-bottom: 100px;
+    margin-bottom : 100px;
+    color         : $primaryColor;
 
     .title {
         text-align: center;
+
         p {
-            font-size: 18px;
+            font-size    : 18px;
             margin-bottom: 50px;
         }
     }
 
-   
+
 }

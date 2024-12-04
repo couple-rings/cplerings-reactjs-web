@@ -3,72 +3,73 @@ import {
   Divider,
   Grid,
   IconButton,
-  SxProps,
+  // SxProps,
   useMediaQuery,
 } from "@mui/material";
 import styles from "./BagItem.module.scss";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
-import sample from "src/assets/sampledata/ringdesign.png";
 import CloseIcon from "@mui/icons-material/Close";
-import SizeMenu from "src/components/menu/SizeMenu";
-import { useState } from "react";
-import { bagItemMenuStyle, menuPaperStyle } from "src/utils/styles";
-import MetalMenu from "src/components/menu/MetalMenu";
-import DiamondMenu from "src/components/menu/DiamondMenu";
-import EngravingMenu from "src/components/menu/EngravingMenu";
+// import { useState } from "react";
+// import { bagItemMenuStyle } from "src/utils/styles";
+// import MetalMenu from "src/components/menu/MetalMenu";
+// import DiamondMenu from "src/components/menu/DiamondMenu";
 import { currencyFormatter } from "src/utils/functions";
 import { useTheme } from "@mui/material/styles";
+import { DesignCharacteristic } from "src/utils/enums";
+import { useAppDispatch } from "src/utils/hooks";
+import { removeFromCart } from "src/redux/slice/cart.slice";
 
-const sizeMenuStyle: SxProps = {
-  ...bagItemMenuStyle,
-  width: 50,
-  fontSize: "0.9rem",
-  minWidth: 30,
-};
+// const metalMenuStyle: SxProps = {
+//   ...bagItemMenuStyle,
+//   fontSize: "0.9rem",
+//   width: 150,
+// };
 
-const metalMenuStyle: SxProps = {
-  ...bagItemMenuStyle,
-  fontSize: "0.9rem",
-  width: 150,
-};
+// const diamondMenuStyle: SxProps = {
+//   ...bagItemMenuStyle,
+//   fontSize: "0.9rem",
+//   width: 120,
+// };
 
-const diamondMenuStyle: SxProps = {
-  ...bagItemMenuStyle,
-  fontSize: "0.9rem",
-  width: 120,
-};
+function BagItem(props: IBagItemProps) {
+  const { data, checkedItem, setCheckedItem } = props;
 
-const engravingMenuStyle: SxProps = {
-  ...bagItemMenuStyle,
-  fontSize: "0.9rem",
-  width: 120,
-};
-
-function BagItem() {
-  const [size, setSize] = useState(5);
-  const [metal, setMetal] = useState("Vàng Trắng 18K");
-  const [diamond, setDiamond] = useState("5PT ,F ,SI1");
-  const [engraving, setEngraving] = useState("");
+  const { design, metalSpec, id } = data;
+  // const [metal, setMetal] = useState("Vàng Trắng 18K");
+  // const [diamond, setDiamond] = useState("5PT ,F ,SI1");
 
   const theme = useTheme();
   const sm = useMediaQuery(theme.breakpoints.up("sm"));
+
+  const dispatch = useAppDispatch();
+
+  const handleCheck = () => {
+    const found = checkedItem.find((item) => item === id);
+    if (found) {
+      setCheckedItem(checkedItem.filter((item) => item !== id));
+    } else setCheckedItem([...checkedItem, id]);
+  };
 
   return (
     <div className={styles.container}>
       <div className={styles.info}>
         <Checkbox
+          onChange={handleCheck}
+          checked={checkedItem.includes(id)}
           icon={<RadioButtonUncheckedIcon />}
           checkedIcon={<RadioButtonCheckedIcon />}
         />
 
-        <img src={sample} />
+        <img src={metalSpec.image.url} />
 
         <div className={styles.detail}>
-          <div className={styles.name}>
-            CR FOREVER Simple Wedding Ring For Man
+          <div className={styles.name}>{design.name}</div>
+          <div className={styles.gender}>
+            {design.characteristic === DesignCharacteristic.Male
+              ? "(Nam Giới)"
+              : "(Nữ Giới)"}
           </div>
-          <div className={styles.gender}>(Nam Giới)</div>
 
           <Grid container marginBottom={sm ? 3 : 0}>
             <Grid
@@ -82,16 +83,27 @@ function BagItem() {
               <Grid item xs={6} sm={12} className={styles.label}>
                 Chất liệu
               </Grid>
-              <Grid item xs={6} sm={12}>
-                <MetalMenu
-                  sx={metalMenuStyle}
-                  metal={metal}
-                  setMetal={setMetal}
-                />
+              <Grid item xs={6} sm={12} fontSize={"0.9rem"}>
+                {metalSpec.metalSpecification.name}
               </Grid>
             </Grid>
 
             <Grid
+              container
+              item
+              xs={12}
+              sm={5}
+              marginBottom={sm ? 0 : 1}
+              alignItems={"center"}
+            >
+              <Grid item xs={6} sm={12} className={styles.label}>
+                Kích thước
+              </Grid>
+              <Grid item xs={6} sm={12} fontSize={"0.9rem"}>
+                {design.size} cm
+              </Grid>
+            </Grid>
+            {/* <Grid
               container
               item
               xs={12}
@@ -109,10 +121,10 @@ function BagItem() {
                   setDiamond={setDiamond}
                 />
               </Grid>
-            </Grid>
+            </Grid> */}
           </Grid>
 
-          <Grid container>
+          <Grid container marginBottom={sm ? 3 : 0}>
             <Grid
               container
               item
@@ -122,16 +134,10 @@ function BagItem() {
               alignItems={"center"}
             >
               <Grid item xs={6} sm={12} className={styles.label}>
-                Kích thước
+                Kim cương phụ
               </Grid>
-              <Grid item xs={6} sm={12}>
-                <SizeMenu
-                  size={size}
-                  setSize={setSize}
-                  label={false}
-                  sx={sizeMenuStyle}
-                  paperStyle={menuPaperStyle}
-                />
+              <Grid item xs={6} sm={12} fontSize={"0.9rem"}>
+                {design.sideDiamondsCount} viên
               </Grid>
             </Grid>
 
@@ -144,21 +150,20 @@ function BagItem() {
               alignItems={"center"}
             >
               <Grid item xs={6} sm={12} className={styles.label}>
-                Khắc chữ
+                Khối lượng
               </Grid>
-              <Grid item xs={6} sm={12}>
-                <EngravingMenu
-                  sx={engravingMenuStyle}
-                  engraving={engraving}
-                  setEngraving={setEngraving}
-                />
+              <Grid item xs={6} sm={12} fontSize={"0.9rem"}>
+                {design.metalWeight} chỉ
               </Grid>
             </Grid>
           </Grid>
         </div>
 
         <div>
-          <IconButton sx={{ p: 0 }}>
+          <IconButton
+            sx={{ p: 0 }}
+            onClick={() => dispatch(removeFromCart(id))}
+          >
             <CloseIcon />
           </IconButton>
         </div>

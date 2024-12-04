@@ -86,6 +86,8 @@ import RefundOrder from "src/pages/Staff/RefundOrder/RefundOrder";
 import RefundOrderDetail from "src/pages/Staff/RefundOrderDetail/RefundOrderDetail";
 import RefundCreateForm from "src/pages/Staff/RefundCreateForm/RefundCreateForm";
 import ManagerFiancePage from "src/pages/Manager/ManagerFinancePage/ManagerFinancePage";
+import RequestCrafting from "src/pages/Customer/RequestCrafting/RequestCrafting";
+import ManageJewelry from "src/pages/Manager/ManageJewelry/ManageJewelry";
 import ManagerProductPage from "src/pages/Manager/ManagerProductPage/ManagerProductPage";
 
 const router = createBrowserRouter([
@@ -150,7 +152,7 @@ const router = createBrowserRouter([
         element: <Jewelry />,
       },
       {
-        path: "jewelry/detail",
+        path: "jewelry/detail/:id",
         element: <JewelryDetail />,
       },
       {
@@ -210,6 +212,10 @@ const router = createBrowserRouter([
       {
         path: "transport/:id",
         element: <Map />,
+      },
+      {
+        path: "request-crafting",
+        element: <RequestCrafting />,
       },
       {
         path: "support",
@@ -420,6 +426,10 @@ const router = createBrowserRouter([
         element: <ManageDesign />,
       },
       {
+        path: "jewelry",
+        element: <ManageJewelry />,
+      },
+      {
         path: "topic&tag",
         element: <ManageTopicAndTag />,
       },
@@ -429,12 +439,12 @@ const router = createBrowserRouter([
       },
       {
         path: "financial",
-        element: <ManagerFiancePage />
+        element: <ManagerFiancePage />,
       },
       {
         path: "product",
-        element: <ManagerProductPage/>
-      }
+        element: <ManagerProductPage />,
+      },
     ],
   },
   {
