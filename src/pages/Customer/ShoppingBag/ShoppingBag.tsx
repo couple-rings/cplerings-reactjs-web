@@ -70,7 +70,11 @@ function ShoppingBag() {
 
           {cartItems.length > 0 && (
             <Grid item lg={5}>
-              <Summary productAmount={12000000} discount={0} />
+              <Summary
+                productAmount={12000000}
+                discount={0}
+                checkedItem={checkedItem}
+              />
 
               <div className={styles.box}>
                 <img src={box} width={"100%"} />

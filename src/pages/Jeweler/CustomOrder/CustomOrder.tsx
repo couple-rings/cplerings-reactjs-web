@@ -13,7 +13,7 @@ import { CustomOrderStatus } from "src/utils/enums";
 import { primaryBtn } from "src/utils/styles";
 import styles from "./CustomOrder.module.scss";
 import { pageSize } from "src/utils/constants";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getCustomOrders } from "src/services/customOrder.service";
 import { fetchCustomOrders } from "src/utils/querykey";
 import { useAppSelector } from "src/utils/hooks";
@@ -46,7 +46,6 @@ function CustomOrder() {
   );
 
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const { id: userId } = useAppSelector((state) => state.auth.userInfo);
 
@@ -196,15 +195,6 @@ function CustomOrder() {
       setOwnMetaData(rest);
     }
   }, [ownResponse]);
-
-  useEffect(() => {
-    if (ownFilterObj)
-      queryClient.invalidateQueries({
-        queryKey: [fetchCustomOrders, ownFilterObj],
-      });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ownFilterObj]);
 
   useEffect(() => {
     setOwnFilterObj({

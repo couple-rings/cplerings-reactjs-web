@@ -350,14 +350,6 @@ function ArrangeTransport() {
   }, [response]);
 
   useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchTransportOrders, filterObj],
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
-
-  useEffect(() => {
     if (branchId !== 0) {
       setFilterObj({
         page: 0,

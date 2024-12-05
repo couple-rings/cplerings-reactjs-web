@@ -14,7 +14,7 @@ import { CraftingRequestStatus } from "src/utils/enums";
 import { Button, FormLabel, Grid, IconButton, Popover } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 import { useNavigate } from "react-router-dom";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getCraftingRequestGroups } from "src/services/craftingRequest.service";
 import { fetchCraftingRequestGroups } from "src/utils/querykey";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
@@ -47,7 +47,6 @@ function CraftingRequest() {
   const id = openPopover ? "simple-popover" : undefined;
 
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const { data: response, isLoading } = useQuery({
     queryKey: [fetchCraftingRequestGroups, filterObj],
@@ -221,14 +220,6 @@ function CraftingRequest() {
       setMetaData(rest);
     }
   }, [response]);
-
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchCraftingRequestGroups, filterObj],
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
 
   return (
     <div className={styles.container}>

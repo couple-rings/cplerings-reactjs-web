@@ -1,13 +1,13 @@
+import { pageSize } from "src/utils/constants";
+import styles from "./StandardOrder.module.scss";
 import {
   DataGrid,
+  getGridStringOperators,
   GridColDef,
   GridFilterModel,
   GridPaginationModel,
   GridSortModel,
-  getGridStringOperators,
 } from "@mui/x-data-grid";
-import { useEffect, useMemo, useState } from "react";
-import styles from "./CustomRequest.module.scss";
 import {
   Box,
   Button,
@@ -20,20 +20,19 @@ import {
   Tab,
   Tabs,
 } from "@mui/material";
-import { primaryBtn } from "src/utils/styles";
-import { CustomRequestStatus, StaffPosition } from "src/utils/enums";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCustomRequests } from "src/utils/querykey";
-import { getCustomRequests } from "src/services/customRequest.service";
-import { pageSize } from "src/utils/constants";
+import { fetchStandardOrders } from "src/utils/querykey";
+import { getStandardOrders } from "src/services/standardOrder.service";
+import RemoveRedEyeSharpIcon from "@mui/icons-material/RemoveRedEyeSharp";
 import moment from "moment";
 import {
   currencyFormatter,
-  formatCustomRequestStatus,
+  formatStandardOrderStatus,
 } from "src/utils/functions";
-import RemoveRedEyeSharpIcon from "@mui/icons-material/RemoveRedEyeSharp";
-import { useAppSelector } from "src/utils/hooks";
+import { primaryBtn } from "src/utils/styles";
+import { useNavigate } from "react-router-dom";
+import { StandardOrderStatus } from "src/utils/enums";
 
 const boxStyle: SxProps = {
   borderBottom: 1,
@@ -42,7 +41,7 @@ const boxStyle: SxProps = {
   mb: 6,
 };
 
-interface Row extends ICustomRequest {}
+interface Row extends IStandardOrder {}
 
 const filterOperators = getGridStringOperators().filter(({ value }) =>
   ["contains" /* add more over time */].includes(value)
@@ -55,12 +54,9 @@ const initMetaData = {
   count: 0,
 };
 
-function CustomRequest() {
+function StandardOrder() {
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
-  const [filterObj, setFilterObj] = useState<ICustomRequestFilter>({
-    page: 0,
-    pageSize,
-  });
+  const [filterObj, setFilterObj] = useState<IStandardOrderFilter | null>(null);
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -69,9 +65,15 @@ function CustomRequest() {
 
   const navigate = useNavigate();
 
-  const { staffPosition, id: staffId } = useAppSelector(
-    (state) => state.auth.userInfo
-  );
+  const { data: response, isLoading } = useQuery({
+    queryKey: [fetchStandardOrders, filterObj],
+
+    queryFn: () => {
+      if (filterObj) return getStandardOrders(filterObj);
+    },
+
+    enabled: !!filterObj,
+  });
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -81,20 +83,21 @@ function CustomRequest() {
     setAnchorEl(null);
   };
 
-  const { data: response, isLoading } = useQuery({
-    queryKey: [fetchCustomRequests, filterObj],
-
-    queryFn: () => {
-      if (filterObj) return getCustomRequests(filterObj);
-    },
-  });
-
   const columns: GridColDef<Row>[] = useMemo(
     () => [
       {
+        field: "orderNo",
+        headerName: "Mã Đơn",
+        width: 150,
+        headerAlign: "center",
+        align: "center",
+        sortable: false,
+        filterOperators,
+      },
+      {
         field: "customer",
         headerName: "Khách Hàng",
-        width: 200,
+        width: 250,
         headerAlign: "center",
         align: "center",
         filterOperators,
@@ -105,7 +108,7 @@ function CustomRequest() {
               {row.customer.username}{" "}
               <IconButton onClick={handleClick}>
                 <RemoveRedEyeSharpIcon fontSize="small" />
-              </IconButton>{" "}
+              </IconButton>
               <Popover
                 id={id}
                 open={openPopover}
@@ -138,7 +141,9 @@ function CustomRequest() {
                   <Grid container justifyContent={"space-between"}>
                     <Grid item>Số điện thoại:</Grid>
 
-                    <Grid item>{row.customer.phone ?? "--"}</Grid>
+                    <Grid item>
+                      {row.customer.phone ? row.customer.phone : "--"}
+                    </Grid>
                   </Grid>
                 </Grid>
               </Popover>
@@ -149,7 +154,7 @@ function CustomRequest() {
       {
         field: "createdAt",
         headerName: "Ngày Tạo",
-        width: 200,
+        width: 150,
         headerAlign: "center",
         align: "center",
         filterable: false,
@@ -158,29 +163,14 @@ function CustomRequest() {
         },
       },
       {
-        field: "designFee",
-        headerName: "Tiền Thanh Toán",
+        field: "totalPrice",
+        headerName: "Tổng Tiền",
         width: 150,
         headerAlign: "center",
         align: "center",
         filterable: false,
         renderCell: ({ row }) => {
-          return <div>{currencyFormatter(row.designFee.amount)}</div>;
-        },
-      },
-      {
-        field: "customRequestHistories",
-        headerName: "Ngày Cập Nhật",
-        width: 200,
-        headerAlign: "center",
-        align: "center",
-        filterable: false,
-        renderCell: ({ row }) => {
-          const current = row.customRequestHistories.find(
-            (item) => item.status === row.status
-          );
-
-          return <div>{moment(current?.createdAt).format("DD/MM/YYYY")}</div>;
+          return <div>{currencyFormatter(row.totalPrice.amount)}</div>;
         },
       },
       {
@@ -194,8 +184,8 @@ function CustomRequest() {
         renderCell: ({ row }) => {
           return (
             <Chip
-              label={formatCustomRequestStatus(row.status).text}
-              color={formatCustomRequestStatus(row.status).color}
+              label={formatStandardOrderStatus(row.status).text}
+              color={formatStandardOrderStatus(row.status).color}
             />
           );
         },
@@ -211,7 +201,9 @@ function CustomRequest() {
           <Button
             variant="contained"
             sx={{ ...primaryBtn, py: 1, m: 2, borderRadius: 5 }}
-            onClick={() => navigate(`/staff/custom-request/detail/${row.id}`)}
+            onClick={() => {
+              navigate(`/staff/standard-order/detail/${row.id}`);
+            }}
           >
             Chi Tiết
           </Button>
@@ -223,23 +215,25 @@ function CustomRequest() {
 
   const handleChangePage = (model: GridPaginationModel) => {
     // model.page is the page to fetch and starts at 0
-    setFilterObj({
-      ...filterObj,
-      page: model.page,
-    });
-  };
-
-  const handleChangeStatus = (status: CustomRequestStatus) => {
-    setFilterObj({
-      ...filterObj,
-      page: 0,
-      pageSize,
-      status,
-    });
+    if (filterObj)
+      setFilterObj({
+        ...filterObj,
+        page: model.page,
+      });
   };
 
   const handleFilter = (model: GridFilterModel) => {
     console.log(model);
+  };
+
+  const handleFilterStatus = (status: StandardOrderStatus) => {
+    if (filterObj)
+      setFilterObj({
+        ...filterObj,
+        page: 0,
+        pageSize,
+        status,
+      });
   };
 
   const handleSort = (model: GridSortModel) => {
@@ -255,72 +249,71 @@ function CustomRequest() {
   }, [response]);
 
   useEffect(() => {
-    if (staffPosition === StaffPosition.Sales) {
-      setFilterObj((current) => ({
-        ...current,
-        status: CustomRequestStatus.Waiting,
-      }));
-    }
-
-    if (staffPosition === StaffPosition.Designer) {
-      setFilterObj((current) => ({
-        ...current,
-        status: CustomRequestStatus.OnGoing,
-        staffId,
-      }));
-    }
-  }, [staffId, staffPosition]);
+    setFilterObj({
+      page: 0,
+      pageSize,
+      status: StandardOrderStatus.Pending,
+    });
+  }, []);
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Yêu Cầu Thiết Kế</div>
+      <div className={styles.title}>Đơn Bán Hàng</div>
 
-      <Box sx={boxStyle}>
-        <Tabs
-          classes={{
-            indicator: "myIndicator",
-          }}
-          value={filterObj?.status}
-          onChange={(e, value: CustomRequestStatus) =>
-            handleChangeStatus(value)
-          }
-        >
-          {staffPosition === StaffPosition.Sales && (
+      {filterObj && (
+        <Box sx={boxStyle}>
+          <Tabs
+            classes={{
+              indicator: "myIndicator",
+            }}
+            value={filterObj?.status}
+            onChange={(e, value: StandardOrderStatus) =>
+              handleFilterStatus(value)
+            }
+          >
             <Tab
               classes={{
                 selected: "selectedCustomRequestTab",
               }}
               className={styles.tabLabel}
-              label="Đang chờ duyệt"
-              value={CustomRequestStatus.Waiting}
+              label="Chưa Thanh Toán"
+              value={StandardOrderStatus.Pending}
             />
-          )}
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Đang thiết kế"
-            value={CustomRequestStatus.OnGoing}
-          />
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Đã hoàn thành"
-            value={CustomRequestStatus.Completed}
-          />
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Đã hủy"
-            value={CustomRequestStatus.Canceled}
-          />
-        </Tabs>
-      </Box>
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Đã Thanh Toán"
+              value={StandardOrderStatus.Paid}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Đang Giao"
+              value={StandardOrderStatus.Delivering}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Đã Hoàn Thành"
+              value={StandardOrderStatus.Completed}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Đã Hủy"
+              value={StandardOrderStatus.Canceled}
+            />
+          </Tabs>
+        </Box>
+      )}
 
       <DataGrid
         loading={isLoading}
@@ -335,8 +328,8 @@ function CustomRequest() {
         autoHeight
         paginationMode="server"
         paginationModel={{
-          page: filterObj.page,
-          pageSize: filterObj.pageSize,
+          page: filterObj?.page ? filterObj.page : 0,
+          pageSize: filterObj?.pageSize ? filterObj.pageSize : pageSize,
         }}
         onPaginationModelChange={handleChangePage}
         rowCount={metaData.count}
@@ -345,4 +338,4 @@ function CustomRequest() {
   );
 }
 
-export default CustomRequest;
+export default StandardOrder;

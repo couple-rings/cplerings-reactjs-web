@@ -19,7 +19,7 @@ import {
 import ProductCard from "src/components/product/ProductCard";
 import { useEffect, useRef, useState } from "react";
 import { pageSize } from "src/utils/constants";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchDesigns } from "src/utils/querykey";
 import { getDesigns } from "src/services/design.service";
 import LoadingProduct from "src/components/product/LoadingProduct";
@@ -56,7 +56,6 @@ function Jewelry() {
 
   const navigate = useNavigate();
   const ref = useRef<HTMLDivElement>(null);
-  const queryClient = useQueryClient();
 
   const location: Location<{
     categoryId?: number;
@@ -92,14 +91,6 @@ function Jewelry() {
       });
     }
   }, [response]);
-
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchDesigns, filterObj],
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
 
   useEffect(() => {
     if (location.state?.categoryId) {

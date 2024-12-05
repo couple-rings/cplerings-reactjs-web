@@ -7,7 +7,9 @@ import {
   DivisionType,
   FileType,
   GoldColor,
+  PaymentStatus,
   RingStatus,
+  StandardOrderStatus,
   Status,
   TransportOrderStatus,
   VersionOwner,
@@ -529,5 +531,41 @@ declare global {
       url: string;
       createdAt: string;
     };
+  }
+
+  interface IStandardOrderItem {
+    id: number;
+    jewelry?: IJewelry;
+    branch: IBranch;
+    design: IDesign;
+    metalSpecification: IMetalSpec;
+  }
+
+  interface IStandardOrder {
+    id: number;
+    customer: IUser;
+    orderNo: string;
+    totalPrice: {
+      amount: number;
+    };
+    status: StandardOrderStatus;
+    standardOrderHistories: IStatusHistory<StandardOrderStatus>[];
+    transportationOrders: ITransportOrder[];
+    jewelries?: IJewelry[];
+    standardOrderItems: IStandardOrderItem[];
+    createdAt: string;
+  }
+
+  interface IPayment {
+    id: number;
+    type: PaymentType;
+    description: string;
+    amount: {
+      amount: number;
+    };
+    status: PaymentStatus;
+    customRequest?: ICustomRequest;
+    craftingStage?: ICraftingStage;
+    standardOrder?: IStandardOrder;
   }
 }

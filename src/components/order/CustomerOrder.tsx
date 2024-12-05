@@ -1,81 +1,147 @@
-import { currencyFormatter } from "src/utils/functions";
+import {
+  currencyFormatter,
+  formatStandardOrderStatus,
+} from "src/utils/functions";
 import styles from "./CustomerOrder.module.scss";
-import sample from "src/assets/sampledata/ringdesign.png";
-import { Box, Button, Divider, Grid } from "@mui/material";
+import sample from "src/assets/default.jpg";
+import { Button, Chip, Divider, FormLabel, Grid } from "@mui/material";
 import { outlinedBtn, primaryBtn } from "src/utils/styles";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
+import { DesignCharacteristic, StandardOrderStatus } from "src/utils/enums";
 
-function CustomerOrder() {
+function CustomerOrder(props: IStandardOrderProps) {
+  const { data } = props;
+  const { createdAt, status, standardOrderItems, id, orderNo } = data;
+
   const navigate = useNavigate();
 
   return (
     <>
       <div className={styles.container}>
-        <div className={styles.header}>
-          <div className={styles.left}>
-            <div>09/10/2024</div>
-            <div>Mã đơn: 824100998377</div>
-          </div>
-          <div>Unpaid</div>
-        </div>
+        <Grid container className={styles.header}>
+          <Grid container item mb={{ xs: 2, md: 0 }} gap={2} sm={10}>
+            <Grid item>{moment(createdAt).format("DD/MM/YYYY")}</Grid>
+            <Grid item>Mã đơn: {orderNo}</Grid>
+          </Grid>
+          <Grid item>
+            <Chip
+              label={formatStandardOrderStatus(status).text}
+              color={formatStandardOrderStatus(status).color}
+            />
+          </Grid>
+        </Grid>
 
         <Grid container className={styles.body}>
-          <Grid item xs={12} sm={3} md={2}>
-            <img src={sample} />
-          </Grid>
+          <Grid container item xs={12} md={8.5} lg={9}>
+            {standardOrderItems.map((item) => {
+              const img = item.design.designMetalSpecifications.find(
+                (i) => i.metalSpecification.id === item.metalSpecification.id
+              )?.image.url;
 
-          <Grid item xs={12} sm={9} md={7} className={styles.middle}>
-            <div className={styles.title}>BỘ SƯU TẬP FOREVER Nhẫn Cưới</div>
-            <div className={styles.price}>{currencyFormatter(12000000)}</div>
-            <Box sx={{ display: "flex", gap: 3, mb: 1 }}>
-              <div>
-                <span className={styles.label}>Chất liệu</span>
-                <span>Vàng Trắng 18K</span>
-              </div>
-              <div>
-                <span className={styles.label}>Kích thước</span>
-                <span>5</span>
-              </div>
-            </Box>
-            <div>
-              <span className={styles.label}>Kim cương</span>
-              <span>5PT, F, SI1</span>
-            </div>
+              return (
+                <Grid
+                  container
+                  item
+                  justifyContent={"space-between"}
+                  key={item.id}
+                >
+                  <Grid item xs={12} sm={3}>
+                    <img src={img ? img : sample} />
+                  </Grid>
+
+                  <Grid item xs={12} sm={8.5} className={styles.middle}>
+                    <div className={styles.title}>
+                      {item.design.name}{" "}
+                      {item.design.characteristic === DesignCharacteristic.Male
+                        ? "(Nam Giới)"
+                        : "(Nữ Giới)"}
+                    </div>
+                    <Grid
+                      container
+                      justifyContent={"space-between"}
+                      my={2}
+                      alignItems={"center"}
+                    >
+                      <FormLabel>
+                        Bộ Sưu Tập {item.design.designCollection.name}
+                      </FormLabel>
+                      <div className={styles.price}>
+                        {currencyFormatter(12000000)}
+                      </div>
+                    </Grid>
+
+                    <Grid
+                      container
+                      justifyContent={"space-between"}
+                      my={{ xs: 3, xl: 1 }}
+                    >
+                      <Grid item>
+                        <span className={styles.label}>Chất liệu</span>
+                        <span>{item.metalSpecification.name}</span>
+                      </Grid>
+                      <Grid item>
+                        <span className={styles.label}>Kích thước</span>
+                        <span>{item.design.size} cm</span>
+                      </Grid>
+                    </Grid>
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item>
+                        <span className={styles.label}>Kim cương phụ</span>
+                        <span>{item.design.sideDiamondsCount} viên</span>
+                      </Grid>
+                      <Grid item>
+                        <span className={styles.label}>Khối lượng</span>
+                        <span>{item.design.metalWeight} chỉ</span>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              );
+            })}
           </Grid>
 
           <Grid container item xs={12} md={3} lg={2.5} className={styles.right}>
-            <Grid item xs={12} sm={3.5} md={12}>
-              <Button
-                fullWidth
-                variant="contained"
-                sx={{ ...primaryBtn, py: 1 }}
-              >
-                Trả Ngay
-              </Button>
-            </Grid>
+            {status === StandardOrderStatus.Pending && (
+              <Grid item xs={12} sm={3.5} md={12}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  sx={{ ...primaryBtn, py: 1 }}
+                  onClick={() => navigate(`/customer/checkout/${id}`)}
+                >
+                  Trả Ngay
+                </Button>
+              </Grid>
+            )}
+
             <Grid item xs={12} sm={3.5} md={12}>
               <Button
                 fullWidth
                 variant="outlined"
                 sx={{ ...outlinedBtn, px: 0 }}
-                onClick={() => navigate(`/customer/order-detail/1`)}
+                onClick={() => navigate(`/customer/order-detail/${id}`)}
               >
                 Chi Tiết
               </Button>
             </Grid>
-            <Grid item xs={12} sm={3.5} md={12}>
-              <Button
-                fullWidth
-                variant="contained"
-                sx={{ ...primaryBtn, py: 1 }}
-              >
-                Hủy Đơn
-              </Button>
-            </Grid>
+
+            {status === StandardOrderStatus.Pending && (
+              <Grid item xs={12} sm={3.5} md={12}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  sx={{ ...primaryBtn, py: 1 }}
+                >
+                  Hủy Đơn
+                </Button>
+              </Grid>
+            )}
           </Grid>
         </Grid>
       </div>
-      <Divider sx={{ backgroundColor: "#555", my: 5 }} />
+      <Divider sx={{ backgroundColor: "#555", mb: 5, mt: 2 }} />
     </>
   );
 }

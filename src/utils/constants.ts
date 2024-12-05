@@ -152,3 +152,7 @@ export const meleeDiamondCarat = 0.008;
 export const profitRatio = 1.3;
 export const designFee = 500000;
 export const taxRate = 0;
+
+export const standardOrderPayment = "Đặt mua trang sức";
+export const designFeePayment = "Thanh toán phí thiết kế";
+export const depositPayment = "Thanh toán tiền đặt cọc";

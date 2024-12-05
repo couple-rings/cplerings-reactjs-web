@@ -8,6 +8,7 @@ import {
   CustomRequestStatus,
   GoldColor,
   JewelryStatus,
+  StandardOrderStatus,
 } from "./enums";
 
 export const showSlides = (minSM: boolean, minMD: boolean, minLG: boolean) => {
@@ -233,5 +234,38 @@ export const formatJewelryStatus = (
   return {
     text: "Unavailable",
     color: "warning",
+  };
+};
+
+export const formatStandardOrderStatus = (
+  status: StandardOrderStatus
+): { text: string; color: ChipColor } => {
+  if (status === StandardOrderStatus.Pending)
+    return {
+      text: "Chưa Thanh Toán",
+      color: "warning",
+    };
+
+  if (status === StandardOrderStatus.Paid)
+    return {
+      text: "Đã Thanh Toán",
+      color: "info",
+    };
+
+  if (status === StandardOrderStatus.Delivering)
+    return {
+      text: "Đang Giao",
+      color: "info",
+    };
+
+  if (status === StandardOrderStatus.Completed)
+    return {
+      text: "Hoàn Thành",
+      color: "success",
+    };
+
+  return {
+    text: "Đã Hủy",
+    color: "error",
   };
 };

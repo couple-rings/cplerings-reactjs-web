@@ -16,7 +16,7 @@ import { DesignStatus, HoverMenuPurpose, ProductType } from "src/utils/enums";
 import ProductCard from "src/components/product/ProductCard";
 import { useEffect, useRef, useState } from "react";
 import WeddingRingsAccordian from "src/components/accordion/WeddingRings.Accordion";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getCoupleDesigns } from "src/services/design.service";
 import { pageSize, prices } from "src/utils/constants";
 import { calculateDefaultPrice } from "src/utils/functions";
@@ -52,7 +52,6 @@ function WeddingRings() {
   const navigate = useNavigate();
 
   const ref = useRef<HTMLDivElement>(null);
-  const queryClient = useQueryClient();
 
   const location: Location<{
     collectionId?: number;
@@ -94,14 +93,6 @@ function WeddingRings() {
       });
     }
   }, [response]);
-
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchCoupleDesigns, filterObj],
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
 
   useEffect(() => {
     if (location.state?.collectionId) {

@@ -16,6 +16,7 @@ import TaskRoundedIcon from "@mui/icons-material/TaskRounded";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import { useAppSelector } from "src/utils/hooks";
 import { StaffPosition } from "src/utils/enums";
+import MonetizationOnSharpIcon from "@mui/icons-material/MonetizationOnSharp";
 
 const saleStaffSidebarList = [
   {
@@ -37,6 +38,11 @@ const saleStaffSidebarList = [
     text: "Đơn Gia Công",
     icon: <TaskRoundedIcon />,
     path: "/staff/custom-order",
+  },
+  {
+    text: "Đơn Bán Hàng",
+    icon: <MonetizationOnSharpIcon />,
+    path: "/staff/standard-order",
   },
   {
     text: "Đơn Bảo Trì",

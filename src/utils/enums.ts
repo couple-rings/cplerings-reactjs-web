@@ -184,3 +184,23 @@ export enum JewelryStatus {
   Unavailable = "UNAVAILABLE",
   Purchased = "PURCHASED",
 }
+
+export enum StandardOrderStatus {
+  Pending = "PENDING",
+  Paid = "PAID",
+  Delivering = "DELIVERING",
+  Completed = "COMPLETED",
+  Canceled = "CANCELLED",
+}
+
+export enum PaymentType {
+  VnPay = "VNPAY",
+}
+
+export enum PaymentStatus {
+  Pending = "PENDING",
+  Successful = "SUCCESSFUL",
+  Failed = "FAILED",
+  Cancelled = "CANCELLED",
+  Expired = "EXPIRED",
+}

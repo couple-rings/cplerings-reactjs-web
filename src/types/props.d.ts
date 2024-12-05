@@ -149,6 +149,8 @@ declare global {
 
   interface IStepperProps {
     activeStep: number;
+
+    shipping: boolean;
   }
 
   interface IConversationProps {
@@ -215,6 +217,8 @@ declare global {
     productAmount: number;
 
     discount: number;
+
+    checkedItem: string[];
   }
 
   interface ISideBarProps {
@@ -522,6 +526,18 @@ declare global {
   }
 
   interface ICheckoutCardProps {
-    data: ICartItem;
+    data: IStandardOrderItem;
+  }
+
+  interface IStandardOrderProps {
+    data: IStandardOrder;
+  }
+
+  interface IStandardOrderTableProps {
+    order: IStandardOrder;
+  }
+
+  interface ICustomRequestTableProps {
+    request: ICustomRequest;
   }
 }
