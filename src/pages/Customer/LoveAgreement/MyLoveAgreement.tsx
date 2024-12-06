@@ -1,6 +1,6 @@
 import LoveAgreeMentDetail from "src/components/loveAgreement/LoveAgreementDetail";
 import styles from "./MyLoveAgreement.module.scss";
-import { Grid, Skeleton } from "@mui/material";
+import { Button, Grid, Skeleton } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "src/utils/hooks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -11,11 +11,14 @@ import {
 import { fetchAgreements } from "src/utils/querykey";
 import { postUploadFile } from "src/services/file.service";
 import { toast } from "react-toastify";
+import { secondaryBtn } from "src/utils/styles";
+import { useNavigate } from "react-router-dom";
 
 function MyLoveAgreement() {
   const [filterObj, setFilterObj] = useState<IAgreementFilter | null>(null);
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { id } = useAppSelector((state) => state.auth.userInfo);
 
@@ -106,7 +109,19 @@ function MyLoveAgreement() {
           loading={uploadMutation.isPending || signMutation.isPending}
         />
       ) : (
-        <div>Bạn chưa có chứng nhận tình yêu</div>
+        <Grid container justifyContent={"center"} mt={5}>
+          <Grid item xs={12} textAlign={"center"} mb={10}>
+            Bạn chưa có chứng nhận tình yêu
+          </Grid>
+
+          <Button
+            variant="contained"
+            sx={secondaryBtn}
+            onClick={() => navigate("/wedding-rings")}
+          >
+            Mua Nhẫn Cưới
+          </Button>
+        </Grid>
       )}
     </Grid>
   );

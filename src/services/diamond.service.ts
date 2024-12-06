@@ -14,3 +14,7 @@ export const postCreateDiamond = (data: ICreateDiamondRequest) => {
 
   return axios.post<unknown, IResponse<IDiamond>>(`diamonds?${queryUrl}`);
 };
+
+export const putUpdateDiamond = (id: number, data: IUpdateDiamondRequest) => {
+  return axios.put<unknown, IResponse<IDiamond>>(`diamonds/${id}`, data);
+};

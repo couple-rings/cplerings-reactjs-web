@@ -34,6 +34,12 @@ import _ from "lodash";
 import ImageModal from "../image/Image.modal";
 import ViewImgChip from "src/components/chip/ViewImgChip";
 import UploadImgChip from "src/components/chip/UploadImgChip";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { postUploadFile } from "src/services/file.service";
+import { toast } from "react-toastify";
+import { postCreateDesign } from "src/services/design.service";
+import { fetchDesigns } from "src/utils/querykey";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 interface IFormInput {
   collectionId: number;
@@ -47,101 +53,62 @@ interface IFormInput {
   characteristic: DesignCharacteristic;
 }
 
-const category = [
-  {
-    id: 1,
-    name: "Dây chuyền",
-    description: "",
-  },
-  { id: 2, name: "Vòng tay", description: "" },
-];
-
-const collections = [
-  {
-    id: 1,
-    name: "Eternal Bond",
-    description: "",
-  },
-
-  {
-    id: 2,
-    name: "Timeless Elegance",
-    description: "",
-  },
-  {
-    id: 3,
-    name: "Infinity Love",
-    description: "",
-  },
-];
-
-const diamondSpecs = [
-  {
-    id: 1,
-    name: "Pure Heart",
-    weight: 0.05,
-    color: "D",
-    clarity: "VS2",
-    shape: "HEART",
-    price: 3600000,
-  },
-  {
-    id: 2,
-    name: "Graceful Oval",
-    weight: 0.05,
-    color: "G",
-    clarity: "SI1",
-    shape: "OVAL",
-    price: 3120000,
-  },
-  {
-    id: 3,
-    name: "Dazzling Round",
-    weight: 0.15,
-    color: "G",
-    clarity: "VS2",
-    shape: "ROUND",
-    price: 3600000,
-  },
-];
-
-const metalsSpecs = [
-  {
-    id: 1,
-    name: "Gold 18K - Yellow",
-  },
-  {
-    id: 2,
-    name: "Gold 18K - White",
-  },
-  {
-    id: 3,
-    name: "Gold 18K - Rose",
-  },
-];
-
 const initError = {
-  notSelectedDiamond: false,
+  // notSelectedDiamond: false,
   notSelectedMetal: false,
-  noDiamondsAdded: false,
+  // noDiamondsAdded: false,
   noMetalsAdded: false,
   imageMissing: false,
 };
 
-function AddModal(props: IModalProps) {
-  const { open, setOpen } = props;
+function AddModal(props: IAddDesignModalProps) {
+  const { open, setOpen, collections, metalSpecs, categories, filterObj } =
+    props;
 
   const [openImg, setOpenImg] = useState(false);
 
   const [previewImg, setPreviewImg] = useState("");
 
-  const [selectedDiamond, setSelectedDiamond] = useState(0);
-  const [addedDiamonds, setAddedDiamonds] = useState<number[]>([]);
+  // const [selectedDiamond, setSelectedDiamond] = useState(0);
+  // const [addedDiamonds, setAddedDiamonds] = useState<number[]>([]);
   const [selectedMetal, setSelectedMetal] = useState(0);
   const [addedMetals, setAddedMetals] = useState<
     { id: number; image: string }[]
   >([]);
   const [error, setError] = useState(initError);
+
+  const queryClient = useQueryClient();
+
+  const uploadMutation = useMutation({
+    mutationFn: (base64: string) => {
+      return postUploadFile(base64);
+    },
+    onSuccess: (response) => {
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (data: ICreateDesignRequest) => {
+      return postCreateDesign(data);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        queryClient.invalidateQueries({
+          queryKey: [fetchDesigns, filterObj],
+        });
+        toast.success("Tạo thiết kế thành công");
+
+        handleClose();
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
 
   const {
     reset,
@@ -154,7 +121,7 @@ function AddModal(props: IModalProps) {
   const onError = () => {
     const clone = _.cloneDeep(initError);
 
-    if (addedDiamonds.length === 0) clone.noDiamondsAdded = true;
+    // if (addedDiamonds.length === 0) clone.noDiamondsAdded = true;
     if (addedMetals.length === 0) clone.noMetalsAdded = true;
 
     addedMetals.forEach((metal) => {
@@ -162,7 +129,11 @@ function AddModal(props: IModalProps) {
     });
 
     setError(clone);
-    if (clone.noDiamondsAdded || clone.noMetalsAdded || clone.imageMissing)
+    if (
+      // clone.noDiamondsAdded ||
+      clone.noMetalsAdded ||
+      clone.imageMissing
+    )
       return true;
     else return false;
   };
@@ -170,33 +141,72 @@ function AddModal(props: IModalProps) {
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     if (onError()) return;
 
-    console.log(data);
-    console.log(await toBase64(data.blueprint));
-  };
+    const base64blueprint = await toBase64(data.blueprint);
+    const blueprintUpload = await uploadMutation.mutateAsync(base64blueprint);
 
-  const handleSelectDiamond = (id: number) => {
-    if (id !== 0) {
-      setError({ ...error, notSelectedDiamond: false });
-      setSelectedDiamond(id);
+    if (blueprintUpload.data) {
+      const metalSpec = await Promise.all(
+        addedMetals.map(async (metal) => {
+          return {
+            metalSpecId: metal.id,
+            imageId:
+              (await uploadMutation.mutateAsync(metal.image)).data?.id ?? 0,
+          };
+        })
+      );
+
+      const uploadError = metalSpec.find((item) => item.imageId === 0);
+      if (!uploadError) {
+        const {
+          collectionId,
+          characteristic,
+          name,
+          description,
+          metalWeight,
+          size,
+          sideDiamondsCount,
+          jewelryCategoryId,
+        } = data;
+
+        createMutation.mutate({
+          collectionId,
+          characteristic,
+          name,
+          description,
+          metalWeight,
+          sideDiamond: sideDiamondsCount,
+          size,
+          jewelryCategoryId,
+          blueprintId: blueprintUpload.data.id,
+          metalSpec,
+        });
+      }
     }
   };
 
-  const handleAddDiamond = (id: number) => {
-    if (id === 0) {
-      setError({ ...error, noDiamondsAdded: false, notSelectedDiamond: true });
-      return;
-    }
-    setAddedDiamonds([...addedDiamonds, id]);
-    setSelectedDiamond(0);
-    setError({ ...error, noDiamondsAdded: false });
-  };
+  // const handleSelectDiamond = (id: number) => {
+  //   if (id !== 0) {
+  //     setError({ ...error, notSelectedDiamond: false });
+  //     setSelectedDiamond(id);
+  //   }
+  // };
 
-  const handleRemoveDiamond = (id: number) => {
-    const list = addedDiamonds.filter((item) => item !== id);
-    setAddedDiamonds(addedDiamonds.filter((item) => item !== id));
-    if (list.length === 0)
-      setError({ ...error, noDiamondsAdded: true, notSelectedDiamond: false });
-  };
+  // const handleAddDiamond = (id: number) => {
+  //   if (id === 0) {
+  //     setError({ ...error, noDiamondsAdded: false, notSelectedDiamond: true });
+  //     return;
+  //   }
+  //   setAddedDiamonds([...addedDiamonds, id]);
+  //   setSelectedDiamond(0);
+  //   setError({ ...error, noDiamondsAdded: false });
+  // };
+
+  // const handleRemoveDiamond = (id: number) => {
+  //   const list = addedDiamonds.filter((item) => item !== id);
+  //   setAddedDiamonds(addedDiamonds.filter((item) => item !== id));
+  //   if (list.length === 0)
+  //     setError({ ...error, noDiamondsAdded: true, notSelectedDiamond: false });
+  // };
 
   const handleSelectMetal = (id: number) => {
     if (id !== 0) {
@@ -245,6 +255,7 @@ function AddModal(props: IModalProps) {
 
       const imageMissing = cloneList.find((item) => !item.image);
       if (!imageMissing) setError({ ...error, imageMissing: false });
+
       setAddedMetals(cloneList);
     }
   };
@@ -261,8 +272,8 @@ function AddModal(props: IModalProps) {
     if (reason && reason === "backdropClick") return;
     setOpen(false);
 
-    setSelectedDiamond(0);
-    setAddedDiamonds([]);
+    // setSelectedDiamond(0);
+    // setAddedDiamonds([]);
     setSelectedMetal(0);
     setAddedMetals([]);
     setError(initError);
@@ -296,7 +307,7 @@ function AddModal(props: IModalProps) {
           </IconButton>
         </Toolbar>
       </AppBar>
-      <Container sx={{ mt: 3 }}>
+      <Container sx={{ mt: 6 }}>
         <Grid container mb={5} justifyContent={"space-between"}>
           <Grid item xs={5} mb={2}>
             <InputLabel error={!!errors.jewelryCategoryId} sx={{ mb: 1 }}>
@@ -320,7 +331,7 @@ function AddModal(props: IModalProps) {
                   <MenuItem value={0} disabled>
                     <em>Select category</em>
                   </MenuItem>
-                  {category.map((item) => {
+                  {categories.map((item) => {
                     return (
                       <MenuItem value={item.id} key={item.id}>
                         {item.name}
@@ -477,6 +488,9 @@ function AddModal(props: IModalProps) {
                     type="number"
                     fullWidth
                     variant="standard"
+                    inputProps={{
+                      step: 0.1,
+                    }}
                     {...register("metalWeight", {
                       required: "* Must not be empty",
                       min: { value: 1, message: "Must be more than 0" },
@@ -557,7 +571,7 @@ function AddModal(props: IModalProps) {
 
           <Grid container item justifyContent={"space-between"} mt={5}>
             {/* Diamond spec start */}
-            <Grid item md={4}>
+            {/* <Grid item md={4}>
               <Grid
                 container
                 item
@@ -640,7 +654,7 @@ function AddModal(props: IModalProps) {
                   )}
                 </List>
               </Grid>
-            </Grid>
+            </Grid> */}
             {/* Diamond spec end */}
 
             {/* Metal spec start */}
@@ -669,7 +683,7 @@ function AddModal(props: IModalProps) {
                     <MenuItem value={0} disabled>
                       <em>Select metal specification</em>
                     </MenuItem>
-                    {metalsSpecs
+                    {metalSpecs
                       .filter(
                         (item) => !addedMetals.find((i) => i.id === item.id)
                       )
@@ -701,7 +715,7 @@ function AddModal(props: IModalProps) {
               <Grid item xs={12}>
                 <List>
                   {addedMetals.map((metal) => {
-                    const spec = metalsSpecs.find(
+                    const spec = metalSpecs.find(
                       (item) => item.id === metal.id
                     );
                     return (
@@ -762,9 +776,14 @@ function AddModal(props: IModalProps) {
         <Button variant="outlined" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="contained" type="submit" sx={{ ml: 1 }}>
+        <LoadingButton
+          loading={uploadMutation.isPending || createMutation.isPending}
+          variant="contained"
+          type="submit"
+          sx={{ ml: 1 }}
+        >
           Confirm
-        </Button>
+        </LoadingButton>
       </Container>
 
       <ImageModal open={openImg} setOpen={setOpenImg} img={previewImg} />

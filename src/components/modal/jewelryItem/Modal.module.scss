@@ -1,0 +1,54 @@
+@use 'src/index.scss'as *;
+
+.container {
+    color: $primaryColor;
+
+    .select {
+        width     : 100%;
+        margin-top: 0.5rem;
+    }
+
+    .name {
+        font-size    : 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .collection {
+        color: #888;
+    }
+
+    .gender {
+        margin-top: 0.5rem;
+
+        img {
+            width       : 13px;
+            margin-right: 10px;
+        }
+    }
+
+    .metal {
+        .title {
+            margin-top: 0.5rem;
+
+            span {
+                font-weight: 600;
+            }
+        }
+
+        .options {
+            display   : flex;
+            gap       : 20px;
+            margin-top: 2rem;
+
+            img {
+                width : 50px;
+                cursor: pointer;
+
+                &.selected {
+                    border       : 1px solid;
+                    border-radius: 50%;
+                }
+            }
+        }
+    }
+}

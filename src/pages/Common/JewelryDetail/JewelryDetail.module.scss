@@ -1,6 +1,8 @@
 @use 'src/index.scss'as *;
 
 .container {
+    color: $primaryColor;
+
     .productInfo {
         padding        : 3rem;
         justify-content: center;
@@ -28,6 +30,11 @@
                     font-size: 1.3rem;
                     color    : $grayColor;
                 }
+            }
+
+            .amount {
+                color    : $secondaryColor;
+                font-size: 1.2rem;
             }
 
             .description {
@@ -91,8 +98,9 @@
             }
 
             .btnGroup {
-                display: flex;
-                gap    : 1.5rem;
+                display      : flex;
+                gap          : 1.5rem;
+                margin-bottom: 2rem;
             }
 
             .note {

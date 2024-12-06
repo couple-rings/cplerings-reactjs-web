@@ -47,85 +47,22 @@ interface IFormInput {
   characteristic: DesignCharacteristic;
 }
 
-const collections = [
-  {
-    id: 1,
-    name: "Eternal Bond",
-    description: "",
-  },
-
-  {
-    id: 2,
-    name: "Timeless Elegance",
-    description: "",
-  },
-  {
-    id: 3,
-    name: "Infinity Love",
-    description: "",
-  },
-];
-
-const diamondSpecs = [
-  {
-    id: 1,
-    name: "Pure Heart",
-    weight: 0.05,
-    color: "D",
-    clarity: "VS2",
-    shape: "HEART",
-    price: 3600000,
-  },
-  {
-    id: 2,
-    name: "Graceful Oval",
-    weight: 0.05,
-    color: "G",
-    clarity: "SI1",
-    shape: "OVAL",
-    price: 3120000,
-  },
-  {
-    id: 3,
-    name: "Dazzling Round",
-    weight: 0.15,
-    color: "G",
-    clarity: "VS2",
-    shape: "ROUND",
-    price: 3600000,
-  },
-];
-
-const metalsSpecs = [
-  {
-    id: 1,
-    name: "Gold 18K - Yellow",
-  },
-  {
-    id: 2,
-    name: "Gold 18K - White",
-  },
-  {
-    id: 3,
-    name: "Gold 18K - Rose",
-  },
-];
-
 const initError = {
-  notSelectedDiamond: false,
+  // notSelectedDiamond: false,
   notSelectedMetal: false,
   imageMissing: false,
 };
 
 function UpdateModal(props: IDesignModalProps) {
-  const { open, setOpen, resetSelected, design } = props;
+  const { open, setOpen, resetSelected, design, collections, metalSpecs } =
+    props;
 
   const [openImg, setOpenImg] = useState(false);
 
   const [previewImg, setPreviewImg] = useState("");
 
-  const [selectedDiamond, setSelectedDiamond] = useState(0);
-  const [addedDiamonds, setAddedDiamonds] = useState<number[]>([]);
+  // const [selectedDiamond, setSelectedDiamond] = useState(0);
+  // const [addedDiamonds, setAddedDiamonds] = useState<number[]>([]);
   const [selectedMetal, setSelectedMetal] = useState(0);
   const [addedMetals, setAddedMetals] = useState<
     { id: number; image: string }[]
@@ -181,25 +118,25 @@ function UpdateModal(props: IDesignModalProps) {
     if (data.blueprint) console.log(await toBase64(data.blueprint));
   };
 
-  const handleSelectDiamond = (id: number) => {
-    if (id !== 0) {
-      setError({ ...error, notSelectedDiamond: false });
-      setSelectedDiamond(id);
-    }
-  };
+  // const handleSelectDiamond = (id: number) => {
+  //   if (id !== 0) {
+  //     setError({ ...error, notSelectedDiamond: false });
+  //     setSelectedDiamond(id);
+  //   }
+  // };
 
-  const handleAddDiamond = (id: number) => {
-    if (id === 0) {
-      setError({ ...error, notSelectedDiamond: true });
-      return;
-    }
-    setAddedDiamonds([...addedDiamonds, id]);
-    setSelectedDiamond(0);
-  };
+  // const handleAddDiamond = (id: number) => {
+  //   if (id === 0) {
+  //     setError({ ...error, notSelectedDiamond: true });
+  //     return;
+  //   }
+  //   setAddedDiamonds([...addedDiamonds, id]);
+  //   setSelectedDiamond(0);
+  // };
 
-  const handleRemoveDiamond = (id: number) => {
-    setAddedDiamonds(addedDiamonds.filter((item) => item !== id));
-  };
+  // const handleRemoveDiamond = (id: number) => {
+  //   setAddedDiamonds(addedDiamonds.filter((item) => item !== id));
+  // };
 
   const handleSelectMetal = (id: number) => {
     if (id !== 0) {
@@ -254,7 +191,7 @@ function UpdateModal(props: IDesignModalProps) {
     if (reason && reason === "backdropClick") return;
     setOpen(false);
 
-    setSelectedDiamond(0);
+    // setSelectedDiamond(0);
     setSelectedMetal(0);
     setError(initError);
 
@@ -271,7 +208,7 @@ function UpdateModal(props: IDesignModalProps) {
       metalWeight,
       sideDiamondsCount,
       size,
-      designDiamondSpecifications,
+      // designDiamondSpecifications,
       designMetalSpecifications,
     } = design;
 
@@ -285,14 +222,14 @@ function UpdateModal(props: IDesignModalProps) {
       size,
     });
 
-    const maleAddedDiamonds = designDiamondSpecifications.map(
-      (item) => item.diamondSpecification.id
-    );
+    // const maleAddedDiamonds = designDiamondSpecifications.map(
+    //   (item) => item.diamondSpecification.id
+    // );
     const maleAddedMetals = designMetalSpecifications.map((item) => {
       return { id: item.metalSpecification.id, image: item.image.url };
     });
 
-    setAddedDiamonds(maleAddedDiamonds);
+    // setAddedDiamonds(maleAddedDiamonds);
     setAddedMetals(maleAddedMetals);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -470,6 +407,9 @@ function UpdateModal(props: IDesignModalProps) {
                     type="number"
                     fullWidth
                     variant="standard"
+                    inputProps={{
+                      step: 0.1,
+                    }}
                     {...register("metalWeight", {
                       required: "* Must not be empty",
                       min: { value: 1, message: "Must be more than 0" },
@@ -550,7 +490,7 @@ function UpdateModal(props: IDesignModalProps) {
 
           <Grid container item justifyContent={"space-between"} mt={5}>
             {/* Diamond spec start */}
-            <Grid item md={4}>
+            {/* <Grid item md={4}>
               <Grid
                 container
                 item
@@ -628,7 +568,7 @@ function UpdateModal(props: IDesignModalProps) {
                   )}
                 </List>
               </Grid>
-            </Grid>
+            </Grid> */}
             {/* Diamond spec end */}
 
             {/* Metal spec start */}
@@ -655,7 +595,7 @@ function UpdateModal(props: IDesignModalProps) {
                     <MenuItem value={0} disabled>
                       <em>Select metal specification</em>
                     </MenuItem>
-                    {metalsSpecs
+                    {metalSpecs
                       .filter(
                         (item) => !addedMetals.find((i) => i.id === item.id)
                       )
@@ -682,7 +622,7 @@ function UpdateModal(props: IDesignModalProps) {
               <Grid item xs={12}>
                 <List>
                   {addedMetals.map((metal) => {
-                    const spec = metalsSpecs.find(
+                    const spec = metalSpecs.find(
                       (item) => item.id === metal.id
                     );
                     return (
