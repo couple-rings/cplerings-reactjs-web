@@ -7,6 +7,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Divider, FormHelperText, FormLabel, Grid } from "@mui/material";
 import defaultImg from "src/assets/default.jpg";
 import moment from "moment";
+import StaffTransportOrderTimeline from "src/components/timeline/staffTransportOrder/StaffTransportOrderTimeline";
 
 function ViewModal(props: ITransportOrderModalProps) {
   const { open, setOpen, order } = props;
@@ -25,9 +26,10 @@ function ViewModal(props: ITransportOrderModalProps) {
       onClose={handleClose}
       PaperProps={{
         component: "form",
-        sx: { p: 2 },
+        sx: { px: 6, py: 3 },
       }}
       maxWidth={"md"}
+      fullScreen
     >
       <DialogTitle>Đơn Giao Hàng</DialogTitle>
       <DialogContent>
@@ -64,6 +66,7 @@ function ViewModal(props: ITransportOrderModalProps) {
               label="Địa Chỉ"
               type="text"
               multiline
+              rows={3}
               fullWidth
               variant="standard"
               defaultValue={order?.deliveryAddress}
@@ -72,8 +75,8 @@ function ViewModal(props: ITransportOrderModalProps) {
           </Grid>
         </Grid>
 
-        <Grid container justifyContent={"center"}>
-          <Grid item xs={8} mt={3}>
+        <Grid container justifyContent={"space-between"} mt={3}>
+          <Grid item xs={5}>
             <img
               src={order?.image ? order.image.url : defaultImg}
               width={"100%"}
@@ -82,12 +85,16 @@ function ViewModal(props: ITransportOrderModalProps) {
               <FormHelperText>Chưa có hình ảnh giao hàng</FormHelperText>
             )}
           </Grid>
+
+          <Grid item xs={6}>
+            <StaffTransportOrderTimeline order={order} />
+          </Grid>
         </Grid>
 
         <Grid container mt={5}>
           <Divider sx={{ width: "100%", mb: 5 }} />
           <fieldset style={{ width: "100%" }}>
-            <legend>Quá Trình Giao Hàng</legend>
+            <legend>Ghi Chú Giao Hàng</legend>
 
             {order.transportationNotes?.length !== 0 ? (
               <Grid container item justifyContent={"space-between"} my={2}>
@@ -110,6 +117,7 @@ function ViewModal(props: ITransportOrderModalProps) {
                   item
                   justifyContent={"space-between"}
                   key={item.id}
+                  mb={2}
                 >
                   <Grid item xs={3}>
                     {moment(item.date).format("DD/MM/YYYY HH:mm")}

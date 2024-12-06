@@ -7,14 +7,13 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
 function createData(
-    id: string,
+  id: string,
   name: string,
   quantity: number,
   price: number,
-  revenue: number,
-  
+  revenue: number
 ) {
-  return {id, name, quantity, price, revenue };
+  return { id, name, quantity, price, revenue };
 }
 
 const rows = [
@@ -28,7 +27,9 @@ const rows = [
 function ManagerTopProductTable() {
   return (
     <div className="container">
-        <div style={{fontSize:"30px", marginBottom:"20px"}}>Những sản phẩm nổi bật</div>
+      <div style={{ fontSize: "30px", marginBottom: "20px" }}>
+        Những sản phẩm nổi bật
+      </div>
 
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -42,9 +43,9 @@ function ManagerTopProductTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {rows.map((row, index) => (
               <TableRow
-                key={row.name}
+                key={index}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">

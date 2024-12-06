@@ -1,9 +1,11 @@
 import {
   Container,
+  Grid,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
+  Skeleton,
 } from "@mui/material";
 import styles from "./Header.module.scss";
 import jewelry from "src/assets/Jewelry.png";
@@ -38,7 +40,7 @@ const generalFilter = {
 function JewelryTab() {
   const navigate = useNavigate();
 
-  const { data: collectionsResponse } = useQuery({
+  const { data: collectionsResponse, isLoading: collectionLoading } = useQuery({
     queryKey: [fetchCollections, generalFilter],
 
     queryFn: () => {
@@ -46,7 +48,7 @@ function JewelryTab() {
     },
   });
 
-  const { data: metalResponse } = useQuery({
+  const { data: metalResponse, isLoading: metalLoading } = useQuery({
     queryKey: [fetchMetalSpecs, generalFilter],
 
     queryFn: () => {
@@ -54,13 +56,34 @@ function JewelryTab() {
     },
   });
 
-  const { data: categoryResponse } = useQuery({
+  const { data: categoryResponse, isLoading: categoryLoading } = useQuery({
     queryKey: [fetchJewelryCategories, generalFilter],
 
     queryFn: () => {
       return getJewelryCategories(generalFilter);
     },
   });
+
+  if (collectionLoading || metalLoading || categoryLoading)
+    return (
+      <Grid container justifyContent={"space-around"} py={3}>
+        <Grid item xs={2}>
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+        </Grid>
+
+        <Grid item xs={2}>
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+        </Grid>
+
+        <Grid item xs={2}>
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+        </Grid>
+
+        <Grid item xs={2}>
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+        </Grid>
+      </Grid>
+    );
 
   if (
     collectionsResponse?.data &&

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { getAgreements } from "src/services/agreement.service";
 import { pageSize } from "src/utils/constants";
 import { fetchAgreements } from "src/utils/querykey";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import moment from "moment";
 import { secondaryBtn } from "src/utils/styles";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +26,6 @@ function LoveAgreement() {
     pageSize,
   });
 
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const { data: response, isLoading } = useQuery({
@@ -43,13 +42,6 @@ function LoveAgreement() {
       page: metaData.page + 1,
     });
   };
-
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchAgreements, filterObj],
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
 
   useEffect(() => {
     if (response && response.data) {

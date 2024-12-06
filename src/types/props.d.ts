@@ -149,6 +149,8 @@ declare global {
 
   interface IStepperProps {
     activeStep: number;
+
+    shipping: boolean;
   }
 
   interface IConversationProps {
@@ -212,9 +214,7 @@ declare global {
   }
 
   interface ISummaryProps {
-    productAmount: number;
-
-    discount: number;
+    checkedItem: string[];
   }
 
   interface ISideBarProps {
@@ -492,6 +492,20 @@ declare global {
     order: ICustomOrder;
   }
 
+  interface IJewelerCustomOrderTimelineProps
+    extends IStaffCustomOrderTimelineProps {}
+
+  interface IStaffStandardOrderTimelineProps {
+    order: IStandardOrder;
+  }
+
+  interface IStaffTransportOrderTimelineProps {
+    order: ITransportOrder;
+  }
+
+  interface ICustomerTransportOrderTimelineProps
+    extends IStaffTransportOrderTimelineProps {}
+
   interface ICustomerCustomOrderTimelineProps
     extends IStaffCustomOrderTimelineProps {
     stages: ICraftingStage[];
@@ -522,6 +536,26 @@ declare global {
   }
 
   interface ICheckoutCardProps {
-    data: ICartItem;
+    data: IStandardOrderItem;
+  }
+
+  interface IStandardOrderProps {
+    data: IStandardOrder;
+
+    handleCancel: (v: number) => void;
+
+    loading: boolean;
+  }
+
+  interface IStandardOrderTableProps {
+    order: IStandardOrder;
+  }
+
+  interface ICustomRequestTableProps {
+    request: ICustomRequest;
+  }
+
+  interface ICraftingStageTableProps {
+    data: IPayment;
   }
 }

@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGem } from "@fortawesome/free-solid-svg-icons";
 import PaymentIcon from "@mui/icons-material/Payment";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 
 const ColorlibStepIconRoot = styled("div")<{
   ownerState: { completed?: boolean; active?: boolean };
@@ -41,13 +42,13 @@ const ColorlibStepIconRoot = styled("div")<{
   ],
 }));
 
-function ColorlibStepIcon(props: StepIconProps) {
+function PickupStepIcon(props: StepIconProps) {
   const { active, completed, className } = props;
 
   const icons: { [index: string]: React.ReactElement<unknown> } = {
     1: <PaymentIcon />,
     2: <FontAwesomeIcon icon={faGem} />,
-    3: <LocalShippingIcon />,
+    3: <CheckRoundedIcon />,
   };
 
   return (
@@ -60,16 +61,47 @@ function ColorlibStepIcon(props: StepIconProps) {
   );
 }
 
-const steps = ["Thanh Toán", "Chuẩn Bị Đơn", "Vận Chuyển"];
+function ShippingStepIcon(props: StepIconProps) {
+  const { active, completed, className } = props;
+
+  const icons: { [index: string]: React.ReactElement<unknown> } = {
+    1: <PaymentIcon />,
+    2: <FontAwesomeIcon icon={faGem} />,
+    3: <LocalShippingIcon />,
+    4: <CheckRoundedIcon />,
+  };
+
+  return (
+    <ColorlibStepIconRoot
+      ownerState={{ completed, active }}
+      className={className}
+    >
+      {icons[String(props.icon)]}
+    </ColorlibStepIconRoot>
+  );
+}
+
+const stepsPickup = ["Thanh Toán", "Chuẩn Bị Đơn", "Hoàn Thành"];
+const stepsDelivery = [
+  "Thanh Toán",
+  "Chuẩn Bị Đơn",
+  "Vận Chuyển",
+  "Hoàn Thành",
+];
 
 export default function StandardOrderStepper(props: IStepperProps) {
-  const { activeStep } = props;
+  const { activeStep, shipping } = props;
 
+  const steps = shipping ? stepsDelivery : stepsPickup;
   return (
     <Stepper alternativeLabel activeStep={activeStep} connector={null}>
       {steps.map((label) => (
         <Step key={label}>
-          <StepLabel StepIconComponent={ColorlibStepIcon}>{label}</StepLabel>
+          <StepLabel
+            StepIconComponent={shipping ? ShippingStepIcon : PickupStepIcon}
+          >
+            {label}
+          </StepLabel>
         </Step>
       ))}
     </Stepper>

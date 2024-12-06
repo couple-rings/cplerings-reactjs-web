@@ -15,10 +15,14 @@ import RingImage from "src/assets/One Ring Black.png";
 import styles from "./LoveAgreementDetail.module.scss";
 import moment from "moment";
 import ReactSignatureCanvas from "react-signature-canvas";
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { secondaryBtn } from "src/utils/styles";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
+import { fetchCustomerSpouse } from "src/utils/querykey";
+import { getCustomerSpouse } from "src/services/spouse.service";
+import { useAppSelector } from "src/utils/hooks";
 
 interface IFormInput {
   mainName: string;
@@ -40,12 +44,38 @@ function LoveAgreeMentDetail(props: IAgreementDetailProps) {
   const mainRef = useRef<ReactSignatureCanvas>(null);
   const partnerRef = useRef<ReactSignatureCanvas>(null);
 
+  const { id: userId } = useAppSelector((state) => state.auth.userInfo);
+
+  const { data: spouseResponse } = useQuery({
+    queryKey: [fetchCustomerSpouse, userId],
+
+    queryFn: () => {
+      return getCustomerSpouse(userId);
+    },
+  });
+
   const {
     register,
     formState: { errors },
     handleSubmit,
     getValues,
-  } = useForm<IFormInput>();
+    reset,
+  } = useForm<IFormInput>({
+    defaultValues: useMemo(() => {
+      const ownerSpouse = spouseResponse?.data?.spouses.find(
+        (item) => !!item.customerId
+      );
+
+      const partnerSpouse = spouseResponse?.data?.spouses.find(
+        (item) => !item.customerId
+      );
+
+      return {
+        mainName: ownerSpouse?.fullName,
+        partnerName: partnerSpouse?.fullName,
+      };
+    }, [spouseResponse]),
+  });
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     verifySignature();
@@ -87,6 +117,22 @@ function LoveAgreeMentDetail(props: IAgreementDetailProps) {
       }
     }
   };
+
+  useEffect(() => {
+    const ownerSpouse = spouseResponse?.data?.spouses.find(
+      (item) => !!item.customerId
+    );
+
+    const partnerSpouse = spouseResponse?.data?.spouses.find(
+      (item) => !item.customerId
+    );
+
+    reset({
+      mainName: ownerSpouse?.fullName,
+      partnerName: partnerSpouse?.fullName,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spouseResponse]);
 
   return (
     <Grid container className={styles.zoomContainer}>
@@ -230,7 +276,10 @@ function LoveAgreeMentDetail(props: IAgreementDetailProps) {
               )}
 
               {!signedDate && (
-                <div className="content"> __ tháng __ , ____</div>
+                <div className="content">
+                  {moment().format("DD")} tháng {moment().format("MM")},{" "}
+                  {moment().format("YYYY")}
+                </div>
               )}
             </div>
 

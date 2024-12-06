@@ -1,9 +1,11 @@
 import {
   Container,
+  Grid,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
+  Skeleton,
 } from "@mui/material";
 import styles from "./Header.module.scss";
 import weddingRing from "src/assets/weddingRing.png";
@@ -22,7 +24,7 @@ const generalFilter = {
 const WeddingRingsTab = () => {
   const navigate = useNavigate();
 
-  const { data: collectionsResponse } = useQuery({
+  const { data: collectionsResponse, isLoading: collectionLoading } = useQuery({
     queryKey: [fetchCollections, generalFilter],
 
     queryFn: () => {
@@ -30,13 +32,34 @@ const WeddingRingsTab = () => {
     },
   });
 
-  const { data: metalResponse } = useQuery({
+  const { data: metalResponse, isLoading: metalLoading } = useQuery({
     queryKey: [fetchMetalSpecs, generalFilter],
 
     queryFn: () => {
       return getMetalSpecs(generalFilter);
     },
   });
+
+  if (collectionLoading || metalLoading)
+    return (
+      <Grid container justifyContent={"space-around"} py={3}>
+        <Grid item xs={2}>
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+        </Grid>
+
+        <Grid item xs={2}>
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+        </Grid>
+
+        <Grid item xs={2}>
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+        </Grid>
+
+        <Grid item xs={2}>
+          <Skeleton variant="rectangular" width={"100%"} height={300} />
+        </Grid>
+      </Grid>
+    );
 
   if (collectionsResponse?.data && metalResponse?.data)
     return (

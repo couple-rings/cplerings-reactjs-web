@@ -165,7 +165,7 @@ export enum TransportOrderStatus {
   Delivering = "DELIVERING",
   Rejected = "REJECTED",
   Completed = "COMPLETED",
-  Failed = "FAILED",
+  Redelivering = "REDELIVERING",
 }
 
 export enum TransactionType {
@@ -183,4 +183,37 @@ export enum JewelryStatus {
   Available = "AVAILABLE",
   Unavailable = "UNAVAILABLE",
   Purchased = "PURCHASED",
+}
+
+export enum StandardOrderStatus {
+  Pending = "PENDING",
+  Paid = "PAID",
+  Delivering = "DELIVERING",
+  Completed = "COMPLETED",
+  Canceled = "CANCELLED",
+}
+
+export enum PaymentType {
+  VnPay = "VNPAY",
+}
+
+export enum PaymentStatus {
+  Pending = "PENDING",
+  Successful = "SUCCESSFUL",
+  Failed = "FAILED",
+  Cancelled = "CANCELLED",
+  Expired = "EXPIRED",
+}
+
+export enum ConfigurationKey {
+  SideDiamondPrice = "SDPR",
+  CraftingFee = "CRFE",
+  RefundRatio = "REFU",
+  ResellRatio = "RESE",
+  ProfitRatio = "PARA",
+  ShippingFee = "SHFE",
+  DesignFee = "DEFE",
+  FirstStageProgress = "CSP1",
+  SecondStageProgress = "CSP2",
+  ThirdStageProgress = "CSP3",
 }

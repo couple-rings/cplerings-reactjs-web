@@ -58,7 +58,7 @@ function CustomOrderDetail() {
   useEffect(() => {
     if (response && response.data) {
       const { firstRing, secondRing, customer } = response.data.customOrder;
-      console.log(customer.id !== userId);
+
       if (customer.id !== userId) navigate("/customer/support/custom-order");
 
       if (

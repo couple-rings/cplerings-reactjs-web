@@ -1,4 +1,14 @@
-import { Box, Button, SxProps, Tab, Tabs } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormLabel,
+  Grid,
+  IconButton,
+  Popover,
+  SxProps,
+  Tab,
+  Tabs,
+} from "@mui/material";
 import {
   DataGrid,
   getGridStringOperators,
@@ -13,11 +23,13 @@ import { CustomOrderStatus } from "src/utils/enums";
 import { primaryBtn } from "src/utils/styles";
 import styles from "./CustomOrder.module.scss";
 import { pageSize } from "src/utils/constants";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getCustomOrders } from "src/services/customOrder.service";
 import { fetchCustomOrders } from "src/utils/querykey";
 import { useAppSelector } from "src/utils/hooks";
 import moment from "moment";
+import RemoveRedEyeSharpIcon from "@mui/icons-material/RemoveRedEyeSharp";
+import { currencyFormatter } from "src/utils/functions";
 
 const boxStyle: SxProps = {
   borderBottom: 1,
@@ -45,8 +57,12 @@ function CustomOrder() {
     null
   );
 
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const openPopover = Boolean(anchorEl);
+  const id = openPopover ? "simple-popover" : undefined;
+
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const { id: userId } = useAppSelector((state) => state.auth.userInfo);
 
@@ -59,6 +75,14 @@ function CustomOrder() {
 
     enabled: !!ownFilterObj,
   });
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const columns: GridColDef<Row>[] = useMemo(
     () => [
@@ -74,13 +98,58 @@ function CustomOrder() {
       {
         field: "customer",
         headerName: "Khách Hàng",
-        width: 300,
+        width: 200,
         headerAlign: "center",
         align: "center",
         filterOperators,
         sortable: false,
-        valueGetter: (value: Omit<IUser, "hasSpouse">) => {
-          return value.username;
+        renderCell: ({ row }) => {
+          return (
+            <div>
+              {row.customer.username}{" "}
+              <IconButton onClick={handleClick}>
+                <RemoveRedEyeSharpIcon fontSize="small" />
+              </IconButton>
+              <Popover
+                id={id}
+                open={openPopover}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+              >
+                <Grid container width={300} p={3} gap={1}>
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Username:</Grid>
+
+                    <Grid item>{row.customer.username}</Grid>
+                  </Grid>
+
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Email:</Grid>
+
+                    <Grid item>
+                      <FormLabel>{row.customer.email}</FormLabel>
+                    </Grid>
+                  </Grid>
+
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Số điện thoại:</Grid>
+
+                    <Grid item>
+                      {row.customer.phone ? row.customer.phone : "--"}
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Popover>
+            </div>
+          );
         },
       },
       {
@@ -95,6 +164,31 @@ function CustomOrder() {
         },
       },
       {
+        field: "assignedAt",
+        headerName: "Ngày Nhận",
+        width: 200,
+        headerAlign: "center",
+        align: "center",
+        filterable: false,
+        renderCell: ({ row }) => {
+          const date = row.customOrderHistories.find(
+            (item) => item.status === CustomOrderStatus.InProgress
+          )?.createdAt;
+          return <div>{moment(date).format("DD/MM/YYYY")}</div>;
+        },
+      },
+      {
+        field: "totalPrice",
+        headerName: "Số Tiền",
+        width: 150,
+        headerAlign: "center",
+        align: "center",
+        filterable: false,
+        renderCell: ({ row }) => {
+          return <div>{currencyFormatter(row.totalPrice.amount)}</div>;
+        },
+      },
+      {
         field: "status",
         headerName: "Trạng Thái",
         width: 200,
@@ -106,14 +200,9 @@ function CustomOrder() {
           let classname = "";
           let status = "";
 
-          if (row.status === CustomOrderStatus.Waiting) {
-            classname = styles.waiting;
-            status = "Chờ Nhận";
-          }
-
           if (row.status === CustomOrderStatus.InProgress) {
             classname = styles.ongoing;
-            status = "Đang Làm";
+            status = "Đang Gia Công";
           }
 
           if (row.status === CustomOrderStatus.Done) {
@@ -159,7 +248,7 @@ function CustomOrder() {
         ),
       },
     ],
-    [navigate]
+    [anchorEl, id, navigate, openPopover]
   );
 
   const handleOwnChangePage = (model: GridPaginationModel) => {
@@ -198,15 +287,6 @@ function CustomOrder() {
   }, [ownResponse]);
 
   useEffect(() => {
-    if (ownFilterObj)
-      queryClient.invalidateQueries({
-        queryKey: [fetchCustomOrders, ownFilterObj],
-      });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ownFilterObj]);
-
-  useEffect(() => {
     setOwnFilterObj({
       page: 0,
       pageSize,
@@ -220,40 +300,44 @@ function CustomOrder() {
     <div className={styles.container}>
       <div className={styles.title}>Đơn Gia Công</div>
 
-      <Box sx={boxStyle}>
-        <Tabs
-          classes={{
-            indicator: "myIndicator",
-          }}
-          value={ownFilterObj?.status}
-          onChange={(e, value: CustomOrderStatus) => handleFilterStatus(value)}
-        >
-          <Tab
+      {ownFilterObj && (
+        <Box sx={boxStyle}>
+          <Tabs
             classes={{
-              selected: "selectedCustomRequestTab",
+              indicator: "myIndicator",
             }}
-            className={styles.tabLabel}
-            label="Đang Gia Công"
-            value={CustomOrderStatus.InProgress}
-          />
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Hoàn Tất Gia Công"
-            value={CustomOrderStatus.Done}
-          />
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Đã Hủy"
-            value={CustomOrderStatus.Canceled}
-          />
-        </Tabs>
-      </Box>
+            value={ownFilterObj?.status}
+            onChange={(e, value: CustomOrderStatus) =>
+              handleFilterStatus(value)
+            }
+          >
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Đang Gia Công"
+              value={CustomOrderStatus.InProgress}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Hoàn Tất Gia Công"
+              value={CustomOrderStatus.Done}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Đã Hủy"
+              value={CustomOrderStatus.Canceled}
+            />
+          </Tabs>
+        </Box>
+      )}
 
       <DataGrid
         loading={ownLoading}

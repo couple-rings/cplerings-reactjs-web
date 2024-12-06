@@ -204,7 +204,11 @@ function CustomOrderDetail() {
           </Grid>
         </Grid>
 
-        <Grid container justifyContent={"space-between"}>
+        <Grid
+          container
+          justifyContent={"space-between"}
+          alignItems={"flex-start"}
+        >
           <Grid container item gap={3} md={5}>
             <fieldset style={{ margin: 0, width: "100%" }}>
               <legend>Khách Hàng</legend>
@@ -551,10 +555,15 @@ function CustomOrderDetail() {
 
             <Grid item>
               <LoadingButton
+                disabled={selected === 0}
                 loading={assignMutation.isPending}
-                onClick={() =>
-                  assignMutation.mutate({ orderId: order.id, jewelerId: 1 })
-                }
+                onClick={() => {
+                  if (selected !== 0)
+                    assignMutation.mutate({
+                      orderId: order.id,
+                      jewelerId: selected,
+                    });
+                }}
                 variant="contained"
                 sx={{ ...primaryBtn, borderRadius: 1, px: 5 }}
               >
@@ -564,7 +573,7 @@ function CustomOrderDetail() {
           </Grid>
         )}
 
-        {order.jeweler && (
+        {/* {order.jeweler && (
           <Grid container justifyContent={"center"}>
             <LoadingButton
               // onClick={() =>
@@ -576,7 +585,7 @@ function CustomOrderDetail() {
               Xem quá trình
             </LoadingButton>
           </Grid>
-        )}
+        )} */}
       </Grid>
     </Grid>
   );
