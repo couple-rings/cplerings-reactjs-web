@@ -14,7 +14,7 @@ import {
   TableRow,
   Tabs,
 } from "@mui/material";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchCustomRequests } from "src/utils/querykey";
 import { getCustomRequests } from "src/services/customRequest.service";
 import { useEffect, useState } from "react";
@@ -42,7 +42,6 @@ function CustomRequest() {
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
   const [filterObj, setFilterObj] = useState<ICustomRequestFilter | null>(null);
 
-  const queryClient = useQueryClient();
   const { id } = useAppSelector((state) => state.auth.userInfo);
 
   const { data: response, isLoading } = useQuery({
@@ -90,14 +89,6 @@ function CustomRequest() {
       setMetaData(rest);
     }
   }, [response]);
-
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchCustomRequests, filterObj],
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
 
   if (isLoading || !filterObj)
     return (

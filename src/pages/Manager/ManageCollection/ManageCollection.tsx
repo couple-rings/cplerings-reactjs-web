@@ -18,7 +18,7 @@ import UpdateModal from "src/components/modal/collection/Update.modal";
 import AddModal from "src/components/modal/collection/Add.modal";
 import DeleteModal from "src/components/modal/collection/Delete.modal";
 import { pageSize } from "src/utils/constants";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getCollections } from "src/services/collection.service";
 import { fetchCollections } from "src/utils/querykey";
 
@@ -53,8 +53,6 @@ function ManageCollection() {
     page: 0,
     pageSize,
   });
-
-  const queryClient = useQueryClient();
 
   const { data: response, isLoading } = useQuery({
     queryKey: [fetchCollections, filterObj],
@@ -162,14 +160,6 @@ function ManageCollection() {
   const handleFilter = (model: GridFilterModel) => {
     console.log(model);
   };
-
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchCollections, filterObj],
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
 
   useEffect(() => {
     if (response && response.data) {

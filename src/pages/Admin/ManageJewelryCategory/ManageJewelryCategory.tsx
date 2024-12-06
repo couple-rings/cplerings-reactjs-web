@@ -19,7 +19,7 @@ import AddModal from "src/components/modal/jewelryCategory/Add.modal";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import DeleteModal from "src/components/modal/jewelryCategory/Delete.modal";
 import { pageSize } from "src/utils/constants";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getJewelryCategories } from "src/services/jewelryCategory.service";
 import { fetchJewelryCategories } from "src/utils/querykey";
 
@@ -54,8 +54,6 @@ function ManageJewelryCategory() {
     page: 0,
     pageSize,
   });
-
-  const queryClient = useQueryClient();
 
   const { data: response, isLoading } = useQuery({
     queryKey: [fetchJewelryCategories],
@@ -178,14 +176,6 @@ function ManageJewelryCategory() {
   const handleSort = (model: GridSortModel) => {
     console.log(model);
   };
-
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchJewelryCategories, filterObj],
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
 
   useEffect(() => {
     if (response && response.data) {

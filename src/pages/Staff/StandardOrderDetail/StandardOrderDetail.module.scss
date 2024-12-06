@@ -1,0 +1,56 @@
+@use 'src/index.scss'as *;
+
+.container {
+    display       : flex;
+    padding-bottom: 10rem;
+    padding-top   : 3rem;
+    color         : $primaryColor;
+
+    .header {
+        display      : flex;
+        align-items  : center;
+        gap          : 3rem;
+        margin-bottom: 2rem;
+
+        .title {
+            font-size  : 1.5rem;
+            font-weight: 500;
+        }
+    }
+
+    .totalPrice {
+        font-weight: 600;
+        font-size  : 1.2rem;
+    }
+
+    .subtitle {
+        font-size: 1.3rem;
+    }
+
+    .jewelry {
+        box-shadow     : $boxShadow;
+        justify-content: space-between;
+        padding        : 1rem;
+        margin-bottom  : 1rem;
+
+        .image {
+            width: 100%;
+
+        }
+
+        .name {
+            font-size  : 1.2rem;
+            font-weight: 500;
+        }
+
+        .genderIcon {
+            width       : 13px;
+            margin-right: 5px;
+        }
+
+        .price {
+            font-weight: 600;
+            font-size  : 1.2rem;
+        }
+    }
+}

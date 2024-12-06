@@ -20,6 +20,7 @@ import { currencyFormatter, mapGoldColor } from "src/utils/functions";
 import { useEffect, useState } from "react";
 import CustomExpandIcon from "src/components/icon/CustomExpandIcon";
 import {
+  ConfigurationKey,
   DesignCharacteristic,
   GoldColor,
   JewelryStatus,
@@ -46,6 +47,7 @@ import { getJewelries } from "src/services/jewelry.service";
 import { toast } from "react-toastify";
 import NecklaceGuide from "src/components/dialog/NecklaceGuide";
 import BraceletGuide from "src/components/dialog/BraceletGuide";
+import { metalWeightUnit } from "src/utils/constants";
 
 const initMetal = {
   id: 0,
@@ -70,6 +72,7 @@ function JewelryDetail() {
   const [metal, setMetal] = useState(initMetal);
   const [amount, setAmount] = useState(0);
   // const [diamond, setDiamond] = useState("5PT ,F ,SI1");
+  const [price, setPrice] = useState(0);
 
   const [filterObj, setFilterObj] = useState<IJewelryFilter | null>(null);
 
@@ -78,6 +81,18 @@ function JewelryDetail() {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  const { configs } = useAppSelector((state) => state.config);
+
+  const profitRatio = configs.find(
+    (item) => item.key === ConfigurationKey.ProfitRatio
+  )?.value;
+  const sideDiamondPrice = configs.find(
+    (item) => item.key === ConfigurationKey.SideDiamondPrice
+  )?.value;
+  const shippingFee = configs.find(
+    (item) => item.key === ConfigurationKey.ShippingFee
+  )?.value;
 
   const { id } = useParams<{ id: string }>();
 
@@ -188,6 +203,29 @@ function JewelryDetail() {
   }, [branchId, id, metal]);
 
   useEffect(() => {
+    if (
+      designResponse?.data &&
+      profitRatio &&
+      sideDiamondPrice &&
+      shippingFee
+    ) {
+      const design = designResponse.data;
+
+      const raw =
+        (design.metalWeight *
+          metalWeightUnit *
+          metal.metalSpecification.pricePerUnit +
+          design.sideDiamondsCount * +sideDiamondPrice +
+          +shippingFee) *
+        +profitRatio;
+
+      const price = Math.round(raw / 1000) * 1000;
+
+      setPrice(price);
+    }
+  }, [metal, designResponse, profitRatio, sideDiamondPrice, shippingFee]);
+
+  useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
@@ -261,7 +299,7 @@ function JewelryDetail() {
 
             <Divider sx={{ backgroundColor: "#555", mb: 3 }} />
 
-            <div className={styles.price}>{currencyFormatter(12000000)}</div>
+            <div className={styles.price}>{currencyFormatter(price)}</div>
 
             <Button variant="contained" sx={{ ...primaryBtn, px: 5 }}>
               {designResponse?.data?.characteristic ===

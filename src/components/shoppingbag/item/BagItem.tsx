@@ -16,9 +16,10 @@ import CloseIcon from "@mui/icons-material/Close";
 // import DiamondMenu from "src/components/menu/DiamondMenu";
 import { currencyFormatter } from "src/utils/functions";
 import { useTheme } from "@mui/material/styles";
-import { DesignCharacteristic } from "src/utils/enums";
-import { useAppDispatch } from "src/utils/hooks";
+import { ConfigurationKey, DesignCharacteristic } from "src/utils/enums";
+import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 import { removeFromCart } from "src/redux/slice/cart.slice";
+import { metalWeightUnit } from "src/utils/constants";
 
 // const metalMenuStyle: SxProps = {
 //   ...bagItemMenuStyle,
@@ -44,11 +45,39 @@ function BagItem(props: IBagItemProps) {
 
   const dispatch = useAppDispatch();
 
+  const { configs } = useAppSelector((state) => state.config);
+
+  const profitRatio = configs.find(
+    (item) => item.key === ConfigurationKey.ProfitRatio
+  )?.value;
+  const sideDiamondPrice = configs.find(
+    (item) => item.key === ConfigurationKey.SideDiamondPrice
+  )?.value;
+  const shippingFee = configs.find(
+    (item) => item.key === ConfigurationKey.ShippingFee
+  )?.value;
+
   const handleCheck = () => {
     const found = checkedItem.find((item) => item === id);
     if (found) {
       setCheckedItem(checkedItem.filter((item) => item !== id));
     } else setCheckedItem([...checkedItem, id]);
+  };
+
+  const calculatePrice = () => {
+    if (sideDiamondPrice && shippingFee && profitRatio) {
+      const price =
+        (design.metalWeight *
+          metalWeightUnit *
+          metalSpec.metalSpecification.pricePerUnit +
+          design.sideDiamondsCount * +sideDiamondPrice +
+          +shippingFee) *
+        +profitRatio;
+
+      return Math.round(price / 1000) * 1000;
+    }
+
+    return 0;
   };
 
   return (
@@ -171,7 +200,7 @@ function BagItem(props: IBagItemProps) {
 
       <div className={styles.price}>
         <div>Thành Tiền</div>
-        <div>{currencyFormatter(12000000)}</div>
+        <div>{currencyFormatter(calculatePrice())}</div>
       </div>
 
       <Divider sx={{ backgroundColor: "#555" }} />

@@ -25,6 +25,7 @@ import {
 import { useEffect, useState } from "react";
 import CustomExpandIcon from "src/components/icon/CustomExpandIcon";
 import {
+  ConfigurationKey,
   CustomOrderStatus,
   CustomRequestStatus,
   GoldColor,
@@ -37,7 +38,7 @@ import ProductDetailAccordion from "src/components/accordion/ProductDetail.Accor
 import Advertisement from "src/components/advertisement/Advertisement";
 import brandIntro from "src/assets/brand-intro.png";
 import FeedbackSection from "src/components/feedback/FeedbackSection";
-import { designFee, metalWeightUnit, profitRatio } from "src/utils/constants";
+import { metalWeightUnit } from "src/utils/constants";
 import { useAppSelector, useScrollTop } from "src/utils/hooks";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -109,6 +110,23 @@ function WeddingRingsDetail() {
 
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const { id: userId } = useAppSelector((state) => state.auth.userInfo);
+  const { configs } = useAppSelector((state) => state.config);
+
+  const designFee = configs.find(
+    (item) => item.key === ConfigurationKey.DesignFee
+  )?.value;
+  const profitRatio = configs.find(
+    (item) => item.key === ConfigurationKey.ProfitRatio
+  )?.value;
+  const sideDiamondPrice = configs.find(
+    (item) => item.key === ConfigurationKey.SideDiamondPrice
+  )?.value;
+  const shippingFee = configs.find(
+    (item) => item.key === ConfigurationKey.ShippingFee
+  )?.value;
+  const craftingFee = configs.find(
+    (item) => item.key === ConfigurationKey.CraftingFee
+  )?.value;
 
   const { maleId, femaleId } = useParams<{
     maleId: string;
@@ -246,22 +264,38 @@ function WeddingRingsDetail() {
 
   // calculate price
   useEffect(() => {
-    if (maleResponse?.data && femaleResponse?.data) {
+    if (
+      maleResponse?.data &&
+      femaleResponse?.data &&
+      profitRatio &&
+      sideDiamondPrice &&
+      shippingFee &&
+      craftingFee
+    ) {
+      const maleDesign = maleResponse.data;
+      const femaleDesign = femaleResponse.data;
+
       const firstDesignPrice =
-        (maleResponse.data.metalWeight *
+        (maleDesign.metalWeight *
           metalWeightUnit *
           firstMetal.metalSpecification.pricePerUnit +
-          firstDiamond.price) *
-        profitRatio;
+          firstDiamond.price +
+          maleDesign.sideDiamondsCount * +sideDiamondPrice +
+          +shippingFee +
+          +craftingFee) *
+        +profitRatio;
       const secondDesignPrice =
         (femaleResponse.data.metalWeight *
           metalWeightUnit *
           secondMetal.metalSpecification.pricePerUnit +
-          secondDiamond.price) *
-        profitRatio;
+          secondDiamond.price +
+          femaleDesign.sideDiamondsCount * +sideDiamondPrice +
+          +shippingFee +
+          +craftingFee) *
+        +profitRatio;
 
-      const malePrice = Math.round(firstDesignPrice / 100000) * 100000;
-      const femalePrice = Math.round(secondDesignPrice / 100000) * 100000;
+      const malePrice = Math.round(firstDesignPrice / 1000) * 1000;
+      const femalePrice = Math.round(secondDesignPrice / 1000) * 1000;
 
       setMalePrice(malePrice);
       setFemalePrice(femalePrice);
@@ -273,6 +307,10 @@ function WeddingRingsDetail() {
     secondDiamond,
     maleResponse,
     femaleResponse,
+    profitRatio,
+    sideDiamondPrice,
+    shippingFee,
+    craftingFee,
   ]);
 
   useEffect(() => {
@@ -291,21 +329,14 @@ function WeddingRingsDetail() {
           setAllow(false);
           return;
         }
+      }
 
-        const allRequestsCanceled = requests.every(
-          (item) => item.status === CustomRequestStatus.Canceled
-        );
+      const allOrdersCanceled = orders.every(
+        (item) => item.status === CustomOrderStatus.Canceled
+      );
 
-        // exist both completed and canceled request
-        if (!allRequestsCanceled) {
-          const allOrdersCanceled = orders.every(
-            (item) => item.status === CustomOrderStatus.Canceled
-          );
-
-          if (!allOrdersCanceled) {
-            setAllow(false);
-          }
-        }
+      if (!allOrdersCanceled) {
+        setAllow(false);
       }
     }
   }, [customRequestResponse, customOrderResponse]);
@@ -689,7 +720,7 @@ function WeddingRingsDetail() {
             {/* Note start */}
             <div className={styles.designfee}>
               Chi phí thu thêm cho mỗi lần thiết kế là{" "}
-              <b>{currencyFormatter(designFee)}</b>.
+              <b>{currencyFormatter(designFee ? +designFee : 0)}</b>.
             </div>
             <div className={styles.note}>
               Xin lưu ý: Xác minh danh tính là bắt buộc để sở hữu nhẫn cưới CR.

@@ -46,8 +46,17 @@
             margin-bottom: 1rem;
         }
 
+        .tabLabel {
+            text-transform: capitalize;
+        }
+
         .list {
             margin-top: 3rem;
+
+            .empty {
+                color: #555;
+            }
         }
+
     }
 }

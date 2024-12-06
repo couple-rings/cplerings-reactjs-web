@@ -10,7 +10,7 @@ import {
   GridPaginationModel,
   GridSortModel,
 } from "@mui/x-data-grid";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getCustomOrders } from "src/services/customOrder.service";
 import { fetchCustomOrders } from "src/utils/querykey";
 import moment from "moment";
@@ -31,7 +31,10 @@ import {
 import { primaryBtn } from "src/utils/styles";
 import FileDownloadSharpIcon from "@mui/icons-material/FileDownloadSharp";
 import { useNavigate } from "react-router-dom";
-import { formatCustomOrderStatus } from "src/utils/functions";
+import {
+  currencyFormatter,
+  formatCustomOrderStatus,
+} from "src/utils/functions";
 import RemoveRedEyeSharpIcon from "@mui/icons-material/RemoveRedEyeSharp";
 
 const boxStyle: SxProps = {
@@ -63,7 +66,6 @@ function CustomOrder() {
   const openPopover = Boolean(anchorEl);
   const id = openPopover ? "simple-popover" : undefined;
 
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const { branchId } = useAppSelector((state) => state.auth.userInfo);
@@ -163,6 +165,17 @@ function CustomOrder() {
         filterable: false,
         renderCell: ({ row }) => {
           return <div>{moment(row.createdAt).format("DD/MM/YYYY")}</div>;
+        },
+      },
+      {
+        field: "totalPrice",
+        headerName: "Số Tiền",
+        width: 150,
+        headerAlign: "center",
+        align: "center",
+        filterable: false,
+        renderCell: ({ row }) => {
+          return <div>{currencyFormatter(row.totalPrice.amount)}</div>;
         },
       },
       {
@@ -326,15 +339,6 @@ function CustomOrder() {
   }, [response]);
 
   useEffect(() => {
-    if (filterObj)
-      queryClient.invalidateQueries({
-        queryKey: [fetchCustomOrders, filterObj],
-      });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
-
-  useEffect(() => {
     if (branchId !== 0)
       setFilterObj({
         page: 0,
@@ -348,72 +352,76 @@ function CustomOrder() {
     <div className={styles.container}>
       <div className={styles.title}>Đơn Gia Công</div>
 
-      <Box sx={boxStyle}>
-        <Tabs
-          classes={{
-            indicator: "myIndicator",
-          }}
-          value={filterObj?.status}
-          onChange={(e, value: CustomOrderStatus) => handleFilterStatus(value)}
-        >
-          <Tab
+      {filterObj && (
+        <Box sx={boxStyle}>
+          <Tabs
             classes={{
-              selected: "selectedCustomRequestTab",
+              indicator: "myIndicator",
             }}
-            className={styles.tabLabel}
-            label="Chưa thanh toán"
-            value={CustomOrderStatus.Pending}
-          />
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Đang chuẩn bị"
-            value={CustomOrderStatus.Waiting}
-          />
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Đang Gia Công"
-            value={CustomOrderStatus.InProgress}
-          />
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Hoàn Tất Gia Công"
-            value={CustomOrderStatus.Done}
-          />
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Đang Giao"
-            value={CustomOrderStatus.Delivering}
-          />
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Hoàn Thành"
-            value={CustomOrderStatus.Completed}
-          />
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Đã Hủy"
-            value={CustomOrderStatus.Canceled}
-          />
-        </Tabs>
-      </Box>
+            value={filterObj.status}
+            onChange={(e, value: CustomOrderStatus) =>
+              handleFilterStatus(value)
+            }
+          >
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Chưa thanh toán"
+              value={CustomOrderStatus.Pending}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Đang chuẩn bị"
+              value={CustomOrderStatus.Waiting}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Đang Gia Công"
+              value={CustomOrderStatus.InProgress}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Hoàn Tất Gia Công"
+              value={CustomOrderStatus.Done}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Đang Giao"
+              value={CustomOrderStatus.Delivering}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Hoàn Thành"
+              value={CustomOrderStatus.Completed}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Đã Hủy"
+              value={CustomOrderStatus.Canceled}
+            />
+          </Tabs>
+        </Box>
+      )}
 
       <DataGrid
         loading={isLoading}

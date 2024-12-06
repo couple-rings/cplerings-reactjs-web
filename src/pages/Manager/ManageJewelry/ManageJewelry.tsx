@@ -16,7 +16,7 @@ import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import AddModal from "src/components/modal/jewelryItem/Add.modal";
 import { pageSize } from "src/utils/constants";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useAppSelector } from "src/utils/hooks";
 import { fetchJewelries } from "src/utils/querykey";
 import { getJewelries } from "src/services/jewelry.service";
@@ -40,8 +40,6 @@ function ManageJewelry() {
 
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
   const [filterObj, setFilterObj] = useState<IJewelryFilter | null>(null);
-
-  const queryClient = useQueryClient();
 
   const { branchId } = useAppSelector((state) => state.auth.userInfo);
 
@@ -184,14 +182,6 @@ function ManageJewelry() {
   const handleSort = (model: GridSortModel) => {
     console.log(model);
   };
-
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchJewelries, filterObj],
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
 
   useEffect(() => {
     if (response && response.data) {

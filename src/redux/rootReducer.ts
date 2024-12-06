@@ -6,6 +6,7 @@ import conversationReducer from "./slice/conversation.slice";
 import messageReducer from "./slice/message.slice";
 import designReducer from "./slice/design.slice";
 import cartReducer from "./slice/cart.slice";
+import configReducer from "./slice/config.slice";
 
 export const rootReducer = combineReducers({
   auth: authReducer,
@@ -15,4 +16,5 @@ export const rootReducer = combineReducers({
   message: messageReducer,
   design: designReducer,
   cart: cartReducer,
+  config: configReducer,
 });

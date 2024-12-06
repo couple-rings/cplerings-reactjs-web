@@ -23,7 +23,7 @@ import {
 import { primaryBtn } from "src/utils/styles";
 import { CustomRequestStatus, StaffPosition } from "src/utils/enums";
 import { useNavigate } from "react-router-dom";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchCustomRequests } from "src/utils/querykey";
 import { getCustomRequests } from "src/services/customRequest.service";
 import { pageSize } from "src/utils/constants";
@@ -68,7 +68,6 @@ function CustomRequest() {
   const id = openPopover ? "simple-popover" : undefined;
 
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const { staffPosition, id: staffId } = useAppSelector(
     (state) => state.auth.userInfo
@@ -256,14 +255,6 @@ function CustomRequest() {
   }, [response]);
 
   useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchCustomRequests, filterObj],
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
-
-  useEffect(() => {
     if (staffPosition === StaffPosition.Sales) {
       setFilterObj((current) => ({
         ...current,
@@ -284,52 +275,54 @@ function CustomRequest() {
     <div className={styles.container}>
       <div className={styles.title}>Yêu Cầu Thiết Kế</div>
 
-      <Box sx={boxStyle}>
-        <Tabs
-          classes={{
-            indicator: "myIndicator",
-          }}
-          value={filterObj?.status}
-          onChange={(e, value: CustomRequestStatus) =>
-            handleChangeStatus(value)
-          }
-        >
-          {staffPosition === StaffPosition.Sales && (
+      {filterObj.status && (
+        <Box sx={boxStyle}>
+          <Tabs
+            classes={{
+              indicator: "myIndicator",
+            }}
+            value={filterObj?.status}
+            onChange={(e, value: CustomRequestStatus) =>
+              handleChangeStatus(value)
+            }
+          >
+            {staffPosition === StaffPosition.Sales && (
+              <Tab
+                classes={{
+                  selected: "selectedCustomRequestTab",
+                }}
+                className={styles.tabLabel}
+                label="Đang chờ duyệt"
+                value={CustomRequestStatus.Waiting}
+              />
+            )}
             <Tab
               classes={{
                 selected: "selectedCustomRequestTab",
               }}
               className={styles.tabLabel}
-              label="Đang chờ duyệt"
-              value={CustomRequestStatus.Waiting}
+              label="Đang thiết kế"
+              value={CustomRequestStatus.OnGoing}
             />
-          )}
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Đang thiết kế"
-            value={CustomRequestStatus.OnGoing}
-          />
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Đã hoàn thành"
-            value={CustomRequestStatus.Completed}
-          />
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Đã hủy"
-            value={CustomRequestStatus.Canceled}
-          />
-        </Tabs>
-      </Box>
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Đã hoàn thành"
+              value={CustomRequestStatus.Completed}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Đã hủy"
+              value={CustomRequestStatus.Canceled}
+            />
+          </Tabs>
+        </Box>
+      )}
 
       <DataGrid
         loading={isLoading}

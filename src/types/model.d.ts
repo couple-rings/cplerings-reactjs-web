@@ -1,4 +1,5 @@
 import {
+  ConfigurationKey,
   CraftingRequestStatus,
   CraftingStageStatus,
   CustomOrderStatus,
@@ -7,7 +8,9 @@ import {
   DivisionType,
   FileType,
   GoldColor,
+  PaymentStatus,
   RingStatus,
+  StandardOrderStatus,
   Status,
   TransportOrderStatus,
   VersionOwner,
@@ -447,6 +450,7 @@ declare global {
     receiverPhone: string;
     deliveryAddress: string;
     customOrder?: ICustomOrder;
+    standardOrder?: IStandardOrder;
     transporter?: IUser;
     transportationNotes?: {
       id: number;
@@ -457,6 +461,7 @@ declare global {
       id: number;
       url: string;
     };
+    transportOrderHistories: IStatusHistory<TransportOrderStatus>[];
   }
 
   interface IAgreement {
@@ -529,5 +534,49 @@ declare global {
       url: string;
       createdAt: string;
     };
+  }
+
+  interface IStandardOrderItem {
+    id: number;
+    jewelry?: IJewelry;
+    branch: IBranch;
+    design: IDesign;
+    metalSpecification: IMetalSpec;
+    price: {
+      amount: number;
+    };
+  }
+
+  interface IStandardOrder {
+    id: number;
+    customer: IUser;
+    orderNo: string;
+    totalPrice: {
+      amount: number;
+    };
+    status: StandardOrderStatus;
+    standardOrderHistories: IStatusHistory<StandardOrderStatus>[];
+    transportationOrders: ITransportOrder[];
+    standardOrderItems: IStandardOrderItem[];
+    createdAt: string;
+  }
+
+  interface IPayment {
+    id: number;
+    type: PaymentType;
+    description: string;
+    amount: {
+      amount: number;
+    };
+    status: PaymentStatus;
+    customRequest?: ICustomRequest;
+    craftingStage?: ICraftingStage;
+    standardOrder?: IStandardOrder;
+  }
+
+  interface IConfigItem {
+    id: number;
+    key: ConfigurationKey;
+    value: string;
   }
 }

@@ -6,18 +6,14 @@
     .header {
         display        : flex;
         justify-content: space-between;
+        align-items    : center;
         font-size      : 1.2rem;
         margin-bottom  : 2rem;
-
-        .left {
-            display: flex;
-            gap    : 3rem;
-        }
     }
 
     .body {
         justify-content: space-between;
-        align-items    : center;
+        align-items    : flex-start;
 
         img {
             width        : 100%;
@@ -30,7 +26,6 @@
             display       : flex;
             flex-direction: column;
             margin-bottom : 1.5rem;
-            padding       : 0 2rem;
 
             .title {
                 color: $primaryColor;
@@ -38,9 +33,7 @@
 
             .price {
                 font-size  : 1.5rem;
-                text-align : right;
                 font-weight: 600;
-                margin     : 1rem 0;
             }
 
             .label {

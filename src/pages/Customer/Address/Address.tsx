@@ -11,7 +11,7 @@ import DeleteModal from "src/components/modal/address/Delete.modal";
 import UpdateModal from "src/components/modal/address/Update.modal";
 import { useNavigate } from "react-router-dom";
 import AddressCard from "src/components/address/Card.Manage";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getTransportAddresses } from "src/services/transportAddress.service";
 import { fetchDistricts, fetchTransportAddresses } from "src/utils/querykey";
 import { UserRole } from "src/utils/enums";
@@ -65,7 +65,6 @@ const Address = () => {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const queryClient = useQueryClient();
 
   const { districts } = useAppSelector((state) => state.district);
   const { id } = useAppSelector((state) => state.auth.userInfo);
@@ -117,14 +116,6 @@ const Address = () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [response]);
-
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchTransportAddresses, filterObj],
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
 
   useEffect(() => {
     setFilterObj({

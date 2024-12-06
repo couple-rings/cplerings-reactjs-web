@@ -24,7 +24,7 @@ import { Button, Grid } from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 import DeleteModal from "src/components/modal/diamondSpecification/Delete.modal";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getDiamondSpecs } from "src/services/diamondSpec.service";
 import { pageSize } from "src/utils/constants";
 import { fetchDiamondSpecs } from "src/utils/querykey";
@@ -66,8 +66,6 @@ function ManageDiamondSpecification() {
     page: 0,
     pageSize,
   });
-
-  const queryClient = useQueryClient();
 
   const { data: response, isLoading } = useQuery({
     queryKey: [fetchDiamondSpecs, filterObj],
@@ -264,14 +262,6 @@ function ManageDiamondSpecification() {
   const handleSort = (model: GridSortModel) => {
     console.log(model);
   };
-
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchDiamondSpecs, filterObj],
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
 
   useEffect(() => {
     if (response && response.data) {

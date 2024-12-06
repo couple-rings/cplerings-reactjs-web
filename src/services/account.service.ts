@@ -10,7 +10,7 @@ export const getAccountProfile = () => {
 export const getTransporters = (queryObj: ITransporterFilter) => {
   const queryUrl = queryString.stringify(queryObj);
 
-  return axios.get<unknown, IResponse<IListResponse<IUser>>>(
+  return axios.get<unknown, IResponse<IListResponse<ITransporterResponse>>>(
     `accounts/transporters?${queryUrl}`
   );
 };

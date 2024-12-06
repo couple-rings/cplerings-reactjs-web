@@ -27,16 +27,20 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { postCreateCustomRequest } from "src/services/customRequest.service";
 import { removeRequestedDesigns } from "src/redux/slice/design.slice";
 import { getCustomerSpouse } from "src/services/spouse.service";
-import { fetchCustomerSpouse } from "src/utils/querykey";
-import { TransactionType } from "src/utils/enums";
+import { fetchCustomerSpouse, fetchPaymentDetail } from "src/utils/querykey";
 import {
   companyAddress,
   companyName,
   companyEmail,
-  taxRate,
+  standardOrderPayment,
+  designFeePayment,
+  depositPayment,
+  stages,
 } from "src/utils/constants";
 import LocalPrintshopSharpIcon from "@mui/icons-material/LocalPrintshopSharp";
 import { secondaryBtn } from "src/utils/styles";
+import { getPaymentDetail } from "src/services/payment.service";
+import { StagePercentage } from "src/utils/enums";
 
 const iconStyle: SxProps = {
   color: "white",
@@ -45,9 +49,14 @@ const iconStyle: SxProps = {
 
 function Invoice() {
   const [ownerSpouse, setOwnerSpouse] = useState<ISpouse | null>(null);
+  const [customRequest, setCustomRequest] = useState<ICustomRequest | null>(
+    null
+  );
 
   const { requestedDesigns } = useAppSelector((state) => state.design);
-  const { id, email } = useAppSelector((state) => state.auth.userInfo);
+  const { id, email, username } = useAppSelector(
+    (state) => state.auth.userInfo
+  );
 
   const [searchParams] = useSearchParams();
 
@@ -72,13 +81,21 @@ function Invoice() {
     },
   });
 
+  const { data: paymentResponse } = useQuery({
+    queryKey: [fetchPaymentDetail, paymentId],
+
+    queryFn: () => {
+      if (paymentId) return getPaymentDetail(+paymentId);
+    },
+  });
+
   const mutation = useMutation({
     mutationFn: (data: ICreateCRRequest) => {
       return postCreateCustomRequest(data);
     },
     onSuccess: (response) => {
       if (response.data) {
-        console.log(response.data);
+        setCustomRequest(response.data);
       }
 
       if (response.errors) {
@@ -133,25 +150,27 @@ function Invoice() {
     transNo,
   ]);
 
+  useEffect(() => {
+    if (paymentResponse?.errors) navigate("/");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentResponse]);
+
   return (
     <div className={styles.container}>
-      <Grid container item xs={11} xl={10}>
-        <Grid item className={styles.homeLink} onClick={() => navigate("/")}>
-          <ArrowBackIosIcon />
-          <span>Trang Chủ</span>
+      <Grid container item xs={11} justifyContent={"center"}>
+        <Grid container item md={9} lg={8}>
+          <Grid item className={styles.homeLink} onClick={() => navigate("/")}>
+            <ArrowBackIosIcon />
+            <span>Trang Chủ</span>
+          </Grid>
         </Grid>
 
-        <Grid
-          container
-          item
-          justifyContent={"space-between"}
-          alignItems={"flex-start"}
-        >
+        <Grid container item md={8} lg={7}>
           <Grid container className={styles.title}>
             Hóa Đơn
           </Grid>
 
-          <Grid container item xs={12} md={8} lg={6} className={styles.body}>
+          <Grid container item xs={12} className={styles.body}>
             <Grid item xs={12} className={styles.upper}>
               <PulseIcon
                 backgroundColor={status === "00" ? "#23A26D" : "#B43620"}
@@ -203,7 +222,9 @@ function Invoice() {
                   Nội Dung
                 </Grid>
                 <Grid item xs={6} className={styles.info}>
-                  {customer}
+                  {paymentResponse?.data?.standardOrder && standardOrderPayment}
+                  {customRequest && designFeePayment}
+                  {paymentResponse?.data?.craftingStage && depositPayment}
                 </Grid>
               </Grid>
 
@@ -264,50 +285,79 @@ function Invoice() {
             )}
           </Grid>
 
-          <Grid container item xs={12} md={8} lg={5} className={styles.detail}>
+          <Grid container item xs={12} className={styles.detail}>
             <div className={styles.title}>Chi Tiết Thanh Toán</div>
-            <Grid container>
-              <div className={styles.sender}>Người thực hiện</div>
-              <Grid container mb={1}>
-                <Grid item xs={4}>
-                  Họ tên:
+            {paymentResponse?.data?.standardOrder && (
+              <Grid container mb={2}>
+                <Grid container mb={1}>
+                  <Grid item xs={4}>
+                    Mã Đơn:
+                  </Grid>
+                  <Grid item sx={{ textTransform: "capitalize" }}>
+                    {paymentResponse.data.standardOrder.orderNo}
+                  </Grid>
                 </Grid>
-                <Grid item sx={{ textTransform: "capitalize" }}>
-                  {ownerSpouse?.fullName.toLowerCase()}
+                <Grid container>
+                  <Grid item xs={4}>
+                    Ngày Tạo:
+                  </Grid>
+                  <Grid item>
+                    {moment(
+                      paymentResponse.data.standardOrder.createdAt
+                    ).format("DD/MM/YYYY HH:mm")}
+                  </Grid>
                 </Grid>
               </Grid>
+            )}
+
+            {customRequest && (
+              <Grid container mb={2}>
+                <Grid container mb={1}>
+                  <Grid item xs={4}>
+                    Yêu Cầu Thiết Kế:
+                  </Grid>
+                  <Grid item sx={{ textTransform: "capitalize" }}>
+                    Bản thiết kế {customRequest.designs[0].name} &{" "}
+                    {customRequest.designs[1].name}
+                  </Grid>
+                </Grid>
+                <Grid container>
+                  <Grid item xs={4}>
+                    Ngày Tạo:
+                  </Grid>
+                  <Grid item>
+                    {moment(customRequest.createdAt).format("DD/MM/YYYY HH:mm")}
+                  </Grid>
+                </Grid>
+              </Grid>
+            )}
+            <Grid container mb={2}>
+              <div className={styles.sender}>Người thực hiện</div>
+              {ownerSpouse ? (
+                <Grid container mb={1}>
+                  <Grid item xs={4}>
+                    Họ tên:
+                  </Grid>
+                  <Grid item sx={{ textTransform: "capitalize" }}>
+                    {ownerSpouse?.fullName.toLowerCase()}
+                  </Grid>
+                </Grid>
+              ) : (
+                <Grid container mb={1}>
+                  <Grid item xs={4}>
+                    Username:
+                  </Grid>
+                  <Grid item sx={{ textTransform: "capitalize" }}>
+                    {username}
+                  </Grid>
+                </Grid>
+              )}
+
               <Grid container>
                 <Grid item xs={4}>
                   Email:
                 </Grid>
                 <Grid item>{email}</Grid>
-              </Grid>
-            </Grid>
-
-            <Grid container my={2}>
-              <div className={styles.sender}>Thông tin giao dịch</div>
-              <Grid container mb={1}>
-                <Grid item xs={4}>
-                  Mã ngân hàng:
-                </Grid>
-                <Grid item>{bankCode}</Grid>
-              </Grid>
-              <Grid container mb={1}>
-                <Grid item xs={4}>
-                  Hình thức:
-                </Grid>
-                <Grid item>
-                  {cardType === TransactionType.ATM && "Chuyển khoản"}
-                </Grid>
-                <Grid item>
-                  {cardType === TransactionType.QrCode && "Quét mã QR"}
-                </Grid>
-              </Grid>
-              <Grid container mb={1}>
-                <Grid item xs={4}>
-                  Mã giao dịch VNPAY:
-                </Grid>
-                <Grid item>{transNo}</Grid>
               </Grid>
             </Grid>
 
@@ -332,66 +382,260 @@ function Invoice() {
               </Grid>
             </Grid>
 
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead className={styles.tableHead}>
-                  <TableRow>
-                    <TableCell align="center" className={styles.cell}>
-                      Nội Dung
-                    </TableCell>
-                    <TableCell align="right" className={styles.cell}>
-                      Giá Tiền
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell align="center">
-                      Thanh toán phí thiết kế
-                    </TableCell>
-                    <TableCell align="right">
-                      {amount && currencyFormatter(+amount / 100)}
-                    </TableCell>
-                  </TableRow>
+            {paymentResponse?.data?.standardOrder && (
+              <StandardOrderTable order={paymentResponse.data.standardOrder} />
+            )}
 
-                  <TableRow>
-                    {/* <TableCell colSpan={1} /> */}
-                    <TableCell align="right">Subtotal</TableCell>
-                    <TableCell align="right">
-                      {amount && currencyFormatter(+amount / 100)}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell align="right">Tax</TableCell>
-                    <TableCell align="right">{`${taxRate} %`}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell align="right">Total</TableCell>
-                    <TableCell align="right">
-                      {amount &&
-                        currencyFormatter(
-                          +amount / 100 + ((+amount / 100) * taxRate) / 100
-                        )}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
+            {customRequest && <CustomRequestTable request={customRequest} />}
+
+            {paymentResponse?.data?.craftingStage && (
+              <CraftingStageTable data={paymentResponse.data} />
+            )}
           </Grid>
 
           <Grid container mt={10} justifyContent={"center"}>
-            <Button
-              variant="contained"
-              sx={secondaryBtn}
-              onClick={() => navigate("/customer/support/custom-request")}
-            >
-              Xem Yêu Cầu
-            </Button>
+            {customRequest && (
+              <Button
+                variant="contained"
+                sx={secondaryBtn}
+                onClick={() => navigate("/customer/support/custom-request")}
+              >
+                Xem Yêu Cầu
+              </Button>
+            )}
+
+            {paymentResponse?.data?.standardOrder && (
+              <Button
+                variant="contained"
+                sx={secondaryBtn}
+                onClick={() =>
+                  navigate(
+                    `/customer/order-detail/${paymentResponse.data?.standardOrder?.id}`
+                  )
+                }
+              >
+                Xem Đơn Hàng
+              </Button>
+            )}
+
+            {paymentResponse?.data?.craftingStage && (
+              <Button
+                variant="contained"
+                sx={secondaryBtn}
+                onClick={() =>
+                  navigate(
+                    `/customer/support/custom-order/${paymentResponse.data?.craftingStage?.customOrderId}/crafting-process`
+                  )
+                }
+              >
+                Xem Quá Trình
+              </Button>
+            )}
           </Grid>
         </Grid>
       </Grid>
     </div>
   );
 }
+
+const StandardOrderTable = (props: IStandardOrderTableProps) => {
+  const { order } = props;
+
+  return (
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead className={styles.tableHead}>
+          <TableRow>
+            <TableCell align="center" className={styles.cell} colSpan={3}>
+              Nội Dung
+            </TableCell>
+            <TableCell align="right" className={styles.cell}>
+              Giá Tiền
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            <TableCell align="center" colSpan={3}>
+              {standardOrderPayment}
+            </TableCell>
+            <TableCell align="right">
+              {currencyFormatter(order.totalPrice.amount)}
+            </TableCell>
+          </TableRow>
+
+          <TableRow>
+            <TableCell>Tên Trang Sức</TableCell>
+            <TableCell align="right">Phân Loại</TableCell>
+            <TableCell align="right">Số Lượng</TableCell>
+            <TableCell align="right">Giá Tiền</TableCell>
+          </TableRow>
+
+          {order.standardOrderItems.map((item) => {
+            return (
+              <TableRow key={item.id}>
+                <TableCell sx={{ width: 200 }}>{item.design.name}</TableCell>
+                <TableCell align="right">
+                  {item.design.jewelryCategory.name}
+                </TableCell>
+                <TableCell align="right">1</TableCell>
+                <TableCell align="right">
+                  {currencyFormatter(item.price.amount)}
+                </TableCell>
+              </TableRow>
+            );
+          })}
+
+          <TableRow>
+            <TableCell align="right" colSpan={2}>
+              Thành Tiền
+            </TableCell>
+            <TableCell align="right" colSpan={2}>
+              {currencyFormatter(order.totalPrice.amount)}
+            </TableCell>
+          </TableRow>
+
+          <TableRow>
+            <TableCell align="right" colSpan={2}>
+              Giảm Giá
+            </TableCell>
+            <TableCell align="right" colSpan={2}>
+              {0}
+            </TableCell>
+          </TableRow>
+
+          <TableRow>
+            <TableCell align="right" colSpan={2}>
+              Tổng Cộng
+            </TableCell>
+            <TableCell align="right" colSpan={2}>
+              {currencyFormatter(order.totalPrice.amount)}
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+};
+
+const CustomRequestTable = (props: ICustomRequestTableProps) => {
+  const { request } = props;
+
+  return (
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead className={styles.tableHead}>
+          <TableRow>
+            <TableCell align="center" className={styles.cell} colSpan={3}>
+              Nội Dung
+            </TableCell>
+            <TableCell align="right" className={styles.cell}>
+              Giá Tiền
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            <TableCell align="center" colSpan={3}>
+              {designFeePayment}
+            </TableCell>
+            <TableCell align="right">
+              {currencyFormatter(request.designFee.amount)}
+            </TableCell>
+          </TableRow>
+
+          <TableRow>
+            <TableCell align="right" colSpan={2}>
+              Thành Tiền
+            </TableCell>
+            <TableCell align="right" colSpan={2}>
+              {currencyFormatter(request.designFee.amount)}
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+};
+
+const CraftingStageTable = (props: ICraftingStageTableProps) => {
+  const { data } = props;
+
+  const { amount, craftingStage } = data;
+
+  if (craftingStage) {
+    let depositValue = 0;
+    if (craftingStage.progress === StagePercentage.First)
+      depositValue = craftingStage.progress;
+    else {
+      const index = stages.findIndex(
+        (item) => item.progress === craftingStage.progress
+      );
+      if (index !== -1) {
+        depositValue = stages[index].progress - stages[index - 1].progress;
+      }
+    }
+
+    return (
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead className={styles.tableHead}>
+            <TableRow>
+              <TableCell align="center" className={styles.cell} colSpan={3}>
+                Nội Dung
+              </TableCell>
+              <TableCell align="right" className={styles.cell}>
+                Giá Tiền
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell align="center" colSpan={3}>
+                {depositPayment}
+              </TableCell>
+              <TableCell align="right">
+                {currencyFormatter(amount.amount)}
+              </TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell>Giai Đoạn Đặt Cọc</TableCell>
+              <TableCell>Tổng Tiền Đơn Hàng</TableCell>
+              <TableCell align="right">Tỷ Lệ</TableCell>
+              <TableCell align="right">Giá Tiền</TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell sx={{ width: 200 }}>
+                {
+                  stages.find(
+                    (item) => item.progress === craftingStage.progress
+                  )?.name
+                }
+              </TableCell>
+              <TableCell align="right">
+                {currencyFormatter(amount.amount)}
+              </TableCell>
+              <TableCell align="right">{depositValue} %</TableCell>
+              <TableCell align="right">
+                {currencyFormatter(amount.amount)}
+              </TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell align="right" colSpan={2}>
+                Tổng Cộng
+              </TableCell>
+              <TableCell align="right" colSpan={2}>
+                {currencyFormatter(amount.amount)}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  }
+};
 
 export default Invoice;

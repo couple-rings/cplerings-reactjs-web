@@ -35,7 +35,7 @@
         flex-direction: column;
 
         .title {
-            font-size    : 2.3rem;
+            font-size    : 2rem;
             margin-bottom: 3rem;
         }
 
@@ -47,43 +47,51 @@
         }
 
         .datetime {
-            text-align   : center;
-            font-size    : 1.2rem;
-            font-weight  : 600;
-            margin-bottom: 2rem;
+            font-size: 1.2rem;
+
         }
 
         .orderNo {
-            text-align   : center;
             font-size    : 1.2rem;
-            font-weight  : 600;
             margin-bottom: 0.5rem;
-            margin-top   : 3rem;
         }
 
-        .productImg {
-            width: 100%;
+        .totalPrice {
+            color      : $secondaryColor;
+            font-size  : 1.3rem;
+            font-weight: 500;
+            margin-left: 1rem;
         }
 
-        .collection {
-            text-align: center;
-            font-size : 1.2rem;
-            margin-top: 1rem;
-            color     : $primaryColor;
+        .item {
+            justify-content: center;
+            border         : 1px solid #ccc;
+            padding        : 2rem;
+
+            .productImg {
+                width: 100%;
+            }
+
+            .name {
+                text-align: center;
+                font-size : 1.1rem;
+                margin-top: 1rem;
+                color     : $primaryColor;
+            }
+
+            .label {
+                color       : $grayColor;
+                margin-right: 1rem;
+            }
+
+            .price {
+                text-align : center;
+                font-size  : 1.2rem;
+                font-weight: 600;
+                margin-top : 1rem;
+            }
         }
 
-        .label {
-            color       : $grayColor;
-            margin-right: 1rem;
-        }
-
-        .price {
-            text-align   : center;
-            font-size    : 1.2rem;
-            font-weight  : 600;
-            margin-bottom: 6rem;
-            margin-top   : 1rem;
-        }
 
         .left {
             .title {
