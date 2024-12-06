@@ -22,8 +22,21 @@ import {
   postAssignTransportOrder,
 } from "src/services/transportOrder.service";
 import { fetchTransporters, fetchTransportOrders } from "src/utils/querykey";
-import { TransportOrderStatus } from "src/utils/enums";
-import { Button, MenuItem, Select, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  FormLabel,
+  Grid,
+  IconButton,
+  MenuItem,
+  Popover,
+  Select,
+  SxProps,
+  Tab,
+  Tabs,
+  TextField,
+} from "@mui/material";
 import { primaryBtn } from "src/utils/styles";
 import { useAppSelector } from "src/utils/hooks";
 import { getTransporters } from "src/services/account.service";
@@ -32,6 +45,17 @@ import CancelIcon from "@mui/icons-material/Close";
 import BorderColorRoundedIcon from "@mui/icons-material/BorderColorRounded";
 import { toast } from "react-toastify";
 import ViewModal from "src/components/modal/transportOrder/Detail.modal";
+import RemoveRedEyeSharpIcon from "@mui/icons-material/RemoveRedEyeSharp";
+import { formatTransportOrderStatus } from "src/utils/functions";
+import { TransportOrderStatus } from "src/utils/enums";
+import moment from "moment";
+
+const boxStyle: SxProps = {
+  borderBottom: 1,
+  borderColor: "divider",
+  width: "100%",
+  mb: 6,
+};
 
 interface Row extends ITransportOrder {}
 
@@ -60,6 +84,11 @@ function ArrangeTransport() {
   const [transporterFilterObj, setTransporterFilterObj] =
     useState<ITransporterFilter | null>(null);
   const [selected, setSelected] = useState(0);
+
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const openPopover = Boolean(anchorEl);
+  const id = openPopover ? "simple-popover" : undefined;
 
   const queryClient = useQueryClient();
 
@@ -129,6 +158,14 @@ function ArrangeTransport() {
     [rowModesModel]
   );
 
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const columns: GridColDef<Row>[] = useMemo(
     () => [
       {
@@ -141,15 +178,68 @@ function ArrangeTransport() {
         filterOperators,
       },
       {
-        field: "customOrder",
+        field: "customer",
         headerName: "Khách Hàng",
         width: 250,
         headerAlign: "center",
         align: "center",
         filterOperators,
         sortable: false,
-        valueGetter: (value: ICustomOrder) => {
-          return value?.customer.username ?? "";
+        renderCell: ({ row }) => {
+          return (
+            <div>
+              {row.customOrder?.customer.username ?? ""}
+              {row.standardOrder?.customer.username ?? ""}
+              <IconButton onClick={handleClick}>
+                <RemoveRedEyeSharpIcon fontSize="small" />
+              </IconButton>
+              <Popover
+                id={id}
+                open={openPopover}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+              >
+                <Grid container width={300} p={3} gap={1}>
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Username:</Grid>
+
+                    <Grid item>
+                      {row.customOrder?.customer.username ?? ""}
+                      {row.standardOrder?.customer.username ?? ""}
+                    </Grid>
+                  </Grid>
+
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Email:</Grid>
+
+                    <Grid item>
+                      <FormLabel>
+                        {row.customOrder?.customer.email ?? ""}
+                        {row.standardOrder?.customer.email ?? ""}
+                      </FormLabel>
+                    </Grid>
+                  </Grid>
+
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Số điện thoại:</Grid>
+
+                    <Grid item>
+                      {row.customOrder?.customer.phone ?? ""}
+                      {row.standardOrder?.customer.phone ?? ""}
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Popover>
+            </div>
+          );
         },
       },
       {
@@ -177,7 +267,8 @@ function ArrangeTransport() {
                 {transporterResponse?.data?.items.map((item) => {
                   return (
                     <MenuItem value={item.id} key={item.id}>
-                      {item.username}
+                      {item.username} - Đang nhận{" "}
+                      {item.numberOfHandleTransportOrder} đơn
                     </MenuItem>
                   );
                 })}
@@ -204,35 +295,26 @@ function ArrangeTransport() {
         filterOperators,
         sortable: false,
         renderCell: ({ row }) => {
-          let classname = "";
-
-          if (row.status === TransportOrderStatus.Pending) {
-            classname = styles.pending;
-          }
-
-          if (row.status === TransportOrderStatus.Completed) {
-            classname = styles.completed;
-          }
-
-          if (row.status === TransportOrderStatus.Rejected) {
-            classname = styles.rejected;
-          }
-
-          if (row.status === TransportOrderStatus.OnGoing) {
-            classname = styles.ongoing;
-          }
-
-          if (row.status === TransportOrderStatus.Waiting) {
-            classname = styles.waiting;
-          }
-
-          if (row.status === TransportOrderStatus.Delivering) {
-            classname = styles.delivering;
-          }
-
           return (
-            <div className={classname}>{row.status.toLocaleLowerCase()}</div>
+            <Chip
+              label={formatTransportOrderStatus(row.status).text}
+              color={formatTransportOrderStatus(row.status).color}
+            />
           );
+        },
+      },
+      {
+        field: "createdAt",
+        headerName: "Cập Nhật",
+        width: 150,
+        headerAlign: "center",
+        align: "center",
+        filterable: false,
+        renderCell: ({ row }) => {
+          const status = row.transportOrderHistories.find(
+            (item) => item.status === row.status
+          );
+          return <div>{moment(status?.createdAt).format("DD/MM/YYYY")}</div>;
         },
       },
       {
@@ -288,9 +370,12 @@ function ArrangeTransport() {
       },
     ],
     [
+      anchorEl,
       handleCancelClick,
       handleEditClick,
       handleSaveClick,
+      id,
+      openPopover,
       rowModesModel,
       selected,
       transporterResponse,
@@ -333,6 +418,15 @@ function ArrangeTransport() {
       });
   };
 
+  const handleChangeStatus = (status: TransportOrderStatus) => {
+    setFilterObj({
+      ...filterObj,
+      page: 0,
+      pageSize,
+      status,
+    });
+  };
+
   const handleFilter = (model: GridFilterModel) => {
     console.log(model);
   };
@@ -355,6 +449,7 @@ function ArrangeTransport() {
         page: 0,
         pageSize,
         branchId,
+        status: TransportOrderStatus.Pending,
       });
 
       setTransporterFilterObj({
@@ -368,6 +463,78 @@ function ArrangeTransport() {
   return (
     <div className={styles.container}>
       <div className={styles.title}>Sắp Xếp Vận Chuyển</div>
+
+      {filterObj && (
+        <Box sx={boxStyle}>
+          <Tabs
+            classes={{
+              indicator: "myIndicator",
+            }}
+            value={filterObj?.status}
+            onChange={(e, value: TransportOrderStatus) =>
+              handleChangeStatus(value)
+            }
+          >
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Chờ Giao"
+              value={TransportOrderStatus.Pending}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Chuẩn Bị Giao"
+              value={TransportOrderStatus.Waiting}
+            />
+
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Bắt Đầu Giao"
+              value={TransportOrderStatus.OnGoing}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Đang Giao"
+              value={TransportOrderStatus.Delivering}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Chờ Giao Lại"
+              value={TransportOrderStatus.Redelivering}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Hoàn Thành"
+              value={TransportOrderStatus.Completed}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Thất Bại"
+              value={TransportOrderStatus.Rejected}
+            />
+          </Tabs>
+        </Box>
+      )}
 
       <DataGrid
         editMode="row"

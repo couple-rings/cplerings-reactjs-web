@@ -153,4 +153,8 @@ declare global {
   interface IDesignStaffResponse extends IUser {
     numberOfHandledCustomRequest: number;
   }
+
+  interface ITransporterResponse extends IUser {
+    numberOfHandleTransportOrder: number;
+  }
 }

@@ -19,7 +19,7 @@ import {
 } from "src/utils/enums";
 import { fetchCraftingStages } from "src/utils/querykey";
 
-function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
+function JewelerCustomOrderTimeline(props: IJewelerCustomOrderTimelineProps) {
   const { order } = props;
 
   const [firstStage, setFirstStage] = useState<ICraftingStage | null>(null);
@@ -147,7 +147,7 @@ function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
             <TimelineDot color="info" />
             <TimelineConnector />
           </TimelineSeparator>
-          <TimelineContent>Giao đơn cho thợ gia công</TimelineContent>
+          <TimelineContent>Tiếp nhận đơn gia công</TimelineContent>
         </TimelineItem>
       )}
 
@@ -254,4 +254,4 @@ function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
   );
 }
 
-export default StaffCustomOrderTimeline;
+export default JewelerCustomOrderTimeline;

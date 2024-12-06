@@ -275,52 +275,54 @@ function CustomRequest() {
     <div className={styles.container}>
       <div className={styles.title}>Yêu Cầu Thiết Kế</div>
 
-      <Box sx={boxStyle}>
-        <Tabs
-          classes={{
-            indicator: "myIndicator",
-          }}
-          value={filterObj?.status}
-          onChange={(e, value: CustomRequestStatus) =>
-            handleChangeStatus(value)
-          }
-        >
-          {staffPosition === StaffPosition.Sales && (
+      {filterObj.status && (
+        <Box sx={boxStyle}>
+          <Tabs
+            classes={{
+              indicator: "myIndicator",
+            }}
+            value={filterObj?.status}
+            onChange={(e, value: CustomRequestStatus) =>
+              handleChangeStatus(value)
+            }
+          >
+            {staffPosition === StaffPosition.Sales && (
+              <Tab
+                classes={{
+                  selected: "selectedCustomRequestTab",
+                }}
+                className={styles.tabLabel}
+                label="Đang chờ duyệt"
+                value={CustomRequestStatus.Waiting}
+              />
+            )}
             <Tab
               classes={{
                 selected: "selectedCustomRequestTab",
               }}
               className={styles.tabLabel}
-              label="Đang chờ duyệt"
-              value={CustomRequestStatus.Waiting}
+              label="Đang thiết kế"
+              value={CustomRequestStatus.OnGoing}
             />
-          )}
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Đang thiết kế"
-            value={CustomRequestStatus.OnGoing}
-          />
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Đã hoàn thành"
-            value={CustomRequestStatus.Completed}
-          />
-          <Tab
-            classes={{
-              selected: "selectedCustomRequestTab",
-            }}
-            className={styles.tabLabel}
-            label="Đã hủy"
-            value={CustomRequestStatus.Canceled}
-          />
-        </Tabs>
-      </Box>
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Đã hoàn thành"
+              value={CustomRequestStatus.Completed}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Đã hủy"
+              value={CustomRequestStatus.Canceled}
+            />
+          </Tabs>
+        </Box>
+      )}
 
       <DataGrid
         loading={isLoading}

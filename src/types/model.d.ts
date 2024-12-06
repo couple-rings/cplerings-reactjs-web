@@ -1,4 +1,5 @@
 import {
+  ConfigurationKey,
   CraftingRequestStatus,
   CraftingStageStatus,
   CustomOrderStatus,
@@ -449,6 +450,7 @@ declare global {
     receiverPhone: string;
     deliveryAddress: string;
     customOrder?: ICustomOrder;
+    standardOrder?: IStandardOrder;
     transporter?: IUser;
     transportationNotes?: {
       id: number;
@@ -459,6 +461,7 @@ declare global {
       id: number;
       url: string;
     };
+    transportOrderHistories: IStatusHistory<TransportOrderStatus>[];
   }
 
   interface IAgreement {
@@ -539,6 +542,9 @@ declare global {
     branch: IBranch;
     design: IDesign;
     metalSpecification: IMetalSpec;
+    price: {
+      amount: number;
+    };
   }
 
   interface IStandardOrder {
@@ -551,7 +557,6 @@ declare global {
     status: StandardOrderStatus;
     standardOrderHistories: IStatusHistory<StandardOrderStatus>[];
     transportationOrders: ITransportOrder[];
-    jewelries?: IJewelry[];
     standardOrderItems: IStandardOrderItem[];
     createdAt: string;
   }
@@ -567,5 +572,11 @@ declare global {
     customRequest?: ICustomRequest;
     craftingStage?: ICraftingStage;
     standardOrder?: IStandardOrder;
+  }
+
+  interface IConfigItem {
+    id: number;
+    key: ConfigurationKey;
+    value: string;
   }
 }

@@ -31,7 +31,10 @@ import {
 import { primaryBtn } from "src/utils/styles";
 import FileDownloadSharpIcon from "@mui/icons-material/FileDownloadSharp";
 import { useNavigate } from "react-router-dom";
-import { formatCustomOrderStatus } from "src/utils/functions";
+import {
+  currencyFormatter,
+  formatCustomOrderStatus,
+} from "src/utils/functions";
 import RemoveRedEyeSharpIcon from "@mui/icons-material/RemoveRedEyeSharp";
 
 const boxStyle: SxProps = {
@@ -162,6 +165,17 @@ function CustomOrder() {
         filterable: false,
         renderCell: ({ row }) => {
           return <div>{moment(row.createdAt).format("DD/MM/YYYY")}</div>;
+        },
+      },
+      {
+        field: "totalPrice",
+        headerName: "Số Tiền",
+        width: 150,
+        headerAlign: "center",
+        align: "center",
+        filterable: false,
+        renderCell: ({ row }) => {
+          return <div>{currencyFormatter(row.totalPrice.amount)}</div>;
         },
       },
       {

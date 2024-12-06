@@ -214,10 +214,6 @@ declare global {
   }
 
   interface ISummaryProps {
-    productAmount: number;
-
-    discount: number;
-
     checkedItem: string[];
   }
 
@@ -496,6 +492,20 @@ declare global {
     order: ICustomOrder;
   }
 
+  interface IJewelerCustomOrderTimelineProps
+    extends IStaffCustomOrderTimelineProps {}
+
+  interface IStaffStandardOrderTimelineProps {
+    order: IStandardOrder;
+  }
+
+  interface IStaffTransportOrderTimelineProps {
+    order: ITransportOrder;
+  }
+
+  interface ICustomerTransportOrderTimelineProps
+    extends IStaffTransportOrderTimelineProps {}
+
   interface ICustomerCustomOrderTimelineProps
     extends IStaffCustomOrderTimelineProps {
     stages: ICraftingStage[];
@@ -531,6 +541,10 @@ declare global {
 
   interface IStandardOrderProps {
     data: IStandardOrder;
+
+    handleCancel: (v: number) => void;
+
+    loading: boolean;
   }
 
   interface IStandardOrderTableProps {
@@ -539,5 +553,9 @@ declare global {
 
   interface ICustomRequestTableProps {
     request: ICustomRequest;
+  }
+
+  interface ICraftingStageTableProps {
+    data: IPayment;
   }
 }

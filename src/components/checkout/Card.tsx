@@ -6,7 +6,7 @@ import placeholder from "src/assets/default.jpg";
 
 function Card(props: ICheckoutCardProps) {
   const { data } = props;
-  const { design, metalSpecification } = data;
+  const { design, metalSpecification, price } = data;
 
   const img = design.designMetalSpecifications.find(
     (item) => item.metalSpecification.id === metalSpecification.id
@@ -55,8 +55,8 @@ function Card(props: ICheckoutCardProps) {
       </Grid>
 
       <div className={styles.price}>
-        <div>Thành Tiền</div>
-        <div>{currencyFormatter(12000000)}</div>
+        <div>Giá Tiền</div>
+        <div>{currencyFormatter(price.amount)}</div>
       </div>
     </div>
   );

@@ -149,9 +149,6 @@ export type ChipColor =
 
 export const metalWeightUnit = 3.75; // 1 chỉ vàng = 3.75 gram
 export const meleeDiamondCarat = 0.008;
-export const profitRatio = 1.3;
-export const designFee = 500000;
-export const taxRate = 0;
 
 export const standardOrderPayment = "Đặt mua trang sức";
 export const designFeePayment = "Thanh toán phí thiết kế";

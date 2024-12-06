@@ -165,7 +165,7 @@ export enum TransportOrderStatus {
   Delivering = "DELIVERING",
   Rejected = "REJECTED",
   Completed = "COMPLETED",
-  Failed = "FAILED",
+  Redelivering = "REDELIVERING",
 }
 
 export enum TransactionType {
@@ -203,4 +203,17 @@ export enum PaymentStatus {
   Failed = "FAILED",
   Cancelled = "CANCELLED",
   Expired = "EXPIRED",
+}
+
+export enum ConfigurationKey {
+  SideDiamondPrice = "SDPR",
+  CraftingFee = "CRFE",
+  RefundRatio = "REFU",
+  ResellRatio = "RESE",
+  ProfitRatio = "PARA",
+  ShippingFee = "SHFE",
+  DesignFee = "DEFE",
+  FirstStageProgress = "CSP1",
+  SecondStageProgress = "CSP2",
+  ThirdStageProgress = "CSP3",
 }

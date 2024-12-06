@@ -111,7 +111,7 @@ function CustomerCustomOrderTimeline(props: ICustomerCustomOrderTimelineProps) {
             ).format("DD/MM/YYYY HH:mm")}
           </TimelineOppositeContent>
           <TimelineSeparator>
-            <TimelineDot color="error" />
+            <TimelineDot color="info" />
             <TimelineConnector />
           </TimelineSeparator>
           <TimelineContent>Đơn được giao cho thợ gia công</TimelineContent>
@@ -193,32 +193,9 @@ function CustomerCustomOrderTimeline(props: ICustomerCustomOrderTimelineProps) {
             {moment(thirdStage.completionDate).format("DD/MM/YYYY HH:mm")}
           </TimelineOppositeContent>
           <TimelineSeparator>
-            <TimelineDot color="info" />
-            <TimelineConnector />
+            <TimelineDot color="success" />
           </TimelineSeparator>
           <TimelineContent>Hoàn tất quá trình gia công</TimelineContent>
-        </TimelineItem>
-      )}
-
-      {/* Assigned for delivery */}
-      {order.customOrderHistories.find(
-        (item) => item.status === CustomOrderStatus.Delivering
-      ) && (
-        <TimelineItem>
-          <TimelineOppositeContent color="textSecondary">
-            {moment(
-              order.customOrderHistories.find(
-                (item) => item.status === CustomOrderStatus.Delivering
-              )?.createdAt
-            ).format("DD/MM/YYYY HH:mm")}
-          </TimelineOppositeContent>
-          <TimelineSeparator>
-            <TimelineDot color="success" />
-            <TimelineConnector />
-          </TimelineSeparator>
-          <TimelineContent>
-            Đơn được giao cho nhân viên vận chuyển
-          </TimelineContent>
         </TimelineItem>
       )}
 
@@ -236,7 +213,6 @@ function CustomerCustomOrderTimeline(props: ICustomerCustomOrderTimelineProps) {
           </TimelineOppositeContent>
           <TimelineSeparator>
             <TimelineDot color="error" />
-            <TimelineConnector />
           </TimelineSeparator>
           <TimelineContent>Hủy đơn gia công</TimelineContent>
         </TimelineItem>

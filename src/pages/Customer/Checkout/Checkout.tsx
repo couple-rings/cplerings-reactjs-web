@@ -9,7 +9,12 @@ import {
   Skeleton,
 } from "@mui/material";
 import styles from "./Checkout.module.scss";
-import { DeliveryMethod, StandardOrderStatus, UserRole } from "src/utils/enums";
+import {
+  ConfigurationKey,
+  DeliveryMethod,
+  StandardOrderStatus,
+  UserRole,
+} from "src/utils/enums";
 import { useEffect, useState } from "react";
 import { primaryBtn } from "src/utils/styles";
 import vnpay from "src/assets/vnpay.png";
@@ -99,6 +104,11 @@ function Checkout() {
 
   const { districts } = useAppSelector((state) => state.district);
   const { id } = useAppSelector((state) => state.auth.userInfo);
+  const { configs } = useAppSelector((state) => state.config);
+
+  const shippingFee = configs.find(
+    (item) => item.key === ConfigurationKey.ShippingFee
+  )?.value;
 
   const { data: response, isLoading } = useQuery({
     queryKey: [fetchTransportAddresses, filterObj],
@@ -270,7 +280,7 @@ function Checkout() {
                   marginBottom={3}
                 >
                   <div>Phí Vận Chuyển</div>
-                  <div>{currencyFormatter(0)}</div>
+                  <div>{currencyFormatter(shippingFee ? +shippingFee : 0)}</div>
                 </Grid>
                 <Divider sx={{ backgroundColor: "#555" }} />
 
@@ -420,7 +430,7 @@ function Checkout() {
                   marginBottom={3}
                 >
                   <div>Phí Vận Chuyển</div>
-                  <div>{currencyFormatter(0)}</div>
+                  <div>{currencyFormatter(shippingFee ? +shippingFee : 0)}</div>
                 </Grid>
                 <Divider sx={{ backgroundColor: "#555" }} />
 

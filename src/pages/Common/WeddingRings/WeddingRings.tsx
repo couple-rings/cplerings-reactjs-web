@@ -25,6 +25,7 @@ import { fetchCoupleDesigns, fetchMetalSpecs } from "src/utils/querykey";
 import { getMetalSpecs } from "src/services/metalSpec.service";
 import MetalSpecHoverMenu from "src/components/menu/hover/MetalSpecMenu";
 import CollectionHoverMenu from "src/components/menu/hover/CollectionMenu";
+import { useAppSelector } from "src/utils/hooks";
 
 const sorts = ["Mới nhất", "Giá - Thấp đến Cao", "Giá - Cao đến Thấp"];
 
@@ -52,6 +53,8 @@ function WeddingRings() {
   const navigate = useNavigate();
 
   const ref = useRef<HTMLDivElement>(null);
+
+  const { configs } = useAppSelector((state) => state.config);
 
   const location: Location<{
     collectionId?: number;
@@ -204,7 +207,7 @@ function WeddingRings() {
           response.data &&
           response.data.items.length > 0 &&
           response.data.items.map((item) => {
-            const price = calculateDefaultPrice(item);
+            const price = calculateDefaultPrice(item, configs);
 
             const product: IProduct = {
               id: item.id,

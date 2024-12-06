@@ -9,49 +9,7 @@
         margin-bottom: 2rem;
     }
 
-    .pending {
-        background-color: #999999;
-        color           : #ffffff;
-        border-radius   : 15px;
-        padding         : 5px 10px;
-        text-transform  : capitalize;
-        width           : 100px;
-    }
-
-    .ongoing,
-    .waiting {
-        background-color: #f1c40f;
-        color           : #ffffff;
-        border-radius   : 15px;
-        padding         : 5px 10px;
-        text-transform  : capitalize;
-        width           : 100px;
-    }
-
-    .delivering {
-        background-color: #3498db;
-        color           : #ffffff;
-        border-radius   : 15px;
-        padding         : 5px 10px;
-        text-transform  : capitalize;
-        width           : 100px;
-    }
-
-    .completed {
-        background-color: #07bc0c;
-        color           : #ffffff;
-        border-radius   : 15px;
-        padding         : 5px 10px;
-        text-transform  : capitalize;
-        width           : 100px;
-    }
-
-    .rejected {
-        background-color: #e74c3c;
-        color           : #ffffff;
-        border-radius   : 15px;
-        padding         : 5px 10px;
-        text-transform  : capitalize;
-        width           : 100px;
+    .tabLabel {
+        text-transform: capitalize;
     }
 }

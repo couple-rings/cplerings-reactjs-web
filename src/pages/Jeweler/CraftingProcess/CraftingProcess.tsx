@@ -1,6 +1,13 @@
 import styles from "./CraftingProcess.module.scss";
 import Carousel from "react-material-ui-carousel";
-import { Button, FormHelperText, Grid, Paper, Skeleton } from "@mui/material";
+import {
+  Button,
+  FormHelperText,
+  FormLabel,
+  Grid,
+  Paper,
+  Skeleton,
+} from "@mui/material";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import ProcessStage_50 from "./ProcessStage_50";
 import ProcessStage_75 from "./ProcessStage_75";
@@ -29,6 +36,7 @@ import CompleteModal from "src/components/modal/craftingStage/Complete.modal";
 import { postUploadFile } from "src/services/file.service";
 import { toast } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
+import moment from "moment";
 
 function CraftingProcess() {
   const [noImg, setNoImg] = useState(false);
@@ -218,7 +226,7 @@ function CraftingProcess() {
       );
 
       if (inProgress !== -1) setCurrentStage(inProgress);
-      if (pending !== -1) setCurrentStage(pending);
+      else if (pending !== -1) setCurrentStage(pending);
       if (inProgress === -1 && pending === -1) setCurrentStage(2);
 
       const firstStage = stageResponse.data.items.find(
@@ -303,6 +311,13 @@ function CraftingProcess() {
                     Đã Hoàn Thành
                   </Grid>
                 )}
+
+                <FormLabel>
+                  {firstStage.completionDate &&
+                    moment(firstStage.completionDate).format(
+                      "DD/MM/YYYY HH:mm"
+                    )}
+                </FormLabel>
               </Grid>
 
               <Grid className={styles.jewelerName}>Jeweler_{username}</Grid>
@@ -422,6 +437,13 @@ function CraftingProcess() {
                       Đã Hoàn Thành
                     </Grid>
                   )}
+
+                <FormLabel>
+                  {secondStage.completionDate &&
+                    moment(secondStage.completionDate).format(
+                      "DD/MM/YYYY HH:mm"
+                    )}
+                </FormLabel>
               </Grid>
 
               <Grid className={styles.jewelerName}>Jeweler_{username}</Grid>

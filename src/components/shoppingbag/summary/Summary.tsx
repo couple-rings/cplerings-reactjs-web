@@ -9,15 +9,29 @@ import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 import { removeFromCart } from "src/redux/slice/cart.slice";
 import { useNavigate } from "react-router-dom";
+import { ConfigurationKey } from "src/utils/enums";
+import { metalWeightUnit } from "src/utils/constants";
 
 function Summary(props: ISummaryProps) {
-  const { discount, productAmount, checkedItem } = props;
+  const { checkedItem } = props;
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const { id: customerId } = useAppSelector((state) => state.auth.userInfo);
   const { cartItems } = useAppSelector((state) => state.cart);
+
+  const { configs } = useAppSelector((state) => state.config);
+
+  const profitRatio = configs.find(
+    (item) => item.key === ConfigurationKey.ProfitRatio
+  )?.value;
+  const sideDiamondPrice = configs.find(
+    (item) => item.key === ConfigurationKey.SideDiamondPrice
+  )?.value;
+  const shippingFee = configs.find(
+    (item) => item.key === ConfigurationKey.ShippingFee
+  )?.value;
 
   const createMutation = useMutation({
     mutationFn: (data: ICreateStandardOrderRequest) => {
@@ -37,6 +51,38 @@ function Summary(props: ISummaryProps) {
       }
     },
   });
+
+  const calculatePrice = () => {
+    if (sideDiamondPrice && shippingFee && profitRatio) {
+      let total = 0;
+
+      cartItems.forEach((item) => {
+        if (checkedItem.includes(item.id)) {
+          const itemPrice =
+            (item.design.metalWeight *
+              metalWeightUnit *
+              item.metalSpec.metalSpecification.pricePerUnit +
+              item.design.sideDiamondsCount * +sideDiamondPrice +
+              +shippingFee) *
+            +profitRatio;
+
+          total += Math.round(itemPrice / 1000) * 1000;
+        }
+      });
+
+      return total;
+    }
+
+    return 0;
+  };
+
+  const calculateTotal = (
+    price: number,
+    discount: number,
+    shipping: number
+  ) => {
+    return price + shipping - discount;
+  };
 
   const handleCheckout = () => {
     if (cartItems.length > 0 && checkedItem.length > 0) {
@@ -63,26 +109,30 @@ function Summary(props: ISummaryProps) {
 
       <Grid container justifyContent={"space-between"} className={styles.text}>
         <div>Phí Vận Chuyển</div>
-        <div>{currencyFormatter(0)}</div>
+        <div>{currencyFormatter(shippingFee ? +shippingFee : 0)}</div>
       </Grid>
 
       <Grid container justifyContent={"space-between"} className={styles.text}>
         <div>Tiền Hàng</div>
-        <div>{currencyFormatter(productAmount)}</div>
+        <div>{currencyFormatter(calculatePrice())}</div>
       </Grid>
 
       <Divider sx={{ backgroundColor: "#888" }} />
 
       <Grid container justifyContent={"space-between"} className={styles.text}>
         <div>Giảm Giá</div>
-        <div>{currencyFormatter(discount)}</div>
+        <div>{currencyFormatter(0)}</div>
       </Grid>
 
       <Divider sx={{ backgroundColor: "#888" }} />
 
       <Grid container justifyContent={"space-between"} className={styles.text}>
         <div>Tổng Tiền</div>
-        <div>{currencyFormatter(productAmount - discount)}</div>
+        <div>
+          {currencyFormatter(
+            calculateTotal(calculatePrice(), 0, shippingFee ? +shippingFee : 0)
+          )}
+        </div>
       </Grid>
 
       <LoadingButton

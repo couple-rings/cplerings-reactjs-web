@@ -5,10 +5,14 @@ import { GoogleMap, OverlayView, useJsApiLoader } from "@react-google-maps/api";
 import { Grid, Skeleton } from "@mui/material";
 import truck from "src/assets/truck.png";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchCustomOrderDetail } from "src/utils/querykey";
+import {
+  fetchCustomOrderDetail,
+  fetchStandardOrderDetail,
+} from "src/utils/querykey";
 import { getCustomOrderDetail } from "src/services/customOrder.service";
 import { useQuery } from "@tanstack/react-query";
 import { useAppSelector } from "src/utils/hooks";
+import { getStandardOrderDetail } from "src/services/standardOrder.service";
 
 const containerStyle = {
   width: "100%",
@@ -47,6 +51,16 @@ function Map() {
     }
   );
 
+  const { data: standardOrderResponse, isLoading: standardOrderLoading } =
+    useQuery({
+      queryKey: [fetchStandardOrderDetail, id],
+
+      queryFn: () => {
+        if (id) return getStandardOrderDetail(+id);
+      },
+      enabled: !!id,
+    });
+
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: import.meta.env.VITE_GOOGLEMAP_API_KEY,
@@ -67,6 +81,7 @@ function Map() {
   useEffect(() => {
     const listener = (coordinate: ICoordinate) => {
       const { latitude, longitude } = coordinate;
+
       setTransporterLocation({
         lat: latitude,
         lng: longitude,
@@ -96,13 +111,19 @@ function Map() {
       if (customer.id !== userId) navigate("/customer/support/custom-order");
     }
 
-    if (customOrderResponse && customOrderResponse.errors) {
-      navigate("/customer/support/custom-order");
+    if (standardOrderResponse && standardOrderResponse.data) {
+      const { customer } = standardOrderResponse.data.standardOrder;
+
+      if (customer.id !== userId) navigate("/customer/orders");
+    }
+
+    if (customOrderResponse?.errors && standardOrderResponse?.errors) {
+      navigate("/");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [customOrderResponse]);
+  }, [customOrderResponse, standardOrderResponse]);
 
-  if (customOrderLoading)
+  if (customOrderLoading || standardOrderLoading)
     return (
       <Grid container justifyContent={"center"} mt={5}>
         <Grid container item xs={8} mb={3} justifyContent={"space-between"}>

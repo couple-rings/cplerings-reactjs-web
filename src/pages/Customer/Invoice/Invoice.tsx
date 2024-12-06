@@ -35,10 +35,12 @@ import {
   standardOrderPayment,
   designFeePayment,
   depositPayment,
+  stages,
 } from "src/utils/constants";
 import LocalPrintshopSharpIcon from "@mui/icons-material/LocalPrintshopSharp";
 import { secondaryBtn } from "src/utils/styles";
 import { getPaymentDetail } from "src/services/payment.service";
+import { StagePercentage } from "src/utils/enums";
 
 const iconStyle: SxProps = {
   color: "white",
@@ -52,7 +54,9 @@ function Invoice() {
   );
 
   const { requestedDesigns } = useAppSelector((state) => state.design);
-  const { id, email } = useAppSelector((state) => state.auth.userInfo);
+  const { id, email, username } = useAppSelector(
+    (state) => state.auth.userInfo
+  );
 
   const [searchParams] = useSearchParams();
 
@@ -153,23 +157,20 @@ function Invoice() {
 
   return (
     <div className={styles.container}>
-      <Grid container item xs={11} xl={10}>
-        <Grid item className={styles.homeLink} onClick={() => navigate("/")}>
-          <ArrowBackIosIcon />
-          <span>Trang Chủ</span>
+      <Grid container item xs={11} justifyContent={"center"}>
+        <Grid container item md={9} lg={8}>
+          <Grid item className={styles.homeLink} onClick={() => navigate("/")}>
+            <ArrowBackIosIcon />
+            <span>Trang Chủ</span>
+          </Grid>
         </Grid>
 
-        <Grid
-          container
-          item
-          justifyContent={"space-between"}
-          alignItems={"flex-start"}
-        >
+        <Grid container item md={8} lg={7}>
           <Grid container className={styles.title}>
             Hóa Đơn
           </Grid>
 
-          <Grid container item xs={12} md={8} lg={6} className={styles.body}>
+          <Grid container item xs={12} className={styles.body}>
             <Grid item xs={12} className={styles.upper}>
               <PulseIcon
                 backgroundColor={status === "00" ? "#23A26D" : "#B43620"}
@@ -284,14 +285,7 @@ function Invoice() {
             )}
           </Grid>
 
-          <Grid
-            container
-            item
-            xs={12}
-            md={8}
-            lg={5.5}
-            className={styles.detail}
-          >
+          <Grid container item xs={12} className={styles.detail}>
             <div className={styles.title}>Chi Tiết Thanh Toán</div>
             {paymentResponse?.data?.standardOrder && (
               <Grid container mb={2}>
@@ -337,17 +331,28 @@ function Invoice() {
                 </Grid>
               </Grid>
             )}
-
             <Grid container mb={2}>
               <div className={styles.sender}>Người thực hiện</div>
-              <Grid container mb={1}>
-                <Grid item xs={4}>
-                  Họ tên:
+              {ownerSpouse ? (
+                <Grid container mb={1}>
+                  <Grid item xs={4}>
+                    Họ tên:
+                  </Grid>
+                  <Grid item sx={{ textTransform: "capitalize" }}>
+                    {ownerSpouse?.fullName.toLowerCase()}
+                  </Grid>
                 </Grid>
-                <Grid item sx={{ textTransform: "capitalize" }}>
-                  {ownerSpouse?.fullName.toLowerCase()}
+              ) : (
+                <Grid container mb={1}>
+                  <Grid item xs={4}>
+                    Username:
+                  </Grid>
+                  <Grid item sx={{ textTransform: "capitalize" }}>
+                    {username}
+                  </Grid>
                 </Grid>
-              </Grid>
+              )}
+
               <Grid container>
                 <Grid item xs={4}>
                   Email:
@@ -382,10 +387,14 @@ function Invoice() {
             )}
 
             {customRequest && <CustomRequestTable request={customRequest} />}
+
+            {paymentResponse?.data?.craftingStage && (
+              <CraftingStageTable data={paymentResponse.data} />
+            )}
           </Grid>
 
           <Grid container mt={10} justifyContent={"center"}>
-            {paymentResponse?.data?.customRequest && (
+            {customRequest && (
               <Button
                 variant="contained"
                 sx={secondaryBtn}
@@ -406,6 +415,20 @@ function Invoice() {
                 }
               >
                 Xem Đơn Hàng
+              </Button>
+            )}
+
+            {paymentResponse?.data?.craftingStage && (
+              <Button
+                variant="contained"
+                sx={secondaryBtn}
+                onClick={() =>
+                  navigate(
+                    `/customer/support/custom-order/${paymentResponse.data?.craftingStage?.customOrderId}/crafting-process`
+                  )
+                }
+              >
+                Xem Quá Trình
               </Button>
             )}
           </Grid>
@@ -456,7 +479,9 @@ const StandardOrderTable = (props: IStandardOrderTableProps) => {
                   {item.design.jewelryCategory.name}
                 </TableCell>
                 <TableCell align="right">1</TableCell>
-                <TableCell align="right">{currencyFormatter(0)}</TableCell>
+                <TableCell align="right">
+                  {currencyFormatter(item.price.amount)}
+                </TableCell>
               </TableRow>
             );
           })}
@@ -531,6 +556,86 @@ const CustomRequestTable = (props: ICustomRequestTableProps) => {
       </Table>
     </TableContainer>
   );
+};
+
+const CraftingStageTable = (props: ICraftingStageTableProps) => {
+  const { data } = props;
+
+  const { amount, craftingStage } = data;
+
+  if (craftingStage) {
+    let depositValue = 0;
+    if (craftingStage.progress === StagePercentage.First)
+      depositValue = craftingStage.progress;
+    else {
+      const index = stages.findIndex(
+        (item) => item.progress === craftingStage.progress
+      );
+      if (index !== -1) {
+        depositValue = stages[index].progress - stages[index - 1].progress;
+      }
+    }
+
+    return (
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead className={styles.tableHead}>
+            <TableRow>
+              <TableCell align="center" className={styles.cell} colSpan={3}>
+                Nội Dung
+              </TableCell>
+              <TableCell align="right" className={styles.cell}>
+                Giá Tiền
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell align="center" colSpan={3}>
+                {depositPayment}
+              </TableCell>
+              <TableCell align="right">
+                {currencyFormatter(amount.amount)}
+              </TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell>Giai Đoạn Đặt Cọc</TableCell>
+              <TableCell>Tổng Tiền Đơn Hàng</TableCell>
+              <TableCell align="right">Tỷ Lệ</TableCell>
+              <TableCell align="right">Giá Tiền</TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell sx={{ width: 200 }}>
+                {
+                  stages.find(
+                    (item) => item.progress === craftingStage.progress
+                  )?.name
+                }
+              </TableCell>
+              <TableCell align="right">
+                {currencyFormatter(amount.amount)}
+              </TableCell>
+              <TableCell align="right">{depositValue} %</TableCell>
+              <TableCell align="right">
+                {currencyFormatter(amount.amount)}
+              </TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell align="right" colSpan={2}>
+                Tổng Cộng
+              </TableCell>
+              <TableCell align="right" colSpan={2}>
+                {currencyFormatter(amount.amount)}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  }
 };
 
 export default Invoice;

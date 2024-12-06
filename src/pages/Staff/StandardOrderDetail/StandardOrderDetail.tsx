@@ -14,6 +14,7 @@ import placeholder from "src/assets/default.jpg";
 import male from "src/assets/male-icon.png";
 import female from "src/assets/female-icon.png";
 import { DesignCharacteristic } from "src/utils/enums";
+import StaffStandardOrderTimeline from "src/components/timeline/staffStandardOrder/StaffStandardOrderTimeline";
 
 function StandardOrderDetail() {
   const [order, setOrder] = useState<IStandardOrder | null>(null);
@@ -147,7 +148,7 @@ function StandardOrderDetail() {
             </Grid>
 
             <Grid item md={6.5}>
-              timeline
+              {order && <StaffStandardOrderTimeline order={order} />}
             </Grid>
           </Grid>
 
@@ -230,7 +231,7 @@ function StandardOrderDetail() {
                     <Grid item xs={12}>
                       Giá Tiền:{" "}
                       <span className={styles.price}>
-                        {currencyFormatter(12000000)}
+                        {currencyFormatter(item.price.amount)}
                       </span>
                     </Grid>
                   </Grid>

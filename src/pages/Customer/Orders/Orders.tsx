@@ -14,9 +14,13 @@ import CustomerOrder from "src/components/order/CustomerOrder";
 import { StandardOrderStatus } from "src/utils/enums";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "src/utils/hooks";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchStandardOrders } from "src/utils/querykey";
-import { getStandardOrders } from "src/services/standardOrder.service";
+import {
+  getStandardOrders,
+  putCancelStandardOrder,
+} from "src/services/standardOrder.service";
+import { toast } from "react-toastify";
 
 const boxStyle: SxProps = {
   borderBottom: 1,
@@ -38,6 +42,7 @@ function Orders() {
   const [filterObj, setFilterObj] = useState<IStandardOrderFilter | null>(null);
 
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { id: customerId } = useAppSelector((state) => state.auth.userInfo);
 
@@ -48,6 +53,25 @@ function Orders() {
       if (filterObj) return getStandardOrders(filterObj);
     },
     enabled: !!filterObj,
+  });
+
+  const cancelMutation = useMutation({
+    mutationFn: (id: number) => {
+      return putCancelStandardOrder(id);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        toast.success("Đã hủy đơn hàng");
+
+        queryClient.invalidateQueries({
+          queryKey: [fetchStandardOrders, filterObj],
+        });
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
   });
 
   const handleFilter = (status: StandardOrderStatus) => {
@@ -66,6 +90,10 @@ function Orders() {
         ...filterObj,
         page: value - 1,
       });
+  };
+
+  const handleCancel = (id: number) => {
+    cancelMutation.mutate(id);
   };
 
   useEffect(() => {
@@ -170,7 +198,14 @@ function Orders() {
 
         <div className={styles.list}>
           {response?.data?.items.map((item) => {
-            return <CustomerOrder key={item.id} data={item} />;
+            return (
+              <CustomerOrder
+                key={item.id}
+                data={item}
+                handleCancel={handleCancel}
+                loading={cancelMutation.isPending}
+              />
+            );
           })}
 
           {response?.data?.items.length === 0 && (

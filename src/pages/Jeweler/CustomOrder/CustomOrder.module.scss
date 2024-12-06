@@ -18,14 +18,13 @@
         text-transform: capitalize;
     }
 
-    .waiting,
     .ongoing {
         background-color: #f1c40f;
         color           : white;
         border-radius   : 15px;
         padding         : 5px 10px;
         text-transform  : capitalize;
-        width           : 100px;
+
     }
 
     .completed {
@@ -34,7 +33,7 @@
         border-radius   : 15px;
         padding         : 5px 10px;
         text-transform  : capitalize;
-        width           : 100px;
+
     }
 
     .canceled {
@@ -43,6 +42,6 @@
         border-radius   : 15px;
         padding         : 5px 10px;
         text-transform  : capitalize;
-        width           : 100px;
+
     }
 }

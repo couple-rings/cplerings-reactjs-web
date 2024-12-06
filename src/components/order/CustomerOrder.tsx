@@ -9,9 +9,10 @@ import { outlinedBtn, primaryBtn } from "src/utils/styles";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { DesignCharacteristic, StandardOrderStatus } from "src/utils/enums";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 function CustomerOrder(props: IStandardOrderProps) {
-  const { data } = props;
+  const { data, handleCancel, loading } = props;
   const { createdAt, status, standardOrderItems, id, orderNo } = data;
 
   const navigate = useNavigate();
@@ -67,7 +68,7 @@ function CustomerOrder(props: IStandardOrderProps) {
                         Bộ Sưu Tập {item.design.designCollection.name}
                       </FormLabel>
                       <div className={styles.price}>
-                        {currencyFormatter(12000000)}
+                        {currencyFormatter(item.price.amount)}
                       </div>
                     </Grid>
 
@@ -106,6 +107,7 @@ function CustomerOrder(props: IStandardOrderProps) {
             {status === StandardOrderStatus.Pending && (
               <Grid item xs={12} sm={3.5} md={12}>
                 <Button
+                  disabled={loading}
                   fullWidth
                   variant="contained"
                   sx={{ ...primaryBtn, py: 1 }}
@@ -118,6 +120,7 @@ function CustomerOrder(props: IStandardOrderProps) {
 
             <Grid item xs={12} sm={3.5} md={12}>
               <Button
+                disabled={loading}
                 fullWidth
                 variant="outlined"
                 sx={{ ...outlinedBtn, px: 0 }}
@@ -129,13 +132,15 @@ function CustomerOrder(props: IStandardOrderProps) {
 
             {status === StandardOrderStatus.Pending && (
               <Grid item xs={12} sm={3.5} md={12}>
-                <Button
+                <LoadingButton
+                  loading={loading}
                   fullWidth
                   variant="contained"
                   sx={{ ...primaryBtn, py: 1 }}
+                  onClick={() => handleCancel(id)}
                 >
                   Hủy Đơn
-                </Button>
+                </LoadingButton>
               </Grid>
             )}
           </Grid>

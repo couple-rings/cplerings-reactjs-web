@@ -27,6 +27,8 @@ import CollectionHoverMenu from "src/components/menu/hover/CollectionMenu";
 import JewelryCategoryHoverMenu from "src/components/menu/hover/JewelryCategoryMenu";
 import MetalSpecHoverMenu from "src/components/menu/hover/MetalSpecMenu";
 import GenderHoverMenu from "src/components/menu/hover/GenderMenu";
+import { calculateDefaultJewelryPrice } from "src/utils/functions";
+import { useAppSelector } from "src/utils/hooks";
 
 const prices = [
   "Dưới 20 Triệu",
@@ -56,6 +58,8 @@ function Jewelry() {
 
   const navigate = useNavigate();
   const ref = useRef<HTMLDivElement>(null);
+
+  const { configs } = useAppSelector((state) => state.config);
 
   const location: Location<{
     categoryId?: number;
@@ -216,7 +220,7 @@ function Jewelry() {
               id: item.id,
               coverImg: item.designMetalSpecifications[0].image.url,
               name: item.name,
-              price: 10000000,
+              price: calculateDefaultJewelryPrice(item, configs),
               type: ProductType.Jewelry,
             };
             return (

@@ -15,6 +15,12 @@ export const postPayStandardOrder = (data: IPayStandardOrderRequest) => {
   );
 };
 
+export const putCancelStandardOrder = (id: number) => {
+  return axios.put<unknown, IResponse<{ standardOrder: IStandardOrder }>>(
+    `standard-orders/${id}/cancel`
+  );
+};
+
 export const getStandardOrders = (queryObj: IStandardOrderFilter) => {
   const queryUrl = queryString.stringify(queryObj);
 

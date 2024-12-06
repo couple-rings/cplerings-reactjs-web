@@ -12,13 +12,19 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchStandardOrderDetail } from "src/utils/querykey";
 import { getStandardOrderDetail } from "src/services/standardOrder.service";
-import { useAppSelector } from "src/utils/hooks";
+import { useAppSelector, useScrollTop } from "src/utils/hooks";
 import moment from "moment";
-import { DesignCharacteristic, StandardOrderStatus } from "src/utils/enums";
+import {
+  DesignCharacteristic,
+  StandardOrderStatus,
+  TransportOrderStatus,
+} from "src/utils/enums";
 import { secondaryBtn } from "src/utils/styles";
+import TimelineModal from "src/components/modal/transportOrder/Timeline.modal";
 
 function OrderDetail() {
   const [order, setOrder] = useState<IStandardOrder | null>(null);
+  const [open, setOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -72,6 +78,8 @@ function OrderDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderResponse]);
 
+  useScrollTop();
+
   if (orderLoading)
     return (
       <Grid container justifyContent={"center"} my={5}>
@@ -117,6 +125,20 @@ function OrderDetail() {
                 />
               </Grid>
             )}
+
+            {order.status !== StandardOrderStatus.Pending &&
+              order.status !== StandardOrderStatus.Canceled &&
+              order.transportationOrders.length > 0 && (
+                <Grid container item xs={12} justifyContent={"center"} mt={6}>
+                  <Button
+                    variant="contained"
+                    sx={{ ...secondaryBtn, px: 3 }}
+                    onClick={() => setOpen(true)}
+                  >
+                    Quá Trình Giao Hàng
+                  </Button>
+                </Grid>
+              )}
           </Grid>
 
           <Grid container my={6} alignItems={"flex-end"}>
@@ -135,7 +157,7 @@ function OrderDetail() {
             </Grid>
           </Grid>
 
-          <Grid container mb={6}>
+          <Grid container mb={6} justifyContent={"space-between"}>
             {order.standardOrderItems.map((item) => {
               const img = item.design.designMetalSpecifications.find(
                 (i) => i.metalSpecification.id === item.metalSpecification.id
@@ -192,7 +214,7 @@ function OrderDetail() {
                     </Grid>
                   </Grid>
                   <div className={styles.price}>
-                    {currencyFormatter(12000000)}
+                    {currencyFormatter(item.price.amount)}
                   </div>
                 </Grid>
               );
@@ -250,23 +272,24 @@ function OrderDetail() {
                 </Grid>
               )}
 
-            {order.status !== StandardOrderStatus.Pending && (
-              <Grid item sm={5} md={4} className={styles.right}>
-                <div className={styles.title}>Thông Tin Thanh Toán</div>
-                <div className={styles.fee}>
-                  <span>Tiền Hàng:</span>
-                  <span>{currencyFormatter(12000000)}</span>
-                </div>
-                <div className={styles.fee}>
-                  <span>Vận Chuyển:</span>
-                  <span>{currencyFormatter(0)}</span>
-                </div>
-                <div className={styles.fee}>
-                  <span>Tổng Cộng:</span>
-                  <span>{currencyFormatter(order.totalPrice.amount)}</span>
-                </div>
-              </Grid>
-            )}
+            {order.status !== StandardOrderStatus.Pending &&
+              order.status !== StandardOrderStatus.Canceled && (
+                <Grid item sm={5} md={4} className={styles.right}>
+                  <div className={styles.title}>Thông Tin Thanh Toán</div>
+                  <div className={styles.fee}>
+                    <span>Tiền Hàng:</span>
+                    <span>{currencyFormatter(order.totalPrice.amount)}</span>
+                  </div>
+                  <div className={styles.fee}>
+                    <span>Vận Chuyển:</span>
+                    <span>{currencyFormatter(0)}</span>
+                  </div>
+                  <div className={styles.fee}>
+                    <span>Tổng Cộng:</span>
+                    <span>{currencyFormatter(order.totalPrice.amount)}</span>
+                  </div>
+                </Grid>
+              )}
 
             {order.status === StandardOrderStatus.Pending && (
               <Grid container justifyContent={"center"}>
@@ -279,8 +302,30 @@ function OrderDetail() {
                 </Button>
               </Grid>
             )}
+
+            {order.transportationOrders.find(
+              (item) => item.status === TransportOrderStatus.Delivering
+            ) && (
+              <Grid container justifyContent={"center"} mt={3}>
+                <Button
+                  variant="contained"
+                  sx={secondaryBtn}
+                  onClick={() => navigate(`/customer/transport/${order.id}`)}
+                >
+                  Vị Trí Người Giao Hàng
+                </Button>
+              </Grid>
+            )}
           </Grid>
         </Grid>
+
+        {order.transportationOrders.length > 0 && (
+          <TimelineModal
+            open={open}
+            setOpen={setOpen}
+            order={order.transportationOrders[0]}
+          />
+        )}
       </div>
     );
 }

@@ -20,7 +20,7 @@ import { toast } from "react-toastify";
 import SpouseModal from "src/components/modal/redirect/Spouse.modal";
 import { fetchDesignDetail } from "src/utils/querykey";
 import { getDesignDetail } from "src/services/design.service";
-import { designFee } from "src/utils/constants";
+import { ConfigurationKey } from "src/utils/enums";
 
 function DesignFee() {
   const [open, setOpen] = useState(false);
@@ -29,6 +29,11 @@ function DesignFee() {
   const dispatch = useAppDispatch();
 
   const { hasSpouse } = useAppSelector((state) => state.auth.userInfo);
+  const { configs } = useAppSelector((state) => state.config);
+
+  const designFee = configs.find(
+    (item) => item.key === ConfigurationKey.DesignFee
+  )?.value;
 
   const { maleDesignId, femaleDesignId } = useParams<{
     maleDesignId: string;
@@ -204,7 +209,7 @@ function DesignFee() {
             <Grid item>Thành Tiền</Grid>
 
             <Grid item fontWeight={600} fontSize={"1.3rem"}>
-              {currencyFormatter(designFee)}
+              {currencyFormatter(designFee ? +designFee : 0)}
             </Grid>
           </Grid>
         </Grid>

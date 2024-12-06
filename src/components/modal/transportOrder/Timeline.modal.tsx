@@ -1,5 +1,4 @@
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -7,9 +6,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Divider, FormHelperText, FormLabel, Grid } from "@mui/material";
 import defaultImg from "src/assets/default.jpg";
 import moment from "moment";
-import StaffTransportOrderTimeline from "src/components/timeline/staffTransportOrder/StaffTransportOrderTimeline";
+import CustomerTransportOrderTimeline from "src/components/timeline/customerTransportOrder/CustomerTransportOrderTimeline";
 
-function ViewModal(props: ITransportOrderModalProps) {
+function TimelineModal(props: ITransportOrderModalProps) {
   const { open, setOpen, order } = props;
 
   const handleClose = (
@@ -26,55 +25,12 @@ function ViewModal(props: ITransportOrderModalProps) {
       onClose={handleClose}
       PaperProps={{
         component: "form",
-        sx: { px: 6, py: 3 },
+        sx: { p: 3 },
       }}
       maxWidth={"md"}
-      fullScreen
     >
-      <DialogTitle>Đơn Giao Hàng</DialogTitle>
+      <DialogTitle>Quá Trình Giao Hàng</DialogTitle>
       <DialogContent>
-        <Grid container justifyContent={"space-between"} mb={3}>
-          <Grid item xs={5.5}>
-            <TextField
-              autoFocus
-              label="Người Nhận"
-              type="text"
-              fullWidth
-              variant="standard"
-              defaultValue={order?.receiverName}
-              InputProps={{ readOnly: true }}
-            />
-          </Grid>
-
-          <Grid item xs={5.5}>
-            <TextField
-              autoFocus
-              label="Số Điện Thoại"
-              type="text"
-              fullWidth
-              variant="standard"
-              defaultValue={order?.receiverPhone}
-              InputProps={{ readOnly: true }}
-            />
-          </Grid>
-        </Grid>
-
-        <Grid container mb={3}>
-          <Grid item xs={12}>
-            <TextField
-              autoFocus
-              label="Địa Chỉ"
-              type="text"
-              multiline
-              rows={3}
-              fullWidth
-              variant="standard"
-              defaultValue={order?.deliveryAddress}
-              InputProps={{ readOnly: true }}
-            />
-          </Grid>
-        </Grid>
-
         <Grid container justifyContent={"space-between"} mt={3}>
           <Grid item xs={5}>
             <img
@@ -87,7 +43,7 @@ function ViewModal(props: ITransportOrderModalProps) {
           </Grid>
 
           <Grid item xs={6}>
-            <StaffTransportOrderTimeline order={order} />
+            <CustomerTransportOrderTimeline order={order} />
           </Grid>
         </Grid>
 
@@ -141,4 +97,4 @@ function ViewModal(props: ITransportOrderModalProps) {
   );
 }
 
-export default ViewModal;
+export default TimelineModal;
