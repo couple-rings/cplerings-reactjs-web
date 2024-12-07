@@ -6,14 +6,23 @@ import FemaleIcon from "@mui/icons-material/Female";
 import styles from "./CustomOrderDetail.module.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { primaryBtn } from "src/utils/styles";
-import { fetchCustomOrderDetail, fetchJewelers } from "src/utils/querykey";
+import {
+  fetchCustomOrderDetail,
+  fetchJewelers,
+  fetchTransportOrdersWithCustomOrder,
+} from "src/utils/querykey";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getCustomOrderDetail,
   postAssignCustomOrder,
+  putCompleteCustomOrder,
 } from "src/services/customOrder.service";
 import { useEffect, useState } from "react";
-import { CustomOrderStatus, DesignCharacteristic } from "src/utils/enums";
+import {
+  CustomOrderStatus,
+  DesignCharacteristic,
+  ResponseType,
+} from "src/utils/enums";
 import {
   currencyFormatter,
   formatCustomOrderStatus,
@@ -26,6 +35,7 @@ import { toast } from "react-toastify";
 import { getJewelers } from "src/services/account.service";
 import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
 import StaffCustomOrderTimeline from "src/components/timeline/staffCustomOrder/StaffCustomOrderTimeline";
+import { getTransportOrderWithCustomOrder } from "src/services/transportOrder.service";
 
 function CustomOrderDetail() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
@@ -61,6 +71,15 @@ function CustomOrderDetail() {
     enabled: !!jewelerFilterObj,
   });
 
+  const { data: transportResponse } = useQuery({
+    queryKey: [fetchTransportOrdersWithCustomOrder, id],
+
+    queryFn: () => {
+      if (id) return getTransportOrderWithCustomOrder(+id);
+    },
+    enabled: !!id,
+  });
+
   const assignMutation = useMutation({
     mutationFn: (data: { orderId: number; jewelerId: number }) => {
       return postAssignCustomOrder(data.orderId, data.jewelerId);
@@ -71,6 +90,24 @@ function CustomOrderDetail() {
           queryKey: [fetchCustomOrderDetail, id],
         });
         toast.success("Đơn đã được giao cho thợ gia công");
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
+  const completeMutation = useMutation({
+    mutationFn: (orderId: number) => {
+      return putCompleteCustomOrder(orderId);
+    },
+    onSuccess: (response) => {
+      if (response.type === ResponseType.Info) {
+        queryClient.invalidateQueries({
+          queryKey: [fetchCustomOrderDetail, id],
+        });
+        toast.success("Đã xác nhận hoàn thành đơn hàng");
       }
 
       if (response.errors) {
@@ -572,6 +609,20 @@ function CustomOrderDetail() {
             </Grid>
           </Grid>
         )}
+
+        {transportResponse?.errors?.find((err) => err.code === "004") &&
+          order.status === CustomOrderStatus.Done && (
+            <Grid container justifyContent={"center"}>
+              <LoadingButton
+                loading={completeMutation.isPending}
+                variant="contained"
+                sx={{ ...primaryBtn, borderRadius: 1, px: 6 }}
+                onClick={() => completeMutation.mutate(order.id)}
+              >
+                Xác Nhận Hoàn Thành
+              </LoadingButton>
+            </Grid>
+          )}
 
         {/* {order.jeweler && (
           <Grid container justifyContent={"center"}>

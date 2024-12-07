@@ -152,11 +152,11 @@ export enum CraftingStageStatus {
   Paid = "PAID",
 }
 
-export enum StagePercentage {
-  First = 50,
-  Second = 75,
-  Third = 100,
-}
+// export enum StagePercentage {
+//   First = 50,
+//   Second = 75,
+//   Third = 100,
+// }
 
 export enum TransportOrderStatus {
   Pending = "PENDING",
@@ -216,4 +216,9 @@ export enum ConfigurationKey {
   FirstStageProgress = "CSP1",
   SecondStageProgress = "CSP2",
   ThirdStageProgress = "CSP3",
+}
+
+export enum OrderType {
+  Standard = "STANDARD",
+  Custom = "CUSTOM",
 }

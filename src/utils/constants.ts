@@ -2,7 +2,6 @@ import store from "src/assets/store.png";
 import story from "src/assets/story.jpg";
 import loveCheck from "src/assets/header_love_check.jpg";
 import loveAgreement from "src/assets/header_love_agreement.jpg";
-import { StagePercentage } from "./enums";
 
 export const pageSize = 8;
 
@@ -87,38 +86,38 @@ export const diamondShapes = [
   "Trillion",
 ];
 export const goldK = ["14K", "18K"];
-export const stages = [
-  {
-    name: "Hoàn Thành 50% - Đúc khuôn nhẫn",
-    steps: [
-      "Nguyên liệu thô được lựa chọn và kiểm tra kỹ lưỡng để đảm bảo chất lượng",
-      "Phần khung của nhẫn được đúc hoặc tạo hình từ kim loại đã chọn.",
-    ],
-    progress: StagePercentage.First,
-  },
-  {
-    name: "Hoàn Thành 75% - Gắn kim cương và Đánh bóng",
-    steps: [
-      "Từng viên kim cương được đặt cẩn thận lên khuôn nhẫn, đảm bảo vị trí và góc độ tối ưu để viên đá tỏa sáng rực rỡ nhất khi đeo.",
-      "Các nét trang trí bổ sung được áp dụng để đáp ứng các yêu cầu tùy chỉnh.",
-    ],
-    progress: StagePercentage.Second,
-  },
-  {
-    name: "Hoàn Thành 100% - Đóng gói và Hoàn tất",
-    steps: [
-      "Khắc lên nhẫn theo yêu cầu để tạo dấu ấn cá nhân riêng biệt (Nếu khách hàng có yêu cầu).",
-      "Chuẩn bị giấy tờ chứng nhận chất lượng kim cương và đóng gói cẩn thận trong hộp sang trọng, sẵn sàng để giao hàng.",
-    ],
-    progress: StagePercentage.Third,
-  },
-];
 export const prices = [
   "Dưới 20 Triệu",
   "20 - 40 Triệu",
   "40 - 50 Triệu",
   "Trên 50 Triệu",
 ];
+// export const stages = [
+//   {
+//     name: "Hoàn Thành 50% - Đúc khuôn nhẫn",
+//     steps: [
+//       "Nguyên liệu thô được lựa chọn và kiểm tra kỹ lưỡng để đảm bảo chất lượng",
+//       "Phần khung của nhẫn được đúc hoặc tạo hình từ kim loại đã chọn.",
+//     ],
+//     progress: StagePercentage.First,
+//   },
+//   {
+//     name: "Hoàn Thành 75% - Gắn kim cương và Đánh bóng",
+//     steps: [
+//       "Từng viên kim cương được đặt cẩn thận lên khuôn nhẫn, đảm bảo vị trí và góc độ tối ưu để viên đá tỏa sáng rực rỡ nhất khi đeo.",
+//       "Các nét trang trí bổ sung được áp dụng để đáp ứng các yêu cầu tùy chỉnh.",
+//     ],
+//     progress: StagePercentage.Second,
+//   },
+//   {
+//     name: "Hoàn Thành 100% - Đóng gói và Hoàn tất",
+//     steps: [
+//       "Khắc lên nhẫn theo yêu cầu để tạo dấu ấn cá nhân riêng biệt (Nếu khách hàng có yêu cầu).",
+//       "Chuẩn bị giấy tờ chứng nhận chất lượng kim cương và đóng gói cẩn thận trong hộp sang trọng, sẵn sàng để giao hàng.",
+//     ],
+//     progress: StagePercentage.Third,
+//   },
+// ];
 
 export const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 export const passwordPattern =
@@ -153,3 +152,20 @@ export const meleeDiamondCarat = 0.008;
 export const standardOrderPayment = "Đặt mua trang sức";
 export const designFeePayment = "Thanh toán phí thiết kế";
 export const depositPayment = "Thanh toán tiền đặt cọc";
+
+export const firstStageName = "Hoàn Thành 50% - Đúc khuôn nhẫn";
+export const secondStageName = "Hoàn Thành 75% - Gắn kim cương và Đánh bóng";
+export const thirdStageName = "Hoàn Thành 100% - Đóng gói và Hoàn tất";
+
+export const firstStageSteps = [
+  "Nguyên liệu thô được lựa chọn và kiểm tra kỹ lưỡng để đảm bảo chất lượng",
+  "Phần khung của nhẫn được đúc hoặc tạo hình từ kim loại đã chọn.",
+];
+export const secondStageSteps = [
+  "Từng viên kim cương được đặt cẩn thận lên khuôn nhẫn, đảm bảo vị trí và góc độ tối ưu để viên đá tỏa sáng rực rỡ nhất khi đeo.",
+  "Các nét trang trí bổ sung được áp dụng để đáp ứng các yêu cầu tùy chỉnh.",
+];
+export const thirdStageSteps = [
+  "Khắc lên nhẫn theo yêu cầu để tạo dấu ấn cá nhân riêng biệt (Nếu khách hàng có yêu cầu).",
+  "Chuẩn bị giấy tờ chứng nhận chất lượng kim cương và đóng gói cẩn thận trong hộp sang trọng, sẵn sàng để giao hàng.",
+];

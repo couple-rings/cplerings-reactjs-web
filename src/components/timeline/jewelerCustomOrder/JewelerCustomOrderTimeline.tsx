@@ -13,10 +13,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCraftingStages } from "src/services/craftingStage.service";
 import {
+  ConfigurationKey,
   CraftingStageStatus,
   CustomOrderStatus,
-  StagePercentage,
 } from "src/utils/enums";
+import { useAppSelector } from "src/utils/hooks";
 import { fetchCraftingStages } from "src/utils/querykey";
 
 function JewelerCustomOrderTimeline(props: IJewelerCustomOrderTimelineProps) {
@@ -31,6 +32,8 @@ function JewelerCustomOrderTimeline(props: IJewelerCustomOrderTimelineProps) {
 
   const navigate = useNavigate();
 
+  const { configs } = useAppSelector((state) => state.config);
+
   const { data: stageResponse } = useQuery({
     queryKey: [fetchCraftingStages, stageFilterObj],
 
@@ -42,22 +45,34 @@ function JewelerCustomOrderTimeline(props: IJewelerCustomOrderTimelineProps) {
 
   useEffect(() => {
     if (stageResponse?.data) {
-      const firstStage = stageResponse.data.items.find(
-        (item) => item.progress === StagePercentage.First
-      );
+      const firstStageProgress = configs.find(
+        (item) => item.key === ConfigurationKey.FirstStageProgress
+      )?.value;
+      const secondStageProgress = configs.find(
+        (item) => item.key === ConfigurationKey.SecondStageProgress
+      )?.value;
+      const thirdStageProgress = configs.find(
+        (item) => item.key === ConfigurationKey.ThirdStageProgress
+      )?.value;
 
-      const secondStage = stageResponse.data.items.find(
-        (item) => item.progress === StagePercentage.Second
-      );
+      if (firstStageProgress && secondStageProgress && thirdStageProgress) {
+        const firstStage = stageResponse.data.items.find(
+          (item) => item.progress === +firstStageProgress
+        );
 
-      const thirdStage = stageResponse.data.items.find(
-        (item) => item.progress === StagePercentage.Third
-      );
+        const secondStage = stageResponse.data.items.find(
+          (item) => item.progress === +secondStageProgress
+        );
 
-      if (firstStage && secondStage && thirdStage) {
-        setFirstStage(firstStage);
-        setSecondStage(secondStage);
-        setThirdStage(thirdStage);
+        const thirdStage = stageResponse.data.items.find(
+          (item) => item.progress === +thirdStageProgress
+        );
+
+        if (firstStage && secondStage && thirdStage) {
+          setFirstStage(firstStage);
+          setSecondStage(secondStage);
+          setThirdStage(thirdStage);
+        }
       }
     }
 
@@ -66,7 +81,7 @@ function JewelerCustomOrderTimeline(props: IJewelerCustomOrderTimelineProps) {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stageResponse]);
+  }, [stageResponse, configs]);
 
   useEffect(() => {
     if (order)

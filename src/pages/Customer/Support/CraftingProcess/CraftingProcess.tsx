@@ -11,19 +11,37 @@ import {
 import { getCustomOrderDetail } from "src/services/customOrder.service";
 import { useEffect, useState } from "react";
 import { getCraftingStages } from "src/services/craftingStage.service";
-import { stages } from "src/utils/constants";
+import {
+  firstStageName,
+  firstStageSteps,
+  secondStageName,
+  secondStageSteps,
+  thirdStageName,
+  thirdStageSteps,
+} from "src/utils/constants";
 import CustomerCustomOrderTimeline from "src/components/timeline/customerCustomOrder/CustomerCustomOrderTimeline";
 import LabelImportantSharpIcon from "@mui/icons-material/LabelImportantSharp";
+import { ConfigurationKey } from "src/utils/enums";
 
 function CraftingProcess() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
   const [filterObj, setFilterObj] = useState<ICraftingStageFilter | null>(null);
 
+  const navigate = useNavigate();
   const { orderId } = useParams<{ orderId: string }>();
 
   const { id: userId } = useAppSelector((state) => state.auth.userInfo);
+  const { configs } = useAppSelector((state) => state.config);
 
-  const navigate = useNavigate();
+  const firstStageProgress = configs.find(
+    (item) => item.key === ConfigurationKey.FirstStageProgress
+  )?.value;
+  const secondStageProgress = configs.find(
+    (item) => item.key === ConfigurationKey.SecondStageProgress
+  )?.value;
+  const thirdStageProgress = configs.find(
+    (item) => item.key === ConfigurationKey.ThirdStageProgress
+  )?.value;
 
   const { data: response } = useQuery({
     queryKey: [fetchCustomOrderDetail, orderId],
@@ -105,13 +123,26 @@ function CraftingProcess() {
 
           <Grid item md={8}>
             {stageResponse.data?.items.map((item, index, list) => {
-              const steps = stages.find(
-                (stage) => stage.progress === item.progress
-              )?.steps;
+              let steps: string[] = [];
+              let name = "";
 
-              const name = stages.find(
-                (stage) => stage.progress === item.progress
-              )?.name;
+              if (firstStageProgress && item.progress === +firstStageProgress) {
+                steps = firstStageSteps;
+                name = firstStageName;
+              }
+
+              if (
+                secondStageProgress &&
+                item.progress === +secondStageProgress
+              ) {
+                steps = secondStageSteps;
+                name = secondStageName;
+              }
+
+              if (thirdStageProgress && item.progress === +thirdStageProgress) {
+                steps = thirdStageSteps;
+                name = thirdStageName;
+              }
 
               return (
                 <div key={item.id}>
@@ -121,7 +152,7 @@ function CraftingProcess() {
                   </Grid>
                   <CraftingStage
                     data={item}
-                    steps={steps ? steps : []}
+                    steps={steps}
                     name={name ? name : item.name}
                     orderId={order.id}
                     previousStage={index !== 0 ? list[index - 1] : undefined}
