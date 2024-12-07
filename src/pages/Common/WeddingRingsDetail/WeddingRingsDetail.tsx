@@ -51,6 +51,7 @@ import { getCustomOrders } from "src/services/customOrder.service";
 import { getDesignDetail } from "src/services/design.service";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { toast } from "react-toastify";
+import SpouseModal from "src/components/modal/redirect/Spouse.modal";
 
 const sizeMenuPaperStyle: SxProps = {
   ...menuPaperStyle,
@@ -106,10 +107,14 @@ function WeddingRingsDetail() {
   const [malePrice, setMalePrice] = useState(0);
   const [femalePrice, setFemalePrice] = useState(0);
 
+  const [open, setOpen] = useState(false);
+
   const navigate = useNavigate();
 
   const { isAuthenticated } = useAppSelector((state) => state.auth);
-  const { id: userId } = useAppSelector((state) => state.auth.userInfo);
+  const { id: userId, hasSpouse } = useAppSelector(
+    (state) => state.auth.userInfo
+  );
   const { configs } = useAppSelector((state) => state.config);
 
   const designFee = configs.find(
@@ -186,6 +191,11 @@ function WeddingRingsDetail() {
 
     if (maleSize === 0 || femaleSize === 0) {
       toast.error("Vui lòng chọn kích thước ngón tay");
+      return;
+    }
+
+    if (!hasSpouse) {
+      setOpen(true);
       return;
     }
 
@@ -781,6 +791,8 @@ function WeddingRingsDetail() {
       </div>
 
       <Advertisement />
+
+      <SpouseModal open={open} setOpen={setOpen} />
     </div>
   );
 }

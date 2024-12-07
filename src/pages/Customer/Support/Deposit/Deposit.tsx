@@ -28,10 +28,10 @@ import {
 import { getCustomOrderDetail } from "src/services/customOrder.service";
 import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 import {
+  ConfigurationKey,
   CraftingStageStatus,
   DeliveryMethod,
   DesignCharacteristic,
-  StagePercentage,
   UserRole,
 } from "src/utils/enums";
 import {
@@ -50,6 +50,11 @@ import DeleteModal from "src/components/modal/address/Delete.modal";
 import UpdateModal from "src/components/modal/address/Update.modal";
 import _ from "lodash";
 import moment from "moment";
+import {
+  firstStageName,
+  secondStageName,
+  thirdStageName,
+} from "src/utils/constants";
 
 const initSelected: ITransportAddress = {
   id: 0,
@@ -108,6 +113,17 @@ function Deposit() {
 
   const { id: userId } = useAppSelector((state) => state.auth.userInfo);
   const { districts } = useAppSelector((state) => state.district);
+  const { configs } = useAppSelector((state) => state.config);
+
+  const firstStageProgress = configs.find(
+    (item) => item.key === ConfigurationKey.FirstStageProgress
+  )?.value;
+  const secondStageProgress = configs.find(
+    (item) => item.key === ConfigurationKey.SecondStageProgress
+  )?.value;
+  const thirdStageProgress = configs.find(
+    (item) => item.key === ConfigurationKey.ThirdStageProgress
+  )?.value;
 
   const { orderId, stageId } = useParams<{
     orderId: string;
@@ -122,7 +138,8 @@ function Deposit() {
     },
     enabled:
       addressFilterObj !== null &&
-      depositStage?.progress === StagePercentage.Third,
+      thirdStageProgress !== undefined &&
+      depositStage?.progress === +thirdStageProgress,
   });
 
   const { data: districtsResponse, isLoading: districtsLoading } = useQuery({
@@ -133,7 +150,8 @@ function Deposit() {
     },
     enabled:
       districts.length === 0 &&
-      depositStage?.progress === StagePercentage.Third,
+      thirdStageProgress !== undefined &&
+      depositStage?.progress === +thirdStageProgress,
   });
 
   const { data: response } = useQuery({
@@ -171,26 +189,32 @@ function Deposit() {
   });
 
   const getStageFormat = () => {
-    if (stageResponse?.data && stageId) {
+    if (
+      stageResponse?.data &&
+      stageId &&
+      firstStageProgress &&
+      secondStageProgress &&
+      thirdStageProgress
+    ) {
       const stage = stageResponse.data.items.find(
         (item) => item.id === +stageId
       );
 
       if (stage) {
-        if (stage.progress === StagePercentage.First)
+        if (stage.progress === +firstStageProgress)
           return {
             stageNo: 1,
-            stageName: "Hoàn Thành 50% - Đúc khuôn nhẫn",
+            stageName: firstStageName,
           };
-        if (stage.progress === StagePercentage.Second)
+        if (stage.progress === +secondStageProgress)
           return {
             stageNo: 2,
-            stageName: "Hoàn Thành 75% - Gắn kim cương và Đánh bóng",
+            stageName: secondStageName,
           };
-        if (stage.progress === StagePercentage.Third)
+        if (stage.progress === +thirdStageProgress)
           return {
             stageNo: 3,
-            stageName: "Hoàn Thành 100% - Đóng gói và Hoàn tất",
+            stageName: thirdStageName,
           };
       }
     }
@@ -219,8 +243,8 @@ function Deposit() {
   };
 
   const handlePayment = () => {
-    if (depositStage) {
-      if (depositStage.progress === StagePercentage.Third) {
+    if (depositStage && thirdStageProgress) {
+      if (depositStage.progress === +thirdStageProgress) {
         if (deliveryMethod === DeliveryMethod.Pickup)
           mutation.mutate({ craftingStageId: depositStage.id });
         else {
@@ -409,88 +433,90 @@ function Deposit() {
             <div className={styles.notAvailable}>Paypal (Sắp ra mắt)</div>
           </div>
 
-          {depositStage.progress === StagePercentage.Third && (
-            <Grid item xs={12} className={styles.left} mt={7}>
-              <div className={styles.title}>Phương Thức Giao Hàng</div>
+          {thirdStageProgress &&
+            depositStage.progress === +thirdStageProgress && (
+              <Grid item xs={12} className={styles.left} mt={7}>
+                <div className={styles.title}>Phương Thức Giao Hàng</div>
 
-              <FormControl>
-                <RadioGroup
-                  row
-                  sx={{ gap: 3 }}
-                  value={deliveryMethod}
-                  onChange={(e) =>
-                    setDeliveryMethod(e.target.value as DeliveryMethod)
-                  }
-                >
-                  <FormControlLabel
-                    value={DeliveryMethod.Shipping}
-                    control={<Radio />}
-                    label="Giao đến nhà"
-                  />
-                  <FormControlLabel
-                    value={DeliveryMethod.Pickup}
-                    control={<Radio />}
-                    label="Đến cửa hàng"
-                  />
-                </RadioGroup>
-              </FormControl>
+                <FormControl>
+                  <RadioGroup
+                    row
+                    sx={{ gap: 3 }}
+                    value={deliveryMethod}
+                    onChange={(e) =>
+                      setDeliveryMethod(e.target.value as DeliveryMethod)
+                    }
+                  >
+                    <FormControlLabel
+                      value={DeliveryMethod.Shipping}
+                      control={<Radio />}
+                      label="Giao đến nhà"
+                    />
+                    <FormControlLabel
+                      value={DeliveryMethod.Pickup}
+                      control={<Radio />}
+                      label="Đến cửa hàng"
+                    />
+                  </RadioGroup>
+                </FormControl>
 
-              <Divider sx={{ backgroundColor: "#555", mt: 1 }} />
+                <Divider sx={{ backgroundColor: "#555", mt: 1 }} />
 
-              {deliveryMethod === DeliveryMethod.Shipping && (
-                <div className={styles.shipping}>
-                  <div className={styles.titleContainer}>
-                    <div className={styles.title}>Địa Chỉ Giao Hàng</div>
-                    <div
-                      className={styles.addBtn}
-                      onClick={() => setOpenAdd(true)}
-                    >
-                      <AddCircleIcon className={styles.icon} />
-                      <span>Thêm Mới</span>
+                {deliveryMethod === DeliveryMethod.Shipping && (
+                  <div className={styles.shipping}>
+                    <div className={styles.titleContainer}>
+                      <div className={styles.title}>Địa Chỉ Giao Hàng</div>
+                      <div
+                        className={styles.addBtn}
+                        onClick={() => setOpenAdd(true)}
+                      >
+                        <AddCircleIcon className={styles.icon} />
+                        <span>Thêm Mới</span>
+                      </div>
+                    </div>
+                    <Divider sx={{ backgroundColor: "#555" }} />
+
+                    <div>
+                      {addressResponse?.data?.items.map((item) => {
+                        const checkItem = arrayCheck.find(
+                          (i) => i.id === item.id
+                        );
+
+                        return (
+                          <AddressCard
+                            key={item.id}
+                            data={item}
+                            setOpenDelete={setOpenDelete}
+                            setOpenUpdate={setOpenUpdate}
+                            setSelected={setSelected}
+                            handleCheck={handleCheck}
+                            checked={checkItem?.checked}
+                          />
+                        );
+                      })}
                     </div>
                   </div>
-                  <Divider sx={{ backgroundColor: "#555" }} />
+                )}
 
-                  <div>
-                    {addressResponse?.data?.items.map((item) => {
-                      const checkItem = arrayCheck.find(
-                        (i) => i.id === item.id
-                      );
-
-                      return (
-                        <AddressCard
-                          key={item.id}
-                          data={item}
-                          setOpenDelete={setOpenDelete}
-                          setOpenUpdate={setOpenUpdate}
-                          setSelected={setSelected}
-                          handleCheck={handleCheck}
-                          checked={checkItem?.checked}
-                        />
-                      );
-                    })}
+                {deliveryMethod === DeliveryMethod.Pickup && (
+                  <div className={styles.pickup}>
+                    <div className={styles.title}>Địa chỉ cửa hàng</div>
+                    <div className={styles.address}>
+                      {maleRing.branch.address}
+                    </div>
+                    <div className={styles.phone}>
+                      Tel:{maleRing.branch.phone}
+                    </div>
+                    <Divider sx={{ backgroundColor: "#555" }} />
                   </div>
-                </div>
-              )}
-
-              {deliveryMethod === DeliveryMethod.Pickup && (
-                <div className={styles.pickup}>
-                  <div className={styles.title}>Địa chỉ cửa hàng</div>
-                  <div className={styles.address}>
-                    {maleRing.branch.address}
-                  </div>
-                  <div className={styles.phone}>
-                    Tel:{maleRing.branch.phone}
-                  </div>
-                  <Divider sx={{ backgroundColor: "#555" }} />
-                </div>
-              )}
-            </Grid>
-          )}
+                )}
+              </Grid>
+            )}
 
           <LoadingButton
             disabled={
-              depositStage.progress === StagePercentage.Third &&
+              thirdStageProgress !== undefined &&
+              depositStage.progress === +thirdStageProgress &&
               deliveryMethod === DeliveryMethod.Shipping &&
               addressResponse?.data?.items.length === 0
             }
