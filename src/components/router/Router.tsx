@@ -89,6 +89,8 @@ import ManagerFiancePage from "src/pages/Manager/ManagerFinancePage/ManagerFinan
 import RequestCrafting from "src/pages/Customer/RequestCrafting/RequestCrafting";
 import ManageJewelry from "src/pages/Manager/ManageJewelry/ManageJewelry";
 import ManagerProductPage from "src/pages/Manager/ManagerProductPage/ManagerProductPage";
+import StandardOrder from "src/pages/Staff/StandardOrder/StandardOrder";
+import StandardOrderDetail from "src/pages/Staff/StandardOrderDetail/StandardOrderDetail";
 
 const router = createBrowserRouter([
   {
@@ -264,7 +266,7 @@ const router = createBrowserRouter([
         element: <ShoppingBag />,
       },
       {
-        path: "checkout",
+        path: "checkout/:id",
         element: <Checkout />,
       },
       {
@@ -328,6 +330,14 @@ const router = createBrowserRouter([
       {
         path: "custom-order/detail/:id",
         element: <StaffCustomOrderDetail />,
+      },
+      {
+        path: "standard-order",
+        element: <StandardOrder />,
+      },
+      {
+        path: "standard-order/detail/:id",
+        element: <StandardOrderDetail />,
       },
       {
         path: "maintenance-order",

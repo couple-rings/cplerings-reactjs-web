@@ -144,7 +144,7 @@ function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
             ).format("DD/MM/YYYY HH:mm")}
           </TimelineOppositeContent>
           <TimelineSeparator>
-            <TimelineDot color="error" />
+            <TimelineDot color="info" />
             <TimelineConnector />
           </TimelineSeparator>
           <TimelineContent>Giao đơn cho thợ gia công</TimelineContent>
@@ -226,30 +226,9 @@ function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
             {moment(thirdStage.completionDate).format("DD/MM/YYYY HH:mm")}
           </TimelineOppositeContent>
           <TimelineSeparator>
-            <TimelineDot color="info" />
-            <TimelineConnector />
+            <TimelineDot color="success" />
           </TimelineSeparator>
           <TimelineContent>Hoàn tất quá trình gia công</TimelineContent>
-        </TimelineItem>
-      )}
-
-      {/* Assigned for delivery */}
-      {order.customOrderHistories.find(
-        (item) => item.status === CustomOrderStatus.Delivering
-      ) && (
-        <TimelineItem>
-          <TimelineOppositeContent color="textSecondary">
-            {moment(
-              order.customOrderHistories.find(
-                (item) => item.status === CustomOrderStatus.Delivering
-              )?.createdAt
-            ).format("DD/MM/YYYY HH:mm")}
-          </TimelineOppositeContent>
-          <TimelineSeparator>
-            <TimelineDot color="success" />
-            <TimelineConnector />
-          </TimelineSeparator>
-          <TimelineContent>Giao đơn cho nhân viên vận chuyển</TimelineContent>
         </TimelineItem>
       )}
 
@@ -267,7 +246,6 @@ function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
           </TimelineOppositeContent>
           <TimelineSeparator>
             <TimelineDot color="error" />
-            <TimelineConnector />
           </TimelineSeparator>
           <TimelineContent>Hủy đơn gia công</TimelineContent>
         </TimelineItem>

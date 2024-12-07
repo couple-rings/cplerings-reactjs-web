@@ -1,13 +1,16 @@
-import { ChipColor, metalWeightUnit, profitRatio } from "./constants";
+import { ChipColor, metalWeightUnit } from "./constants";
 import white from "src/assets/whitegold.png";
 import rose from "src/assets/rosegold.png";
 import yellow from "src/assets/yellowgold.png";
 import {
+  ConfigurationKey,
   CraftingRequestStatus,
   CustomOrderStatus,
   CustomRequestStatus,
   GoldColor,
   JewelryStatus,
+  StandardOrderStatus,
+  TransportOrderStatus,
 } from "./enums";
 
 export const showSlides = (minSM: boolean, minMD: boolean, minLG: boolean) => {
@@ -56,41 +59,115 @@ export const calMinDiamondPrice = (array: IDiamondSpec[]) => {
   return metal.price;
 };
 
-export const calculateDefaultPrice = (item: ICoupleDesign) => {
-  const firstMetalArr: IMetalSpec[] = [];
-  const secondMetalArr: IMetalSpec[] = [];
-  const firstDiamondArr: IDiamondSpec[] = [];
-  const secondDiamondArr: IDiamondSpec[] = [];
+export const calculateDefaultPrice = (
+  item: ICoupleDesign,
+  configs: IConfigItem[]
+) => {
+  const profitRatio = configs.find(
+    (item) => item.key === ConfigurationKey.ProfitRatio
+  )?.value;
+  const sideDiamondPrice = configs.find(
+    (item) => item.key === ConfigurationKey.SideDiamondPrice
+  )?.value;
+  const shippingFee = configs.find(
+    (item) => item.key === ConfigurationKey.ShippingFee
+  )?.value;
+  const craftingFee = configs.find(
+    (item) => item.key === ConfigurationKey.CraftingFee
+  )?.value;
 
-  item.designs[0].designMetalSpecifications.forEach((metal) => {
-    firstMetalArr.push(metal.metalSpecification);
-  });
-  item.designs[1].designMetalSpecifications.forEach((metal) => {
-    secondMetalArr.push(metal.metalSpecification);
-  });
-  item.designs[0].designDiamondSpecifications.forEach((diamond) => {
-    firstDiamondArr.push(diamond.diamondSpecification);
-  });
-  item.designs[1].designDiamondSpecifications.forEach((diamond) => {
-    secondDiamondArr.push(diamond.diamondSpecification);
-  });
+  if (profitRatio && sideDiamondPrice && shippingFee && craftingFee) {
+    const firstMetalArr: IMetalSpec[] = [];
+    const secondMetalArr: IMetalSpec[] = [];
+    const firstDiamondArr: IDiamondSpec[] = [];
+    const secondDiamondArr: IDiamondSpec[] = [];
 
-  const firstMetalPrice = calMinMetalPrice(
-    firstMetalArr,
-    item.designs[0].metalWeight
-  );
-  const secondMetalPrice = calMinMetalPrice(
-    secondMetalArr,
-    item.designs[1].metalWeight
-  );
-  const firstDiamondPrice = calMinDiamondPrice(firstDiamondArr);
-  const secondDiamondPrice = calMinDiamondPrice(secondDiamondArr);
+    const firstDesign = item.designs[0];
+    const secondDesign = item.designs[1];
 
-  const raw =
-    (firstMetalPrice + firstDiamondPrice) * profitRatio +
-    (secondMetalPrice + secondDiamondPrice) * profitRatio;
+    firstDesign.designMetalSpecifications.forEach((metal) => {
+      firstMetalArr.push(metal.metalSpecification);
+    });
+    secondDesign.designMetalSpecifications.forEach((metal) => {
+      secondMetalArr.push(metal.metalSpecification);
+    });
+    firstDesign.designDiamondSpecifications.forEach((diamond) => {
+      firstDiamondArr.push(diamond.diamondSpecification);
+    });
+    secondDesign.designDiamondSpecifications.forEach((diamond) => {
+      secondDiamondArr.push(diamond.diamondSpecification);
+    });
 
-  return Math.round(raw / 100000) * 100000;
+    const firstMetalPrice = calMinMetalPrice(
+      firstMetalArr,
+      firstDesign.metalWeight
+    );
+    const secondMetalPrice = calMinMetalPrice(
+      secondMetalArr,
+      secondDesign.metalWeight
+    );
+    const firstDiamondPrice = calMinDiamondPrice(firstDiamondArr);
+    const secondDiamondPrice = calMinDiamondPrice(secondDiamondArr);
+
+    const firstRaw =
+      (firstMetalPrice +
+        firstDiamondPrice +
+        firstDesign.sideDiamondsCount * +sideDiamondPrice +
+        +shippingFee +
+        +craftingFee) *
+      +profitRatio;
+    const secondRaw =
+      (secondMetalPrice +
+        secondDiamondPrice +
+        secondDesign.sideDiamondsCount * +sideDiamondPrice +
+        +shippingFee +
+        +craftingFee) *
+      +profitRatio;
+
+    return (
+      Math.round(firstRaw / 1000) * 1000 + Math.round(secondRaw / 1000) * 1000
+    );
+  }
+
+  return 0;
+};
+
+export const calculateDefaultJewelryPrice = (
+  design: IDesign,
+  configs: IConfigItem[]
+) => {
+  const profitRatio = configs.find(
+    (item) => item.key === ConfigurationKey.ProfitRatio
+  )?.value;
+  const sideDiamondPrice = configs.find(
+    (item) => item.key === ConfigurationKey.SideDiamondPrice
+  )?.value;
+  const shippingFee = configs.find(
+    (item) => item.key === ConfigurationKey.ShippingFee
+  )?.value;
+  const craftingFee = configs.find(
+    (item) => item.key === ConfigurationKey.CraftingFee
+  )?.value;
+
+  if (profitRatio && sideDiamondPrice && shippingFee && craftingFee) {
+    const metalArr: IMetalSpec[] = [];
+
+    design.designMetalSpecifications.forEach((metal) => {
+      metalArr.push(metal.metalSpecification);
+    });
+
+    const metalPrice = calMinMetalPrice(metalArr, design.metalWeight);
+
+    const raw =
+      (metalPrice +
+        design.sideDiamondsCount * +sideDiamondPrice +
+        +shippingFee) *
+      +profitRatio;
+
+    return Math.round(raw / 1000) * 1000;
+  }
+
+  return 0;
 };
 
 export const mapGoldColor = (item: IMetalSpec) => {
@@ -233,5 +310,83 @@ export const formatJewelryStatus = (
   return {
     text: "Unavailable",
     color: "warning",
+  };
+};
+
+export const formatStandardOrderStatus = (
+  status: StandardOrderStatus
+): { text: string; color: ChipColor } => {
+  if (status === StandardOrderStatus.Pending)
+    return {
+      text: "Chưa Thanh Toán",
+      color: "warning",
+    };
+
+  if (status === StandardOrderStatus.Paid)
+    return {
+      text: "Đã Thanh Toán",
+      color: "info",
+    };
+
+  if (status === StandardOrderStatus.Delivering)
+    return {
+      text: "Đang Giao",
+      color: "info",
+    };
+
+  if (status === StandardOrderStatus.Completed)
+    return {
+      text: "Hoàn Thành",
+      color: "success",
+    };
+
+  return {
+    text: "Đã Hủy",
+    color: "error",
+  };
+};
+
+export const formatTransportOrderStatus = (
+  status: TransportOrderStatus
+): { text: string; color: ChipColor } => {
+  if (status === TransportOrderStatus.Pending)
+    return {
+      text: "Chờ Giao",
+      color: "default",
+    };
+
+  if (status === TransportOrderStatus.Waiting)
+    return {
+      text: "Chuẩn Bị Hàng",
+      color: "warning",
+    };
+
+  if (status === TransportOrderStatus.OnGoing)
+    return {
+      text: "Bắt Đầu Giao",
+      color: "info",
+    };
+
+  if (status === TransportOrderStatus.Delivering)
+    return {
+      text: "Đang Giao",
+      color: "info",
+    };
+
+  if (status === TransportOrderStatus.Completed)
+    return {
+      text: "Hoàn Thành",
+      color: "success",
+    };
+
+  if (status === TransportOrderStatus.Redelivering)
+    return {
+      text: "Chờ Giao Lại",
+      color: "warning",
+    };
+
+  return {
+    text: "Thất Bại",
+    color: "error",
   };
 };

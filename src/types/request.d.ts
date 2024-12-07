@@ -242,4 +242,18 @@ declare global {
     designId: number;
     branchId: number;
   }
+
+  interface ICreateStandardOrderRequest {
+    customerId: number;
+    branchId: number;
+    metalSpecDesignIds: {
+      metalSpecId: number;
+      designId: number;
+    }[];
+  }
+
+  interface IPayStandardOrderRequest {
+    standardOrderId: number;
+    transportationAddressId?: number;
+  }
 }

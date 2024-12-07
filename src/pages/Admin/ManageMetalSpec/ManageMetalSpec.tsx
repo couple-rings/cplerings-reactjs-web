@@ -25,7 +25,7 @@ import AddModal from "src/components/modal/metalSpecification/Add.modal";
 import DeleteModal from "src/components/modal/metalSpecification/Delete.modal";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import { pageSize } from "src/utils/constants";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getMetalSpecs } from "src/services/metalSpec.service";
 import { fetchMetalSpecs } from "src/utils/querykey";
 import moment from "moment";
@@ -63,8 +63,6 @@ function ManageMetalSpec() {
     page: 0,
     pageSize,
   });
-
-  const queryClient = useQueryClient();
 
   const { data: response, isLoading } = useQuery({
     queryKey: [fetchMetalSpecs, filterObj],
@@ -243,14 +241,6 @@ function ManageMetalSpec() {
   const handleSort = (model: GridSortModel) => {
     console.log(model);
   };
-
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchMetalSpecs, filterObj],
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
 
   useEffect(() => {
     if (response && response.data) {

@@ -1,6 +1,6 @@
 import { Box, Grid, List, Tab } from "@mui/material";
 import styles from "./ConversationList.module.scss";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useAppDispatch, useAppSelector } from "src/utils/hooks";
 import Conversation from "./Conversation";
 import { getConversations } from "src/services/conversation.service";
@@ -28,7 +28,6 @@ function ConversationList(props: IConversationListProps) {
   const [value, setValue] = useState("conversation");
 
   const dispatch = useAppDispatch();
-  const queryClient = useQueryClient();
 
   const { id: userId, role } = useAppSelector((state) => state.auth.userInfo);
   const { conversationsList, currentConversation } = useAppSelector(
@@ -67,14 +66,6 @@ function ConversationList(props: IConversationListProps) {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentConversation]);
-
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchCustomRequests, filterObj],
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
 
   useEffect(() => {
     if (response && response.statusCode === 200 && response.data) {

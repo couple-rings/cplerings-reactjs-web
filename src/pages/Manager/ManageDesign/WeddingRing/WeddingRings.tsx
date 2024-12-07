@@ -12,7 +12,7 @@ import { primaryBtn } from "src/utils/styles";
 import AddModal from "src/components/modal/weddingRing/Add.modal";
 import UpdateCoupleModal from "src/components/modal/weddingRing/UpdateCouple.modal";
 import UpdateDesignModal from "src/components/modal/weddingRing/UpdateDesign.modal";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getCoupleDesigns } from "src/services/design.service";
 import { pageSize } from "src/utils/constants";
 import { fetchCoupleDesigns } from "src/utils/querykey";
@@ -56,8 +56,6 @@ function WeddingRings() {
 
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
   const [filterObj, setFilterObj] = useState<ICoupleDesignFilter>(initFilter);
-
-  const queryClient = useQueryClient();
 
   const { data: response, isLoading } = useQuery({
     queryKey: [fetchCoupleDesigns, filterObj],
@@ -192,14 +190,6 @@ function WeddingRings() {
       setMetaData(rest);
     }
   }, [response]);
-
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchCoupleDesigns, filterObj],
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
 
   return (
     <Box sx={{ py: 3 }}>

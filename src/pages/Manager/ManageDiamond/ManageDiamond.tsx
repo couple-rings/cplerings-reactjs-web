@@ -17,7 +17,7 @@ import UpdateModal from "src/components/modal/diamond/Update.modal";
 import AddModal from "src/components/modal/diamond/Add.modal";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import DeleteModal from "src/components/modal/diamond/Delete.modal";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { pageSize } from "src/utils/constants";
 import { useAppSelector } from "src/utils/hooks";
 import { fetchDiamonds } from "src/utils/querykey";
@@ -74,8 +74,6 @@ function ManageDiamond() {
 
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
   const [filterObj, setFilterObj] = useState<IDiamondFilter | null>(null);
-
-  const queryClient = useQueryClient();
 
   const { branchId } = useAppSelector((state) => state.auth.userInfo);
 
@@ -219,14 +217,6 @@ function ManageDiamond() {
   const handleSort = (model: GridSortModel) => {
     console.log(model);
   };
-
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchDiamonds, filterObj],
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
 
   useEffect(() => {
     if (response && response.data) {

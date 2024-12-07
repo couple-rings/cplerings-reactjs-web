@@ -5,6 +5,7 @@ import {
   DesignCharacteristic,
   DesignStatus,
   JewelryStatus,
+  StandardOrderStatus,
   Status,
   TransportOrderStatus,
 } from "src/utils/enums";
@@ -114,5 +115,11 @@ declare global {
     designId?: number;
     metalSpecId?: number;
     status?: JewelryStatus;
+  }
+
+  interface IStandardOrderFilter extends IPaginationFilter {
+    customerId?: number;
+    status?: StandardOrderStatus;
+    branchId?: number;
   }
 }

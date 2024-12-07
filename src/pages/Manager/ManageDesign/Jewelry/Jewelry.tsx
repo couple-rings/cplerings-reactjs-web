@@ -15,7 +15,7 @@ import BorderColorSharpIcon from "@mui/icons-material/BorderColorSharp";
 import FileDownloadSharpIcon from "@mui/icons-material/FileDownloadSharp";
 import AddModal from "src/components/modal/jewelry/Add.modal";
 import UpdateModal from "src/components/modal/jewelry/Update.modal";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getCollections } from "src/services/collection.service";
 import {
   fetchCollections,
@@ -81,8 +81,6 @@ function Jewelry() {
     pageSize,
   });
 
-  const queryClient = useQueryClient();
-
   const { data: designResponse, isLoading } = useQuery({
     queryKey: [fetchDesigns, filterObj],
 
@@ -131,14 +129,14 @@ function Jewelry() {
         sortable: false,
       },
       {
-        field: "category",
+        field: "jewelryCategory",
         headerName: "Category",
         width: 170,
         headerAlign: "center",
         align: "center",
         filterOperators,
         sortable: false,
-        renderCell: () => <div>--</div>,
+        renderCell: ({ row }) => <div>{row.jewelryCategory.name}</div>,
       },
       {
         field: "designCollection",
@@ -259,14 +257,6 @@ function Jewelry() {
   const handleSort = (model: GridSortModel) => {
     console.log(model);
   };
-
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchDesigns, filterObj],
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
 
   useEffect(() => {
     if (designResponse && designResponse.data) {

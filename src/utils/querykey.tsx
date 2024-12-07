@@ -63,3 +63,8 @@ export const fetchCollections = "fetchCollections";
 export const fetchJewelryCategories = "fetchJewelryCategories";
 
 export const fetchJewelries = "fetchJewelries";
+
+export const fetchStandardOrders = "fetchStandardOrders";
+export const fetchStandardOrderDetail = "fetchStandardOrderDetail";
+
+export const fetchPaymentDetail = "fetchPaymentDetail";

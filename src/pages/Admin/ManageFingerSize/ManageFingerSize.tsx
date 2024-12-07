@@ -23,7 +23,7 @@ import DeleteModal from "src/components/modal/fingerSize/Delete.modal";
 import { pageSize } from "src/utils/constants";
 import { fetchFingerSizes } from "src/utils/querykey";
 import { getFingerSize } from "src/services/fingerSize.service";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 interface Row extends IFingerSize {}
 
@@ -52,8 +52,6 @@ function ManageFingerSize() {
     page: 0,
     pageSize,
   });
-
-  const queryClient = useQueryClient();
 
   const { data: response, isLoading } = useQuery({
     queryKey: [fetchFingerSizes, filterObj],
@@ -196,14 +194,6 @@ function ManageFingerSize() {
   const handleSort = (model: GridSortModel) => {
     console.log(model);
   };
-
-  useEffect(() => {
-    queryClient.invalidateQueries({
-      queryKey: [fetchFingerSizes, filterObj],
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterObj]);
 
   useEffect(() => {
     if (response && response.data) {
