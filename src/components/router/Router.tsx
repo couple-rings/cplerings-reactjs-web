@@ -91,6 +91,8 @@ import ManageJewelry from "src/pages/Manager/ManageJewelry/ManageJewelry";
 import ManagerProductPage from "src/pages/Manager/ManagerProductPage/ManagerProductPage";
 import StandardOrder from "src/pages/Staff/StandardOrder/StandardOrder";
 import StandardOrderDetail from "src/pages/Staff/StandardOrderDetail/StandardOrderDetail";
+import RefundList from "src/pages/Customer/RefundList/RefundList";
+import RequestRefund from "src/pages/Customer/RequestRefund/RequestRefund";
 
 const router = createBrowserRouter([
   {
@@ -284,6 +286,14 @@ const router = createBrowserRouter([
       {
         path: "love-agreement",
         element: <MyLoveAgreement />,
+      },
+      {
+        path: "refund",
+        element: <RefundList />,
+      },
+      {
+        path: "refund-create",
+        element: <RequestRefund />,
       },
     ],
   },

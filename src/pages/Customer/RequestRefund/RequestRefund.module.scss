@@ -1,0 +1,46 @@
+@use 'src/index.scss' as *;
+
+.container {
+  padding: 3rem;
+  max-width: 800px;
+  margin: 0 auto;
+
+  .title {
+    font-size: 1.5rem;
+    color: $primaryColor;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-weight: 500;
+  }
+
+  .formCard {
+    margin-bottom: 2rem;
+    border-radius: 12px;
+    box-shadow: $boxShadow;
+  }
+
+  .fileInput {
+    width: 100%;
+    padding: 1rem 0;
+  }
+
+  .imageNote {
+    color: $grayColor;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+
+  .buttonGroup {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+
+    button {
+      min-width: 150px;
+      text-transform: none;
+      border-radius: 8px;
+      padding: 0.5rem 2rem;
+    }
+  }
+}

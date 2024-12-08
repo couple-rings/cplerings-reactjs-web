@@ -1,0 +1,154 @@
+@use 'src/index.scss' as *;
+
+.container {
+  padding: 3rem;
+  color: $primaryColor;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    .title {
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+
+    .buttonCreate {
+      background-color: $primaryColor;
+      color: white;
+      text-transform: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 1rem;
+
+      &:hover {
+        background-color: darken($primaryColor, 10%);
+      }
+    }
+  }
+
+  .orderCard {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: $boxShadow;
+
+    .header {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #eee;
+
+      .orderInfo {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+
+        .orderId {
+          font-weight: 500;
+        }
+
+        .date {
+          color: $grayColor;
+        }
+
+        .status {
+          color: $secondaryColor;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .body {
+      .productImage {
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .middle {
+        .collection {
+          font-size: 1.3rem;
+          margin-bottom: 1.5rem;
+          color: $primaryColor;
+          font-weight: 500;
+
+          .collectionIcon {
+            margin-right: 0.5rem;
+          }
+        }
+
+        .ringsInfo {
+          display: flex;
+          gap: 2rem;
+          margin-bottom: 1.5rem;
+
+          .ringSection {
+            flex: 1;
+
+            .ringTitle {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              margin-bottom: 1rem;
+              color: $primaryColor;
+              font-weight: 500;
+            }
+
+            .specs {
+              .spec {
+                margin-bottom: 0.5rem;
+
+                .label {
+                  color: $grayColor;
+                  margin-right: 0.5rem;
+                }
+
+                .value {
+                  font-weight: 500;
+                }
+              }
+            }
+          }
+        }
+
+        .reason {
+          .label {
+            color: $grayColor;
+            margin-right: 0.5rem;
+          }
+
+          .value {
+            color: #e53e3e;
+            font-weight: 500;
+          }
+        }
+      }
+
+      .right {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+
+        .price {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: $primaryColor;
+        }
+
+        .detailButton {
+          background-color: $primaryColor;
+          color: white;
+          text-transform: none;
+          border-radius: 8px;
+
+          &:hover {
+            background-color: darken($primaryColor, 10%);
+          }
+        }
+      }
+    }
+  }
+}
