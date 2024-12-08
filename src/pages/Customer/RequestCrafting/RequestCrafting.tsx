@@ -17,7 +17,7 @@ import {
 import { useEffect, useState } from "react";
 import { useAppSelector, useScrollTop } from "src/utils/hooks";
 import { primaryBtn } from "src/utils/styles";
-import { getDiamondSpec } from "src/utils/functions";
+import { currencyFormatter, getDiamondSpec } from "src/utils/functions";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   fetchBranches,
@@ -25,12 +25,13 @@ import {
   fetchDesignDetail,
 } from "src/utils/querykey";
 import { getDesignDetail } from "src/services/design.service";
-import { VersionOwner } from "src/utils/enums";
+import { ConfigurationKey, ResponseType, VersionOwner } from "src/utils/enums";
 import { getBranches } from "src/services/branch.service";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { getCustomerSpouse } from "src/services/spouse.service";
 import { postCreateCraftingRing } from "src/services/craftingRequest.service";
 import { toast } from "react-toastify";
+import { metalWeightUnit } from "src/utils/constants";
 
 interface ICraftingData {
   designId: number;
@@ -58,9 +59,13 @@ function RequestCrafting() {
   const [branchId, setBranchId] = useState(0);
   const [emptyBranch, setEmptyBranch] = useState(false);
 
+  const [malePrice, setMalePrice] = useState(0);
+  const [femalePrice, setFemalePrice] = useState(0);
+
   const navigate = useNavigate();
 
   const { id: userId } = useAppSelector((state) => state.auth.userInfo);
+  const { configs } = useAppSelector((state) => state.config);
 
   const location: Location<{
     maleRequest: ICraftingData;
@@ -108,8 +113,12 @@ function RequestCrafting() {
       return postCreateCraftingRing(data);
     },
     onSuccess: (response) => {
-      toast.success("Đã tạo yêu cầu gia công, quý khách vui lòng chờ phản hồi");
-      navigate("/customer/support/crafting-request");
+      if (response.type === ResponseType.Info) {
+        toast.success(
+          "Đã tạo yêu cầu gia công, quý khách vui lòng chờ phản hồi"
+        );
+        navigate("/customer/support/crafting-request");
+      }
 
       if (response.errors) {
         response.errors.forEach((err) => toast.error(err.description));
@@ -206,6 +215,61 @@ function RequestCrafting() {
       navigate("/wedding-rings");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [branchResponse, spouseResponse]);
+
+  // calculate price
+  useEffect(() => {
+    if (
+      maleResponse?.data &&
+      femaleResponse?.data &&
+      configs.length > 0 &&
+      maleRequest &&
+      femaleRequest
+    ) {
+      const profitRatio = configs.find(
+        (item) => item.key === ConfigurationKey.ProfitRatio
+      )?.value;
+      const sideDiamondPrice = configs.find(
+        (item) => item.key === ConfigurationKey.SideDiamondPrice
+      )?.value;
+      const shippingFee = configs.find(
+        (item) => item.key === ConfigurationKey.ShippingFee
+      )?.value;
+      const craftingFee = configs.find(
+        (item) => item.key === ConfigurationKey.CraftingFee
+      )?.value;
+
+      if (profitRatio && sideDiamondPrice && shippingFee && craftingFee) {
+        const maleDesign = maleResponse.data;
+        const femaleDesign = femaleResponse.data;
+
+        const firstDesignPrice =
+          (maleDesign.metalWeight *
+            metalWeightUnit *
+            maleRequest.metalSpec.metalSpecification.pricePerUnit +
+            maleRequest.diamondSpec.price +
+            maleDesign.sideDiamondsCount * +sideDiamondPrice +
+            +shippingFee +
+            +craftingFee) *
+          +profitRatio;
+
+        const secondDesignPrice =
+          (femaleResponse.data.metalWeight *
+            metalWeightUnit *
+            femaleRequest.metalSpec.metalSpecification.pricePerUnit +
+            femaleRequest.diamondSpec.price +
+            femaleDesign.sideDiamondsCount * +sideDiamondPrice +
+            +shippingFee +
+            +craftingFee) *
+          +profitRatio;
+
+        const malePrice = Math.round(firstDesignPrice / 1000) * 1000;
+        const femalePrice = Math.round(secondDesignPrice / 1000) * 1000;
+
+        setMalePrice(malePrice);
+        setFemalePrice(femalePrice);
+      }
+    }
+  }, [maleResponse, femaleResponse, configs, maleRequest, femaleRequest]);
 
   useScrollTop();
 
@@ -348,6 +412,21 @@ function RequestCrafting() {
               </Box>
 
               <Divider sx={{ backgroundColor: "#ccc" }} />
+
+              <Box>
+                <div className={styles.info}>
+                  <Grid
+                    container
+                    className={styles.label}
+                    justifyContent={"space-between"}
+                  >
+                    <Grid item>Dự Trù Chi Phí:</Grid>
+
+                    <Grid item>{currencyFormatter(malePrice)}</Grid>
+                  </Grid>
+                </div>
+              </Box>
+              <Divider sx={{ backgroundColor: "#ccc" }} />
             </Grid>
           </Grid>
           {/* Male Design  */}
@@ -476,6 +555,22 @@ function RequestCrafting() {
                     <Grid item>
                       {femaleResponse?.data?.sideDiamondsCount} Viên
                     </Grid>
+                  </Grid>
+                </div>
+              </Box>
+
+              <Divider sx={{ backgroundColor: "#ccc" }} />
+
+              <Box>
+                <div className={styles.info}>
+                  <Grid
+                    container
+                    className={styles.label}
+                    justifyContent={"space-between"}
+                  >
+                    <Grid item>Dự Trù Chi Phí:</Grid>
+
+                    <Grid item>{currencyFormatter(femalePrice)}</Grid>
                   </Grid>
                 </div>
               </Box>

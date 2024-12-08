@@ -9,8 +9,9 @@ import { useMutation } from "@tanstack/react-query";
 import { postUploadFile } from "src/services/file.service";
 import { toast } from "react-toastify";
 import { toBase64 } from "src/utils/functions";
-import { StagePercentage } from "src/utils/enums";
+import { ConfigurationKey } from "src/utils/enums";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { useAppSelector } from "src/utils/hooks";
 
 interface IFormInput {
   maleDocument: File;
@@ -19,6 +20,12 @@ interface IFormInput {
 
 function CompleteModal(props: ICompleteCraftingStageModalProps) {
   const { open, setOpen, handleComplete, updatingStage } = props;
+
+  const { configs } = useAppSelector((state) => state.config);
+
+  const thirdStageProgress = configs.find(
+    (item) => item.key === ConfigurationKey.ThirdStageProgress
+  )?.value;
 
   const uploadMutation = useMutation({
     mutationFn: (base64: string) => {
@@ -47,9 +54,9 @@ function CompleteModal(props: ICompleteCraftingStageModalProps) {
     const maleResponse = await uploadMutation.mutateAsync(maleBase64);
     const femaleResponse = await uploadMutation.mutateAsync(femaleBase64);
 
-    if (maleResponse.data && femaleResponse.data) {
+    if (maleResponse.data && femaleResponse.data && thirdStageProgress) {
       handleComplete(
-        StagePercentage.Third,
+        +thirdStageProgress,
         maleResponse.data.id,
         femaleResponse.data.id
       );

@@ -10,10 +10,11 @@ import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import {
+  ConfigurationKey,
   CraftingStageStatus,
   CustomOrderStatus,
-  StagePercentage,
 } from "src/utils/enums";
+import { useAppSelector } from "src/utils/hooks";
 
 function CustomerCustomOrderTimeline(props: ICustomerCustomOrderTimelineProps) {
   const { order, stages } = props;
@@ -22,27 +23,41 @@ function CustomerCustomOrderTimeline(props: ICustomerCustomOrderTimelineProps) {
   const [secondStage, setSecondStage] = useState<ICraftingStage | null>(null);
   const [thirdStage, setThirdStage] = useState<ICraftingStage | null>(null);
 
+  const { configs } = useAppSelector((state) => state.config);
+
   useEffect(() => {
     if (stages && stages.length > 0) {
-      const firstStage = stages.find(
-        (item) => item.progress === StagePercentage.First
-      );
+      const firstStageProgress = configs.find(
+        (item) => item.key === ConfigurationKey.FirstStageProgress
+      )?.value;
+      const secondStageProgress = configs.find(
+        (item) => item.key === ConfigurationKey.SecondStageProgress
+      )?.value;
+      const thirdStageProgress = configs.find(
+        (item) => item.key === ConfigurationKey.ThirdStageProgress
+      )?.value;
 
-      const secondStage = stages.find(
-        (item) => item.progress === StagePercentage.Second
-      );
+      if (firstStageProgress && secondStageProgress && thirdStageProgress) {
+        const firstStage = stages.find(
+          (item) => item.progress === +firstStageProgress
+        );
 
-      const thirdStage = stages.find(
-        (item) => item.progress === StagePercentage.Third
-      );
+        const secondStage = stages.find(
+          (item) => item.progress === +secondStageProgress
+        );
 
-      if (firstStage && secondStage && thirdStage) {
-        setFirstStage(firstStage);
-        setSecondStage(secondStage);
-        setThirdStage(thirdStage);
+        const thirdStage = stages.find(
+          (item) => item.progress === +thirdStageProgress
+        );
+
+        if (firstStage && secondStage && thirdStage) {
+          setFirstStage(firstStage);
+          setSecondStage(secondStage);
+          setThirdStage(thirdStage);
+        }
       }
     }
-  }, [stages]);
+  }, [configs, stages]);
 
   return (
     <Timeline
@@ -193,9 +208,29 @@ function CustomerCustomOrderTimeline(props: ICustomerCustomOrderTimelineProps) {
             {moment(thirdStage.completionDate).format("DD/MM/YYYY HH:mm")}
           </TimelineOppositeContent>
           <TimelineSeparator>
-            <TimelineDot color="success" />
+            <TimelineDot color="info" />
+            <TimelineConnector />
           </TimelineSeparator>
           <TimelineContent>Hoàn tất quá trình gia công</TimelineContent>
+        </TimelineItem>
+      )}
+
+      {/* Complete custom order */}
+      {order.customOrderHistories.find(
+        (item) => item.status === CustomOrderStatus.Completed
+      ) && (
+        <TimelineItem>
+          <TimelineOppositeContent color="textSecondary">
+            {moment(
+              order.customOrderHistories.find(
+                (item) => item.status === CustomOrderStatus.Completed
+              )?.createdAt
+            ).format("DD/MM/YYYY HH:mm")}
+          </TimelineOppositeContent>
+          <TimelineSeparator>
+            <TimelineDot color="success" />
+          </TimelineSeparator>
+          <TimelineContent>Đã nhận hàng</TimelineContent>
         </TimelineItem>
       )}
 

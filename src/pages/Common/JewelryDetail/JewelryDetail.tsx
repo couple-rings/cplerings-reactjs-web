@@ -469,7 +469,7 @@ function JewelryDetail() {
 
             {designResponse?.data && (
               <ProductDetailAccordion
-                collectionName="FOREVER"
+                collectionName={designResponse.data.designCollection.name}
                 category={designResponse?.data?.jewelryCategory.name}
                 jewelryDetail={{
                   metalSpec: metal.metalSpecification,

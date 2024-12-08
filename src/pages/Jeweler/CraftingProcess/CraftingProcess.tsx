@@ -22,16 +22,23 @@ import {
 } from "src/utils/querykey";
 import { getCustomOrderDetail } from "src/services/customOrder.service";
 import {
+  ConfigurationKey,
   CraftingStageStatus,
   DesignCharacteristic,
-  StagePercentage,
 } from "src/utils/enums";
 import {
   getCraftingStages,
   postCompleteCraftingStage,
 } from "src/services/craftingStage.service";
 import { useAppSelector } from "src/utils/hooks";
-import { stages } from "src/utils/constants";
+import {
+  firstStageName,
+  firstStageSteps,
+  secondStageName,
+  secondStageSteps,
+  thirdStageName,
+  thirdStageSteps,
+} from "src/utils/constants";
 import CompleteModal from "src/components/modal/craftingStage/Complete.modal";
 import { postUploadFile } from "src/services/file.service";
 import { toast } from "react-toastify";
@@ -55,14 +62,25 @@ function CraftingProcess() {
   const [currentStage, setCurrentStage] = useState(0);
   const [open, setOpen] = useState(false);
 
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const { orderId } = useParams<{ orderId: string }>();
 
   const { username, id: userId } = useAppSelector(
     (state) => state.auth.userInfo
   );
+  const { configs } = useAppSelector((state) => state.config);
 
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const firstStageProgress = configs.find(
+    (item) => item.key === ConfigurationKey.FirstStageProgress
+  )?.value;
+  const secondStageProgress = configs.find(
+    (item) => item.key === ConfigurationKey.SecondStageProgress
+  )?.value;
+  const thirdStageProgress = configs.find(
+    (item) => item.key === ConfigurationKey.ThirdStageProgress
+  )?.value;
 
   const { data: response } = useQuery({
     queryKey: [fetchCustomOrderDetail, orderId],
@@ -115,11 +133,11 @@ function CraftingProcess() {
   });
 
   const handleComplete = async (
-    progress: StagePercentage,
+    progress: number,
     maleDocumentId?: number,
     femaleDocumentId?: number
   ) => {
-    if (progress === StagePercentage.First) {
+    if (firstStageProgress && progress === +firstStageProgress) {
       if (imageSrcs50.length === 0) {
         setNoImg(true);
         return;
@@ -137,7 +155,7 @@ function CraftingProcess() {
       }
     }
 
-    if (progress === StagePercentage.Second) {
+    if (secondStageProgress && progress === +secondStageProgress) {
       if (imageSrcs75.length === 0) {
         setNoImg(true);
         return;
@@ -155,7 +173,7 @@ function CraftingProcess() {
       }
     }
 
-    if (progress === StagePercentage.Third) {
+    if (thirdStageProgress && progress === +thirdStageProgress) {
       const uploadResponse = await uploadMutation.mutateAsync(imageSrcs100[0]);
 
       if (
@@ -215,7 +233,12 @@ function CraftingProcess() {
   }, [response]);
 
   useEffect(() => {
-    if (stageResponse?.data) {
+    if (
+      stageResponse?.data &&
+      firstStageProgress &&
+      secondStageProgress &&
+      thirdStageProgress
+    ) {
       const inProgress = stageResponse.data.items.findIndex(
         (item) =>
           item.status === CraftingStageStatus.Paid && !item.completionDate
@@ -230,15 +253,15 @@ function CraftingProcess() {
       if (inProgress === -1 && pending === -1) setCurrentStage(2);
 
       const firstStage = stageResponse.data.items.find(
-        (item) => item.progress === StagePercentage.First
+        (item) => item.progress === +firstStageProgress
       );
 
       const secondStage = stageResponse.data.items.find(
-        (item) => item.progress === StagePercentage.Second
+        (item) => item.progress === +secondStageProgress
       );
 
       const thirdStage = stageResponse.data.items.find(
-        (item) => item.progress === StagePercentage.Third
+        (item) => item.progress === +thirdStageProgress
       );
 
       if (firstStage && secondStage && thirdStage) {
@@ -257,7 +280,12 @@ function CraftingProcess() {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stageResponse]);
+  }, [
+    firstStageProgress,
+    secondStageProgress,
+    stageResponse,
+    thirdStageProgress,
+  ]);
 
   useEffect(() => {
     if (orderId)
@@ -328,11 +356,7 @@ function CraftingProcess() {
 
               <Grid container>
                 <Grid item className={styles.headerProcess}>
-                  {
-                    stages.find(
-                      (item) => item.progress === StagePercentage.First
-                    )?.name
-                  }
+                  {firstStageName}
                 </Grid>
 
                 <Grid
@@ -349,30 +373,23 @@ function CraftingProcess() {
                     pb={5}
                     className={styles.infoDetail}
                   >
-                    {stages
-                      .find((item) => item.progress === StagePercentage.First)
-                      ?.steps.map((item, index) => {
-                        return (
-                          <Grid
-                            key={index}
-                            item
-                            container
-                            className={styles.infoItem}
-                          >
-                            <Grid item xs={1} md={1}>
-                              <VerifiedIcon />
-                            </Grid>
-                            <Grid
-                              item
-                              xs={11}
-                              md={8}
-                              className={styles.content}
-                            >
-                              {item}
-                            </Grid>
+                    {firstStageSteps.map((item, index) => {
+                      return (
+                        <Grid
+                          key={index}
+                          item
+                          container
+                          className={styles.infoItem}
+                        >
+                          <Grid item xs={1} md={1}>
+                            <VerifiedIcon />
                           </Grid>
-                        );
-                      })}
+                          <Grid item xs={11} md={8} className={styles.content}>
+                            {item}
+                          </Grid>
+                        </Grid>
+                      );
+                    })}
                   </Grid>
 
                   <Grid
@@ -400,14 +417,15 @@ function CraftingProcess() {
               </Grid>
 
               {firstStage.status === CraftingStageStatus.Paid &&
-                !firstStage.completionDate && (
+                !firstStage.completionDate &&
+                firstStageProgress && (
                   <Grid container justifyContent={"center"}>
                     <LoadingButton
                       loading={
                         uploadMutation.isPending || stageMutation.isPending
                       }
                       className={styles.completeButton}
-                      onClick={() => handleComplete(StagePercentage.First)}
+                      onClick={() => handleComplete(+firstStageProgress)}
                     >
                       Hoàn Thành Qui Trình
                     </LoadingButton>
@@ -454,11 +472,7 @@ function CraftingProcess() {
 
               <Grid container>
                 <Grid item className={styles.headerProcess}>
-                  {
-                    stages.find(
-                      (item) => item.progress === StagePercentage.Second
-                    )?.name
-                  }
+                  {secondStageName}
                 </Grid>
 
                 <Grid
@@ -474,30 +488,23 @@ function CraftingProcess() {
                     pb={5}
                     className={styles.infoDetail}
                   >
-                    {stages
-                      .find((item) => item.progress === StagePercentage.Second)
-                      ?.steps.map((item, index) => {
-                        return (
-                          <Grid
-                            key={index}
-                            item
-                            container
-                            className={styles.infoItem}
-                          >
-                            <Grid item xs={1} md={1}>
-                              <VerifiedIcon />
-                            </Grid>
-                            <Grid
-                              item
-                              xs={11}
-                              md={8}
-                              className={styles.content}
-                            >
-                              {item}
-                            </Grid>
+                    {secondStageSteps.map((item, index) => {
+                      return (
+                        <Grid
+                          key={index}
+                          item
+                          container
+                          className={styles.infoItem}
+                        >
+                          <Grid item xs={1} md={1}>
+                            <VerifiedIcon />
                           </Grid>
-                        );
-                      })}
+                          <Grid item xs={11} md={8} className={styles.content}>
+                            {item}
+                          </Grid>
+                        </Grid>
+                      );
+                    })}
                   </Grid>
 
                   <Grid
@@ -525,14 +532,15 @@ function CraftingProcess() {
               </Grid>
 
               {secondStage.status === CraftingStageStatus.Paid &&
-                !secondStage.completionDate && (
+                !secondStage.completionDate &&
+                secondStageProgress && (
                   <Grid container justifyContent={"center"}>
                     <LoadingButton
                       loading={
                         uploadMutation.isPending || stageMutation.isPending
                       }
                       className={styles.completeButton}
-                      onClick={() => handleComplete(StagePercentage.Second)}
+                      onClick={() => handleComplete(+secondStageProgress)}
                     >
                       Hoàn Thành Qui Trình
                     </LoadingButton>
@@ -572,11 +580,7 @@ function CraftingProcess() {
 
               <Grid container>
                 <Grid item className={styles.headerProcess}>
-                  {
-                    stages.find(
-                      (item) => item.progress === StagePercentage.Third
-                    )?.name
-                  }
+                  {thirdStageName}
                 </Grid>
 
                 <Grid
@@ -592,30 +596,23 @@ function CraftingProcess() {
                     pb={5}
                     className={styles.infoDetail}
                   >
-                    {stages
-                      .find((item) => item.progress === StagePercentage.Third)
-                      ?.steps.map((item, index) => {
-                        return (
-                          <Grid
-                            key={index}
-                            item
-                            container
-                            className={styles.infoItem}
-                          >
-                            <Grid item xs={1} md={1}>
-                              <VerifiedIcon />
-                            </Grid>
-                            <Grid
-                              item
-                              xs={11}
-                              md={8}
-                              className={styles.content}
-                            >
-                              {item}
-                            </Grid>
+                    {thirdStageSteps.map((item, index) => {
+                      return (
+                        <Grid
+                          key={index}
+                          item
+                          container
+                          className={styles.infoItem}
+                        >
+                          <Grid item xs={1} md={1}>
+                            <VerifiedIcon />
                           </Grid>
-                        );
-                      })}
+                          <Grid item xs={11} md={8} className={styles.content}>
+                            {item}
+                          </Grid>
+                        </Grid>
+                      );
+                    })}
                   </Grid>
 
                   <Grid
