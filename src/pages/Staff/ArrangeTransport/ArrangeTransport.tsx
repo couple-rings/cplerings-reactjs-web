@@ -46,9 +46,13 @@ import BorderColorRoundedIcon from "@mui/icons-material/BorderColorRounded";
 import { toast } from "react-toastify";
 import ViewModal from "src/components/modal/transportOrder/Detail.modal";
 import RemoveRedEyeSharpIcon from "@mui/icons-material/RemoveRedEyeSharp";
-import { formatTransportOrderStatus } from "src/utils/functions";
+import {
+  currencyFormatter,
+  formatTransportOrderStatus,
+} from "src/utils/functions";
 import { TransportOrderStatus } from "src/utils/enums";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 const boxStyle: SxProps = {
   borderBottom: 1,
@@ -86,11 +90,18 @@ function ArrangeTransport() {
   const [selected, setSelected] = useState(0);
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [orderAnchorEl, setOrderAnchorEl] = useState<HTMLButtonElement | null>(
+    null
+  );
 
   const openPopover = Boolean(anchorEl);
-  const id = openPopover ? "simple-popover" : undefined;
+  const id = openPopover ? "customerPopover" : undefined;
+
+  const openOrderPopover = Boolean(orderAnchorEl);
+  const orderPopover = openOrderPopover ? "orderPopover" : undefined;
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { branchId } = useAppSelector((state) => state.auth.userInfo);
 
@@ -170,7 +181,7 @@ function ArrangeTransport() {
     () => [
       {
         field: "orderNo",
-        headerName: "Mã Đơn",
+        headerName: "Đơn Vận Chuyển",
         width: 150,
         headerAlign: "center",
         align: "center",
@@ -235,6 +246,113 @@ function ArrangeTransport() {
                       {row.customOrder?.customer.phone ?? ""}
                       {row.standardOrder?.customer.phone ?? ""}
                     </Grid>
+                  </Grid>
+                </Grid>
+              </Popover>
+            </div>
+          );
+        },
+      },
+      {
+        field: "product",
+        headerName: "Hàng Giao",
+        width: 200,
+        headerAlign: "center",
+        align: "center",
+        filterOperators,
+        sortable: false,
+        renderCell: ({ row }) => {
+          return (
+            <div>
+              {row.customOrder && "Nhẫn cưới"}
+              {row.standardOrder && "Trang sức"}
+            </div>
+          );
+        },
+      },
+      {
+        field: "attachOrder",
+        headerName: "Đơn Hàng",
+        width: 200,
+        headerAlign: "center",
+        align: "center",
+        filterOperators,
+        sortable: false,
+        renderCell: ({ row }) => {
+          return (
+            <div>
+              {row.customOrder?.orderNo}
+              {row.standardOrder?.orderNo}
+              <IconButton onClick={(e) => setOrderAnchorEl(e.currentTarget)}>
+                <RemoveRedEyeSharpIcon fontSize="small" />
+              </IconButton>
+              <Popover
+                id={orderPopover}
+                open={openOrderPopover}
+                anchorEl={orderAnchorEl}
+                onClose={() => setOrderAnchorEl(null)}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+              >
+                <Grid container width={300} p={3} gap={1}>
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Mã đơn:</Grid>
+
+                    <Grid item>
+                      {row.customOrder?.orderNo}
+                      {row.standardOrder?.orderNo}
+                    </Grid>
+                  </Grid>
+
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Ngày tạo:</Grid>
+
+                    <Grid item>
+                      {row.customOrder &&
+                        moment(row.customOrder.createdAt).format(
+                          "DD/MM/YYYY HH:mm"
+                        )}
+                      {row.standardOrder &&
+                        moment(row.standardOrder.createdAt).format(
+                          "DD/MM/YYYY HH:mm"
+                        )}
+                    </Grid>
+                  </Grid>
+
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Số tiền:</Grid>
+
+                    <Grid item>
+                      {row.customOrder &&
+                        currencyFormatter(row.customOrder.totalPrice.amount)}
+                      {row.standardOrder &&
+                        currencyFormatter(row.standardOrder.totalPrice.amount)}
+                    </Grid>
+                  </Grid>
+
+                  <Grid container justifyContent={"flex-end"} mt={3}>
+                    <Button
+                      variant="contained"
+                      sx={{ ...primaryBtn, py: 1 }}
+                      onClick={() => {
+                        if (row.customOrder)
+                          navigate(
+                            `/staff/custom-order/detail/${row.customOrder.id}`
+                          );
+                        if (row.standardOrder)
+                          navigate(
+                            `/staff/standard-order/detail/${row.standardOrder.id}`
+                          );
+                      }}
+                    >
+                      Xem Thêm
+                    </Button>
                   </Grid>
                 </Grid>
               </Popover>
@@ -375,10 +493,14 @@ function ArrangeTransport() {
       handleEditClick,
       handleSaveClick,
       id,
+      navigate,
+      openOrderPopover,
       openPopover,
+      orderAnchorEl,
+      orderPopover,
       rowModesModel,
       selected,
-      transporterResponse,
+      transporterResponse?.data?.items,
     ]
   );
 

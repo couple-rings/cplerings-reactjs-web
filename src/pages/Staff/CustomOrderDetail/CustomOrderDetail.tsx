@@ -297,7 +297,10 @@ function CustomOrderDetail() {
           </Grid>
 
           <Grid item md={6.5}>
-            <StaffCustomOrderTimeline order={order} />
+            <StaffCustomOrderTimeline
+              order={order}
+              transportOrder={transportResponse?.data ?? undefined}
+            />
           </Grid>
         </Grid>
 

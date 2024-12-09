@@ -8,9 +8,26 @@ import { Divider, FormHelperText, FormLabel, Grid } from "@mui/material";
 import defaultImg from "src/assets/default.jpg";
 import moment from "moment";
 import StaffTransportOrderTimeline from "src/components/timeline/staffTransportOrder/StaffTransportOrderTimeline";
+import { primaryBtn } from "src/utils/styles";
+import { useState } from "react";
+import { TransportOrderStatus } from "src/utils/enums";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { toast } from "react-toastify";
 
 function ViewModal(props: ITransportOrderModalProps) {
   const { open, setOpen, order } = props;
+
+  const [deliveryImage, setDeliveryImage] = useState<File | null>(null);
+  const [error, setError] = useState(false);
+
+  const handleComplete = () => {
+    if (!deliveryImage) {
+      setError(true);
+      return;
+    }
+
+    toast.success("Call api...");
+  };
 
   const handleClose = (
     event?: object,
@@ -18,6 +35,8 @@ function ViewModal(props: ITransportOrderModalProps) {
   ) => {
     if (reason && reason === "backdropClick") return;
     setOpen(false);
+    setError(false);
+    setDeliveryImage(null);
   };
 
   return (
@@ -77,13 +96,78 @@ function ViewModal(props: ITransportOrderModalProps) {
 
         <Grid container justifyContent={"space-between"} mt={3}>
           <Grid item xs={5}>
-            <img
-              src={order?.image ? order.image.url : defaultImg}
-              width={"100%"}
-            />
-            {!order?.image && (
+            {order.transportOrderHistories.find(
+              (item) => item.status === TransportOrderStatus.Rejected
+            ) &&
+            order.transportOrderHistories.every(
+              (item) => item.status !== TransportOrderStatus.Completed
+            ) ? (
+              <label>
+                <img
+                  src={
+                    deliveryImage
+                      ? URL.createObjectURL(deliveryImage)
+                      : defaultImg
+                  }
+                  width={"100%"}
+                  height={550}
+                  style={{
+                    cursor: "pointer",
+                    objectFit: "contain",
+                    border: "1px dashed #ccc",
+                  }}
+                />
+                <input
+                  accept=".jpg,.png,.jpeg"
+                  type="file"
+                  hidden
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      setDeliveryImage(e.target.files[0]);
+                      setError(false);
+                    }
+                  }}
+                />
+              </label>
+            ) : (
+              <img
+                src={order?.image ? order.image.url : defaultImg}
+                width={"100%"}
+                height={550}
+                style={{
+                  objectFit: "contain",
+                  border: "1px dashed #ccc",
+                }}
+              />
+            )}
+
+            {!order?.image && !deliveryImage && (
               <FormHelperText>Chưa có hình ảnh giao hàng</FormHelperText>
             )}
+
+            {order.transportOrderHistories.find(
+              (item) => item.status === TransportOrderStatus.Rejected
+            ) &&
+              order.transportOrderHistories.every(
+                (item) => item.status !== TransportOrderStatus.Completed
+              ) && (
+                <Grid container justifyContent={"flex-end"} mt={1}>
+                  <LoadingButton
+                    variant="contained"
+                    sx={{ ...primaryBtn, py: 1 }}
+                    onClick={handleComplete}
+                  >
+                    Xác Nhận Hoàn Thành
+                  </LoadingButton>
+                  {error && (
+                    <Grid item xs={12} mt={1}>
+                      <FormHelperText error sx={{ textAlign: "right" }}>
+                        * Chưa upload hình ảnh giao hàng
+                      </FormHelperText>
+                    </Grid>
+                  )}
+                </Grid>
+              )}
           </Grid>
 
           <Grid item xs={6}>
