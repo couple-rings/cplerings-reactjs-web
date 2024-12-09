@@ -489,6 +489,8 @@ declare global {
 
   interface IStaffCustomOrderTimelineProps {
     order: ICustomOrder;
+
+    transportOrder?: ITransportOrder;
   }
 
   interface IJewelerCustomOrderTimelineProps
