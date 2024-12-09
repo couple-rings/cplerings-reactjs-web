@@ -4,7 +4,6 @@ import {
   CustomRequestStatus,
   DesignCharacteristic,
   ProductType,
-  StagePercentage,
 } from "src/utils/enums";
 
 export {};
@@ -441,7 +440,7 @@ declare global {
   }
 
   interface ICompleteCraftingStageModalProps extends IModalProps {
-    handleComplete: (v1: StagePercentage, v2: number, v3: number) => void;
+    handleComplete: (v1: number, v2: number, v3: number) => void;
 
     updatingStage: boolean;
   }
@@ -557,5 +556,7 @@ declare global {
 
   interface ICraftingStageTableProps {
     data: IPayment;
+
+    orderPrice: number;
   }
 }

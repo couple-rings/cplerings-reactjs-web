@@ -1,5 +1,6 @@
 import axios from "src/config/axios.main";
 import queryString from "query-string";
+import { OrderType } from "src/utils/enums";
 
 export const getCustomOrders = (queryObj: ICustomOrderFilter) => {
   const queryUrl = queryString.stringify(queryObj);
@@ -22,4 +23,11 @@ export const postAssignCustomOrder = (orderId: number, jewelerId: number) => {
       jewelerId,
     }
   );
+};
+
+export const putCompleteCustomOrder = (orderId: number) => {
+  return axios.post<unknown, IResponse<object>>(`orders/complete`, {
+    orderId,
+    orderType: OrderType.Custom,
+  });
 };

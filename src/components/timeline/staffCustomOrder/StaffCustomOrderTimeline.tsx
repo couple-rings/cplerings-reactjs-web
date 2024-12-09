@@ -13,10 +13,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCraftingStages } from "src/services/craftingStage.service";
 import {
+  ConfigurationKey,
   CraftingStageStatus,
   CustomOrderStatus,
-  StagePercentage,
 } from "src/utils/enums";
+import { useAppSelector } from "src/utils/hooks";
 import { fetchCraftingStages } from "src/utils/querykey";
 
 function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
@@ -31,6 +32,8 @@ function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
 
   const navigate = useNavigate();
 
+  const { configs } = useAppSelector((state) => state.config);
+
   const { data: stageResponse } = useQuery({
     queryKey: [fetchCraftingStages, stageFilterObj],
 
@@ -42,22 +45,34 @@ function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
 
   useEffect(() => {
     if (stageResponse?.data) {
-      const firstStage = stageResponse.data.items.find(
-        (item) => item.progress === StagePercentage.First
-      );
+      const firstStageProgress = configs.find(
+        (item) => item.key === ConfigurationKey.FirstStageProgress
+      )?.value;
+      const secondStageProgress = configs.find(
+        (item) => item.key === ConfigurationKey.SecondStageProgress
+      )?.value;
+      const thirdStageProgress = configs.find(
+        (item) => item.key === ConfigurationKey.ThirdStageProgress
+      )?.value;
 
-      const secondStage = stageResponse.data.items.find(
-        (item) => item.progress === StagePercentage.Second
-      );
+      if (firstStageProgress && secondStageProgress && thirdStageProgress) {
+        const firstStage = stageResponse.data.items.find(
+          (item) => item.progress === +firstStageProgress
+        );
 
-      const thirdStage = stageResponse.data.items.find(
-        (item) => item.progress === StagePercentage.Third
-      );
+        const secondStage = stageResponse.data.items.find(
+          (item) => item.progress === +secondStageProgress
+        );
 
-      if (firstStage && secondStage && thirdStage) {
-        setFirstStage(firstStage);
-        setSecondStage(secondStage);
-        setThirdStage(thirdStage);
+        const thirdStage = stageResponse.data.items.find(
+          (item) => item.progress === +thirdStageProgress
+        );
+
+        if (firstStage && secondStage && thirdStage) {
+          setFirstStage(firstStage);
+          setSecondStage(secondStage);
+          setThirdStage(thirdStage);
+        }
       }
     }
 
@@ -66,7 +81,7 @@ function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stageResponse]);
+  }, [stageResponse, configs]);
 
   useEffect(() => {
     if (order)
@@ -226,9 +241,29 @@ function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
             {moment(thirdStage.completionDate).format("DD/MM/YYYY HH:mm")}
           </TimelineOppositeContent>
           <TimelineSeparator>
-            <TimelineDot color="success" />
+            <TimelineDot color="info" />
+            <TimelineConnector />
           </TimelineSeparator>
           <TimelineContent>Hoàn tất quá trình gia công</TimelineContent>
+        </TimelineItem>
+      )}
+
+      {/* Complete custom order */}
+      {order.customOrderHistories.find(
+        (item) => item.status === CustomOrderStatus.Completed
+      ) && (
+        <TimelineItem>
+          <TimelineOppositeContent color="textSecondary">
+            {moment(
+              order.customOrderHistories.find(
+                (item) => item.status === CustomOrderStatus.Completed
+              )?.createdAt
+            ).format("DD/MM/YYYY HH:mm")}
+          </TimelineOppositeContent>
+          <TimelineSeparator>
+            <TimelineDot color="success" />
+          </TimelineSeparator>
+          <TimelineContent>Khách đã nhận hàng</TimelineContent>
         </TimelineItem>
       )}
 

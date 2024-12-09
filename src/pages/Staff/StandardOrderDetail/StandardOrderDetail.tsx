@@ -2,8 +2,11 @@ import { Chip, FormLabel, Grid } from "@mui/material";
 import styles from "./StandardOrderDetail.module.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getStandardOrderDetail } from "src/services/standardOrder.service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  getStandardOrderDetail,
+  putCompleteStandardOrder,
+} from "src/services/standardOrder.service";
 import { fetchStandardOrderDetail } from "src/utils/querykey";
 import {
   currencyFormatter,
@@ -13,8 +16,15 @@ import moment from "moment";
 import placeholder from "src/assets/default.jpg";
 import male from "src/assets/male-icon.png";
 import female from "src/assets/female-icon.png";
-import { DesignCharacteristic } from "src/utils/enums";
+import {
+  DesignCharacteristic,
+  ResponseType,
+  StandardOrderStatus,
+} from "src/utils/enums";
 import StaffStandardOrderTimeline from "src/components/timeline/staffStandardOrder/StaffStandardOrderTimeline";
+import { toast } from "react-toastify";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { primaryBtn } from "src/utils/styles";
 
 function StandardOrderDetail() {
   const [order, setOrder] = useState<IStandardOrder | null>(null);
@@ -22,6 +32,7 @@ function StandardOrderDetail() {
   const { id } = useParams<{ id: string }>();
 
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data: response } = useQuery({
     queryKey: [fetchStandardOrderDetail, id],
@@ -30,6 +41,24 @@ function StandardOrderDetail() {
       if (id) return getStandardOrderDetail(+id);
     },
     enabled: !!id,
+  });
+
+  const completeMutation = useMutation({
+    mutationFn: (orderId: number) => {
+      return putCompleteStandardOrder(orderId);
+    },
+    onSuccess: (response) => {
+      if (response.type === ResponseType.Info) {
+        queryClient.invalidateQueries({
+          queryKey: [fetchStandardOrderDetail, id],
+        });
+        toast.success("Đã xác nhận hoàn thành đơn hàng");
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
   });
 
   useEffect(() => {
@@ -239,6 +268,20 @@ function StandardOrderDetail() {
               );
             })}
           </Grid>
+
+          {order.transportationOrders.length === 0 &&
+            order.status === StandardOrderStatus.Paid && (
+              <Grid container justifyContent={"center"} mt={7}>
+                <LoadingButton
+                  loading={completeMutation.isPending}
+                  variant="contained"
+                  sx={{ ...primaryBtn, borderRadius: 1, px: 6 }}
+                  onClick={() => completeMutation.mutate(order.id)}
+                >
+                  Xác Nhận Hoàn Thành
+                </LoadingButton>
+              </Grid>
+            )}
         </Grid>
       </Grid>
     );

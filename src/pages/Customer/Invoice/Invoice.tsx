@@ -27,7 +27,11 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { postCreateCustomRequest } from "src/services/customRequest.service";
 import { removeRequestedDesigns } from "src/redux/slice/design.slice";
 import { getCustomerSpouse } from "src/services/spouse.service";
-import { fetchCustomerSpouse, fetchPaymentDetail } from "src/utils/querykey";
+import {
+  fetchCustomerSpouse,
+  fetchCustomOrderDetail,
+  fetchPaymentDetail,
+} from "src/utils/querykey";
 import {
   companyAddress,
   companyName,
@@ -35,12 +39,15 @@ import {
   standardOrderPayment,
   designFeePayment,
   depositPayment,
-  stages,
+  firstStageName,
+  secondStageName,
+  thirdStageName,
 } from "src/utils/constants";
 import LocalPrintshopSharpIcon from "@mui/icons-material/LocalPrintshopSharp";
 import { secondaryBtn } from "src/utils/styles";
 import { getPaymentDetail } from "src/services/payment.service";
-import { StagePercentage } from "src/utils/enums";
+import { ConfigurationKey } from "src/utils/enums";
+import { getCustomOrderDetail } from "src/services/customOrder.service";
 
 const iconStyle: SxProps = {
   color: "white",
@@ -87,6 +94,21 @@ function Invoice() {
     queryFn: () => {
       if (paymentId) return getPaymentDetail(+paymentId);
     },
+  });
+
+  const { data: orderResponse } = useQuery({
+    queryKey: [
+      fetchCustomOrderDetail,
+      paymentResponse?.data?.craftingStage?.customOrderId,
+    ],
+
+    queryFn: () => {
+      if (paymentResponse?.data?.craftingStage?.customOrderId)
+        return getCustomOrderDetail(
+          paymentResponse?.data?.craftingStage?.customOrderId
+        );
+    },
+    enabled: !!paymentResponse?.data?.craftingStage?.customOrderId,
   });
 
   const mutation = useMutation({
@@ -331,6 +353,32 @@ function Invoice() {
                 </Grid>
               </Grid>
             )}
+
+            {orderResponse?.data && (
+              <Grid container mb={2}>
+                <Grid container mb={1}>
+                  Đặt cọc đơn gia công
+                </Grid>
+                <Grid container mb={1}>
+                  <Grid item xs={4}>
+                    Mã Đơn:
+                  </Grid>
+                  <Grid item sx={{ textTransform: "capitalize" }}>
+                    {orderResponse.data.customOrder.orderNo}
+                  </Grid>
+                </Grid>
+                <Grid container>
+                  <Grid item xs={4}>
+                    Ngày Tạo:
+                  </Grid>
+                  <Grid item>
+                    {moment(orderResponse.data.customOrder.createdAt).format(
+                      "DD/MM/YYYY HH:mm"
+                    )}
+                  </Grid>
+                </Grid>
+              </Grid>
+            )}
             <Grid container mb={2}>
               <div className={styles.sender}>Người thực hiện</div>
               {ownerSpouse ? (
@@ -388,8 +436,11 @@ function Invoice() {
 
             {customRequest && <CustomRequestTable request={customRequest} />}
 
-            {paymentResponse?.data?.craftingStage && (
-              <CraftingStageTable data={paymentResponse.data} />
+            {paymentResponse?.data?.craftingStage && orderResponse?.data && (
+              <CraftingStageTable
+                data={paymentResponse.data}
+                orderPrice={orderResponse.data.customOrder.totalPrice.amount}
+              />
             )}
           </Grid>
 
@@ -559,22 +610,52 @@ const CustomRequestTable = (props: ICustomRequestTableProps) => {
 };
 
 const CraftingStageTable = (props: ICraftingStageTableProps) => {
-  const { data } = props;
+  const { data, orderPrice } = props;
 
   const { amount, craftingStage } = data;
 
-  if (craftingStage) {
+  const { configs } = useAppSelector((state) => state.config);
+
+  const firstStageProgress = configs.find(
+    (item) => item.key === ConfigurationKey.FirstStageProgress
+  )?.value;
+  const secondStageProgress = configs.find(
+    (item) => item.key === ConfigurationKey.FirstStageProgress
+  )?.value;
+  const thirdStageProgress = configs.find(
+    (item) => item.key === ConfigurationKey.FirstStageProgress
+  )?.value;
+
+  if (
+    craftingStage &&
+    firstStageProgress &&
+    secondStageProgress &&
+    thirdStageProgress
+  ) {
+    const stages = [
+      +firstStageProgress,
+      +secondStageProgress,
+      +thirdStageProgress,
+    ];
+
     let depositValue = 0;
-    if (craftingStage.progress === StagePercentage.First)
+
+    if (craftingStage.progress === +firstStageProgress)
       depositValue = craftingStage.progress;
     else {
-      const index = stages.findIndex(
-        (item) => item.progress === craftingStage.progress
-      );
+      const index = stages.findIndex((item) => item === craftingStage.progress);
       if (index !== -1) {
-        depositValue = stages[index].progress - stages[index - 1].progress;
+        depositValue = stages[index] - stages[index - 1];
       }
     }
+
+    let stageName = "";
+    if (craftingStage.progress === +firstStageProgress)
+      stageName = firstStageName;
+    if (craftingStage.progress === +secondStageProgress)
+      stageName = secondStageName;
+    if (craftingStage.progress === +thirdStageProgress)
+      stageName = thirdStageName;
 
     return (
       <TableContainer component={Paper}>
@@ -601,21 +682,15 @@ const CraftingStageTable = (props: ICraftingStageTableProps) => {
 
             <TableRow>
               <TableCell>Giai Đoạn Đặt Cọc</TableCell>
-              <TableCell>Tổng Tiền Đơn Hàng</TableCell>
+              <TableCell align="right">Tổng Tiền Đơn Hàng</TableCell>
               <TableCell align="right">Tỷ Lệ</TableCell>
               <TableCell align="right">Giá Tiền</TableCell>
             </TableRow>
 
             <TableRow>
-              <TableCell sx={{ width: 200 }}>
-                {
-                  stages.find(
-                    (item) => item.progress === craftingStage.progress
-                  )?.name
-                }
-              </TableCell>
+              <TableCell sx={{ width: 200 }}>{stageName}</TableCell>
               <TableCell align="right">
-                {currencyFormatter(amount.amount)}
+                {currencyFormatter(orderPrice)}
               </TableCell>
               <TableCell align="right">{depositValue} %</TableCell>
               <TableCell align="right">
