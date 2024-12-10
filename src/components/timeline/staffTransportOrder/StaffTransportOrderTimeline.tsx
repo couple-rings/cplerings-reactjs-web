@@ -8,10 +8,47 @@ import TimelineOppositeContent, {
 } from "@mui/lab/TimelineOppositeContent";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import moment from "moment";
+import { TimelineDotColor } from "src/utils/constants";
 import { TransportOrderStatus } from "src/utils/enums";
 
 function StaffTransportOrderTimeline(props: IStaffTransportOrderTimelineProps) {
   const { order } = props;
+
+  const formatTransportTimelineText = (status: TransportOrderStatus) => {
+    if (status === TransportOrderStatus.Waiting)
+      return "Giao đơn cho bên vận chuyển";
+
+    if (status === TransportOrderStatus.OnGoing)
+      return "Đơn hàng đã được đưa lên xe";
+
+    if (status === TransportOrderStatus.Delivering) return "Bắt đầu giao";
+
+    if (status === TransportOrderStatus.Redelivering)
+      return "Đang chờ giao lại";
+
+    if (status === TransportOrderStatus.Completed) return "Khách đã nhận hàng";
+
+    if (status === TransportOrderStatus.Rejected)
+      return "Khách từ chối nhận hàng";
+  };
+
+  const formatTransportTimelineColor = (
+    status: TransportOrderStatus
+  ): TimelineDotColor => {
+    if (status === TransportOrderStatus.Waiting) return "warning";
+
+    if (status === TransportOrderStatus.OnGoing) return "info";
+
+    if (status === TransportOrderStatus.Delivering) return "info";
+
+    if (status === TransportOrderStatus.Redelivering) return "warning";
+
+    if (status === TransportOrderStatus.Completed) return "success";
+
+    if (status === TransportOrderStatus.Rejected) return "error";
+
+    return "grey";
+  };
 
   return (
     <Timeline
@@ -21,123 +58,31 @@ function StaffTransportOrderTimeline(props: IStaffTransportOrderTimelineProps) {
         },
       }}
     >
-      {/* Order assigned */}
-      {order.transportOrderHistories.find(
-        (item) => item.status === TransportOrderStatus.Waiting
-      ) && (
-        <TimelineItem>
-          <TimelineOppositeContent color="textSecondary">
-            {moment(
-              order.transportOrderHistories.find(
-                (item) => item.status === TransportOrderStatus.Waiting
-              )?.createdAt
-            ).format("DD/MM/YYYY HH:mm")}
-          </TimelineOppositeContent>
-          <TimelineSeparator>
-            <TimelineDot color="warning" />
-            <TimelineConnector />
-          </TimelineSeparator>
-          <TimelineContent>Giao đơn cho bên vận chuyển</TimelineContent>
-        </TimelineItem>
-      )}
-
-      {/* Praparing order */}
-      {order.transportOrderHistories.find(
-        (item) => item.status === TransportOrderStatus.OnGoing
-      ) && (
-        <TimelineItem>
-          <TimelineOppositeContent color="textSecondary">
-            {moment(
-              order.transportOrderHistories.find(
-                (item) => item.status === TransportOrderStatus.OnGoing
-              )?.createdAt
-            ).format("DD/MM/YYYY HH:mm")}
-          </TimelineOppositeContent>
-          <TimelineSeparator>
-            <TimelineDot color="info" />
-            <TimelineConnector />
-          </TimelineSeparator>
-          <TimelineContent>Đơn hàng đã được đưa lên xe</TimelineContent>
-        </TimelineItem>
-      )}
-
-      {/* Delivery started*/}
-      {order.transportOrderHistories.find(
-        (item) => item.status === TransportOrderStatus.Delivering
-      ) && (
-        <TimelineItem>
-          <TimelineOppositeContent color="textSecondary">
-            {moment(
-              order.transportOrderHistories.find(
-                (item) => item.status === TransportOrderStatus.Delivering
-              )?.createdAt
-            ).format("DD/MM/YYYY HH:mm")}
-          </TimelineOppositeContent>
-          <TimelineSeparator>
-            <TimelineDot color="info" />
-            <TimelineConnector />
-          </TimelineSeparator>
-          <TimelineContent>Bắt đầu giao</TimelineContent>
-        </TimelineItem>
-      )}
-
-      {/* Waiting to deliver again */}
-      {order.transportOrderHistories.find(
-        (item) => item.status === TransportOrderStatus.Redelivering
-      ) && (
-        <TimelineItem>
-          <TimelineOppositeContent color="textSecondary">
-            {moment(
-              order.transportOrderHistories.find(
-                (item) => item.status === TransportOrderStatus.Redelivering
-              )?.createdAt
-            ).format("DD/MM/YYYY HH:mm")}
-          </TimelineOppositeContent>
-          <TimelineSeparator>
-            <TimelineDot color="warning" />
-            <TimelineConnector />
-          </TimelineSeparator>
-          <TimelineContent>Đang chờ giao lại</TimelineContent>
-        </TimelineItem>
-      )}
-
-      {/* Delivery completed */}
-      {order.transportOrderHistories.find(
-        (item) => item.status === TransportOrderStatus.Completed
-      ) && (
-        <TimelineItem>
-          <TimelineOppositeContent color="textSecondary">
-            {moment(
-              order.transportOrderHistories.find(
-                (item) => item.status === TransportOrderStatus.Completed
-              )?.createdAt
-            ).format("DD/MM/YYYY HH:mm")}
-          </TimelineOppositeContent>
-          <TimelineSeparator>
-            <TimelineDot color="success" />
-          </TimelineSeparator>
-          <TimelineContent>Khách đã nhận hàng</TimelineContent>
-        </TimelineItem>
-      )}
-
-      {/* Delivery completed */}
-      {order.transportOrderHistories.find(
-        (item) => item.status === TransportOrderStatus.Rejected
-      ) && (
-        <TimelineItem>
-          <TimelineOppositeContent color="textSecondary">
-            {moment(
-              order.transportOrderHistories.find(
-                (item) => item.status === TransportOrderStatus.Rejected
-              )?.createdAt
-            ).format("DD/MM/YYYY HH:mm")}
-          </TimelineOppositeContent>
-          <TimelineSeparator>
-            <TimelineDot color="error" />
-          </TimelineSeparator>
-          <TimelineContent>Giao hàng thất bại</TimelineContent>
-        </TimelineItem>
-      )}
+      {order.transportOrderHistories
+        .sort((a, b) => {
+          return a.createdAt.localeCompare(b.createdAt);
+        })
+        .map((item) => {
+          if (item.status !== TransportOrderStatus.Pending)
+            return (
+              <TimelineItem key={item.id}>
+                <TimelineOppositeContent color="textSecondary">
+                  {moment(item.createdAt).format("DD/MM/YYYY HH:mm")}
+                </TimelineOppositeContent>
+                <TimelineSeparator>
+                  <TimelineDot
+                    color={formatTransportTimelineColor(item.status)}
+                  />
+                  {item.status !== TransportOrderStatus.Completed && (
+                    <TimelineConnector />
+                  )}
+                </TimelineSeparator>
+                <TimelineContent>
+                  {formatTransportTimelineText(item.status)}
+                </TimelineContent>
+              </TimelineItem>
+            );
+        })}
     </Timeline>
   );
 }

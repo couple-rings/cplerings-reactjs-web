@@ -53,7 +53,6 @@ function CraftingRequestDetail() {
     },
     onSuccess: (response) => {
       if (response.data) {
-        toast.success("Đã chấp nhận yêu cầu gia công");
         navigate("/staff/crafting-request");
       }
 
@@ -63,29 +62,39 @@ function CraftingRequestDetail() {
     },
   });
 
-  const handleReject = (
+  const handleReject = async (
     firstCommentCrafting: string,
     secondCommentCrafting: string
   ) => {
-    if (maleRequest && femaleRequest)
-      mutation.mutate({
+    if (maleRequest && femaleRequest) {
+      const response = await mutation.mutateAsync({
         firstCraftingRequestId: maleRequest.id,
         secondCraftingRequestId: femaleRequest.id,
         firstCommentCrafting,
         secondCommentCrafting,
         status: CraftingRequestStatus.Rejected,
       });
+
+      if (response.data) {
+        toast.success("Đã từ chối yêu cầu gia công");
+      }
+    }
   };
 
-  const handleAccept = () => {
-    if (maleRequest && femaleRequest)
-      mutation.mutate({
+  const handleAccept = async () => {
+    if (maleRequest && femaleRequest) {
+      const response = await mutation.mutateAsync({
         firstCraftingRequestId: maleRequest.id,
         secondCraftingRequestId: femaleRequest.id,
         firstCommentCrafting: "Đã chấp nhận",
         secondCommentCrafting: "Đã chấp nhận",
         status: CraftingRequestStatus.Accepted,
       });
+
+      if (response.data) {
+        toast.success("Đã chấp nhận yêu cầu gia công");
+      }
+    }
   };
 
   useEffect(() => {

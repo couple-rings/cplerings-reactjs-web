@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   fetchCraftingStages,
   fetchCustomOrderDetail,
+  fetchTransportOrdersWithCustomOrder,
 } from "src/utils/querykey";
 import { getCustomOrderDetail } from "src/services/customOrder.service";
 import { useEffect, useState } from "react";
@@ -22,6 +23,7 @@ import {
 import CustomerCustomOrderTimeline from "src/components/timeline/customerCustomOrder/CustomerCustomOrderTimeline";
 import LabelImportantSharpIcon from "@mui/icons-material/LabelImportantSharp";
 import { ConfigurationKey } from "src/utils/enums";
+import { getTransportOrderWithCustomOrder } from "src/services/transportOrder.service";
 
 function CraftingProcess() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
@@ -59,6 +61,15 @@ function CraftingProcess() {
       if (filterObj) return getCraftingStages(filterObj);
     },
     enabled: !!filterObj,
+  });
+
+  const { data: transportResponse } = useQuery({
+    queryKey: [fetchTransportOrdersWithCustomOrder, orderId],
+
+    queryFn: () => {
+      if (orderId) return getTransportOrderWithCustomOrder(+orderId);
+    },
+    enabled: !!orderId,
   });
 
   useEffect(() => {
@@ -117,6 +128,7 @@ function CraftingProcess() {
               <CustomerCustomOrderTimeline
                 order={order}
                 stages={stageResponse.data.items}
+                transportOrder={transportResponse?.data ?? undefined}
               />
             )}
           </Grid>

@@ -576,7 +576,7 @@ function CustomDesign() {
               <Grid container justifyContent={"space-between"}>
                 <Grid item xs={7} md={5} mb={3}>
                   <FormLabel error={!!errors.male?.metalWeight}>
-                    Khối lượng nhẫn:
+                    Khối lượng nhẫn (chỉ):
                   </FormLabel>
                   <OutlinedInput
                     fullWidth
@@ -723,7 +723,7 @@ function CustomDesign() {
                   maleError.notSelectedDiamond || maleError.noDiamondsAdded
                 }
               >
-                Kim cương:
+                Loại Kim cương:
               </FormLabel>
 
               <Grid container mb={1} mt={2}>
@@ -744,7 +744,7 @@ function CustomDesign() {
                     }
                   >
                     <MenuItem disabled value={0}>
-                      Chọn kim cương
+                      Chọn loại kim cương
                     </MenuItem>
                     {diamondSpecResponse?.data?.items
                       .filter((item) => !maleAddedDiamonds.includes(item.id))
@@ -771,10 +771,14 @@ function CustomDesign() {
                 </IconButton>
               </Grid>
               {maleError.notSelectedDiamond && (
-                <FormHelperText error>* Chưa chọn kim cương</FormHelperText>
+                <FormHelperText error>
+                  * Chưa chọn loại kim cương
+                </FormHelperText>
               )}
               {maleError.noDiamondsAdded && (
-                <FormHelperText error>* Vui lòng thêm kim cương</FormHelperText>
+                <FormHelperText error>
+                  * Vui lòng thêm loại kim cương
+                </FormHelperText>
               )}
               <Grid container>
                 <List>
@@ -812,7 +816,7 @@ function CustomDesign() {
                   })}
                   {maleAddedDiamonds.length === 0 && (
                     <ListItem>
-                      <ListItemText primary="Chưa thêm kim cương nào" />
+                      <ListItemText primary="Chưa thêm loại kim cương nào" />
                     </ListItem>
                   )}
                 </List>
@@ -886,7 +890,7 @@ function CustomDesign() {
               <Grid container justifyContent={"space-between"}>
                 <Grid item xs={7} md={5}>
                   <FormLabel error={!!errors.female?.metalWeight}>
-                    Khối lượng nhẫn:
+                    Khối lượng nhẫn (chỉ):
                   </FormLabel>
                   <OutlinedInput
                     error={!!errors.female?.metalWeight}
@@ -1038,7 +1042,7 @@ function CustomDesign() {
                   femaleError.notSelectedDiamond || femaleError.noDiamondsAdded
                 }
               >
-                Kim cương:
+                Loại Kim cương:
               </FormLabel>
 
               <Grid container mb={1} mt={2}>
@@ -1060,7 +1064,7 @@ function CustomDesign() {
                     }
                   >
                     <MenuItem disabled value={0}>
-                      Chọn kim cương
+                      Chọn loại kim cương
                     </MenuItem>
                     {diamondSpecResponse?.data?.items
                       .filter((item) => !femaleAddedDiamonds.includes(item.id))
@@ -1087,10 +1091,14 @@ function CustomDesign() {
                 </IconButton>
               </Grid>
               {femaleError.notSelectedDiamond && (
-                <FormHelperText error>* Chưa chọn kim cương</FormHelperText>
+                <FormHelperText error>
+                  * Chưa chọn loại kim cương
+                </FormHelperText>
               )}
               {femaleError.noDiamondsAdded && (
-                <FormHelperText error>* Vui lòng thêm kim cương</FormHelperText>
+                <FormHelperText error>
+                  * Vui lòng thêm loại kim cương
+                </FormHelperText>
               )}
               <Grid container>
                 <List>
@@ -1131,7 +1139,7 @@ function CustomDesign() {
                   })}
                   {femaleAddedDiamonds.length === 0 && (
                     <ListItem>
-                      <ListItemText primary="Chưa thêm kim cương nào" />
+                      <ListItemText primary="Chưa thêm loại kim cương nào" />
                     </ListItem>
                   )}
                 </List>
@@ -1279,7 +1287,7 @@ const ViewCustomDesign = (props: IViewCustomDesignProps) => {
             <Grid item xs={12} md={6.5} className={styles.right}>
               <Grid container justifyContent={"space-between"}>
                 <Grid item xs={7} md={5} mb={3}>
-                  <FormLabel>Khối lượng nhẫn:</FormLabel>
+                  <FormLabel>Khối lượng nhẫn (chỉ):</FormLabel>
                   <OutlinedInput
                     fullWidth
                     sx={{ borderRadius: 2, mt: 2 }}
@@ -1329,7 +1337,7 @@ const ViewCustomDesign = (props: IViewCustomDesignProps) => {
               <Divider sx={{ backgroundColor: "#ccc", my: 4 }} />
 
               {/* Male diamond spec start */}
-              <FormLabel>Kim cương:</FormLabel>
+              <FormLabel>Loại Kim cương:</FormLabel>
 
               <Grid container>
                 <List>
@@ -1408,7 +1416,7 @@ const ViewCustomDesign = (props: IViewCustomDesignProps) => {
             <Grid item xs={12} md={6.5} className={styles.right}>
               <Grid container justifyContent={"space-between"}>
                 <Grid item xs={7} md={5}>
-                  <FormLabel>Khối lượng nhẫn:</FormLabel>
+                  <FormLabel>Khối lượng nhẫn (chỉ):</FormLabel>
                   <OutlinedInput
                     fullWidth
                     sx={{ borderRadius: 2, mt: 2 }}
@@ -1458,7 +1466,7 @@ const ViewCustomDesign = (props: IViewCustomDesignProps) => {
               <Divider sx={{ backgroundColor: "#ccc", my: 4 }} />
 
               {/* Female diamond spec start */}
-              <FormLabel>Kim cương:</FormLabel>
+              <FormLabel>Loại Kim cương:</FormLabel>
 
               <Grid container>
                 <List>

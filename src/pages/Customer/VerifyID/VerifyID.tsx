@@ -282,7 +282,7 @@ function VerifyID() {
             return;
           }
 
-          if (selfIdInfo.gender === Gender.Female && partnerAge < 18) {
+          if (selfIdInfo.gender === Gender.Female && selfAge < 18) {
             toast.error("Bạn chưa đủ tuổi. Yêu cầu trên 18 tuổi");
             return;
           }
@@ -292,7 +292,7 @@ function VerifyID() {
             return;
           }
 
-          if (partnerIdInfo.gender === Gender.Female && selfAge < 18) {
+          if (partnerIdInfo.gender === Gender.Female && partnerAge < 18) {
             toast.error("Bạn đời chưa đủ tuổi. Yêu cầu trên 18 tuổi");
             return;
           }

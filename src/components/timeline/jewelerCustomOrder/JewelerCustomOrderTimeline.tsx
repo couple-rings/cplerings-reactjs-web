@@ -221,7 +221,7 @@ function JewelerCustomOrderTimeline(props: IJewelerCustomOrderTimelineProps) {
         <TimelineItem>
           <TimelineOppositeContent color="textSecondary">
             {moment(
-              secondStage?.craftingStageHistories.find(
+              thirdStage?.craftingStageHistories.find(
                 (item) => item.status === CraftingStageStatus.Paid
               )?.createdAt
             ).format("DD/MM/YYYY HH:mm")}

@@ -5,7 +5,7 @@ import { postRefreshToken } from "src/services/auth.service";
 import { ErrorCode } from "src/utils/enums";
 // import { store } from "../redux/store";
 
-const publicRoute = ["auth/refresh", "designs/couple"];
+const publicRoute = ["auth/refresh", "designs/couple", "configurations"];
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 

@@ -146,6 +146,16 @@ export type ChipColor =
   | "secondary"
   | "warning";
 
+export type TimelineDotColor =
+  | "info"
+  | "error"
+  | "success"
+  | "primary"
+  | "secondary"
+  | "warning"
+  | "inherit"
+  | "grey";
+
 export const metalWeightUnit = 3.75; // 1 chỉ vàng = 3.75 gram
 export const meleeDiamondCarat = 0.008;
 
