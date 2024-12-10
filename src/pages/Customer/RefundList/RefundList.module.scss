@@ -22,10 +22,17 @@
       padding: 0.5rem 1rem;
       border-radius: 8px;
       font-size: 1rem;
+    }
+  }
 
-      &:hover {
-        background-color: darken($primaryColor, 10%);
-      }
+  .section {
+    margin-bottom: 3rem;
+
+    .sectionTitle {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: $secondaryColor;
     }
   }
 
@@ -144,9 +151,6 @@
           text-transform: none;
           border-radius: 8px;
 
-          &:hover {
-            background-color: darken($primaryColor, 10%);
-          }
         }
       }
     }
