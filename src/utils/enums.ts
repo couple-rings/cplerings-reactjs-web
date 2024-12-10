@@ -222,3 +222,8 @@ export enum OrderType {
   Standard = "STANDARD",
   Custom = "CUSTOM",
 }
+
+export enum PaymentMethod {
+  Cash = "CASH",
+  Transfer = "TRANSFER",
+}

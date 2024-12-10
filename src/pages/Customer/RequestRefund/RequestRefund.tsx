@@ -3,6 +3,9 @@ import { Button, Card, Grid, TextField, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import styles from "./RequestRefund.module.scss";
 import { secondaryBtn, primaryBtn } from "src/utils/styles";
+import { postRefundRequest } from "src/services/refund.service";
+import { PaymentMethod } from "src/utils/enums";
+import { toast } from "react-toastify";
 
 const reasons = [
   "Kích thước không phù hợp",
@@ -14,23 +17,28 @@ const reasons = [
 function RequestRefund() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    orderId: "",
+    customOrderId: 0,
+    staffId: 0,
     reason: "",
-    description: "",
-    images: [] as File[]
+    proofImageId: 0,
+    method: PaymentMethod.Cash
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log(formData);
-  };
+  const [loading, setLoading] = useState(false);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFormData(prev => ({
-        ...prev,
-        images: [...Array.from(e.target.files!)]
-      }));
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const response = await postRefundRequest(formData.customOrderId, formData);
+      if (response.data) {
+        toast.success("Gửi yêu cầu hoàn trả thành công!");
+        navigate('/customer/refund');
+      }
+    } catch (error) {
+      toast.error("Có lỗi xảy ra khi gửi yêu cầu hoàn trả!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,9 +53,10 @@ function RequestRefund() {
               <TextField
                 fullWidth
                 label="Mã đơn hàng"
-                value={formData.orderId}
-                onChange={(e) => setFormData(prev => ({...prev, orderId: e.target.value}))}
+                value={formData.customOrderId}
+                onChange={(e) => setFormData(prev => ({...prev, customOrderId: Number(e.target.value)}))}
                 required
+                type="number"
               />
             </Grid>
 
@@ -70,26 +79,35 @@ function RequestRefund() {
 
             <Grid item xs={12}>
               <TextField
+                select
                 fullWidth
-                multiline
-                rows={4}
-                label="Mô tả chi tiết"
-                value={formData.description}
-                onChange={(e) => setFormData(prev => ({...prev, description: e.target.value}))}
+                label="Phương thức hoàn tiền"
+                value={formData.method}
+                onChange={(e) => setFormData(prev => ({...prev, method: e.target.value as PaymentMethod}))}
                 required
-              />
+              >
+                {Object.values(PaymentMethod).map((method) => (
+                  <MenuItem key={method} value={method}>
+                    {method}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
 
             <Grid item xs={12}>
               <input
                 type="file"
-                multiple
                 accept="image/*"
-                onChange={handleImageChange}
+                onChange={(e) => {
+                  if (e.target.files?.[0]) {
+                    setFormData(prev => ({...prev, proofImageId: 1}));
+                  }
+                }}
                 className={styles.fileInput}
+                required
               />
               <div className={styles.imageNote}>
-                Vui lòng đính kèm hình ảnh sản phẩm (tối đa 3 ảnh)
+                Vui lòng đính kèm hình ảnh chứng minh
               </div>
             </Grid>
           </Grid>
@@ -107,8 +125,9 @@ function RequestRefund() {
             type="submit"
             variant="contained"
             sx={primaryBtn}
+            disabled={loading}
           >
-            Gửi Yêu Cầu
+            {loading ? "Đang xử lý..." : "Gửi Yêu Cầu"}
           </Button>
         </div>
       </form>
