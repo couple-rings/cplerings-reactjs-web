@@ -561,4 +561,14 @@ declare global {
 
     orderPrice: number;
   }
+
+  interface IStandardOrderItemProps {
+    item: IStandardOrderItem;
+  }
+
+  interface IWeddingRingProps {
+    ring: IRing;
+
+    gender: DesignCharacteristic;
+  }
 }

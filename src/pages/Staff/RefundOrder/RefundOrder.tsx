@@ -1,150 +1,267 @@
-import { Button, Card, Grid, Divider } from "@mui/material";
-import { currencyFormatter } from "src/utils/functions";
+import { Button, FormLabel, Grid, IconButton, Popover } from "@mui/material";
 import styles from "./RefundOrder.module.scss";
-import sample from "src/assets/sampledata/ringdesign.png";
-import { secondaryBtn } from "src/utils/styles";
 import { useNavigate } from "react-router-dom";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import {
+  DataGrid,
+  getGridStringOperators,
+  GridColDef,
+  GridFilterModel,
+  GridPaginationModel,
+  GridSortModel,
+} from "@mui/x-data-grid";
+import { pageSize } from "src/utils/constants";
+import { useEffect, useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchRefunds } from "src/utils/querykey";
+import { getRefunds } from "src/services/refund.service";
+import RemoveRedEyeSharpIcon from "@mui/icons-material/RemoveRedEyeSharp";
+import moment from "moment";
+import {
+  currencyFormatter,
+  formatRefundMethodTitle,
+} from "src/utils/functions";
+import { primaryBtn } from "src/utils/styles";
 
-const refundOrders = [
-  {
-    id: 1,
-    orderId: "824100998377",
-    date: "09/10/2024",
-    customerName: "Nguyễn Văn A",
-    collection: "Bộ Sưu Tập FOREVER",
-    price: 24000000,
-    reason: "Kích thước không phù hợp",
-    rings: {
-      male: {
-        material: "Vàng Trắng 18K",
-        size: "15",
-        diamond: "5PT, F, SI1"
-      },
-      female: {
-        material: "Vàng Trắng 18K",
-        size: "10",
-        diamond: "5PT, F, SI1"
-      }
-    }
-  }
-];
+interface Row extends IRefund {}
+
+const filterOperators = getGridStringOperators().filter(({ value }) =>
+  ["contains" /* add more over time */].includes(value)
+);
+
+const initMetaData = {
+  page: 0,
+  pageSize,
+  totalPages: 0,
+  count: 0,
+};
 
 function RefundOrder() {
+  const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
+  const [filterObj, setFilterObj] = useState<IRefundFilter>({
+    page: 0,
+    pageSize,
+  });
+
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const openPopover = Boolean(anchorEl);
+  const id = openPopover ? "simple-popover" : undefined;
+
   const navigate = useNavigate();
+
+  const { data: response, isLoading } = useQuery({
+    queryKey: [fetchRefunds, filterObj],
+
+    queryFn: () => {
+      if (filterObj) return getRefunds(filterObj);
+    },
+  });
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const columns: GridColDef<Row>[] = useMemo(
+    () => [
+      {
+        field: "customer",
+        headerName: "Khách Hàng",
+        width: 200,
+        headerAlign: "center",
+        align: "center",
+        filterOperators,
+        sortable: false,
+        renderCell: ({ row }) => {
+          return (
+            <div>
+              {row.standardOrder && row.standardOrder.customer.username}
+              {row.customOrder && row.customOrder.customer.username}
+              <IconButton onClick={handleClick}>
+                <RemoveRedEyeSharpIcon fontSize="small" />
+              </IconButton>{" "}
+              <Popover
+                id={id}
+                open={openPopover}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+              >
+                <Grid container width={300} p={3} gap={1}>
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Username:</Grid>
+
+                    <Grid item>
+                      {row.standardOrder && row.standardOrder.customer.username}
+                      {row.customOrder && row.customOrder.customer.username}
+                    </Grid>
+                  </Grid>
+
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Email:</Grid>
+
+                    <Grid item>
+                      <FormLabel>
+                        {row.standardOrder && row.standardOrder.customer.email}
+                        {row.customOrder && row.customOrder.customer.email}
+                      </FormLabel>
+                    </Grid>
+                  </Grid>
+
+                  <Grid container justifyContent={"space-between"}>
+                    <Grid item>Số điện thoại:</Grid>
+
+                    <Grid item>
+                      {row.standardOrder && row.standardOrder.customer.phone}
+                      {row.customOrder && row.customOrder.customer.phone}
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Popover>
+            </div>
+          );
+        },
+      },
+      {
+        field: "createdAt",
+        headerName: "Ngày Tạo",
+        width: 200,
+        headerAlign: "center",
+        align: "center",
+        filterable: false,
+        renderCell: ({ row }) => {
+          return (
+            <div>{moment(row.proofImage.createdAt).format("DD/MM/YYYY")}</div>
+          );
+        },
+      },
+      {
+        field: "amount",
+        headerName: "Số Tiền",
+        width: 150,
+        headerAlign: "center",
+        align: "center",
+        filterable: false,
+        renderCell: ({ row }) => {
+          return <div>{currencyFormatter(row.amount.amount)}</div>;
+        },
+      },
+      {
+        field: "method",
+        headerName: "Phương Thức",
+        width: 200,
+        headerAlign: "center",
+        align: "center",
+        filterOperators,
+        sortable: false,
+        renderCell: ({ row }) => {
+          return <div>{formatRefundMethodTitle(row.method)}</div>;
+        },
+      },
+      {
+        field: "order",
+        headerName: "Loại Hàng",
+        width: 200,
+        headerAlign: "center",
+        align: "center",
+        filterOperators,
+        sortable: false,
+        renderCell: ({ row }) => {
+          return (
+            <div>
+              {row.standardOrder && "Trang Sức"}
+              {row.customOrder && "Nhẫn Cưới"}
+            </div>
+          );
+        },
+      },
+      {
+        field: "actions",
+        headerName: "",
+        type: "actions",
+        width: 200,
+        headerAlign: "center",
+        align: "center",
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        renderCell: ({ row }) => (
+          <Button
+            variant="contained"
+            sx={{ ...primaryBtn, py: 1, m: 2, borderRadius: 5 }}
+          >
+            Chi Tiết
+          </Button>
+        ),
+      },
+    ],
+    [anchorEl, id, openPopover]
+  );
+
+  const handleChangePage = (model: GridPaginationModel) => {
+    // model.page is the page to fetch and starts at 0
+    setFilterObj({
+      ...filterObj,
+      page: model.page,
+    });
+  };
+
+  const handleFilter = (model: GridFilterModel) => {
+    console.log(model);
+  };
+
+  const handleSort = (model: GridSortModel) => {
+    console.log(model);
+  };
+
+  useEffect(() => {
+    if (response && response.data) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { items, ...rest } = response.data;
+      setMetaData(rest);
+    }
+  }, [response]);
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div className={styles.title}>Danh Sách Đơn Hoàn Trả</div>
-        <Button 
+        <div className={styles.title}>Danh Sách Hoàn Tiền</div>
+        <Button
           className={styles.buttonCreate}
-          onClick={() => navigate('/staff/refund-create-form')}
+          onClick={() => navigate("/staff/refund-create-form")}
         >
           <AddCircleOutlineIcon /> <div>Tạo Đơn</div>
         </Button>
       </div>
-      
-      {refundOrders.map((order) => (
-        <Card key={order.id} className={styles.orderCard}>
-          <div className={styles.header}>
-            <div className={styles.orderInfo}>
-              <div className={styles.date}>Ngày: {order.date}</div>
-              <div className={styles.orderId}>Mã đơn: {order.orderId}</div>
-            </div>
-          </div>
 
-          <Grid container className={styles.body} spacing={3}>
-            <Grid item xs={12} sm={3} md={2}>
-              <img src={sample} alt="Product" className={styles.productImage} />
-            </Grid>
-
-            <Grid item xs={12} sm={9} md={7} className={styles.middle}>
-              <div className={styles.collection}>
-                <span className={styles.collectionIcon}>💍</span>
-                {order.collection}
-              </div>
-              
-              <div className={styles.customerInfo}>
-                <span className={styles.label}>Khách hàng:</span>
-                <span className={styles.value}>{order.customerName}</span>
-              </div>
-              
-              <div className={styles.ringsInfo}>
-                <div className={styles.ringSection}>
-                  <div className={styles.ringTitle}>
-                    <span className={styles.icon}>👨</span>
-                    Nhẫn Nam
-                  </div>
-                  <div className={styles.specsCard}>
-                    <div className={styles.spec}>
-                      <span className={styles.label}>Chất liệu:</span>
-                      <span className={styles.value}>{order.rings.male.material}</span>
-                    </div>
-                    <div className={styles.spec}>
-                      <span className={styles.label}>Size:</span>
-                      <span className={styles.value}>{order.rings.male.size}</span>
-                    </div>
-                    <div className={styles.spec}>
-                      <span className={styles.label}>Kim cương:</span>
-                      <span className={styles.value}>{order.rings.male.diamond}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <Divider orientation="vertical" flexItem sx={{ mx: 3 }} />
-
-                <div className={styles.ringSection}>
-                  <div className={styles.ringTitle}>
-                    <span className={styles.icon}>👩</span>
-                    Nhẫn Nữ
-                  </div>
-                  <div className={styles.specsCard}>
-                    <div className={styles.spec}>
-                      <span className={styles.label}>Chất liệu:</span>
-                      <span className={styles.value}>{order.rings.female.material}</span>
-                    </div>
-                    <div className={styles.spec}>
-                      <span className={styles.label}>Size:</span>
-                      <span className={styles.value}>{order.rings.female.size}</span>
-                    </div>
-                    <div className={styles.spec}>
-                      <span className={styles.label}>Kim cương:</span>
-                      <span className={styles.value}>{order.rings.female.diamond}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.reason}>
-                <span className={styles.label}>Lý do hoàn trả: </span>
-                <span className={styles.value}>{order.reason}</span>
-              </div>
-            </Grid>
-
-            <Grid container item xs={12} md={3} lg={2.5} className={styles.right}>
-              <Grid item xs={12}>
-                <div className={styles.price}>
-                  {currencyFormatter(order.price)}
-                </div>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  sx={{ 
-                    ...secondaryBtn,
-                    borderRadius: '8px',
-                    padding: '10px',
-                    fontSize: '1rem'
-                  }}
-                  onClick={() => navigate(`/staff/refund-order/detail/${order.id}`)}
-                >
-                  Chi Tiết
-                </Button>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Card>
-      ))}
+      <DataGrid
+        loading={isLoading}
+        getRowHeight={() => "auto"}
+        rows={response?.data?.items ? response.data.items : []}
+        columns={columns}
+        onFilterModelChange={handleFilter}
+        onSortModelChange={handleSort}
+        pageSizeOptions={[pageSize]}
+        disableColumnSelector
+        disableRowSelectionOnClick
+        autoHeight
+        paginationMode="server"
+        paginationModel={{
+          page: filterObj.page,
+          pageSize: filterObj.pageSize,
+        }}
+        onPaginationModelChange={handleChangePage}
+        rowCount={metaData.count}
+      />
     </div>
   );
 }
