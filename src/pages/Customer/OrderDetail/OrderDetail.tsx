@@ -24,6 +24,7 @@ import { getStandardOrderDetail } from "src/services/standardOrder.service";
 import { useAppSelector, useScrollTop } from "src/utils/hooks";
 import moment from "moment";
 import {
+  ConfigurationKey,
   DesignCharacteristic,
   StandardOrderStatus,
   TransportOrderStatus,
@@ -40,6 +41,11 @@ function OrderDetail() {
   const { id: orderId } = useParams<{ id: string }>();
 
   const { id: userId } = useAppSelector((state) => state.auth.userInfo);
+  const { configs } = useAppSelector((state) => state.config);
+
+  const shippingFee = configs.find(
+    (item) => item.key === ConfigurationKey.ShippingFee
+  )?.value;
 
   const { data: orderResponse, isLoading: orderLoading } = useQuery({
     queryKey: [fetchStandardOrderDetail, orderId],
@@ -269,7 +275,7 @@ function OrderDetail() {
           <Grid container justifyContent={"space-between"}>
             {order.status !== StandardOrderStatus.Pending &&
               order.transportationOrders.length > 0 && (
-                <Grid item sm={5} md={4} className={styles.left}>
+                <Grid item sm={5} className={styles.left}>
                   <div className={styles.title}>Thông Tin Giao Hàng</div>
                   <div className={styles.name}>
                     {order.transportationOrders[0].receiverName}
@@ -285,15 +291,27 @@ function OrderDetail() {
 
             {order.status !== StandardOrderStatus.Pending &&
               order.status !== StandardOrderStatus.Canceled && (
-                <Grid item sm={5} md={4} className={styles.right}>
+                <Grid item sm={5} className={styles.right}>
                   <div className={styles.title}>Thông Tin Thanh Toán</div>
+                  <div className={styles.fee}>
+                    <span>Ngày thanh toán:</span>
+                    <span>
+                      {moment(
+                        order.standardOrderHistories.find(
+                          (item) => item.status === StandardOrderStatus.Paid
+                        )?.createdAt
+                      ).format("DD/MM/YYYY HH:mm")}
+                    </span>
+                  </div>
                   <div className={styles.fee}>
                     <span>Tiền Hàng:</span>
                     <span>{currencyFormatter(order.totalPrice.amount)}</span>
                   </div>
                   <div className={styles.fee}>
                     <span>Vận Chuyển:</span>
-                    <span>{currencyFormatter(0)}</span>
+                    <span>
+                      {shippingFee && currencyFormatter(+shippingFee)}
+                    </span>
                   </div>
                   <div className={styles.fee}>
                     <span>Tổng Cộng:</span>
