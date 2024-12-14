@@ -251,7 +251,7 @@ function CustomOrderDetail() {
               <legend>Khách Hàng</legend>
               <Grid container p={2}>
                 <Grid container justifyContent={"space-between"} mb={1}>
-                  <Grid item>Username:</Grid>
+                  <Grid item>Tên tài khoản:</Grid>
 
                   <Grid item>{order.customer.username}</Grid>
                 </Grid>
@@ -263,7 +263,7 @@ function CustomOrderDetail() {
                 </Grid>
 
                 <Grid container justifyContent={"space-between"} mb={1}>
-                  <Grid item>Username:</Grid>
+                  <Grid item>Số điện thoại:</Grid>
 
                   <Grid item>
                     {order.customer.phone ? order.customer.phone : "--"}

@@ -1,4 +1,11 @@
-import { Chip, FormLabel, Grid } from "@mui/material";
+import {
+  Box,
+  Chip,
+  Divider,
+  FormLabel,
+  Grid,
+  OutlinedInput,
+} from "@mui/material";
 import styles from "./StandardOrderDetail.module.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -10,21 +17,16 @@ import {
 import { fetchStandardOrderDetail } from "src/utils/querykey";
 import {
   currencyFormatter,
+  formatRefundMethodTitle,
   formatStandardOrderStatus,
 } from "src/utils/functions";
 import moment from "moment";
-import placeholder from "src/assets/default.jpg";
-import male from "src/assets/male-icon.png";
-import female from "src/assets/female-icon.png";
-import {
-  DesignCharacteristic,
-  ResponseType,
-  StandardOrderStatus,
-} from "src/utils/enums";
+import { ResponseType, StandardOrderStatus } from "src/utils/enums";
 import StaffStandardOrderTimeline from "src/components/timeline/staffStandardOrder/StaffStandardOrderTimeline";
 import { toast } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { primaryBtn } from "src/utils/styles";
+import StandardOrderItem from "src/components/product/StandardOrderItem";
 
 function StandardOrderDetail() {
   const [order, setOrder] = useState<IStandardOrder | null>(null);
@@ -91,7 +93,9 @@ function StandardOrderDetail() {
                   Mã đơn:
                 </Grid>
 
-                <Grid item>{order.orderNo}</Grid>
+                <Grid item>
+                  <FormLabel>{order.orderNo}</FormLabel>
+                </Grid>
               </Grid>
 
               <Grid container item sm={6}>
@@ -100,7 +104,9 @@ function StandardOrderDetail() {
                 </Grid>
 
                 <Grid item>
-                  {moment(order.createdAt).format("DD/MM/YYYY HH:mm")}
+                  <FormLabel>
+                    {moment(order.createdAt).format("DD/MM/YYYY HH:mm")}
+                  </FormLabel>
                 </Grid>
               </Grid>
             </Grid>
@@ -124,7 +130,7 @@ function StandardOrderDetail() {
                 <legend>Khách Hàng</legend>
                 <Grid container p={2}>
                   <Grid container justifyContent={"space-between"} mb={1}>
-                    <Grid item>Username:</Grid>
+                    <Grid item>Tên tài khoản:</Grid>
 
                     <Grid item>{order.customer.username}</Grid>
                   </Grid>
@@ -136,7 +142,7 @@ function StandardOrderDetail() {
                   </Grid>
 
                   <Grid container justifyContent={"space-between"} mb={1}>
-                    <Grid item>Username:</Grid>
+                    <Grid item>Số điện thoại:</Grid>
 
                     <Grid item>
                       {order.customer.phone ? order.customer.phone : "--"}
@@ -179,7 +185,135 @@ function StandardOrderDetail() {
             <Grid item md={6.5}>
               {order && <StaffStandardOrderTimeline order={order} />}
             </Grid>
+
+            <Grid container justifyContent={"center"} mt={4}>
+              <Grid container item xs={12}>
+                <Divider sx={{ width: "100%" }} />
+              </Grid>
+            </Grid>
           </Grid>
+
+          {order.status === StandardOrderStatus.Refunded && order.refund && (
+            <Grid container>
+              <Grid item xs={12} my={4} className={styles.subtitle}>
+                Thông tin hoàn tiền
+              </Grid>
+
+              <Grid container mb={1} justifyContent={"space-between"}>
+                <Grid container item md={6} alignItems={"baseline"}>
+                  <Grid item xs={4} md={3} mb={1}>
+                    Số tiền hoàn trả:
+                  </Grid>
+
+                  <Grid item className={styles.totalPrice}>
+                    {currencyFormatter(order.refund.amount.amount)}
+                  </Grid>
+                </Grid>
+
+                <Grid container item md={5.7}>
+                  <Grid item xs={4} md={3}>
+                    Phương thức:
+                  </Grid>
+
+                  <Grid item>
+                    <FormLabel>
+                      {formatRefundMethodTitle(order.refund.method)}
+                    </FormLabel>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Grid
+                container
+                rowGap={2}
+                mb={3}
+                justifyContent={"space-between"}
+              >
+                <Grid container item md={5.7}>
+                  <Grid item mb={2}>
+                    Lý do hoàn trả:
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <OutlinedInput
+                      sx={{ borderRadius: 0 }}
+                      fullWidth
+                      readOnly
+                      multiline
+                      rows={4}
+                      defaultValue={order.refund.reason}
+                    />
+                  </Grid>
+                </Grid>
+
+                <Grid container item md={5.7}>
+                  <Grid item xs={4} md={3}>
+                    Ngày thực hiện:
+                  </Grid>
+
+                  <Grid item>
+                    <FormLabel>
+                      {moment(
+                        order.standardOrderHistories.find(
+                          (item) => item.status === StandardOrderStatus.Refunded
+                        )?.createdAt
+                      ).format("DD/MM/YYYY HH:mm")}
+                    </FormLabel>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Box sx={{ mb: 1 }}>Hình ảnh giao dịch:</Box>
+              <Grid container rowGap={2} justifyContent={"space-between"}>
+                <Grid item md={5.7}>
+                  <img
+                    src={order.refund.proofImage.url}
+                    className={styles.refundImage}
+                  />
+                </Grid>
+                <Grid item xs={12} md={5.7}>
+                  <fieldset style={{ margin: 0, width: "100%" }}>
+                    <legend>Nhân Viên Thực Hiện</legend>
+                    <Grid container p={2}>
+                      <Grid container justifyContent={"space-between"} mb={1}>
+                        <Grid item>Tên tài khoản:</Grid>
+
+                        <Grid item>{order.refund.staff.username}</Grid>
+                      </Grid>
+
+                      <Grid container justifyContent={"space-between"} mb={1}>
+                        <Grid item>Email:</Grid>
+
+                        <Grid item>{order.refund.staff.email}</Grid>
+                      </Grid>
+
+                      <Grid container justifyContent={"space-between"} mb={1}>
+                        <Grid item>Số điện thoại:</Grid>
+
+                        <Grid item>
+                          {order.refund.staff.phone
+                            ? order.refund.staff.phone
+                            : "--"}
+                        </Grid>
+                      </Grid>
+
+                      <Grid container justifyContent={"space-between"} mb={1}>
+                        <Grid item>Chi Nhánh:</Grid>
+
+                        <Grid item>{order.refund.staff.branch?.storeName}</Grid>
+                      </Grid>
+                    </Grid>
+                  </fieldset>
+                </Grid>
+              </Grid>
+
+              <Grid container justifyContent={"center"} my={4}>
+                <Grid container item xs={12}>
+                  <Divider sx={{ width: "100%" }} />
+                </Grid>
+              </Grid>
+            </Grid>
+          )}
 
           <Grid container>
             <Grid item xs={12} my={4} className={styles.subtitle}>
@@ -187,85 +321,7 @@ function StandardOrderDetail() {
             </Grid>
 
             {order.standardOrderItems.map((item) => {
-              const img = item.design.designMetalSpecifications.find(
-                (i) => i.metalSpecification.id === item.metalSpecification.id
-              )?.image.url;
-
-              return (
-                <Grid container key={item.id} className={styles.jewelry}>
-                  <Grid item sm={4} lg={2.5}>
-                    <img
-                      src={img ? img : placeholder}
-                      className={styles.image}
-                    />
-                  </Grid>
-
-                  <Grid container item sm={7.5} lg={9}>
-                    <Grid item className={styles.name}>
-                      {item.design.name}
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      {item.design.characteristic ===
-                        DesignCharacteristic.Male && (
-                        <div>
-                          <img src={male} className={styles.genderIcon} />{" "}
-                          {"Nam Tính"}
-                        </div>
-                      )}
-
-                      {item.design.characteristic ===
-                        DesignCharacteristic.Female && (
-                        <div>
-                          <img src={female} className={styles.genderIcon} />{" "}
-                          {"Nữ Tính"}
-                        </div>
-                      )}
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      <FormLabel>
-                        Bộ Sưu Tập {item.design.designCollection.name}
-                      </FormLabel>
-                    </Grid>
-
-                    <Grid container justifyContent={"space-between"}>
-                      <Grid container item md={6} gap={2}>
-                        <Grid item>Chất liệu:</Grid>
-
-                        <Grid item>{item.metalSpecification.name}</Grid>
-                      </Grid>
-
-                      <Grid container item md={6} gap={2}>
-                        <Grid item>Kích thước:</Grid>
-
-                        <Grid item>{item.design.size} cm</Grid>
-                      </Grid>
-                    </Grid>
-
-                    <Grid container justifyContent={"space-between"}>
-                      <Grid container item md={6} gap={2}>
-                        <Grid item>Kim cương phụ:</Grid>
-
-                        <Grid item>{item.design.sideDiamondsCount} viên</Grid>
-                      </Grid>
-
-                      <Grid container item md={6} gap={2}>
-                        <Grid item>Khối lượng:</Grid>
-
-                        <Grid item>{item.design.metalWeight} chỉ</Grid>
-                      </Grid>
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      Giá Tiền:{" "}
-                      <span className={styles.price}>
-                        {currencyFormatter(item.price.amount)}
-                      </span>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              );
+              return <StandardOrderItem key={item.id} item={item} />;
             })}
           </Grid>
 

@@ -9,6 +9,7 @@ import {
   CustomRequestStatus,
   GoldColor,
   JewelryStatus,
+  RefundMethod,
   StandardOrderStatus,
   TransportOrderStatus,
 } from "./enums";
@@ -286,6 +287,12 @@ export const formatCustomOrderStatus = (
       color: "success",
     };
 
+  if (status === CustomOrderStatus.Refunded)
+    return {
+      text: "Đã Hoàn Tiền",
+      color: "warning",
+    };
+
   return {
     text: "Đã Hủy",
     color: "error",
@@ -340,6 +347,12 @@ export const formatStandardOrderStatus = (
       color: "success",
     };
 
+  if (status === StandardOrderStatus.Refunded)
+    return {
+      text: "Đã Hoàn Tiền",
+      color: "warning",
+    };
+
   return {
     text: "Đã Hủy",
     color: "error",
@@ -389,4 +402,9 @@ export const formatTransportOrderStatus = (
     text: "Thất Bại",
     color: "error",
   };
+};
+
+export const formatRefundMethodTitle = (method: RefundMethod) => {
+  if (method === RefundMethod.Cash) return "Trả tiền mặt";
+  return "Chuyển khoản";
 };

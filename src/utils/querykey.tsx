@@ -34,6 +34,7 @@ export const fetchCraftingRequestGroups = "fetchCraftingRequestGroups";
 
 export const fetchCustomOrders = "fetchCustomOrders";
 export const fetchCustomOrderDetail = "fetchCustomOrderDetail";
+export const fetchCustomOrderByOrderNo = "fetchCustomOrderByOrderNo";
 
 export const fetchCraftingStages = "fetchCraftingStages";
 
@@ -66,5 +67,8 @@ export const fetchJewelries = "fetchJewelries";
 
 export const fetchStandardOrders = "fetchStandardOrders";
 export const fetchStandardOrderDetail = "fetchStandardOrderDetail";
+export const fetchStandardOrderByOrderNo = "fetchStandardOrderByOrderNo";
 
 export const fetchPaymentDetail = "fetchPaymentDetail";
+
+export const fetchRefunds = "fetchRefunds";

@@ -297,10 +297,32 @@ function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
             </TimelineOppositeContent>
             <TimelineSeparator>
               <TimelineDot color="success" />
+              {order.customOrderHistories.find(
+                (item) => item.status === CustomOrderStatus.Refunded
+              ) && <TimelineConnector />}
             </TimelineSeparator>
             <TimelineContent>Khách đã nhận hàng</TimelineContent>
           </TimelineItem>
         )}
+
+      {/* Refund custom order */}
+      {order.customOrderHistories.find(
+        (item) => item.status === CustomOrderStatus.Refunded
+      ) && (
+        <TimelineItem>
+          <TimelineOppositeContent color="textSecondary">
+            {moment(
+              order.customOrderHistories.find(
+                (item) => item.status === CustomOrderStatus.Refunded
+              )?.createdAt
+            ).format("DD/MM/YYYY HH:mm")}
+          </TimelineOppositeContent>
+          <TimelineSeparator>
+            <TimelineDot color="error" />
+          </TimelineSeparator>
+          <TimelineContent>Đơn đã được hoàn tiền</TimelineContent>
+        </TimelineItem>
+      )}
 
       {/* Cancel custom order */}
       {order.customOrderHistories.find(

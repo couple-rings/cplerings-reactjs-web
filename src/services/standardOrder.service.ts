@@ -30,6 +30,12 @@ export const getStandardOrders = (queryObj: IStandardOrderFilter) => {
   );
 };
 
+export const getStandardOrderByOrderNo = (orderNo: string) => {
+  return axios.get<unknown, IResponse<{ standardOrder: IStandardOrder }>>(
+    `standard-orders/orderNo/${orderNo}`
+  );
+};
+
 export const getStandardOrderDetail = (id: number) => {
   return axios.get<unknown, IResponse<{ standardOrder: IStandardOrder }>>(
     `standard-orders/${id}`
@@ -37,7 +43,7 @@ export const getStandardOrderDetail = (id: number) => {
 };
 
 export const putCompleteStandardOrder = (orderId: number) => {
-  return axios.post<unknown, IResponse<object>>(`orders/complete`, {
+  return axios.put<unknown, IResponse<object>>(`orders/complete`, {
     orderId,
     orderType: OrderType.Standard,
   });

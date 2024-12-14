@@ -1,11 +1,20 @@
 import styles from "./OrderDetail.module.scss";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { Button, FormHelperText, Grid, Skeleton } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormHelperText,
+  FormLabel,
+  Grid,
+  OutlinedInput,
+  Skeleton,
+} from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import CustomizedSteppers from "src/components/stepper/Stepper";
 import sample from "src/assets/default.jpg";
 import {
   currencyFormatter,
+  formatRefundMethodTitle,
   formatStandardOrderStatus,
 } from "src/utils/functions";
 import { useEffect, useState } from "react";
@@ -115,19 +124,21 @@ function OrderDetail() {
           </div>
 
           <Grid container justifyContent={"center"}>
-            {order.status !== StandardOrderStatus.Canceled && (
-              <Grid item xs={12} md={8} lg={6}>
-                <CustomizedSteppers
-                  activeStep={determineStep()}
-                  shipping={
-                    order.transportationOrders.length > 0 ? true : false
-                  }
-                />
-              </Grid>
-            )}
+            {order.status !== StandardOrderStatus.Canceled &&
+              order.status !== StandardOrderStatus.Refunded && (
+                <Grid item xs={12} md={8} lg={6}>
+                  <CustomizedSteppers
+                    activeStep={determineStep()}
+                    shipping={
+                      order.transportationOrders.length > 0 ? true : false
+                    }
+                  />
+                </Grid>
+              )}
 
             {order.status !== StandardOrderStatus.Pending &&
               order.status !== StandardOrderStatus.Canceled &&
+              order.status !== StandardOrderStatus.Refunded &&
               order.transportationOrders.length > 0 && (
                 <Grid container item xs={12} justifyContent={"center"} mt={6}>
                   <Button
@@ -317,6 +328,122 @@ function OrderDetail() {
               </Grid>
             )}
           </Grid>
+
+          {order.status === StandardOrderStatus.Refunded && order.refund && (
+            <Grid container>
+              <Grid item xs={12} my={4} className={styles.refuntTitle}>
+                Thông tin hoàn tiền
+              </Grid>
+
+              <Grid container mb={1} justifyContent={"space-between"}>
+                <Grid container item md={6} alignItems={"baseline"}>
+                  <Grid item xs={4} mb={1}>
+                    Số tiền hoàn trả:
+                  </Grid>
+
+                  <Grid item className={styles.totalPrice}>
+                    {currencyFormatter(order.refund.amount.amount)}
+                  </Grid>
+                </Grid>
+
+                <Grid container item md={5.7}>
+                  <Grid item xs={4}>
+                    Phương thức:
+                  </Grid>
+
+                  <Grid item>
+                    <FormLabel>
+                      {formatRefundMethodTitle(order.refund.method)}
+                    </FormLabel>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Grid
+                container
+                rowGap={2}
+                mb={3}
+                justifyContent={"space-between"}
+              >
+                <Grid container item md={5.7}>
+                  <Grid item mb={2}>
+                    Lý do hoàn trả:
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <OutlinedInput
+                      sx={{ borderRadius: 0 }}
+                      fullWidth
+                      readOnly
+                      multiline
+                      rows={4}
+                      defaultValue={order.refund.reason}
+                    />
+                  </Grid>
+                </Grid>
+
+                <Grid container item md={5.7}>
+                  <Grid item xs={4}>
+                    Ngày thực hiện:
+                  </Grid>
+
+                  <Grid item>
+                    <FormLabel>
+                      {moment(
+                        order.standardOrderHistories.find(
+                          (item) => item.status === StandardOrderStatus.Refunded
+                        )?.createdAt
+                      ).format("DD/MM/YYYY HH:mm")}
+                    </FormLabel>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Box sx={{ mb: 1 }}>Hình ảnh giao dịch:</Box>
+              <Grid container rowGap={2} justifyContent={"space-between"}>
+                <Grid item md={5.7}>
+                  <img
+                    src={order.refund.proofImage.url}
+                    className={styles.refundImage}
+                  />
+                </Grid>
+                <Grid item xs={12} md={5.7}>
+                  <fieldset style={{ margin: 0, width: "100%" }}>
+                    <legend>Nhân Viên Thực Hiện</legend>
+                    <Grid container p={2}>
+                      <Grid container justifyContent={"space-between"} mb={1}>
+                        <Grid item>Tên tài khoản:</Grid>
+
+                        <Grid item>{order.refund.staff.username}</Grid>
+                      </Grid>
+
+                      <Grid container justifyContent={"space-between"} mb={1}>
+                        <Grid item>Email:</Grid>
+
+                        <Grid item>{order.refund.staff.email}</Grid>
+                      </Grid>
+
+                      <Grid container justifyContent={"space-between"} mb={1}>
+                        <Grid item>Số điện thoại:</Grid>
+
+                        <Grid item>
+                          {order.refund.staff.phone
+                            ? order.refund.staff.phone
+                            : "--"}
+                        </Grid>
+                      </Grid>
+
+                      <Grid container justifyContent={"space-between"} mb={1}>
+                        <Grid item>Chi Nhánh:</Grid>
+
+                        <Grid item>{order.refund.staff.branch?.storeName}</Grid>
+                      </Grid>
+                    </Grid>
+                  </fieldset>
+                </Grid>
+              </Grid>
+            </Grid>
+          )}
         </Grid>
 
         {order.transportationOrders.length > 0 && (

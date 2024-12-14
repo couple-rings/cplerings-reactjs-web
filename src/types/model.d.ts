@@ -9,6 +9,7 @@ import {
   FileType,
   GoldColor,
   PaymentStatus,
+  RefundMethod,
   RingStatus,
   StandardOrderStatus,
   Status,
@@ -558,6 +559,7 @@ declare global {
     standardOrderHistories: IStatusHistory<StandardOrderStatus>[];
     transportationOrders: ITransportOrder[];
     standardOrderItems: IStandardOrderItem[];
+    refund?: IRefund;
     createdAt: string;
   }
 
@@ -578,5 +580,21 @@ declare global {
     id: number;
     key: ConfigurationKey;
     value: string;
+  }
+
+  interface IRefund {
+    id: number;
+    reason: string;
+    method: RefundMethod;
+    amount: {
+      amount: number;
+    };
+    staff: IUser;
+    standardOrder?: IStandardOrder;
+    customOrder?: ICustomOrder;
+    proofImage: {
+      url: string;
+      createdAt: string;
+    };
   }
 }
