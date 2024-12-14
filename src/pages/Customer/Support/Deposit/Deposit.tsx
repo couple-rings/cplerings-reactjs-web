@@ -557,8 +557,10 @@ function Deposit() {
                 <Grid container justifyContent={"space-between"}>
                   <Grid item>Kim cương:</Grid>
                   <Grid item>
-                    {maleRing.diamonds[0].diamondSpecification.shape}{" "}
-                    {getDiamondSpec(maleRing.diamonds[0].diamondSpecification)}
+                    {maleRing.diamonds.length > 0 &&
+                      maleRing.diamonds[0].diamondSpecification.shape}{" "}
+                    {maleRing.diamonds.length > 0 &&
+                      getDiamondSpec(maleRing.diamonds[0].diamondSpecification)}
                   </Grid>
                 </Grid>
                 <Grid container justifyContent={"space-between"}>
@@ -589,10 +591,12 @@ function Deposit() {
                 <Grid container justifyContent={"space-between"}>
                   <Grid item>Kim cương:</Grid>
                   <Grid item>
-                    {femaleRing.diamonds[0].diamondSpecification.shape}{" "}
-                    {getDiamondSpec(
-                      femaleRing.diamonds[0].diamondSpecification
-                    )}
+                    {femaleRing.diamonds.length > 0 &&
+                      femaleRing.diamonds[0].diamondSpecification.shape}{" "}
+                    {femaleRing.diamonds.length > 0 &&
+                      getDiamondSpec(
+                        femaleRing.diamonds[0].diamondSpecification
+                      )}
                   </Grid>
                 </Grid>
                 <Grid container justifyContent={"space-between"}>

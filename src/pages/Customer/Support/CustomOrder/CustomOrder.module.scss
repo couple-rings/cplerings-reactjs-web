@@ -9,6 +9,10 @@
         margin-bottom: 3rem;
     }
 
+    .tabLabel {
+        text-transform: capitalize;
+    }
+
     .order {
         border: 1px solid $secondaryColor;
 

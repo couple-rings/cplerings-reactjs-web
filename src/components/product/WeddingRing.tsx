@@ -44,8 +44,10 @@ function WeddingRing(props: IWeddingRingProps) {
             <Grid item>Kim cương:</Grid>
 
             <Grid item>
-              {ring.diamonds[0].diamondSpecification.shape}{" "}
-              {getDiamondSpec(ring.diamonds[0].diamondSpecification)}
+              {ring.diamonds.length > 0 &&
+                ring.diamonds[0].diamondSpecification.shape}{" "}
+              {ring.diamonds.length > 0 &&
+                getDiamondSpec(ring.diamonds[0].diamondSpecification)}
             </Grid>
           </Grid>
 
