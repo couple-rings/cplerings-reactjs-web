@@ -50,7 +50,7 @@ const saleStaffSidebarList = [
     path: "/staff/maintenance-order",
   },
   {
-    text: "Yêu Cầu Hoàn Tiền",
+    text: "Danh Sách Hoàn Tiền",
     icon: <CurrencyExchangeIcon />,
     path: "/staff/refund-order",
   },

@@ -186,7 +186,7 @@ function CraftingRequestDetail() {
               <fieldset style={{ margin: 0 }}>
                 <legend>Khách Hàng</legend>
                 <Grid container justifyContent={"space-between"} mb={1}>
-                  <Grid item>Username:</Grid>
+                  <Grid item>Tên tài khoản:</Grid>
 
                   <Grid item>{maleRequest.customer.username}</Grid>
                 </Grid>
@@ -434,7 +434,7 @@ const PastRequests = (props: IPastRequestsProps) => {
           <legend>Khách hàng</legend>
           <Grid container my={1}>
             <Grid item xs={3}>
-              Username:
+              Tên tài khoản:
             </Grid>
             <Grid item>{data[0].customer.username}</Grid>
           </Grid>
@@ -448,7 +448,7 @@ const PastRequests = (props: IPastRequestsProps) => {
 
           <Grid container mb={1}>
             <Grid item xs={3}>
-              Phone:
+              Số điện thoại:
             </Grid>
             <Grid item>
               {data[0].customer.phone ? data[0].customer.phone : "--"}

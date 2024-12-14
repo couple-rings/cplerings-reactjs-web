@@ -21,10 +21,18 @@
     .totalPrice {
         font-weight: 600;
         font-size  : 1.2rem;
+        color      : $secondaryColor;
     }
 
     .subtitle {
         font-size: 1.3rem;
+    }
+
+    .refundImage {
+        width     : 100%;
+        border    : 1px solid #ccc;
+        object-fit: contain;
+        max-height: 300px;
     }
 
     .jewelry {

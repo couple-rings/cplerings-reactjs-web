@@ -123,10 +123,32 @@ function StaffStandardOrderTimeline(props: IStaffStandardOrderTimelineProps) {
             </TimelineOppositeContent>
             <TimelineSeparator>
               <TimelineDot color="success" />
+              {order.standardOrderHistories.find(
+                (item) => item.status === StandardOrderStatus.Refunded
+              ) && <TimelineConnector />}
             </TimelineSeparator>
             <TimelineContent>Khách đã nhận hàng</TimelineContent>
           </TimelineItem>
         )}
+
+      {/* Refund order */}
+      {order.standardOrderHistories.find(
+        (item) => item.status === StandardOrderStatus.Refunded
+      ) && (
+        <TimelineItem>
+          <TimelineOppositeContent color="textSecondary">
+            {moment(
+              order.standardOrderHistories.find(
+                (item) => item.status === StandardOrderStatus.Refunded
+              )?.createdAt
+            ).format("DD/MM/YYYY HH:mm")}
+          </TimelineOppositeContent>
+          <TimelineSeparator>
+            <TimelineDot color="error" />
+          </TimelineSeparator>
+          <TimelineContent>Đơn đã được hoàn tiền</TimelineContent>
+        </TimelineItem>
+      )}
 
       {/* Cancel order */}
       {order.standardOrderHistories.find(
