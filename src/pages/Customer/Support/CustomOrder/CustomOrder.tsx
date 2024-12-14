@@ -1,15 +1,26 @@
-import { Box, Button, Card, Chip, Grid, Skeleton } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  Chip,
+  Grid,
+  Pagination,
+  Skeleton,
+  SxProps,
+  Tab,
+  Tabs,
+} from "@mui/material";
 import styles from "./CustomOrder.module.scss";
 import male from "src/assets/male-icon.png";
 import female from "src/assets/female-icon.png";
 import { secondaryBtn } from "src/utils/styles";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppSelector } from "src/utils/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { getCustomOrders } from "src/services/customOrder.service";
 import { fetchCustomOrders } from "src/utils/querykey";
-import { DesignCharacteristic } from "src/utils/enums";
+import { CustomOrderStatus, DesignCharacteristic } from "src/utils/enums";
 import {
   currencyFormatter,
   formatCustomOrderStatus,
@@ -18,10 +29,27 @@ import {
 import moment from "moment";
 import HoverCard from "src/components/product/HoverCard";
 
+const boxStyle: SxProps = {
+  borderBottom: 1,
+  borderColor: "divider",
+  width: "100%",
+  mb: 6,
+};
+
+const initMetaData = {
+  page: 0,
+  pageSize: 3,
+  totalPages: 0,
+  count: 0,
+};
+
 function CustomOrder() {
+  const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
   const [filterObj, setFilterObj] = useState<ICustomOrderFilter | null>(null);
 
   const navigate = useNavigate();
+
+  const ref = useRef<HTMLDivElement>(null);
 
   const { id } = useAppSelector((state) => state.auth.userInfo);
 
@@ -34,11 +62,44 @@ function CustomOrder() {
     enabled: !!filterObj,
   });
 
+  const handleFilter = (status: CustomOrderStatus) => {
+    if (filterObj)
+      setFilterObj({
+        ...filterObj,
+        page: 0,
+        pageSize: 3,
+        status,
+      });
+  };
+
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    if (filterObj)
+      setFilterObj({
+        ...filterObj,
+        page: value - 1,
+      });
+  };
+
+  useEffect(() => {
+    if (response && response.data) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { items, ...rest } = response.data;
+      setMetaData(rest);
+
+      window.scrollTo({
+        top: ref.current?.offsetTop,
+        left: 0,
+        behavior: "smooth",
+      });
+    }
+  }, [response]);
+
   useEffect(() => {
     setFilterObj({
       page: 0,
-      pageSize: 100,
+      pageSize: 3,
       customerId: id,
+      status: CustomOrderStatus.Pending,
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -62,9 +123,91 @@ function CustomOrder() {
     );
 
   return (
-    <Grid container className={styles.container} justifyContent={"center"}>
+    <Grid
+      container
+      className={styles.container}
+      justifyContent={"center"}
+      ref={ref}
+    >
       <Grid container item xs={11}>
         <div className={styles.title}>Đơn Hàng Gia Công</div>
+
+        {filterObj && (
+          <Box sx={boxStyle}>
+            <Tabs
+              classes={{
+                indicator: "myIndicator",
+              }}
+              value={filterObj.status}
+              onChange={(e, value: CustomOrderStatus) => handleFilter(value)}
+            >
+              <Tab
+                classes={{
+                  selected: "selectedCustomRequestTab",
+                }}
+                className={styles.tabLabel}
+                label="Chưa thanh toán"
+                value={CustomOrderStatus.Pending}
+              />
+              <Tab
+                classes={{
+                  selected: "selectedCustomRequestTab",
+                }}
+                className={styles.tabLabel}
+                label="Đang chuẩn bị"
+                value={CustomOrderStatus.Waiting}
+              />
+              <Tab
+                classes={{
+                  selected: "selectedCustomRequestTab",
+                }}
+                className={styles.tabLabel}
+                label="Đang Gia Công"
+                value={CustomOrderStatus.InProgress}
+              />
+              <Tab
+                classes={{
+                  selected: "selectedCustomRequestTab",
+                }}
+                className={styles.tabLabel}
+                label="Hoàn Tất Gia Công"
+                value={CustomOrderStatus.Done}
+              />
+              <Tab
+                classes={{
+                  selected: "selectedCustomRequestTab",
+                }}
+                className={styles.tabLabel}
+                label="Đang Giao"
+                value={CustomOrderStatus.Delivering}
+              />
+              <Tab
+                classes={{
+                  selected: "selectedCustomRequestTab",
+                }}
+                className={styles.tabLabel}
+                label="Hoàn Thành"
+                value={CustomOrderStatus.Completed}
+              />
+              <Tab
+                classes={{
+                  selected: "selectedCustomRequestTab",
+                }}
+                className={styles.tabLabel}
+                label="Đã Hoàn Tiền"
+                value={CustomOrderStatus.Refunded}
+              />
+              <Tab
+                classes={{
+                  selected: "selectedCustomRequestTab",
+                }}
+                className={styles.tabLabel}
+                label="Đã Hủy"
+                value={CustomOrderStatus.Canceled}
+              />
+            </Tabs>
+          </Box>
+        )}
 
         {response?.data?.items.map((item) => {
           const maleRing =
@@ -73,7 +216,10 @@ function CustomOrder() {
               ? item.firstRing
               : item.secondRing;
 
-          const maleDiamondSpec = maleRing.diamonds[0].diamondSpecification;
+          const maleDiamondSpec =
+            maleRing.diamonds.length > 0
+              ? maleRing.diamonds[0].diamondSpecification
+              : null;
 
           const femaleRing =
             item.firstRing.customDesign.designVersion.design.characteristic ===
@@ -81,13 +227,16 @@ function CustomOrder() {
               ? item.firstRing
               : item.secondRing;
 
-          const femaleDiamondSpec = femaleRing.diamonds[0].diamondSpecification;
+          const femaleDiamondSpec =
+            femaleRing.diamonds.length > 0
+              ? femaleRing.diamonds[0].diamondSpecification
+              : null;
 
           return (
             <Card
               key={item.id}
               className={styles.order}
-              sx={{ px: { md: 5, lg: 2 }, py: { md: 3, lg: 1 } }}
+              sx={{ px: { md: 5, lg: 2 }, py: { md: 3, lg: 1 }, mb: 3 }}
             >
               <Grid
                 container
@@ -162,8 +311,8 @@ function CustomOrder() {
                         Kim Cương:
                       </Grid>
                       <div>
-                        {maleDiamondSpec.shape}{" "}
-                        {getDiamondSpec(maleDiamondSpec)}
+                        {maleDiamondSpec && maleDiamondSpec.shape}{" "}
+                        {maleDiamondSpec && getDiamondSpec(maleDiamondSpec)}
                       </div>
                     </Grid>
 
@@ -216,8 +365,8 @@ function CustomOrder() {
                         Kim Cương:
                       </Grid>
                       <div>
-                        {femaleDiamondSpec.shape}{" "}
-                        {getDiamondSpec(femaleDiamondSpec)}
+                        {femaleDiamondSpec && femaleDiamondSpec.shape}{" "}
+                        {femaleDiamondSpec && getDiamondSpec(femaleDiamondSpec)}
                       </div>
                     </Grid>
 
@@ -255,7 +404,17 @@ function CustomOrder() {
 
         {response?.data?.items.length === 0 && (
           <Grid container mb={10}>
-            Chưa có đơn hàng nào
+            Không tìm thấy đơn hàng nào
+          </Grid>
+        )}
+
+        {metaData.totalPages > 1 && (
+          <Grid container justifyContent={"center"} mt={5}>
+            <Pagination
+              count={metaData.totalPages}
+              page={metaData.page + 1}
+              onChange={handleChange}
+            />
           </Grid>
         )}
       </Grid>

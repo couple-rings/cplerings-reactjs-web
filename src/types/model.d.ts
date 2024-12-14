@@ -426,6 +426,7 @@ declare global {
     };
     status: CustomOrderStatus;
     createdAt: string;
+    refund?: IRefund;
     customOrderHistories: IStatusHistory<CustomOrderStatus>[];
   }
 

@@ -29,6 +29,18 @@
         font-weight: 600;
     }
 
+    .refuntTitle {
+        font-size    : 1.3rem;
+        margin-bottom: 2rem;
+    }
+
+    .refundImage {
+        width     : 100%;
+        border    : 1px solid #ccc;
+        object-fit: contain;
+        max-height: 300px;
+    }
+
     .card {
         box-shadow   : $boxShadow;
         border-radius: 10px;
