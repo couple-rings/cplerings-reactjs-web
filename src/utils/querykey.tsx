@@ -14,6 +14,8 @@ export const fetchJewelerProfile = "fetchJewelerProfile";
 export const fetchManagerProfile = "fetchManagerProfile";
 export const fetchAdminProfile = "fetchAdminProfile";
 
+export const fetchCustomers = "fetchCustomers";
+
 export const fetchCoupleDesigns = "fetchCoupleDesigns";
 export const fetchDesigns = "fetchDesigns";
 export const fetchDesignDetail = "fetchDesignDetail";
@@ -34,6 +36,7 @@ export const fetchCraftingRequestGroups = "fetchCraftingRequestGroups";
 
 export const fetchCustomOrders = "fetchCustomOrders";
 export const fetchCustomOrderDetail = "fetchCustomOrderDetail";
+export const fetchCustomOrderByOrderNo = "fetchCustomOrderByOrderNo";
 
 export const fetchCraftingStages = "fetchCraftingStages";
 
@@ -63,8 +66,12 @@ export const fetchCollections = "fetchCollections";
 export const fetchJewelryCategories = "fetchJewelryCategories";
 
 export const fetchJewelries = "fetchJewelries";
+export const fetchJewelryByProductNo = "fetchJewelryByProductNo";
 
 export const fetchStandardOrders = "fetchStandardOrders";
 export const fetchStandardOrderDetail = "fetchStandardOrderDetail";
+export const fetchStandardOrderByOrderNo = "fetchStandardOrderByOrderNo";
 
 export const fetchPaymentDetail = "fetchPaymentDetail";
+
+export const fetchRefunds = "fetchRefunds";

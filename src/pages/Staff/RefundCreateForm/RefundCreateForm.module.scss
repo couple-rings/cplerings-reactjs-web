@@ -1,146 +1,53 @@
-@use "src/index.scss" as *;
+@use "src/index.scss"as *;
 
 .container {
-  padding: 2rem;
+  padding        : 3rem 0;
+  color          : $primaryColor;
+  justify-content: center;
 
   .title {
-    font-size: 2rem;
-    color: $primaryColor;
-    margin-bottom: 2rem;
-    text-align: center;
-    font-weight: 500;
-  }
-
-  .formCard {
-    margin-bottom: 2rem;
-    border-radius: 12px;
-    box-shadow: $boxShadow;
-
-    .sectionTitle {
-      font-size: 1.3rem;
-      font-weight: 500;
-      color: $primaryColor;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-
-      .icon {
-        font-size: 1.5rem;
-      }
-    }
-  }
-
-  .buttonGroup {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    
-    button {
-      text-transform: none;
-      border-radius: 8px;
-      
-      &:hover {
-        opacity: 0.9;
-      }
-    }
-  }
-}
-
-.orderCard {
-  background: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: all 0.2s ease;
-  margin-bottom: 1rem;
-
-  &:hover {
-    border-color: rgba($primaryColor, 0.3);
-  }
-
-  .orderHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    font-size    : 1.5rem;
+    color        : $primaryColor;
     margin-bottom: 1rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #eee;
-
-    .collection {
-      font-size: 1.2rem;
-      font-weight: 500;
-      color: $primaryColor;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-
-      .collectionIcon {
-        font-size: 1.5rem;
-      }
-    }
-
-    .price {
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: $primaryColor;
-    }
+    font-weight  : 500;
   }
 
-  .orderDate {
-    color: $grayColor;
-    font-size: 0.95rem;
-    margin-bottom: 1.5rem;
+  .tabLabel {
+    text-transform: capitalize;
   }
 
-  .ringsInfo {
-    display: flex;
-    background: white;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  .card {
+    box-shadow: $boxShadow;
+    gap       : 1rem;
+    padding   : 2rem;
+  }
 
-    .ringSection {
-      flex: 1;
+  .status {
+    color: $secondaryColor;
+  }
 
-      .ringTitle {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-weight: 500;
-        margin-bottom: 1rem;
-        color: $primaryColor;
-        padding-bottom: 0.8rem;
-        border-bottom: 2px solid #f0f0f0;
+  .sectionTitle {
+    font-weight: 500;
+    font-size  : 1.2rem;
+  }
 
-        .icon {
-          font-size: 1.2rem;
-        }
-      }
+  .totalPrice {
+    color      : $secondaryColor;
+    font-size  : 1.2rem;
+    font-weight: 600;
+  }
 
-      .specs {
-        display: flex;
-        flex-direction: column;
-        gap: 0.8rem;
+  .ratio {
+    font-size  : 1.2rem;
+    color      : #555;
+    font-weight: 300;
+  }
 
-        .spec {
-          display: flex;
-          gap: 0.5rem;
+  .refundAmount {
+    font-size: 1.3rem;
 
-          .label {
-            color: $grayColor;
-            min-width: 80px;
-          }
-
-          .value {
-            font-weight: 500;
-            color: #2d3748;
-          }
-        }
-      }
+    .amount {
+      color: $secondaryColor;
     }
   }
 }

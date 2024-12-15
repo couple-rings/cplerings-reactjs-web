@@ -341,12 +341,16 @@ function WeddingRingsDetail() {
         }
       }
 
-      const allOrdersCanceled = orders.every(
-        (item) => item.status === CustomOrderStatus.Canceled
-      );
+      if (orders.length !== 0) {
+        const allCanceledOrRefunded = orders.every(
+          (item) =>
+            item.status === CustomOrderStatus.Canceled ||
+            item.status === CustomOrderStatus.Refunded
+        );
 
-      if (!allOrdersCanceled) {
-        setAllow(false);
+        if (!allCanceledOrRefunded) {
+          setAllow(false);
+        }
       }
     }
   }, [customRequestResponse, customOrderResponse]);

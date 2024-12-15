@@ -258,7 +258,7 @@ function StandardOrder() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Đơn Bán Hàng</div>
+      <div className={styles.title}>Đơn Bán Trang Sức</div>
 
       {filterObj && (
         <Box sx={boxStyle}>
@@ -302,6 +302,14 @@ function StandardOrder() {
               className={styles.tabLabel}
               label="Đã Hoàn Thành"
               value={StandardOrderStatus.Completed}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Đã Hoàn Tiền"
+              value={StandardOrderStatus.Refunded}
             />
             <Tab
               classes={{

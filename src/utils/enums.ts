@@ -73,6 +73,7 @@ export enum CustomOrderStatus {
   Delivering = "DELIVERING",
   Completed = "COMPLETED",
   Canceled = "CANCELED",
+  Refunded = "REFUNDED",
 }
 
 export enum MaintenanceOrderStatus {
@@ -183,6 +184,7 @@ export enum JewelryStatus {
   Available = "AVAILABLE",
   Unavailable = "UNAVAILABLE",
   Purchased = "PURCHASED",
+  Resold = "RESOLD",
 }
 
 export enum StandardOrderStatus {
@@ -191,6 +193,7 @@ export enum StandardOrderStatus {
   Delivering = "DELIVERING",
   Completed = "COMPLETED",
   Canceled = "CANCELLED",
+  Refunded = "REFUNDED",
 }
 
 export enum PaymentType {
@@ -221,4 +224,10 @@ export enum ConfigurationKey {
 export enum OrderType {
   Standard = "STANDARD",
   Custom = "CUSTOM",
+}
+
+export enum PaymentMethod {
+  Default = "",
+  Cash = "CASH",
+  Transfer = "TRANSFER",
 }

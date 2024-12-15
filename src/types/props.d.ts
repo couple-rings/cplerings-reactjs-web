@@ -460,6 +460,8 @@ declare global {
 
   interface ITransportOrderModalProps extends IModalProps {
     order: ITransportOrder;
+
+    filterObj?: ITransportOrderFilter;
   }
 
   interface ICustomRequestRowProps {
@@ -489,6 +491,8 @@ declare global {
 
   interface IStaffCustomOrderTimelineProps {
     order: ICustomOrder;
+
+    transportOrder?: ITransportOrder;
   }
 
   interface IJewelerCustomOrderTimelineProps
@@ -558,5 +562,19 @@ declare global {
     data: IPayment;
 
     orderPrice: number;
+  }
+
+  interface IStandardOrderItemProps {
+    item: IStandardOrderItem;
+  }
+
+  interface IJewelryProps {
+    item: IJewelry;
+  }
+
+  interface IWeddingRingProps {
+    ring: IRing;
+
+    gender: DesignCharacteristic;
   }
 }

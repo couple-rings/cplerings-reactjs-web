@@ -9,6 +9,7 @@ import {
   CustomRequestStatus,
   GoldColor,
   JewelryStatus,
+  PaymentMethod,
   StandardOrderStatus,
   TransportOrderStatus,
 } from "./enums";
@@ -286,6 +287,12 @@ export const formatCustomOrderStatus = (
       color: "success",
     };
 
+  if (status === CustomOrderStatus.Refunded)
+    return {
+      text: "Đã Hoàn Tiền",
+      color: "warning",
+    };
+
   return {
     text: "Đã Hủy",
     color: "error",
@@ -305,6 +312,12 @@ export const formatJewelryStatus = (
     return {
       text: "Purchased",
       color: "info",
+    };
+
+  if (status === JewelryStatus.Resold)
+    return {
+      text: "Resold",
+      color: "warning",
     };
 
   return {
@@ -338,6 +351,12 @@ export const formatStandardOrderStatus = (
     return {
       text: "Hoàn Thành",
       color: "success",
+    };
+
+  if (status === StandardOrderStatus.Refunded)
+    return {
+      text: "Đã Hoàn Tiền",
+      color: "warning",
     };
 
   return {
@@ -388,5 +407,35 @@ export const formatTransportOrderStatus = (
   return {
     text: "Thất Bại",
     color: "error",
+  };
+};
+
+export const formatRefundMethodTitle = (method: PaymentMethod) => {
+  if (method === PaymentMethod.Cash) return "Trả tiền mặt";
+  return "Chuyển khoản";
+};
+
+export const formatJewelryStatusLabel = (status: JewelryStatus) => {
+  if (status === JewelryStatus.Available)
+    return {
+      text: "Đang Bán",
+      color: "#07bc0c",
+    };
+
+  if (status === JewelryStatus.Purchased)
+    return {
+      text: "Đã Bán",
+      color: "#3498db",
+    };
+
+  if (status === JewelryStatus.Resold)
+    return {
+      text: "Đã Mua Lại",
+      color: "#f1c40f",
+    };
+
+  return {
+    text: "Đang Bán",
+    color: "#07bc0c",
   };
 };

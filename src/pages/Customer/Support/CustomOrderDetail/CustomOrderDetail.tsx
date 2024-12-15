@@ -1,10 +1,20 @@
-import { Button, Chip, Divider, Grid, Skeleton } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  Divider,
+  FormLabel,
+  Grid,
+  OutlinedInput,
+  Skeleton,
+} from "@mui/material";
 import styles from "./CustomOrderDetail.module.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import {
   currencyFormatter,
   formatCustomOrderStatus,
+  formatRefundMethodTitle,
   getDiamondSpec,
 } from "src/utils/functions";
 import { secondaryBtn } from "src/utils/styles";
@@ -228,6 +238,117 @@ function CustomOrderDetail() {
           </Grid>
         </Grid>
 
+        {order.status === CustomOrderStatus.Refunded && order.refund && (
+          <Grid container>
+            <Grid item xs={12} my={4} className={styles.refuntTitle}>
+              Thông tin hoàn tiền
+            </Grid>
+
+            <Grid container mb={1} justifyContent={"space-between"}>
+              <Grid container item md={6} alignItems={"baseline"}>
+                <Grid item xs={4} mb={1}>
+                  Số tiền hoàn trả:
+                </Grid>
+
+                <Grid item className={styles.total}>
+                  {currencyFormatter(order.refund.amount.amount)}
+                </Grid>
+              </Grid>
+
+              <Grid container item md={5.7}>
+                <Grid item xs={4}>
+                  Phương thức:
+                </Grid>
+
+                <Grid item>
+                  <FormLabel>
+                    {formatRefundMethodTitle(order.refund.method)}
+                  </FormLabel>
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <Grid container rowGap={2} mb={3} justifyContent={"space-between"}>
+              <Grid container item md={5.7}>
+                <Grid item mb={2}>
+                  Lý do hoàn trả:
+                </Grid>
+
+                <Grid item xs={12}>
+                  <OutlinedInput
+                    sx={{ borderRadius: 0 }}
+                    fullWidth
+                    readOnly
+                    multiline
+                    rows={4}
+                    defaultValue={order.refund.reason}
+                  />
+                </Grid>
+              </Grid>
+
+              <Grid container item md={5.7}>
+                <Grid item xs={4}>
+                  Ngày thực hiện:
+                </Grid>
+
+                <Grid item>
+                  <FormLabel>
+                    {moment(
+                      order.customOrderHistories.find(
+                        (item) => item.status === CustomOrderStatus.Refunded
+                      )?.createdAt
+                    ).format("DD/MM/YYYY HH:mm")}
+                  </FormLabel>
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <Box sx={{ mb: 1 }}>Hình ảnh giao dịch:</Box>
+            <Grid container rowGap={2} justifyContent={"space-between"}>
+              <Grid item md={5.7}>
+                <img
+                  src={order.refund.proofImage.url}
+                  className={styles.refundImage}
+                />
+              </Grid>
+              <Grid item xs={12} md={5.7}>
+                <fieldset style={{ margin: 0, width: "100%" }}>
+                  <legend>Nhân Viên Thực Hiện</legend>
+                  <Grid container p={2}>
+                    <Grid container justifyContent={"space-between"} mb={1}>
+                      <Grid item>Tên tài khoản:</Grid>
+
+                      <Grid item>{order.refund.staff.username}</Grid>
+                    </Grid>
+
+                    <Grid container justifyContent={"space-between"} mb={1}>
+                      <Grid item>Email:</Grid>
+
+                      <Grid item>{order.refund.staff.email}</Grid>
+                    </Grid>
+
+                    <Grid container justifyContent={"space-between"} mb={1}>
+                      <Grid item>Số điện thoại:</Grid>
+
+                      <Grid item>
+                        {order.refund.staff.phone
+                          ? order.refund.staff.phone
+                          : "--"}
+                      </Grid>
+                    </Grid>
+
+                    <Grid container justifyContent={"space-between"} mb={1}>
+                      <Grid item>Chi Nhánh:</Grid>
+
+                      <Grid item>{order.refund.staff.branch?.storeName}</Grid>
+                    </Grid>
+                  </Grid>
+                </fieldset>
+              </Grid>
+            </Grid>
+          </Grid>
+        )}
+
         <Grid container justifyContent={"center"} mt={5}>
           <Grid container item lg={10} className={styles.card} py={5}>
             <Grid
@@ -281,10 +402,12 @@ function CustomOrderDetail() {
                   </Grid>
                   <Grid item>
                     {`${
+                      maleRing.diamonds.length > 0 &&
                       maleRing.diamonds[0].diamondSpecification.shape
-                    } ${getDiamondSpec(
-                      maleRing.diamonds[0].diamondSpecification
-                    )}`}
+                    } ${
+                      maleRing.diamonds.length > 0 &&
+                      getDiamondSpec(maleRing.diamonds[0].diamondSpecification)
+                    }`}
                   </Grid>
                 </Grid>
                 <Divider sx={{ my: 2 }} />
@@ -386,10 +509,14 @@ function CustomOrderDetail() {
                   <Grid item>
                     {" "}
                     {`${
+                      femaleRing.diamonds.length > 0 &&
                       femaleRing.diamonds[0].diamondSpecification.shape
-                    } ${getDiamondSpec(
-                      femaleRing.diamonds[0].diamondSpecification
-                    )}`}
+                    } ${
+                      femaleRing.diamonds.length > 0 &&
+                      getDiamondSpec(
+                        femaleRing.diamonds[0].diamondSpecification
+                      )
+                    }`}
                   </Grid>
                 </Grid>
                 <Divider sx={{ my: 2 }} />

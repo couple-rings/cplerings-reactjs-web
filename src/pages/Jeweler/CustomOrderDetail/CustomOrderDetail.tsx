@@ -170,7 +170,7 @@ function CustomOrderDetail() {
             <legend>Khách Hàng</legend>
             <Grid container p={2}>
               <Grid container justifyContent={"space-between"} mb={1}>
-                <Grid item>Username:</Grid>
+                <Grid item>Tên tài khoản:</Grid>
 
                 <Grid item>{order.customer.username}</Grid>
               </Grid>
@@ -182,7 +182,7 @@ function CustomOrderDetail() {
               </Grid>
 
               <Grid container justifyContent={"space-between"} mb={1}>
-                <Grid item>Username:</Grid>
+                <Grid item>Số điện thoại:</Grid>
 
                 <Grid item>
                   {order.customer.phone ? order.customer.phone : "--"}
@@ -264,8 +264,10 @@ function CustomOrderDetail() {
                 Kim cương
               </Grid>
               <Grid item className="info-detail-content">
-                {maleRing.diamonds[0].diamondSpecification.shape}{" "}
-                {getDiamondSpec(maleRing.diamonds[0].diamondSpecification)}
+                {maleRing.diamonds.length > 0 &&
+                  maleRing.diamonds[0].diamondSpecification.shape}{" "}
+                {maleRing.diamonds.length > 0 &&
+                  getDiamondSpec(maleRing.diamonds[0].diamondSpecification)}
               </Grid>
             </Grid>
 
@@ -394,8 +396,10 @@ function CustomOrderDetail() {
                 Kim cương
               </Grid>
               <Grid item className="info-detail-content">
-                {femaleRing.diamonds[0].diamondSpecification.shape}{" "}
-                {getDiamondSpec(femaleRing.diamonds[0].diamondSpecification)}
+                {femaleRing.diamonds.length > 0 &&
+                  femaleRing.diamonds[0].diamondSpecification.shape}{" "}
+                {femaleRing.diamonds.length > 0 &&
+                  getDiamondSpec(femaleRing.diamonds[0].diamondSpecification)}
               </Grid>
             </Grid>
 

@@ -1,5 +1,6 @@
 import axios from "src/config/axios.main";
 import queryString from "query-string";
+import { TransportOrderStatus } from "src/utils/enums";
 
 export const getTransportOrders = (queryObj: ITransportOrderFilter) => {
   const queryUrl = queryString.stringify(queryObj);
@@ -32,4 +33,21 @@ export const getTransportOrderDetail = (id: number) => {
     unknown,
     IResponse<{ transportationOrder: ITransportOrder }>
   >(`transportation-orders/${id}`);
+};
+
+export const putUpdateOrderImage = (orderId: number, imageId: number) => {
+  return axios.put<
+    unknown,
+    IResponse<{ transportationOrders: ITransportOrder }>
+  >(`transportation-orders/${orderId}/delivery-image`, { imageId });
+};
+
+export const putUpdateOrderStatus = (
+  id: number,
+  status: TransportOrderStatus
+) => {
+  return axios.put<
+    unknown,
+    IResponse<{ transportationOrder: ITransportOrder }>
+  >(`transportation-orders/${id}/status`, { status });
 };

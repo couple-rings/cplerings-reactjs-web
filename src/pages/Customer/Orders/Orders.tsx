@@ -12,7 +12,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useNavigate } from "react-router-dom";
 import CustomerOrder from "src/components/order/CustomerOrder";
 import { StandardOrderStatus } from "src/utils/enums";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppSelector } from "src/utils/hooks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchStandardOrders } from "src/utils/querykey";
@@ -43,6 +43,8 @@ function Orders() {
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const ref = useRef<HTMLDivElement>(null);
 
   const { id: customerId } = useAppSelector((state) => state.auth.userInfo);
 
@@ -101,6 +103,12 @@ function Orders() {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { items, ...rest } = response.data;
       setMetaData(rest);
+
+      window.scrollTo({
+        top: ref.current?.offsetTop,
+        left: 0,
+        behavior: "smooth",
+      });
     }
   }, [response]);
 
@@ -137,7 +145,7 @@ function Orders() {
         </div>
       </Grid>
 
-      <Grid container item xs={11} xl={7} className={styles.body}>
+      <Grid container item xs={11} xl={7} className={styles.body} ref={ref}>
         <div className={styles.title}>Đơn Hàng</div>
         <div className={styles.subtitle}>
           Cảm ơn bạn vì đã lựa chọn Couple Rings®
@@ -183,6 +191,14 @@ function Orders() {
                 className={styles.tabLabel}
                 label="Đã Hoàn Thành"
                 value={StandardOrderStatus.Completed}
+              />
+              <Tab
+                classes={{
+                  selected: "selectedCustomRequestTab",
+                }}
+                className={styles.tabLabel}
+                label="Đã Hoàn Tiền"
+                value={StandardOrderStatus.Refunded}
               />
               <Tab
                 classes={{

@@ -33,9 +33,11 @@ function TimelineModal(props: ITransportOrderModalProps) {
       <DialogContent>
         <Grid container justifyContent={"space-between"} mt={3}>
           <Grid item xs={5}>
+            <FormLabel>Hình ảnh giao hàng</FormLabel>
             <img
               src={order?.image ? order.image.url : defaultImg}
               width={"100%"}
+              style={{ marginTop: 15 }}
             />
             {!order?.image && (
               <FormHelperText>Chưa có hình ảnh giao hàng</FormHelperText>

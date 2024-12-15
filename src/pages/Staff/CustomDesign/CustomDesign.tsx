@@ -487,7 +487,7 @@ function CustomDesign() {
             <legend>Khách Hàng</legend>
             <Grid container mb={1}>
               <Grid item xs={4}>
-                Username:
+                Tên tài khoản:
               </Grid>
 
               <Grid item>{response.data.customer.username}</Grid>
@@ -1209,7 +1209,7 @@ const ViewCustomDesign = (props: IViewCustomDesignProps) => {
             <legend>Khách Hàng</legend>
             <Grid container mb={1}>
               <Grid item xs={4}>
-                Username:
+                Tên tài khoản:
               </Grid>
 
               <Grid item>{maleVersion.customer.username}</Grid>

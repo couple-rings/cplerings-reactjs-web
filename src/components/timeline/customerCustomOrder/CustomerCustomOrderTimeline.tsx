@@ -13,11 +13,12 @@ import {
   ConfigurationKey,
   CraftingStageStatus,
   CustomOrderStatus,
+  TransportOrderStatus,
 } from "src/utils/enums";
 import { useAppSelector } from "src/utils/hooks";
 
 function CustomerCustomOrderTimeline(props: ICustomerCustomOrderTimelineProps) {
-  const { order, stages } = props;
+  const { order, stages, transportOrder } = props;
 
   const [firstStage, setFirstStage] = useState<ICraftingStage | null>(null);
   const [secondStage, setSecondStage] = useState<ICraftingStage | null>(null);
@@ -188,7 +189,7 @@ function CustomerCustomOrderTimeline(props: ICustomerCustomOrderTimelineProps) {
         <TimelineItem>
           <TimelineOppositeContent color="textSecondary">
             {moment(
-              secondStage?.craftingStageHistories.find(
+              thirdStage?.craftingStageHistories.find(
                 (item) => item.status === CraftingStageStatus.Paid
               )?.createdAt
             ).format("DD/MM/YYYY HH:mm")}
@@ -215,22 +216,78 @@ function CustomerCustomOrderTimeline(props: ICustomerCustomOrderTimelineProps) {
         </TimelineItem>
       )}
 
+      {/* Order being rejected */}
+      {order.customOrderHistories.find(
+        (item) => item.status === CustomOrderStatus.Completed
+      ) &&
+        transportOrder &&
+        transportOrder.transportOrderHistories.find(
+          (item) => item.status === TransportOrderStatus.Rejected
+        ) && (
+          <TimelineItem>
+            <TimelineOppositeContent color="textSecondary">
+              {moment(
+                transportOrder.transportOrderHistories.find(
+                  (item) => item.status === TransportOrderStatus.Rejected
+                )?.createdAt
+              ).format("DD/MM/YYYY HH:mm")}
+            </TimelineOppositeContent>
+            <TimelineSeparator>
+              <TimelineDot color="warning" />
+              <TimelineConnector />
+            </TimelineSeparator>
+            <TimelineContent>Từ chối nhận hàng</TimelineContent>
+          </TimelineItem>
+        )}
+
       {/* Complete custom order */}
       {order.customOrderHistories.find(
         (item) => item.status === CustomOrderStatus.Completed
+      ) &&
+        (!transportOrder ||
+          transportOrder.transportOrderHistories.find(
+            (item) => item.status === TransportOrderStatus.Completed
+          )) && (
+          <TimelineItem>
+            <TimelineOppositeContent color="textSecondary">
+              {transportOrder
+                ? moment(
+                    transportOrder.transportOrderHistories.find(
+                      (item) => item.status === TransportOrderStatus.Completed
+                    )?.createdAt
+                  ).format("DD/MM/YYYY HH:mm")
+                : moment(
+                    order.customOrderHistories.find(
+                      (item) => item.status === CustomOrderStatus.Completed
+                    )?.createdAt
+                  ).format("DD/MM/YYYY HH:mm")}
+            </TimelineOppositeContent>
+            <TimelineSeparator>
+              <TimelineDot color="success" />
+              {order.customOrderHistories.find(
+                (item) => item.status === CustomOrderStatus.Refunded
+              ) && <TimelineConnector />}
+            </TimelineSeparator>
+            <TimelineContent>Đã nhận hàng</TimelineContent>
+          </TimelineItem>
+        )}
+
+      {/* Refund custom order */}
+      {order.customOrderHistories.find(
+        (item) => item.status === CustomOrderStatus.Refunded
       ) && (
         <TimelineItem>
           <TimelineOppositeContent color="textSecondary">
             {moment(
               order.customOrderHistories.find(
-                (item) => item.status === CustomOrderStatus.Completed
+                (item) => item.status === CustomOrderStatus.Refunded
               )?.createdAt
             ).format("DD/MM/YYYY HH:mm")}
           </TimelineOppositeContent>
           <TimelineSeparator>
-            <TimelineDot color="success" />
+            <TimelineDot color="error" />
           </TimelineSeparator>
-          <TimelineContent>Đã nhận hàng</TimelineContent>
+          <TimelineContent>Đơn đã được hoàn tiền</TimelineContent>
         </TimelineItem>
       )}
 

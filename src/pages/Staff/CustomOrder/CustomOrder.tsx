@@ -416,6 +416,14 @@ function CustomOrder() {
                 selected: "selectedCustomRequestTab",
               }}
               className={styles.tabLabel}
+              label="Đã Hoàn Tiền"
+              value={CustomOrderStatus.Refunded}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
               label="Đã Hủy"
               value={CustomOrderStatus.Canceled}
             />

@@ -122,4 +122,14 @@ declare global {
     status?: StandardOrderStatus;
     branchId?: number;
   }
+
+  interface IRefundFilter extends IPaginationFilter {
+    customerId?: number;
+    status?: StandardOrderStatus;
+    staffId?: number;
+  }
+
+  interface ICustomerFilter extends IPaginationFilter {
+    email?: string;
+  }
 }

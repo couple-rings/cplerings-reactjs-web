@@ -1,4 +1,13 @@
-import { Chip, Grid, MenuItem, Select, Skeleton } from "@mui/material";
+import {
+  Box,
+  Chip,
+  FormLabel,
+  Grid,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  Skeleton,
+} from "@mui/material";
 import Divider from "@mui/material/Divider";
 import HoverCard from "src/components/product/HoverCard";
 import MaleIcon from "@mui/icons-material/Male";
@@ -26,6 +35,7 @@ import {
 import {
   currencyFormatter,
   formatCustomOrderStatus,
+  formatRefundMethodTitle,
   getDiamondSpec,
 } from "src/utils/functions";
 import { useAppSelector } from "src/utils/hooks";
@@ -251,7 +261,7 @@ function CustomOrderDetail() {
               <legend>Khách Hàng</legend>
               <Grid container p={2}>
                 <Grid container justifyContent={"space-between"} mb={1}>
-                  <Grid item>Username:</Grid>
+                  <Grid item>Tên tài khoản:</Grid>
 
                   <Grid item>{order.customer.username}</Grid>
                 </Grid>
@@ -263,7 +273,7 @@ function CustomOrderDetail() {
                 </Grid>
 
                 <Grid container justifyContent={"space-between"} mb={1}>
-                  <Grid item>Username:</Grid>
+                  <Grid item>Số điện thoại:</Grid>
 
                   <Grid item>
                     {order.customer.phone ? order.customer.phone : "--"}
@@ -297,9 +307,123 @@ function CustomOrderDetail() {
           </Grid>
 
           <Grid item md={6.5}>
-            <StaffCustomOrderTimeline order={order} />
+            <StaffCustomOrderTimeline
+              order={order}
+              transportOrder={transportResponse?.data ?? undefined}
+            />
           </Grid>
         </Grid>
+
+        {order.status === CustomOrderStatus.Refunded && order.refund && (
+          <Grid container>
+            <Grid item xs={12} my={4} className={styles.refuntTitle}>
+              Thông tin hoàn tiền
+            </Grid>
+
+            <Grid container mb={1} justifyContent={"space-between"}>
+              <Grid container item md={6} alignItems={"baseline"}>
+                <Grid item xs={4} mb={1}>
+                  Số tiền hoàn trả:
+                </Grid>
+
+                <Grid item className={styles.totalPrice}>
+                  {currencyFormatter(order.refund.amount.amount)}
+                </Grid>
+              </Grid>
+
+              <Grid container item md={5.7}>
+                <Grid item xs={4}>
+                  Phương thức:
+                </Grid>
+
+                <Grid item>
+                  <FormLabel>
+                    {formatRefundMethodTitle(order.refund.method)}
+                  </FormLabel>
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <Grid container rowGap={2} mb={3} justifyContent={"space-between"}>
+              <Grid container item md={5.7}>
+                <Grid item mb={2}>
+                  Lý do hoàn trả:
+                </Grid>
+
+                <Grid item xs={12}>
+                  <OutlinedInput
+                    sx={{ borderRadius: 0 }}
+                    fullWidth
+                    readOnly
+                    multiline
+                    rows={4}
+                    defaultValue={order.refund.reason}
+                  />
+                </Grid>
+              </Grid>
+
+              <Grid container item md={5.7}>
+                <Grid item xs={4}>
+                  Ngày thực hiện:
+                </Grid>
+
+                <Grid item>
+                  <FormLabel>
+                    {moment(
+                      order.customOrderHistories.find(
+                        (item) => item.status === CustomOrderStatus.Refunded
+                      )?.createdAt
+                    ).format("DD/MM/YYYY HH:mm")}
+                  </FormLabel>
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <Box sx={{ mb: 1 }}>Hình ảnh giao dịch:</Box>
+            <Grid container rowGap={2} justifyContent={"space-between"}>
+              <Grid item md={5.7}>
+                <img
+                  src={order.refund.proofImage.url}
+                  className={styles.refundImage}
+                />
+              </Grid>
+              <Grid item xs={12} md={5.7}>
+                <fieldset style={{ margin: 0, width: "100%" }}>
+                  <legend>Nhân Viên Thực Hiện</legend>
+                  <Grid container p={2}>
+                    <Grid container justifyContent={"space-between"} mb={1}>
+                      <Grid item>Tên tài khoản:</Grid>
+
+                      <Grid item>{order.refund.staff.username}</Grid>
+                    </Grid>
+
+                    <Grid container justifyContent={"space-between"} mb={1}>
+                      <Grid item>Email:</Grid>
+
+                      <Grid item>{order.refund.staff.email}</Grid>
+                    </Grid>
+
+                    <Grid container justifyContent={"space-between"} mb={1}>
+                      <Grid item>Số điện thoại:</Grid>
+
+                      <Grid item>
+                        {order.refund.staff.phone
+                          ? order.refund.staff.phone
+                          : "--"}
+                      </Grid>
+                    </Grid>
+
+                    <Grid container justifyContent={"space-between"} mb={1}>
+                      <Grid item>Chi Nhánh:</Grid>
+
+                      <Grid item>{order.refund.staff.branch?.storeName}</Grid>
+                    </Grid>
+                  </Grid>
+                </fieldset>
+              </Grid>
+            </Grid>
+          </Grid>
+        )}
 
         <Grid
           container
@@ -369,8 +493,10 @@ function CustomOrderDetail() {
                   Kim cương
                 </Grid>
                 <Grid item className="info-detail-content">
-                  {maleRing.diamonds[0].diamondSpecification.shape}{" "}
-                  {getDiamondSpec(maleRing.diamonds[0].diamondSpecification)}
+                  {maleRing.diamonds.length > 0 &&
+                    maleRing.diamonds[0].diamondSpecification.shape}{" "}
+                  {maleRing.diamonds.length > 0 &&
+                    getDiamondSpec(maleRing.diamonds[0].diamondSpecification)}
                 </Grid>
               </Grid>
 
@@ -499,8 +625,10 @@ function CustomOrderDetail() {
                   Kim cương
                 </Grid>
                 <Grid item className="info-detail-content">
-                  {femaleRing.diamonds[0].diamondSpecification.shape}{" "}
-                  {getDiamondSpec(femaleRing.diamonds[0].diamondSpecification)}
+                  {femaleRing.diamonds.length > 0 &&
+                    femaleRing.diamonds[0].diamondSpecification.shape}{" "}
+                  {femaleRing.diamonds.length > 0 &&
+                    getDiamondSpec(femaleRing.diamonds[0].diamondSpecification)}
                 </Grid>
               </Grid>
 

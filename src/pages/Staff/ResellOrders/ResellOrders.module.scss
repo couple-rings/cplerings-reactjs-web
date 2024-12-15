@@ -1,0 +1,10 @@
+@use 'src/index.scss'as *;
+
+.container {
+    padding: 3rem;
+
+    .title {
+        color    : $primaryColor;
+        font-size: 1.5rem;
+    }
+}

@@ -8,7 +8,7 @@ import TimelineOppositeContent, {
 } from "@mui/lab/TimelineOppositeContent";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import moment from "moment";
-import { StandardOrderStatus } from "src/utils/enums";
+import { StandardOrderStatus, TransportOrderStatus } from "src/utils/enums";
 
 function StaffStandardOrderTimeline(props: IStaffStandardOrderTimelineProps) {
   const { order } = props;
@@ -73,22 +73,80 @@ function StaffStandardOrderTimeline(props: IStaffStandardOrderTimelineProps) {
         </TimelineItem>
       )}
 
+      {/* Order being rejected */}
+      {order.standardOrderHistories.find(
+        (item) => item.status === StandardOrderStatus.Completed
+      ) &&
+        order.transportationOrders.length !== 0 &&
+        order.transportationOrders[0].transportOrderHistories.find(
+          (item) => item.status === TransportOrderStatus.Rejected
+        ) && (
+          <TimelineItem>
+            <TimelineOppositeContent color="textSecondary">
+              {moment(
+                order.transportationOrders[0].transportOrderHistories.find(
+                  (item) => item.status === TransportOrderStatus.Rejected
+                )?.createdAt
+              ).format("DD/MM/YYYY HH:mm")}
+            </TimelineOppositeContent>
+            <TimelineSeparator>
+              <TimelineDot color="warning" />
+              <TimelineConnector />
+            </TimelineSeparator>
+            <TimelineContent>Khách từ chối nhận hàng</TimelineContent>
+          </TimelineItem>
+        )}
+
       {/* Complete order */}
       {order.standardOrderHistories.find(
         (item) => item.status === StandardOrderStatus.Completed
+      ) &&
+        (order.transportationOrders.length === 0 ||
+          order.transportationOrders[0].transportOrderHistories.find(
+            (item) => item.status === TransportOrderStatus.Completed
+          )) && (
+          <TimelineItem>
+            <TimelineOppositeContent color="textSecondary">
+              {order.transportationOrders.length > 0 &&
+                moment(
+                  order.transportationOrders[0].transportOrderHistories.find(
+                    (item) => item.status === TransportOrderStatus.Completed
+                  )?.createdAt
+                ).format("DD/MM/YYYY HH:mm")}
+
+              {order.transportationOrders.length === 0 &&
+                moment(
+                  order.standardOrderHistories.find(
+                    (item) => item.status === StandardOrderStatus.Completed
+                  )?.createdAt
+                ).format("DD/MM/YYYY HH:mm")}
+            </TimelineOppositeContent>
+            <TimelineSeparator>
+              <TimelineDot color="success" />
+              {order.standardOrderHistories.find(
+                (item) => item.status === StandardOrderStatus.Refunded
+              ) && <TimelineConnector />}
+            </TimelineSeparator>
+            <TimelineContent>Khách đã nhận hàng</TimelineContent>
+          </TimelineItem>
+        )}
+
+      {/* Refund order */}
+      {order.standardOrderHistories.find(
+        (item) => item.status === StandardOrderStatus.Refunded
       ) && (
         <TimelineItem>
           <TimelineOppositeContent color="textSecondary">
             {moment(
               order.standardOrderHistories.find(
-                (item) => item.status === StandardOrderStatus.Completed
+                (item) => item.status === StandardOrderStatus.Refunded
               )?.createdAt
             ).format("DD/MM/YYYY HH:mm")}
           </TimelineOppositeContent>
           <TimelineSeparator>
-            <TimelineDot color="success" />
+            <TimelineDot color="error" />
           </TimelineSeparator>
-          <TimelineContent>Khách đã nhận hàng</TimelineContent>
+          <TimelineContent>Đơn đã được hoàn tiền</TimelineContent>
         </TimelineItem>
       )}
 

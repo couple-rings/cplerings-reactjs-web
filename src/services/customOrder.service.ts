@@ -10,6 +10,12 @@ export const getCustomOrders = (queryObj: ICustomOrderFilter) => {
   );
 };
 
+export const getCustomOrderByOrderNo = (orderNo: string) => {
+  return axios.get<unknown, IResponse<{ customOrder: ICustomOrder }>>(
+    `custom-orders/orderNo/${orderNo}`
+  );
+};
+
 export const getCustomOrderDetail = (id: number) => {
   return axios.get<unknown, IResponse<{ customOrder: ICustomOrder }>>(
     `custom-orders/${id}`
@@ -26,7 +32,7 @@ export const postAssignCustomOrder = (orderId: number, jewelerId: number) => {
 };
 
 export const putCompleteCustomOrder = (orderId: number) => {
-  return axios.post<unknown, IResponse<object>>(`orders/complete`, {
+  return axios.put<unknown, IResponse<object>>(`orders/complete`, {
     orderId,
     orderType: OrderType.Custom,
   });

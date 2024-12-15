@@ -2,6 +2,7 @@ import {
   CraftingRequestStatus,
   CustomRequestStatus,
   DesignCharacteristic,
+  PaymentMethod,
   VersionOwner,
 } from "src/utils/enums";
 
@@ -255,5 +256,28 @@ declare global {
   interface IPayStandardOrderRequest {
     standardOrderId: number;
     transportationAddressId?: number;
+  }
+
+  interface ICustomOrderRefundRequest {
+    customOrderId: number;
+    staffId: number;
+    reason: string;
+    proofImageId: number;
+    method: PaymentMethod;
+  }
+
+  interface IStandardOrderRefundRequest {
+    staffId: number;
+    reason: string;
+    proofImageId: number;
+    refundMethod: PaymentMethod;
+  }
+
+  interface ICustomOrderRefundRequest {
+    customOrderId: number;
+    staffId: number;
+    reason: string;
+    proofImageId: number;
+    method: PaymentMethod;
   }
 }

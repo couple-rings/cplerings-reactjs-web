@@ -30,3 +30,11 @@ export const getDesignStaffs = (queryObj: IDesignStaffFilter) => {
     `accounts/staffs/designers?${queryUrl}`
   );
 };
+
+export const getCustomers = (queryObj: ICustomerFilter) => {
+  const queryUrl = queryString.stringify(queryObj);
+
+  return axios.get<unknown, IResponse<IListResponse<IUser>>>(
+    `accounts/customers?${queryUrl}`
+  );
+};
