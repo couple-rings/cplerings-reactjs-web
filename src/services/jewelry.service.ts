@@ -12,3 +12,9 @@ export const getJewelries = (queryObj: IJewelryFilter) => {
 export const postCreateJewelry = (data: ICreateJewelryRequest) => {
   return axios.post<unknown, IResponse<IJewelry>>(`jewelries`, data);
 };
+
+export const getJewelryByProductNo = (productNo: string) => {
+  return axios.get<unknown, IResponse<IJewelry>>(
+    `jewelries/productNo/${productNo}`
+  );
+};

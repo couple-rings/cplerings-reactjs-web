@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios";
 import { logout, saveToken } from "src/redux/slice/auth.slice";
 import { store } from "src/redux/store";
 import { postRefreshToken } from "src/services/auth.service";
-import { ErrorCode } from "src/utils/enums";
+import { ErrorCode, ErrorType } from "src/utils/enums";
 // import { store } from "../redux/store";
 
 const publicRoute = ["auth/refresh", "designs/couple", "configurations"];
@@ -63,7 +63,10 @@ instance.interceptors.response.use(
 
           if (errors) {
             for (const err of errors) {
-              if (err.code === ErrorCode.JwtExpired) {
+              if (
+                err.code === ErrorCode.JwtExpired &&
+                err.type === ErrorType.Validation
+              ) {
                 if (error.config.url === "auth/refresh")
                   store.dispatch(logout());
                 else {
