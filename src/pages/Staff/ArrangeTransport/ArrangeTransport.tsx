@@ -682,8 +682,13 @@ function ArrangeTransport() {
         onRowModesModelChange={handleRowModesModelChange}
       />
 
-      {selectedOrder && (
-        <ViewModal open={open} setOpen={setOpen} order={selectedOrder} />
+      {selectedOrder && filterObj && (
+        <ViewModal
+          open={open}
+          setOpen={setOpen}
+          order={selectedOrder}
+          filterObj={filterObj}
+        />
       )}
     </div>
   );

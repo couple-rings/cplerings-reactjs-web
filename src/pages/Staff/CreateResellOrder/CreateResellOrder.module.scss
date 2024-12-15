@@ -1,0 +1,57 @@
+@use "src/index.scss"as *;
+
+.container {
+    padding        : 3rem 0;
+    color          : $primaryColor;
+    justify-content: center;
+
+    .title {
+        font-size    : 1.5rem;
+        color        : $primaryColor;
+        margin-bottom: 1rem;
+        font-weight  : 500;
+    }
+
+    .select {
+        width        : 100%;
+        margin-top   : 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .card {
+        box-shadow: $boxShadow;
+        gap       : 1rem;
+        padding   : 2rem;
+
+    }
+
+    .status {
+        color: $secondaryColor;
+    }
+
+    .sectionTitle {
+        font-weight: 500;
+        font-size  : 1.2rem;
+    }
+
+    .totalPrice {
+        color      : $secondaryColor;
+        font-size  : 1.2rem;
+        font-weight: 600;
+    }
+
+    .ratio {
+        font-size  : 1.2rem;
+        color      : #555;
+        font-weight: 300;
+    }
+
+    .resellAmount {
+        font-size: 1.3rem;
+
+        .amount {
+            color      : $secondaryColor;
+            font-weight: 600;
+        }
+    }
+}

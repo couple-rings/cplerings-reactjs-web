@@ -19,7 +19,7 @@ import { postRefundStandardOrder } from "src/services/refund.service";
 import { getStandardOrderByOrderNo } from "src/services/standardOrder.service";
 import {
   ConfigurationKey,
-  RefundMethod,
+  PaymentMethod,
   StandardOrderStatus,
 } from "src/utils/enums";
 import {
@@ -41,7 +41,7 @@ import StandardOrderItem from "src/components/product/StandardOrderItem";
 interface IStandardOrderFormInput {
   reason: string;
   proofImage: File;
-  refundMethod: RefundMethod;
+  refundMethod: PaymentMethod;
 }
 
 const StandardOrderTab = () => {
@@ -89,6 +89,11 @@ const StandardOrderTab = () => {
     },
     enabled: !!orderNo,
   });
+
+  const purchasedDate =
+    response?.data?.standardOrder.standardOrderHistories.find(
+      (item) => item.status === StandardOrderStatus.Paid
+    )?.createdAt;
 
   const uploadMutation = useMutation({
     mutationFn: (base64: string) => {
@@ -195,14 +200,15 @@ const StandardOrderTab = () => {
         {response?.data &&
           (response.data.standardOrder.status === StandardOrderStatus.Paid ||
             response.data.standardOrder.status ===
-              StandardOrderStatus.Completed) && (
+              StandardOrderStatus.Completed) &&
+          moment().diff(moment(purchasedDate), "days") <= 15 && (
             <Grid container gap={2} mt={1}>
               <Grid item xs={12}>
                 <FormLabel error={!!errors.refundMethod}>
                   Phương Thức Hoàn Tiền
                 </FormLabel>
                 <Controller
-                  defaultValue={RefundMethod.Default}
+                  defaultValue={PaymentMethod.Default}
                   name="refundMethod"
                   rules={{ required: "* Chưa chọn phương thức hoàn tiền" }}
                   control={control}
@@ -213,10 +219,10 @@ const StandardOrderTab = () => {
                       {...field}
                       error={!!errors.refundMethod}
                     >
-                      <MenuItem value={RefundMethod.Default} disabled>
+                      <MenuItem value={PaymentMethod.Default} disabled>
                         <em>Chọn phương thức hoàn tiền</em>
                       </MenuItem>
-                      {[RefundMethod.Cash, RefundMethod.Transfer].map(
+                      {[PaymentMethod.Cash, PaymentMethod.Transfer].map(
                         (method) => {
                           return (
                             <MenuItem value={method} key={method}>
@@ -318,21 +324,22 @@ const StandardOrderTab = () => {
           )}
 
         {response?.data &&
-          [
+          ([
             StandardOrderStatus.Pending,
             StandardOrderStatus.Delivering,
             StandardOrderStatus.Canceled,
             StandardOrderStatus.Refunded,
-          ].includes(response.data.standardOrder.status) && (
+          ].includes(response.data.standardOrder.status) ||
+            moment().diff(moment(purchasedDate), "days") > 15) && (
             <Grid container mt={1}>
               Đơn hàng này hiện tại không thể hoàn tiền
               <FormHelperText sx={{ mt: 1 }}>
                 Lưu ý: Những đơn hàng thuộc trạng thái{" "}
                 <span className={styles.status}>chưa thanh toán</span>,{" "}
                 <span className={styles.status}>đang vận chuyển</span>,{" "}
-                <span className={styles.status}>đã bị hủy</span> hoặc{" "}
-                <span className={styles.status}>đã hoàn tiền</span> sẽ không thể
-                thực hiện thao tác này
+                <span className={styles.status}>đã bị hủy</span>,{" "}
+                <span className={styles.status}>đã hoàn tiền</span> hoặc quá
+                thời hạn 15 ngày sẽ không thể thực hiện thao tác này
               </FormHelperText>
             </Grid>
           )}

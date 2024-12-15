@@ -258,7 +258,7 @@ function StandardOrder() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Đơn Bán Hàng</div>
+      <div className={styles.title}>Đơn Bán Trang Sức</div>
 
       {filterObj && (
         <Box sx={boxStyle}>
