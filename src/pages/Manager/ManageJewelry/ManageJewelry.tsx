@@ -71,7 +71,7 @@ function ManageJewelry() {
         align: "center",
         filterOperators,
         sortable: false,
-        renderCell: ({ row }) => <div>{row.design.jewelryCategory.name}</div>,
+        renderCell: ({ row }) => <div>{row.design.jewelryCategory?.name}</div>,
       },
       {
         field: "design",
@@ -81,7 +81,7 @@ function ManageJewelry() {
         align: "center",
         filterOperators,
         sortable: false,
-        renderCell: ({ row }) => <div>{row.design.name}</div>,
+        renderCell: ({ row }) => <div>{row.design?.name}</div>,
       },
       {
         field: "metalSpec",
@@ -91,7 +91,7 @@ function ManageJewelry() {
         align: "center",
         filterOperators,
         sortable: false,
-        renderCell: ({ row }) => <div>{row.metalSpecification.name}</div>,
+        renderCell: ({ row }) => <div>{row.metalSpecification?.name}</div>,
       },
       {
         field: "maintenanceDocument",

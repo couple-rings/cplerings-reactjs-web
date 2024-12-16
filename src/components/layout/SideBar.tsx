@@ -44,8 +44,8 @@ function SideBar(props: ISideBarProps) {
       <DrawerHeader>
         <Box sx={{ fontWeight: 600, fontSize: "1.2rem" }}>
           {staffPosition !== null &&
-            capitalizeFirstLetter((staffPosition as string).toLowerCase())}{" "}
-          {capitalizeFirstLetter((role as string).toLowerCase())}
+            capitalizeFirstLetter((staffPosition as string))}{" "}
+          {capitalizeFirstLetter((role as string))}
         </Box>
         <IconButton onClick={() => setOpen(false)}>
           {theme.direction === "ltr" ? (
