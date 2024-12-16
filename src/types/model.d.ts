@@ -536,6 +536,7 @@ declare global {
       url: string;
       createdAt: string;
     };
+    productNo: string;
   }
 
   interface IStandardOrderItem {
@@ -597,5 +598,21 @@ declare global {
       url: string;
       createdAt: string;
     };
+  }
+
+  interface IResellOrder {
+    id: number;
+    jewelry: IJewelry;
+    staff: IUser;
+    customer: IUser;
+    paymentMethod: PaymentMethod;
+    amount: {
+      amount: number;
+    };
+    proofImage: {
+      url: string;
+      createdAt: string;
+    };
+    note: string;
   }
 }

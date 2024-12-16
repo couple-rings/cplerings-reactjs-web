@@ -146,7 +146,7 @@ function Orders() {
       </Grid>
 
       <Grid container item xs={11} xl={7} className={styles.body} ref={ref}>
-        <div className={styles.title}>Đơn Hàng</div>
+        <div className={styles.title}>Đơn Mua Trang Sức</div>
         <div className={styles.subtitle}>
           Cảm ơn bạn vì đã lựa chọn Couple Rings®
         </div>
