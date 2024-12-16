@@ -2,7 +2,7 @@ import {
   ConfigurationKey,
   CustomOrderStatus,
   DesignCharacteristic,
-  RefundMethod,
+  PaymentMethod,
 } from "src/utils/enums";
 import styles from "./RefundCreateForm.module.scss";
 import {
@@ -42,7 +42,7 @@ import SearchIcon from "@mui/icons-material/Search";
 interface ICustomOrderFormInput {
   reason: string;
   proofImage: File;
-  method: RefundMethod;
+  method: PaymentMethod;
 }
 
 const CustomOrderTab = () => {
@@ -225,7 +225,7 @@ const CustomOrderTab = () => {
                   Phương Thức Hoàn Tiền
                 </FormLabel>
                 <Controller
-                  defaultValue={RefundMethod.Default}
+                  defaultValue={PaymentMethod.Default}
                   name="method"
                   rules={{ required: "* Chưa chọn phương thức hoàn tiền" }}
                   control={control}
@@ -236,10 +236,10 @@ const CustomOrderTab = () => {
                       {...field}
                       error={!!errors.method}
                     >
-                      <MenuItem value={RefundMethod.Default} disabled>
+                      <MenuItem value={PaymentMethod.Default} disabled>
                         <em>Chọn phương thức hoàn tiền</em>
                       </MenuItem>
-                      {[RefundMethod.Cash, RefundMethod.Transfer].map(
+                      {[PaymentMethod.Cash, PaymentMethod.Transfer].map(
                         (method) => {
                           return (
                             <MenuItem value={method} key={method}>

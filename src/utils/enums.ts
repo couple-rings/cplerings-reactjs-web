@@ -184,6 +184,7 @@ export enum JewelryStatus {
   Available = "AVAILABLE",
   Unavailable = "UNAVAILABLE",
   Purchased = "PURCHASED",
+  Resold = "RESOLD",
 }
 
 export enum StandardOrderStatus {
@@ -225,7 +226,7 @@ export enum OrderType {
   Custom = "CUSTOM",
 }
 
-export enum RefundMethod {
+export enum PaymentMethod {
   Default = "",
   Cash = "CASH",
   Transfer = "TRANSFER",

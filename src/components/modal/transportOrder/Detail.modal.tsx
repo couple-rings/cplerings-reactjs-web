@@ -13,20 +13,85 @@ import { useState } from "react";
 import { TransportOrderStatus } from "src/utils/enums";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { toast } from "react-toastify";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { postUploadFile } from "src/services/file.service";
+import { toBase64 } from "src/utils/functions";
+import {
+  putUpdateOrderImage,
+  putUpdateOrderStatus,
+} from "src/services/transportOrder.service";
+import { fetchTransportOrders } from "src/utils/querykey";
 
 function ViewModal(props: ITransportOrderModalProps) {
-  const { open, setOpen, order } = props;
+  const { open, setOpen, order, filterObj } = props;
 
   const [deliveryImage, setDeliveryImage] = useState<File | null>(null);
   const [error, setError] = useState(false);
 
-  const handleComplete = () => {
+  const queryClient = useQueryClient();
+
+  const uploadMutation = useMutation({
+    mutationFn: (base64: string) => {
+      return postUploadFile(base64);
+    },
+    onSuccess: (response) => {
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
+  const updateImageMutation = useMutation({
+    mutationFn: (data: { orderId: number; imageId: number }) => {
+      return putUpdateOrderImage(data.orderId, data.imageId);
+    },
+    onSuccess: (response) => {
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
+  const updateStatusMutation = useMutation({
+    mutationFn: (data: { id: number; status: TransportOrderStatus }) => {
+      return putUpdateOrderStatus(data.id, data.status);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        queryClient.invalidateQueries({
+          queryKey: [fetchTransportOrders, filterObj],
+        });
+        toast.success("Đã xác nhận giao hàng cho khách");
+        handleClose();
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
+  const handleComplete = async () => {
     if (!deliveryImage) {
       setError(true);
       return;
     }
 
-    toast.success("Call api...");
+    const base64 = await toBase64(deliveryImage);
+    const uploadResponse = await uploadMutation.mutateAsync(base64);
+    if (uploadResponse.data) {
+      const updateImageResponse = await updateImageMutation.mutateAsync({
+        orderId: order.id,
+        imageId: uploadResponse.data.id,
+      });
+
+      if (updateImageResponse.data) {
+        updateStatusMutation.mutate({
+          id: order.id,
+          status: TransportOrderStatus.Completed,
+        });
+      }
+    }
   };
 
   const handleClose = (
@@ -96,13 +161,14 @@ function ViewModal(props: ITransportOrderModalProps) {
 
         <Grid container justifyContent={"space-between"} mt={3}>
           <Grid item xs={5}>
+            <FormLabel>Hình ảnh giao hàng</FormLabel>
             {order.transportOrderHistories.find(
               (item) => item.status === TransportOrderStatus.Rejected
             ) &&
             order.transportOrderHistories.every(
               (item) => item.status !== TransportOrderStatus.Completed
             ) ? (
-              <label>
+              <label style={{ marginTop: 15 }}>
                 <img
                   src={
                     deliveryImage
@@ -137,6 +203,7 @@ function ViewModal(props: ITransportOrderModalProps) {
                 style={{
                   objectFit: "contain",
                   border: "1px dashed #ccc",
+                  marginTop: 15,
                 }}
               />
             )}
@@ -153,6 +220,11 @@ function ViewModal(props: ITransportOrderModalProps) {
               ) && (
                 <Grid container justifyContent={"flex-end"} mt={1}>
                   <LoadingButton
+                    loading={
+                      uploadMutation.isPending ||
+                      updateImageMutation.isPending ||
+                      updateStatusMutation.isPending
+                    }
                     variant="contained"
                     sx={{ ...primaryBtn, py: 1 }}
                     onClick={handleComplete}
@@ -217,7 +289,15 @@ function ViewModal(props: ITransportOrderModalProps) {
         </Grid>
       </DialogContent>
       <DialogActions sx={{ mt: 3 }}>
-        <Button variant="outlined" onClick={handleClose}>
+        <Button
+          variant="outlined"
+          onClick={handleClose}
+          disabled={
+            uploadMutation.isPending ||
+            updateImageMutation.isPending ||
+            updateStatusMutation.isPending
+          }
+        >
           Close
         </Button>
       </DialogActions>

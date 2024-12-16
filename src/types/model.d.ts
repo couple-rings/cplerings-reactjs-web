@@ -9,7 +9,7 @@ import {
   FileType,
   GoldColor,
   PaymentStatus,
-  RefundMethod,
+  PaymentMethod,
   RingStatus,
   StandardOrderStatus,
   Status,
@@ -586,7 +586,7 @@ declare global {
   interface IRefund {
     id: number;
     reason: string;
-    method: RefundMethod;
+    method: PaymentMethod;
     amount: {
       amount: number;
     };

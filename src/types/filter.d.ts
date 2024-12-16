@@ -128,4 +128,8 @@ declare global {
     status?: StandardOrderStatus;
     staffId?: number;
   }
+
+  interface ICustomerFilter extends IPaginationFilter {
+    email?: string;
+  }
 }
