@@ -132,4 +132,9 @@ declare global {
   interface ICustomerFilter extends IPaginationFilter {
     email?: string;
   }
+
+  interface IResellFilter extends IPaginationFilter {
+    customerId?: number;
+    staffId?: number;
+  }
 }

@@ -1,4 +1,13 @@
-import { Button, Chip, Grid, Link } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  Grid,
+  Link,
+  SxProps,
+  Tab,
+  Tabs,
+} from "@mui/material";
 import styles from "./ManageJewelry.module.scss";
 import { primaryBtn } from "src/utils/styles";
 import {
@@ -21,6 +30,14 @@ import { useAppSelector } from "src/utils/hooks";
 import { fetchJewelries } from "src/utils/querykey";
 import { getJewelries } from "src/services/jewelry.service";
 import { formatJewelryStatus } from "src/utils/functions";
+import { JewelryStatus } from "src/utils/enums";
+
+const boxStyle: SxProps = {
+  borderBottom: 1,
+  borderColor: "divider",
+  width: "100%",
+  mb: 6,
+};
 
 interface Row extends IJewelry {}
 
@@ -175,6 +192,16 @@ function ManageJewelry() {
       });
   };
 
+  const handleFilterStatus = (status: JewelryStatus) => {
+    if (filterObj)
+      setFilterObj({
+        ...filterObj,
+        page: 0,
+        pageSize,
+        status,
+      });
+  };
+
   const handleFilter = (model: GridFilterModel) => {
     console.log(model);
   };
@@ -197,6 +224,7 @@ function ManageJewelry() {
         page: 0,
         pageSize,
         branchId,
+        status: JewelryStatus.Available,
       });
     }
   }, [branchId]);
@@ -214,6 +242,51 @@ function ManageJewelry() {
           Add New
         </Button>
       </Grid>
+
+      {filterObj && (
+        <Box sx={boxStyle}>
+          <Tabs
+            classes={{
+              indicator: "myIndicator",
+            }}
+            value={filterObj.status}
+            onChange={(e, value: JewelryStatus) => handleFilterStatus(value)}
+          >
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Available"
+              value={JewelryStatus.Available}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Unavailable"
+              value={JewelryStatus.Unavailable}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Purchased"
+              value={JewelryStatus.Purchased}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Resold"
+              value={JewelryStatus.Resold}
+            />
+          </Tabs>
+        </Box>
+      )}
 
       <DataGrid
         loading={isLoading}

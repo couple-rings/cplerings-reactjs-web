@@ -29,7 +29,7 @@ function SupportHeader() {
         <Box sx={containerStyle}>
           <SideBar />
 
-          <Box sx={titleStyle}>Hỗ Trợ Khách Hàng</Box>
+          <Box sx={titleStyle}>Thiết Kế & Gia Công</Box>
         </Box>
       </Toolbar>
     </AppBar>
