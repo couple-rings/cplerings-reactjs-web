@@ -1,11 +1,12 @@
 import styles from "./Index.module.scss";
 import SettingsIcon from "@mui/icons-material/Settings";
 import orders from "src/assets/orders.png";
-import wishlist from "src/assets/wish_list.png";
+import resell from "src/assets/wish_list.png";
 import profile from "src/assets/profile.png";
 import verification from "src/assets/verification.png";
 import agreement from "src/assets/agreement.png";
-import support from "src/assets/support.png";
+// import support from "src/assets/support.png";
+import weddingBands from "src/assets/weddingbands.jpg";
 import { Grid, ListItemText, Menu, MenuItem, Switch } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -18,8 +19,8 @@ const imgLists = [
     path: "/customer/orders",
   },
   {
-    img: wishlist,
-    path: "/customer",
+    img: resell,
+    path: "/customer/resell-order",
   },
   {
     img: profile,
@@ -34,7 +35,7 @@ const imgLists = [
     path: "/customer/love-agreement",
   },
   {
-    img: support,
+    img: weddingBands,
     path: "/customer/support",
   },
 ];

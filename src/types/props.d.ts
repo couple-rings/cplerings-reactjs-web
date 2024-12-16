@@ -470,6 +470,12 @@ declare global {
     expandComponent: JSX.Element;
   }
 
+  interface IResellOrderRowProps {
+    data: IResellOrder;
+
+    expandComponent: JSX.Element;
+  }
+
   interface IDesignVersionProps {
     data: IDesignVersion;
     className: string;

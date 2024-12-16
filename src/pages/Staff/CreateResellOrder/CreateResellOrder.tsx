@@ -21,8 +21,9 @@ import {
   currencyFormatter,
   formatJewelryStatusLabel,
   formatRefundMethodTitle,
+  toBase64,
 } from "src/utils/functions";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchCustomers, fetchJewelryByProductNo } from "src/utils/querykey";
 import { getJewelryByProductNo } from "src/services/jewelry.service";
 import { useEffect, useState } from "react";
@@ -34,6 +35,9 @@ import { getCustomers } from "src/services/account.service";
 import Jewelry from "src/components/product/Jewelry";
 import { useAppSelector } from "src/utils/hooks";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { postResellJewelry } from "src/services/resell.service";
+import { postUploadFile } from "src/services/file.service";
 
 const initMetaData: IListMetaData = {
   page: 0,
@@ -45,7 +49,7 @@ const initMetaData: IListMetaData = {
 interface IFormInput {
   note: string;
   proofImage: File;
-  method: PaymentMethod;
+  paymentMethod: PaymentMethod;
 }
 
 function CreateResellOrder() {
@@ -53,6 +57,7 @@ function CreateResellOrder() {
   const [previewImage, setPreviewImage] = useState("");
 
   const [value, onChange] = useState<IUser | null>(null);
+  const [emptyValue, setEmptyValue] = useState(false);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -104,12 +109,69 @@ function CreateResellOrder() {
     enabled: !!productNo,
   });
 
+  const uploadMutation = useMutation({
+    mutationFn: (base64: string) => {
+      return postUploadFile(base64);
+    },
+    onSuccess: (response) => {
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
+  const resellMutation = useMutation({
+    mutationFn: (data: {
+      jewelryId: number;
+      payload: IJewelryResellRequest;
+    }) => {
+      return postResellJewelry(data.jewelryId, data.payload);
+    },
+    onSuccess: (response) => {
+      if (response.data) {
+        toast.success("Đã xác nhận mua lại trang sức");
+        navigate("/staff/resell-order");
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
   const onSubmitProductNo: SubmitHandler<{ productNo: string }> = (data) => {
     setProductNo(data.productNo);
   };
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    console.log(data);
+    const hasError = onError();
+    if (hasError) return;
+
+    const base64 = await toBase64(data.proofImage);
+    const uploadResponse = await uploadMutation.mutateAsync(base64);
+    if (uploadResponse.data && response?.data && value) {
+      const { note, paymentMethod } = data;
+
+      resellMutation.mutate({
+        jewelryId: response.data.id,
+        payload: {
+          note,
+          paymentMethod,
+          customerId: value.id,
+          jewelryId: response.data.id,
+          proofImageId: uploadResponse.data.id,
+        },
+      });
+    }
+  };
+
+  const onError = () => {
+    if (!value) {
+      setEmptyValue(true);
+      return true;
+    }
+
+    return false;
   };
 
   const loadPageOptions = async (
@@ -198,7 +260,7 @@ function CreateResellOrder() {
           <Grid container mb={3}>
             <Grid item flex={1}>
               <OutlinedInput
-                // disabled={uploadMutation.isPending || refundMutation.isPending}
+                disabled={uploadMutation.isPending || resellMutation.isPending}
                 fullWidth
                 sx={{ borderRadius: 0 }}
                 {...registerProductNo("productNo", {
@@ -208,7 +270,7 @@ function CreateResellOrder() {
             </Grid>
 
             <Button
-              // disabled={uploadMutation.isPending || refundMutation.isPending}
+              disabled={uploadMutation.isPending || resellMutation.isPending}
               variant="contained"
               sx={{ ...primaryBtn, py: 1, ml: 2 }}
               onClick={handleSubmitProductNo(onSubmitProductNo)}
@@ -242,12 +304,12 @@ function CreateResellOrder() {
             response.data.status === JewelryStatus.Purchased && (
               <Grid container gap={2} mt={1}>
                 <Grid item xs={12}>
-                  <FormLabel error={!!errors.method}>
+                  <FormLabel error={!!errors.paymentMethod}>
                     Phương Thức Thanh Toán
                   </FormLabel>
                   <Controller
                     defaultValue={PaymentMethod.Default}
-                    name="method"
+                    name="paymentMethod"
                     rules={{ required: "* Chưa chọn phương thức thanh toán" }}
                     control={control}
                     render={({ field }) => (
@@ -255,7 +317,7 @@ function CreateResellOrder() {
                         sx={{ borderRadius: 0, mt: 1 }}
                         fullWidth
                         {...field}
-                        error={!!errors.method}
+                        error={!!errors.paymentMethod}
                       >
                         <MenuItem value={PaymentMethod.Default} disabled>
                           <em>Chọn phương thức thanh toán</em>
@@ -272,9 +334,9 @@ function CreateResellOrder() {
                       </Select>
                     )}
                   />
-                  {errors.method && (
+                  {errors.paymentMethod && (
                     <FormHelperText error>
-                      {errors.method.message}
+                      {errors.paymentMethod.message}
                     </FormHelperText>
                   )}
                 </Grid>
@@ -298,7 +360,9 @@ function CreateResellOrder() {
                 </Grid>
 
                 <Grid item xs={12} mt={1}>
-                  <FormLabel>Hình Ảnh Giao Dịch</FormLabel>
+                  <FormLabel error={!!errors.proofImage}>
+                    Hình Ảnh Giao Dịch
+                  </FormLabel>
                 </Grid>
                 <Grid
                   container
@@ -350,12 +414,12 @@ function CreateResellOrder() {
 
                 <Grid item xs={12} textAlign={"right"} mt={3}>
                   <LoadingButton
-                    // loading={
-                    //   uploadMutation.isPending || refundMutation.isPending
-                    // }
+                    loading={
+                      uploadMutation.isPending || resellMutation.isPending
+                    }
                     variant="contained"
                     sx={{ ...primaryBtn, px: 3, py: 1 }}
-                    onClick={handleSubmit(onSubmit)}
+                    onClick={handleSubmit(onSubmit, onError)}
                   >
                     Xác Nhận
                   </LoadingButton>
@@ -376,7 +440,7 @@ function CreateResellOrder() {
         </Grid>
 
         <Grid item md={4}>
-          <FormLabel>Tìm khách hàng:</FormLabel>
+          <FormLabel error={emptyValue}>Tìm khách hàng:</FormLabel>
           <AsyncPaginate
             isClearable
             isSearchable
@@ -386,30 +450,40 @@ function CreateResellOrder() {
             additional={initMetaData}
             value={value}
             loadOptions={loadPageOptions}
-            onChange={onChange}
+            onChange={(value) => {
+              if (value) setEmptyValue(false);
+              onChange(value);
+            }}
           />
+          {emptyValue && (
+            <FormHelperText error>
+              * Chưa có thông tin khách hàng
+            </FormHelperText>
+          )}
 
           {value && (
-            <fieldset style={{ margin: 0 }}>
-              <legend>Khách Hàng</legend>
-              <Grid container justifyContent={"space-between"} mb={1}>
-                <Grid item>Tên tài khoản:</Grid>
+            <Grid item xs={12} mt={3}>
+              <fieldset style={{ margin: 0 }}>
+                <legend>Khách Hàng</legend>
+                <Grid container justifyContent={"space-between"} mb={1}>
+                  <Grid item>Tên tài khoản:</Grid>
 
-                <Grid item>{value.username}</Grid>
-              </Grid>
+                  <Grid item>{value.username}</Grid>
+                </Grid>
 
-              <Grid container justifyContent={"space-between"} mb={1}>
-                <Grid item>Email:</Grid>
+                <Grid container justifyContent={"space-between"} mb={1}>
+                  <Grid item>Email:</Grid>
 
-                <Grid item>{value.email}</Grid>
-              </Grid>
+                  <Grid item>{value.email}</Grid>
+                </Grid>
 
-              <Grid container justifyContent={"space-between"}>
-                <Grid item>Số điện thoại:</Grid>
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item>Số điện thoại:</Grid>
 
-                <Grid item>{value.phone ? value.phone : "--"}</Grid>
-              </Grid>
-            </fieldset>
+                  <Grid item>{value.phone ? value.phone : "--"}</Grid>
+                </Grid>
+              </fieldset>
+            </Grid>
           )}
         </Grid>
 

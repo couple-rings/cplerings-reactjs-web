@@ -1,5 +1,9 @@
 @use 'src/index.scss'as *;
 
+.title {
+    font-size: 1.5rem;
+}
+
 .container {
     display       : flex;
     overflow      : hidden;

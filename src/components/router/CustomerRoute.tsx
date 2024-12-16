@@ -26,6 +26,7 @@ import CraftingProcess from "src/pages/Customer/Support/CraftingProcess/Crafting
 import Deposit from "src/pages/Customer/Support/Deposit/Deposit";
 import MyLoveAgreement from "src/pages/Customer/LoveAgreement/MyLoveAgreement";
 import RequestCrafting from "src/pages/Customer/RequestCrafting/RequestCrafting";
+import ResellOrder from "src/pages/Customer/ResellOrder/ResellOrder";
 
 const CustomerRouteObject: RouteObject = {
   path: "/customer",
@@ -136,6 +137,10 @@ const CustomerRouteObject: RouteObject = {
     {
       path: "love-agreement",
       element: <MyLoveAgreement />,
+    },
+    {
+      path: "resell-order",
+      element: <ResellOrder />,
     },
   ],
 };

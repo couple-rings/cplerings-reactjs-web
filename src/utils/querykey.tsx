@@ -75,3 +75,4 @@ export const fetchStandardOrderByOrderNo = "fetchStandardOrderByOrderNo";
 export const fetchPaymentDetail = "fetchPaymentDetail";
 
 export const fetchRefunds = "fetchRefunds";
+export const fetchResellOrders = "fetchResellOrders";

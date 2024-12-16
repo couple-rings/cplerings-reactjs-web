@@ -280,4 +280,12 @@ declare global {
     proofImageId: number;
     method: PaymentMethod;
   }
+
+  interface IJewelryResellRequest {
+    jewelryId: number;
+    customerId: number;
+    note: string;
+    proofImageId: number;
+    paymentMethod: PaymentMethod;
+  }
 }

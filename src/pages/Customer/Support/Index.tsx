@@ -117,36 +117,41 @@ function Index() {
   }, []);
 
   return (
-    <div className={styles.container}>
-      <ConversationList joinRooms={joinRooms} conversation={conversation} />
+    <>
+      <Grid px={6} mt={3} item xs={12} className={styles.title}>
+        Chat & Hỗ Trợ
+      </Grid>
+      <div className={styles.container}>
+        <ConversationList joinRooms={joinRooms} conversation={conversation} />
 
-      {_id ? (
-        <Chatbox handleSend={handleSend} receiveMessage={receiveMessage} />
-      ) : (
-        <Grid container justifyContent={"center"} sx={{ height: "50vh" }}>
-          <Grid item xs={12} md={8}>
-            <div className={styles.intro}>
-              Chào mừng bạn đến với Trung Tâm Chăm Sóc Khách Hàng!
-            </div>
-            <div className={styles.guide}>
-              Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ mọi yêu cầu của bạn.
-              Hãy nhấn vào nút bên dưới để bắt đầu trò chuyện cùng nhân viên của
-              chúng tôi.
-            </div>
-            <div style={{ textAlign: "center" }}>
-              <LoadingButton
-                loading={chatMutation.isPending}
-                variant="contained"
-                sx={{ ...primaryBtn, py: 1 }}
-                onClick={() => chatMutation.mutate(userId)}
-              >
-                Chat Ngay
-              </LoadingButton>
-            </div>
+        {_id ? (
+          <Chatbox handleSend={handleSend} receiveMessage={receiveMessage} />
+        ) : (
+          <Grid container justifyContent={"center"} sx={{ height: "50vh" }}>
+            <Grid item xs={12} md={8}>
+              <div className={styles.intro}>
+                Chào mừng bạn đến với Trung Tâm Chăm Sóc Khách Hàng!
+              </div>
+              <div className={styles.guide}>
+                Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ mọi yêu cầu của bạn.
+                Hãy nhấn vào nút bên dưới để bắt đầu trò chuyện cùng nhân viên
+                của chúng tôi.
+              </div>
+              <div style={{ textAlign: "center" }}>
+                <LoadingButton
+                  loading={chatMutation.isPending}
+                  variant="contained"
+                  sx={{ ...primaryBtn, py: 1 }}
+                  onClick={() => chatMutation.mutate(userId)}
+                >
+                  Chat Ngay
+                </LoadingButton>
+              </div>
+            </Grid>
           </Grid>
-        </Grid>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 }
 
