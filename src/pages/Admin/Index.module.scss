@@ -1,12 +1,370 @@
-@use 'src/index.scss'as *;
+@use "src/index.scss" as *;
 
 .container {
     padding: 1.5rem;
 
-    .title {
-        color        : $primaryColor;
-        font-size    : 1.7rem;
-        margin-bottom: 1rem;
-    }
+    .content {
+        background-color: #f5f5f5;
+        border-radius: 10px;
+        padding: 1.5rem;
+        border-radius: 10px;
+        padding: 1.5rem;
 
+        .title {
+            color: $primaryColor;
+            font-size: 1.7rem;
+            color: $primaryColor;
+            font-size: 1.7rem;
+            margin-bottom: 1rem;
+        }
+
+        .section {
+            border-radius: 10px;
+            border-radius: 10px;
+            background-color: white;
+        }
+
+        .itemContainer {
+            background-color: #f3fdf4;
+            border-radius: 10px;
+            padding: 10px 25px;
+            padding-bottom: 10px;
+            display: flex; 
+            flex-direction: column; 
+            margin-bottom: 20px;
+
+            .boxTitle {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .boxIcon {
+                    width: 40px;
+                    height: 40px;
+                    background-color: #ffff;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 10px;
+                    img {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+                .title {
+                    color: #78a55a;
+                    padding: 0;
+                    margin: 0;
+                    font-size: 16px;
+                }
+            }
+
+            .numberContainer {
+                display: flex;
+                align-items: baseline;
+                gap: 10px;
+                p {
+                    font-size: 30px;
+                    padding: 0;
+                    margin: 0;
+                }
+            }
+
+            .trendContainer {
+                margin-left: auto; /* Push the trendContainer to the far right */
+                .numberTrend {
+                    color: #48742c;
+                    display: flex;
+                    gap: 5px;
+                    font-size: 12px;
+                }
+
+                .timeTrend {
+                    font-size: 10px;
+                    color: #a8a7a7;
+                }
+            }
+        }
+
+        .revenueContainer {
+            background-color: #f3fdf4;
+            border-radius: 10px;
+            padding: 10px 25px;
+            padding-bottom: 10px;
+            display: flex; 
+            flex-direction: column; 
+            margin-bottom: 20px;
+
+            .boxTitle {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .boxIcon {
+                    width: 40px;
+                    height: 40px;
+                    background-color: #ffff;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 10px;
+                    img {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+                .title {
+                    color: #78a55a;
+                    padding: 0;
+                    margin: 0;
+                    font-size: 16px;
+                }
+            }
+
+            .numberContainer {
+                display: flex;
+                align-items: baseline;
+                gap: 10px;
+                p {
+                    font-size: 30px;
+                    padding: 0;
+                    margin: 0;
+                }
+            }
+
+            .trendContainer {
+                margin-left: auto; /* Push the trendContainer to the far right */
+                .numberTrendUp {
+                    color: #48742c;
+                    display: flex;
+                    gap: 5px;
+                    font-size: 12px;
+                }
+
+                .numberTrendDown {
+                    color: #BB271A;
+                    display: flex;
+                    gap: 5px;
+                    font-size: 12px;
+                }
+
+                .timeTrend {
+                    font-size: 10px;
+                    color: #a8a7a7;
+                }
+            }
+        }
+
+        .transactionContainer {
+            background-color: #EEF9FB;
+            border-radius: 10px;
+            padding: 10px 25px;
+            padding-bottom: 10px;
+            display: flex; 
+            flex-direction: column; 
+            margin-bottom: 20px;
+
+            .boxTitle {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .boxIcon {
+                    width: 40px;
+                    height: 40px;
+                    background-color: #ffff;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 10px;
+                    img {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+                .title {
+                    color: #7BA7D7;
+                    padding: 0;
+                    margin: 0;
+                    font-size: 16px;
+                }
+            }
+
+            .numberContainer {
+                display: flex;
+                align-items: baseline;
+                gap: 10px;
+                p {
+                    font-size: 30px;
+                    padding: 0;
+                    margin: 0;
+                }
+            }
+
+            .trendContainer {
+                margin-left: auto; /* Push the trendContainer to the far right */
+                .numberTrendUp {
+                    color: #48742c;
+                    display: flex;
+                    gap: 5px;
+                    font-size: 12px;
+                }
+
+                .numberTrendDown {
+                    color: #BB271A;
+                    display: flex;
+                    gap: 5px;
+                    font-size: 12px;
+                }
+
+                .timeTrend {
+                    font-size: 10px;
+                    color: #a8a7a7;
+                }
+            }
+        }
+
+        .customerContainer {
+            background-color: #F4F0FE;
+            border-radius: 10px;
+            padding: 10px 25px;
+            padding-bottom: 10px;
+            display: flex; 
+            flex-direction: column; 
+            margin-bottom: 20px;
+
+            .boxTitle {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .boxIcon {
+                    width: 40px;
+                    height: 40px;
+                    background-color: #ffff;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 10px;
+                    img {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+                .title {
+                    color: #8A7EBE;
+                    padding: 0;
+                    margin: 0;
+                    font-size: 16px;
+                }
+            }
+
+            .numberContainer {
+                display: flex;
+                align-items: baseline;
+                gap: 10px;
+                p {
+                    font-size: 30px;
+                    padding: 0;
+                    margin: 0;
+                }
+            }
+
+            .trendContainer {
+                margin-left: auto; /* Push the trendContainer to the far right */
+                .numberTrendUp {
+                    color: #48742c;
+                    display: flex;
+                    gap: 5px;
+                    font-size: 12px;
+                }
+
+                .numberTrendDown {
+                    color: #BB271A;
+                    display: flex;
+                    gap: 5px;
+                    font-size: 12px;
+                }
+
+                .timeTrend {
+                    font-size: 10px;
+                    color: #a8a7a7;
+                }
+            }
+        }
+
+        .productContainer {
+            background-color: #FFF6ED;
+            border-radius: 10px;
+            padding: 10px 25px;
+            padding-bottom: 10px;
+            display: flex; 
+            flex-direction: column; 
+            margin-bottom: 20px;
+
+            .boxTitle {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .boxIcon {
+                    width: 40px;
+                    height: 40px;
+                    background-color: #ffff;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 10px;
+                    img {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+                .title {
+                    color: #E6A768;
+                    padding: 0;
+                    margin: 0;
+                    font-size: 16px;
+                }
+            }
+
+            .numberContainer {
+                display: flex;
+                align-items: baseline;
+                gap: 10px;
+                p {
+                    font-size: 30px;
+                    padding: 0;
+                    margin: 0;
+                }
+            }
+
+            .trendContainer {
+                margin-left: auto; /* Push the trendContainer to the far right */
+                .numberTrendUp {
+                    color: #48742c;
+                    display: flex;
+                    gap: 5px;
+                    font-size: 12px;
+                }
+
+                .numberTrendDown {
+                    color: #BB271A;
+                    display: flex;
+                    gap: 5px;
+                    font-size: 12px;
+                }
+
+                .timeTrend {
+                    font-size: 10px;
+                    color: #a8a7a7;
+                }
+            }
+        }
+    }
 }
