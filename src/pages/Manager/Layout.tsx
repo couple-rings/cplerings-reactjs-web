@@ -13,6 +13,7 @@ import CollectionsBookmarkRoundedIcon from "@mui/icons-material/CollectionsBookm
 import TopicRoundedIcon from "@mui/icons-material/TopicRounded";
 import LocalOfferRoundedIcon from "@mui/icons-material/LocalOfferRounded";
 import DesignServicesRoundedIcon from "@mui/icons-material/DesignServicesRounded";
+import PersonIcon from '@mui/icons-material/Person';
 import necklace from "src/assets/necklace.png";
 
 const sidebarList = [
@@ -20,6 +21,11 @@ const sidebarList = [
     text: "Dashboard",
     icon: <DashboardRoundedIcon />,
     path: "/manager",
+  },
+  {
+    text: "Account",
+    icon: <PersonIcon/>,
+    path: "/manager/account",
   },
   {
     text: "Manage Branch",
