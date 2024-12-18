@@ -20,6 +20,7 @@ import { fetchCraftingRequestGroups } from "src/utils/querykey";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import ReportProblemRoundedIcon from "@mui/icons-material/ReportProblemRounded";
 import RemoveRedEyeSharpIcon from "@mui/icons-material/RemoveRedEyeSharp";
+import { useAppSelector } from "src/utils/hooks";
 
 interface Row extends ICraftingRequestGroup {}
 
@@ -36,10 +37,8 @@ const initMetaData = {
 
 function CraftingRequest() {
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
-  const [filterObj, setFilterObj] = useState<ICraftingRequestGroupFilter>({
-    page: 0,
-    pageSize,
-  });
+  const [filterObj, setFilterObj] =
+    useState<ICraftingRequestGroupFilter | null>(null);
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -47,6 +46,8 @@ function CraftingRequest() {
   const id = openPopover ? "simple-popover" : undefined;
 
   const navigate = useNavigate();
+
+  const { branchId } = useAppSelector((state) => state.auth.userInfo);
 
   const { data: response, isLoading } = useQuery({
     queryKey: [fetchCraftingRequestGroups, filterObj],
@@ -199,10 +200,11 @@ function CraftingRequest() {
 
   const handleChangePage = (model: GridPaginationModel) => {
     // model.page is the page to fetch and starts at 0
-    setFilterObj({
-      ...filterObj,
-      page: model.page,
-    });
+    if (filterObj)
+      setFilterObj({
+        ...filterObj,
+        page: model.page,
+      });
   };
 
   const handleFilter = (model: GridFilterModel) => {
@@ -221,6 +223,15 @@ function CraftingRequest() {
     }
   }, [response]);
 
+  useEffect(() => {
+    if (branchId !== 0)
+      setFilterObj({
+        page: 0,
+        pageSize,
+        branchId,
+      });
+  }, [branchId]);
+
   return (
     <div className={styles.container}>
       <div className={styles.title}>Yêu Cầu Gia Công</div>
@@ -238,8 +249,8 @@ function CraftingRequest() {
         autoHeight
         paginationMode="server"
         paginationModel={{
-          page: filterObj.page,
-          pageSize: filterObj.pageSize,
+          page: filterObj?.page ? filterObj.page : 0,
+          pageSize: filterObj?.pageSize ? filterObj.pageSize : pageSize,
         }}
         onPaginationModelChange={handleChangePage}
         rowCount={metaData.count}
