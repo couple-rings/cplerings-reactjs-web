@@ -11,6 +11,7 @@ import ManageDesign from "src/pages/Manager/ManageDesign/Index";
 import ManagerFiancePage from "src/pages/Manager/ManagerFinancePage/ManagerFinancePage";
 import ManageJewelry from "src/pages/Manager/ManageJewelry/ManageJewelry";
 import ManagerProductPage from "src/pages/Manager/ManagerProductPage/ManagerProductPage";
+import ViewAccountInfo from "src/pages/Manager/ViewAccountInfo/ViewAccountInfo";
 
 const ManagerRouteObject: RouteObject = {
   path: "/manager",
@@ -60,6 +61,10 @@ const ManagerRouteObject: RouteObject = {
       path: "product",
       element: <ManagerProductPage />,
     },
+    {
+      path: "account",
+      element: <ViewAccountInfo />,
+    }
   ],
 };
 
