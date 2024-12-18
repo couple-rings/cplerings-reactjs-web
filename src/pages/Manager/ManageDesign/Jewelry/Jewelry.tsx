@@ -279,6 +279,10 @@ function Jewelry() {
       </Grid>
 
       <DataGrid
+        sx={{
+          display: "grid",
+          gridTemplateRows: "auto 1f auto",
+        }}
         loading={isLoading}
         getRowHeight={() => "auto"}
         rows={designResponse?.data?.items ? designResponse.data.items : []}
