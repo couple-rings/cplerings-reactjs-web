@@ -63,7 +63,7 @@ declare global {
   }
 
   interface ICraftingRequestGroupFilter extends IPaginationFilter {
-    branchId: number;
+    branchId?: number;
   }
 
   interface ICustomOrderFilter extends IPaginationFilter {

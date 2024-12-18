@@ -228,7 +228,7 @@ function CraftingRequest() {
       setFilterObj({
         page: 0,
         pageSize,
-        branchId,
+        branchId: undefined,
       });
   }, [branchId]);
 
