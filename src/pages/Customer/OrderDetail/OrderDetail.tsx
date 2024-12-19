@@ -188,6 +188,14 @@ function OrderDetail() {
                   className={styles.item}
                   key={item.id}
                 >
+                  {item.jewelry && (
+                    <Grid container justifyContent={"center"}>
+                      <FormHelperText sx={{ mb: 2 }}>
+                        Mã sản phẩm: {item.jewelry.productNo}
+                      </FormHelperText>
+                    </Grid>
+                  )}
+
                   <Grid container justifyContent={"center"}>
                     <Grid item xs={10} sm={8}>
                       <img
