@@ -340,6 +340,10 @@ function CustomOrder() {
       )}
 
       <DataGrid
+        sx={{
+          display: "grid",
+          gridTemplateRows: "auto 1f auto",
+        }}
         loading={ownLoading}
         getRowHeight={() => "auto"}
         rows={ownResponse?.data?.items ? ownResponse.data.items : []}

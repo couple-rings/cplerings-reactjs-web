@@ -286,6 +286,10 @@ function ManageDiamondSpecification() {
       </Grid>
 
       <DataGrid
+        sx={{
+          display: "grid",
+          gridTemplateRows: "auto 1f auto",
+        }}
         processRowUpdate={handleProcessRowUpdate}
         loading={isLoading}
         getRowHeight={() => "auto"}
