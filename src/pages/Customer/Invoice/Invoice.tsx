@@ -620,10 +620,10 @@ const CraftingStageTable = (props: ICraftingStageTableProps) => {
     (item) => item.key === ConfigurationKey.FirstStageProgress
   )?.value;
   const secondStageProgress = configs.find(
-    (item) => item.key === ConfigurationKey.FirstStageProgress
+    (item) => item.key === ConfigurationKey.SecondStageProgress
   )?.value;
   const thirdStageProgress = configs.find(
-    (item) => item.key === ConfigurationKey.FirstStageProgress
+    (item) => item.key === ConfigurationKey.ThirdStageProgress
   )?.value;
 
   if (
