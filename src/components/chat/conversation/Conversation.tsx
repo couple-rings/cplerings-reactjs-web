@@ -48,7 +48,10 @@ function Conversation(props: IConversationProps) {
     if (message.imageId)
       return (
         <span className={classname}>
-          <span>{message.sender === userId ? "You" : message.sender}:</span>{" "}
+          <span>
+            {message.sender === userId ? "You" : conversation.partner?.username}
+            :
+          </span>{" "}
           <InsertPhotoSharpIcon fontSize="small" />
           <span>Image</span>
         </span>
@@ -57,7 +60,10 @@ function Conversation(props: IConversationProps) {
     if (message.attachmentId)
       return (
         <span className={classname}>
-          <span>{message.sender === userId ? "You" : message.sender}:</span>{" "}
+          <span>
+            {message.sender === userId ? "You" : conversation.partner?.username}
+            :
+          </span>{" "}
           <AttachmentSharpIcon fontSize="small" />
           <span className={styles.messageContent}>
             {message.attachmentId.originalName}
@@ -67,7 +73,9 @@ function Conversation(props: IConversationProps) {
 
     return (
       <span className={classname}>
-        <span>{message.sender === userId ? "You" : message.sender}:</span>{" "}
+        <span>
+          {message.sender === userId ? "You" : conversation.partner?.username}:
+        </span>{" "}
         <span className={styles.messageContent}>{message.content}</span>
       </span>
     );

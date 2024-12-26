@@ -12,7 +12,7 @@ import MenuItem from "@mui/material/MenuItem";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import FmdGoodOutlinedIcon from "@mui/icons-material/FmdGoodOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import logo from "src/assets/logo.png";
+import logo from "src/assets/CoupleRings.png";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import Drawer from "@mui/material/Drawer";

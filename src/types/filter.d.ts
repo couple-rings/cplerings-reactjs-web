@@ -62,7 +62,9 @@ declare global {
     status?: CraftingRequestStatus;
   }
 
-  interface ICraftingRequestGroupFilter extends IPaginationFilter {}
+  interface ICraftingRequestGroupFilter extends IPaginationFilter {
+    branchId?: number;
+  }
 
   interface ICustomOrderFilter extends IPaginationFilter {
     jewelerId?: number;
