@@ -2,7 +2,7 @@ import { Divider, Grid } from "@mui/material";
 import moneyBag from "src/assets/moneyBag.png";
 import chartArrowRise from "src/assets/ChartArrowRise.png";
 import styles from "./ManagerFinancePage.module.scss";
-import ManagerChartFinace from "src/components/chart/ManagerChartFinance/ManagerChartFinance";
+// import ManagerChartFinace from "src/components/chart/ManagerChartFinance/ManagerChartFinance";
 
 const transaction = [
   {
@@ -77,7 +77,7 @@ function ManagerFiancePage() {
             </Grid>
             <Grid container>
               <Grid lg={12} item className={styles.section}>
-                <ManagerChartFinace />
+                {/* <ManagerChartFinace /> */}
 
                 <div className={styles.transactionContainer}>
                   {transaction.map((item) => (

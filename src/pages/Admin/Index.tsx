@@ -7,7 +7,7 @@ import productIcon from "src/assets/ProductIcon.png";
 import chartArrowRise from "src/assets/ChartArrowRise.png";
 import chartArrowDescent from "src/assets/ChartArrowDescent.png";
 import ManagerTopProductTable from "src/pages/Manager/ManagerTopProductTable/ManagerTopProductTable";
-import ManagerChartFinace from "src/components/chart/ManagerChartFinance/ManagerChartFinance";
+// import ManagerChartFinace from "src/components/chart/ManagerChartFinance/ManagerChartFinance";
 import ManagerPieChartCategory from "src/components/chart/ManagerPieChartCategory/ManagerPieChartCategory";
 
 function Index() {
@@ -119,7 +119,7 @@ function Index() {
 
           <Grid container justifyContent={"space-between"}>
             <Grid item xs={12} className={styles.section} >
-              <ManagerChartFinace />
+              {/* <ManagerChartFinace /> */}
             </Grid>
 
             <Grid item xs={7} className={styles.section} mt={3} p={3}>

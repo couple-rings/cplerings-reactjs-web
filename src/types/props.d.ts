@@ -583,4 +583,10 @@ declare global {
 
     gender: DesignCharacteristic;
   }
+
+  interface IManagerChartFinanceProps {
+    uData: number[];
+    xLabels: string[];
+    totalRevenue: number;
+  }
 }
