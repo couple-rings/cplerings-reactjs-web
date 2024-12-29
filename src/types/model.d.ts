@@ -615,4 +615,13 @@ declare global {
     };
     note: string;
   }
+
+  interface IRevenue {
+    totalRevenue: {
+      amount: number;
+    };
+    revenueForEach: {
+      amount: number;
+    }[];
+  }
 }

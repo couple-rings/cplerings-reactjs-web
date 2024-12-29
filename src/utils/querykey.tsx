@@ -76,3 +76,4 @@ export const fetchPaymentDetail = "fetchPaymentDetail";
 
 export const fetchRefunds = "fetchRefunds";
 export const fetchResellOrders = "fetchResellOrders";
+export const fetchRevenueFollowingBranch = "fetchRevenueFollowingBranch";

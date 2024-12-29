@@ -1,68 +1,111 @@
 import { BarChart } from "@mui/x-charts/BarChart";
 import styles from "./ManagerChartFinance.module.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { fetchRevenueFollowingBranch } from "src/utils/querykey";
+import { getTotalRevenueFollowingBranch } from "src/services/dashboard.service";
 
-// const uData = [4000, 3000, 2000, 2780, 1890, 2390, 3490,122222,1222,1222,1222];
-// const xLabels = [
-//   "21 january",
-//   "Page B",
-//   "Page C",
-//   "Page D",
-//   "Page E",
-//   "Page F",
-//   "Page G",
-//   "Page H",
-//   "Page I",
-//   "Page J",
-//   "Page K",
-// ];
+let uData: number[] = [];
+let xLabels: string[] = [];
 
-const initialData = [
-  { date: "2024-01-21", value: 4000 },
-  { date: "2024-01-22", value: 3000 },
-  { date: "2024-01-23", value: 2000 },
-  { date: "2024-01-24", value: 2780 },
-  { date: "2024-01-25", value: 1890 },
-  { date: "2024-01-26", value: 2390 },
-  { date: "2024-01-27", value: 3490 },
-  { date: "2024-01-28", value: 12222 },
-  { date: "2024-01-29", value: 1222 },
-  { date: "2024-01-30", value: 1222 },
-  { date: "2024-01-31", value: 1222 },
-  { date: "2024-02-01", value: 1222 },
-  { date: "2024-02-02", value: 1222 },
-  { date: "2024-02-03", value: 1222 },
-];
+// const initFilter: IRevenueFilter = {
+//   startDate: new Date(
+//     new Date().setDate(new Date().getDate() - 7)
+//   ).toISOString(),
+//   endDate: new Date().toISOString(),
+// };
 
 function ManagerChartFinace() {
+  const [filterObj, setFilterObj] = useState<IRevenueFilter>({
+    startDate: "",
+    endDate: "",
+  });
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const navigate = useNavigate();
 
-  const filteredData = initialData.filter((data) => {
-    const dataDate = new Date(data.date);
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate) : null;
-    return (!start || dataDate >= start) && (!end || dataDate <= end);
+  const generateDatesInRange = (startDate: string, endDate: string) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const dates: string[] = [];
+
+    if (start > end) {
+      console.error("Start date must be before or equal to end date.");
+      return dates;
+    }
+
+    xLabels = [];
+
+    while (start <= end) {
+      xLabels.push(new Date(start).toISOString().split("T")[0]);
+      start.setDate(start.getDate() + 1);
+    }
+  };
+
+  useEffect(() => {
+    const initialStartDate = new Date(
+      new Date().setDate(new Date().getDate() - 7)
+    ).toISOString();
+    const initialEndDate = new Date().toISOString();
+
+    generateDatesInRange(initialStartDate, initialEndDate);
+
+    setFilterObj({
+      startDate: initialStartDate,
+      endDate: initialEndDate,
+    });
+  }, []);
+
+  const { data: response } = useQuery({
+    queryKey: [fetchRevenueFollowingBranch, filterObj],
+    queryFn: () => getTotalRevenueFollowingBranch(filterObj),
   });
 
-  const xLabels = filteredData.map((data) =>
-    new Date(data.date).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-    })
-  );
-  const uData = filteredData.map((data) => data.value);
+  useEffect(() => {
+    if (response && response.data) {
+      console.log("response", response.data);
+      const items = response.data;
+      console.log("items", items);
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [response]);
+
+  const handleChangeDate = (startDate: string, endDate: string) => {
+    console.log("startDate", startDate);
+    console.log("endDate", endDate);
+
+    generateDatesInRange(startDate, endDate);
+    setStartDate(startDate);
+    setEndDate(endDate);
+    setFilterObj({
+      startDate: startDate ? new Date(startDate).toISOString() : "",
+      endDate: endDate ? new Date(endDate).toISOString() : "",
+    });
+  };
+
+  const totalRevenue = response?.data?.totalRevenue.amount;
+
+  response?.data?.revenueForEach.forEach((data) => {
+    uData = [];
+    uData.push(data.amount);
+  });
+
+  console.log("uData", uData);
 
   return (
     <div className={styles.container}>
       <div className={styles.titleChartContainer}>
-        <div className={styles.titleChart} onClick={() => navigate('/manager/financial')}>
+        <div
+          className={styles.titleChart}
+          onClick={() => navigate("/manager/financial")}
+        >
           Doanh Thu <p>(VND)</p>
         </div>
         <div className={styles.numberContainer}>
-          280,012,003<p>₫</p>
+          {totalRevenue}
+          <p>₫</p>
         </div>
       </div>
 
@@ -72,23 +115,56 @@ function ManagerChartFinace() {
         height={300}
       />
 
-      <div style={{ display: "flex", justifyContent:"space-evenly",  gap: "50px", marginBottom: "20px" }}>
-        <div style={{ display: "flex", flexDirection:"column", gap: "10px", marginBottom: "20px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-evenly",
+          gap: "50px",
+          marginBottom: "20px",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            marginBottom: "20px",
+          }}
+        >
           <label>Từ ngày: </label>
           <input
-            style={{ width: "400px", height: "30px", borderRadius:"5px", padding:"5px"}}
+            style={{
+              width: "400px",
+              height: "30px",
+              borderRadius: "5px",
+              padding: "5px",
+            }}
             type="date"
             value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
+            onChange={(e) => handleChangeDate(e.target.value, endDate)}
+            max={endDate || undefined}
           />
         </div>
-        <div style={{ display: "flex", flexDirection:"column", gap: "10px", marginBottom: "20px" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            marginBottom: "20px",
+          }}
+        >
           <label>Đến ngày: </label>
           <input
-          style={{ width: "400px", height: "30px", borderRadius:"5px", padding:"5px"}}
+            style={{
+              width: "400px",
+              height: "30px",
+              borderRadius: "5px",
+              padding: "5px",
+            }}
             type="date"
             value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
+            onChange={(e) => handleChangeDate(startDate, e.target.value)}
+            min={startDate || undefined}
           />
         </div>
       </div>
