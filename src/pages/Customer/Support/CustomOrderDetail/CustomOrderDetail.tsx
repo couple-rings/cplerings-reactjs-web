@@ -27,6 +27,7 @@ import {
 } from "src/utils/querykey";
 import { useEffect, useState } from "react";
 import {
+  CraftingDifficulty,
   CustomOrderStatus,
   DesignCharacteristic,
   TransportOrderStatus,
@@ -390,6 +391,18 @@ function CustomOrderDetail() {
               <Grid item xs={10} mt={3}>
                 <Grid container justifyContent={"space-between"}>
                   <Grid item className={styles.label}>
+                    Độ Phức Tạp
+                  </Grid>
+                  <Grid item>
+                    {maleRing.difficulty === CraftingDifficulty.Normal
+                      ? "Bình thường"
+                      : "Khó"}
+                  </Grid>
+                </Grid>
+                <Divider sx={{ my: 2 }} />
+
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item className={styles.label}>
                     Chất Liệu
                   </Grid>
                   <Grid item>{maleRing.metalSpecification.name}</Grid>
@@ -450,7 +463,17 @@ function CustomOrderDetail() {
                 <Divider sx={{ my: 2 }} />
                 <Grid container justifyContent={"space-between"}>
                   <Grid item className={styles.label}>
-                    Giá Tiền
+                    Phí Gia Công
+                  </Grid>
+                  <Grid item>
+                    {currencyFormatter(maleRing.craftingFee.amount)}
+                  </Grid>
+                </Grid>
+
+                <Divider sx={{ my: 2 }} />
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item className={styles.label}>
+                    Tổng Tiền
                   </Grid>
                   <Grid item>{currencyFormatter(maleRing.price.amount)}</Grid>
                 </Grid>
@@ -494,6 +517,18 @@ function CustomOrderDetail() {
               )}
 
               <Grid item xs={10} mt={3}>
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item className={styles.label}>
+                    Độ Phức Tạp
+                  </Grid>
+                  <Grid item>
+                    {femaleRing.difficulty === CraftingDifficulty.Normal
+                      ? "Bình thường"
+                      : "Khó"}
+                  </Grid>
+                </Grid>
+                <Divider sx={{ my: 2 }} />
+
                 <Grid container justifyContent={"space-between"}>
                   <Grid item className={styles.label}>
                     Chất Liệu
@@ -559,11 +594,31 @@ function CustomOrderDetail() {
                 <Divider sx={{ my: 2 }} />
                 <Grid container justifyContent={"space-between"}>
                   <Grid item className={styles.label}>
-                    Giá Tiền
+                    Phí Gia Công
+                  </Grid>
+                  <Grid item>
+                    {currencyFormatter(femaleRing.craftingFee.amount)}
+                  </Grid>
+                </Grid>
+
+                <Divider sx={{ my: 2 }} />
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item className={styles.label}>
+                    Tổng Tiền
                   </Grid>
                   <Grid item>{currencyFormatter(femaleRing.price.amount)}</Grid>
                 </Grid>
               </Grid>
+            </Grid>
+
+            <Grid container px={4} flexDirection={"column"} gap={1} mb={2}>
+              <FormLabel>
+                * Phí vận chuyển: {currencyFormatter(order.shippingFee.amount)}
+              </FormLabel>
+              <FormLabel>
+                * Kim cương phụ:{" "}
+                {currencyFormatter(maleRing.sideDiamondPrice.amount)}/viên
+              </FormLabel>
             </Grid>
 
             {order.contract.document && (

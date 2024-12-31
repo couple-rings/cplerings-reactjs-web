@@ -1,4 +1,14 @@
-import { Button, Card, Chip, Divider, Grid, Skeleton } from "@mui/material";
+import {
+  Button,
+  Card,
+  Chip,
+  Divider,
+  FormLabel,
+  Grid,
+  MenuItem,
+  Select,
+  Skeleton,
+} from "@mui/material";
 import styles from "./CraftingRequestDetail.module.scss";
 import male from "src/assets/male-icon.png";
 import female from "src/assets/female-icon.png";
@@ -12,15 +22,23 @@ import {
 } from "src/services/craftingRequest.service";
 import { useEffect, useState } from "react";
 import { fetchCraftingRequests } from "src/utils/querykey";
-import { CraftingRequestStatus, DesignCharacteristic } from "src/utils/enums";
+import {
+  ConfigurationKey,
+  CraftingDifficulty,
+  CraftingRequestStatus,
+  DesignCharacteristic,
+} from "src/utils/enums";
 import RejectModal from "src/components/modal/craftingRequest/Reject.modal";
 import {
+  currencyFormatter,
   formatCraftingRequestStatus,
   getDiamondSpec,
 } from "src/utils/functions";
 import { toast } from "react-toastify";
 import moment from "moment";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { useAppSelector } from "src/utils/hooks";
+import { metalWeightUnit } from "src/utils/constants";
 
 function CraftingRequestDetail() {
   const [needApproval, setNeedApproval] = useState(true);
@@ -34,9 +52,21 @@ function CraftingRequestDetail() {
     null
   );
 
+  const [malePrice, setMalePrice] = useState(0);
+  const [femalePrice, setFemalePrice] = useState(0);
+
+  const [maleDifficulty, setMaleDifficulty] = useState(
+    CraftingDifficulty.Normal
+  );
+  const [femaleDifficulty, setFemaleDifficulty] = useState(
+    CraftingDifficulty.Normal
+  );
+
   const navigate = useNavigate();
 
   const { customerId } = useParams<{ customerId: string }>();
+
+  const { configs } = useAppSelector((state) => state.config);
 
   const { data: response } = useQuery({
     queryKey: [fetchCraftingRequests, filterObj],
@@ -46,6 +76,19 @@ function CraftingRequestDetail() {
     },
     enabled: !!filterObj,
   });
+
+  const profitRatio = configs.find(
+    (item) => item.key === ConfigurationKey.ProfitRatio
+  )?.value;
+  const sideDiamondPrice = configs.find(
+    (item) => item.key === ConfigurationKey.SideDiamondPrice
+  )?.value;
+  const craftingFee = configs.find(
+    (item) => item.key === ConfigurationKey.CraftingFee
+  )?.value;
+  const difficultyMultiply = configs.find(
+    (item) => item.key === ConfigurationKey.DifficultyMultiply
+  )?.value;
 
   const mutation = useMutation({
     mutationFn: (data: IUpdateCraftingRequest) => {
@@ -73,6 +116,8 @@ function CraftingRequestDetail() {
         firstCommentCrafting,
         secondCommentCrafting,
         status: CraftingRequestStatus.Rejected,
+        firstCraftingRequestDifficulty: maleDifficulty,
+        secondCraftingRequestDifficulty: femaleDifficulty,
       });
 
       if (response.data) {
@@ -89,6 +134,8 @@ function CraftingRequestDetail() {
         firstCommentCrafting: "Đã chấp nhận",
         secondCommentCrafting: "Đã chấp nhận",
         status: CraftingRequestStatus.Accepted,
+        firstCraftingRequestDifficulty: maleDifficulty,
+        secondCraftingRequestDifficulty: femaleDifficulty,
       });
 
       if (response.data) {
@@ -144,6 +191,62 @@ function CraftingRequestDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [response]);
 
+  useEffect(() => {
+    if (maleRequest && femaleRequest) {
+      if (
+        profitRatio &&
+        sideDiamondPrice &&
+        craftingFee &&
+        difficultyMultiply
+      ) {
+        const maleDesign = maleRequest.customDesign;
+        const maleCraftingFee =
+          maleDifficulty === CraftingDifficulty.Normal
+            ? +craftingFee
+            : +craftingFee * +difficultyMultiply;
+
+        const femaleDesign = femaleRequest.customDesign;
+        const femaleCraftingFee =
+          femaleDifficulty === CraftingDifficulty.Normal
+            ? +craftingFee
+            : +craftingFee * +difficultyMultiply;
+
+        const firstDesignPrice =
+          (maleDesign.metalWeight *
+            metalWeightUnit *
+            maleRequest.metalSpecification.pricePerUnit +
+            maleRequest.diamondSpecification.price +
+            maleDesign.sideDiamondsCount * +sideDiamondPrice +
+            maleCraftingFee) *
+          +profitRatio;
+
+        const secondDesignPrice =
+          (femaleDesign.metalWeight *
+            metalWeightUnit *
+            femaleRequest.metalSpecification.pricePerUnit +
+            femaleRequest.diamondSpecification.price +
+            femaleDesign.sideDiamondsCount * +sideDiamondPrice +
+            femaleCraftingFee) *
+          +profitRatio;
+
+        const malePrice = Math.round(firstDesignPrice / 1000) * 1000;
+        const femalePrice = Math.round(secondDesignPrice / 1000) * 1000;
+
+        setMalePrice(malePrice);
+        setFemalePrice(femalePrice);
+      }
+    }
+  }, [
+    craftingFee,
+    difficultyMultiply,
+    femaleDifficulty,
+    femaleRequest,
+    maleDifficulty,
+    maleRequest,
+    profitRatio,
+    sideDiamondPrice,
+  ]);
+
   if (!response?.data)
     return (
       <Grid container justifyContent={"center"} my={10}>
@@ -169,7 +272,14 @@ function CraftingRequestDetail() {
       </Grid>
     );
 
-  if (needApproval && maleRequest && femaleRequest)
+  if (
+    needApproval &&
+    maleRequest &&
+    femaleRequest &&
+    sideDiamondPrice &&
+    craftingFee &&
+    difficultyMultiply
+  )
     return (
       <div className={styles.container}>
         <Grid container mb={7} justifyContent={"center"}>
@@ -238,6 +348,12 @@ function CraftingRequestDetail() {
                   <Grid item>{maleRequest.customDesign.spouse.fullName}</Grid>
                 </Grid>
 
+                <Grid container justifyContent={"space-between"} mb={1}>
+                  <Grid item>Số CCCD:</Grid>
+
+                  <Grid item>{maleRequest.customDesign.spouse.citizenId}</Grid>
+                </Grid>
+
                 <Grid container justifyContent={"space-between"}>
                   <Grid item>Ngày tạo:</Grid>
 
@@ -246,6 +362,23 @@ function CraftingRequestDetail() {
                   </Grid>
                 </Grid>
               </fieldset>
+
+              <Grid container mt={3}>
+                <FormLabel sx={{ mb: 1 }}>Độ phức tạp</FormLabel>
+                <Select
+                  fullWidth
+                  variant="standard"
+                  value={maleDifficulty}
+                  onChange={(e) => {
+                    setMaleDifficulty(e.target.value as CraftingDifficulty);
+                  }}
+                >
+                  <MenuItem value={CraftingDifficulty.Normal}>
+                    Bình thường
+                  </MenuItem>
+                  <MenuItem value={CraftingDifficulty.Hard}>Khó</MenuItem>
+                </Select>
+              </Grid>
 
               <div className={styles.info}>
                 <div className={styles.row}>
@@ -291,6 +424,47 @@ function CraftingRequestDetail() {
                   <div className={styles.field}>Khắc chữ</div>
                   <div className={styles.value}>{maleRequest.engraving}</div>
                 </div>
+
+                <Divider sx={{ backgroundColor: "#ccc", my: 2 }} />
+                <Grid container mb={1} className={styles.row}>
+                  <div className={styles.field}>Giá vàng (/gram)</div>
+                  <div className={styles.value}>
+                    {currencyFormatter(
+                      maleRequest.metalSpecification.pricePerUnit
+                    )}
+                  </div>
+                </Grid>
+                <Grid container mb={1} className={styles.row}>
+                  <div className={styles.field}>Kim cương chính</div>
+                  <div className={styles.value}>
+                    {currencyFormatter(maleRequest.diamondSpecification.price)}
+                  </div>
+                </Grid>
+                <Grid container mb={1} className={styles.row}>
+                  <div className={styles.field}>Kim cương phụ</div>
+                  <div className={styles.value}>
+                    {currencyFormatter(
+                      maleRequest.customDesign.sideDiamondsCount *
+                        +sideDiamondPrice
+                    )}
+                  </div>
+                </Grid>
+                <Grid container mb={1} className={styles.row}>
+                  <div className={styles.field}>Phí gia công</div>
+                  <div className={styles.value}>
+                    {maleDifficulty === CraftingDifficulty.Normal
+                      ? currencyFormatter(+craftingFee)
+                      : currencyFormatter(+craftingFee * +difficultyMultiply)}
+                  </div>
+                </Grid>
+
+                <Divider sx={{ backgroundColor: "#ccc", my: 2 }} />
+                <div className={styles.row}>
+                  <div className={styles.field}>Tổng tiền</div>
+                  <div className={styles.value}>
+                    {currencyFormatter(malePrice)}
+                  </div>
+                </div>
               </div>
             </Grid>
 
@@ -319,6 +493,14 @@ function CraftingRequestDetail() {
                   <Grid item>{femaleRequest.customDesign.spouse.fullName}</Grid>
                 </Grid>
 
+                <Grid container justifyContent={"space-between"} mb={1}>
+                  <Grid item>Số CCCD:</Grid>
+
+                  <Grid item>
+                    {femaleRequest.customDesign.spouse.citizenId}
+                  </Grid>
+                </Grid>
+
                 <Grid container justifyContent={"space-between"}>
                   <Grid item>Ngày tạo:</Grid>
 
@@ -327,6 +509,23 @@ function CraftingRequestDetail() {
                   </Grid>
                 </Grid>
               </fieldset>
+
+              <Grid container mt={3}>
+                <FormLabel sx={{ mb: 1 }}>Độ phức tạp</FormLabel>
+                <Select
+                  fullWidth
+                  variant="standard"
+                  value={femaleDifficulty}
+                  onChange={(e) => {
+                    setFemaleDifficulty(e.target.value as CraftingDifficulty);
+                  }}
+                >
+                  <MenuItem value={CraftingDifficulty.Normal}>
+                    Bình thường
+                  </MenuItem>
+                  <MenuItem value={CraftingDifficulty.Hard}>Khó</MenuItem>
+                </Select>
+              </Grid>
 
               <div className={styles.info}>
                 <div className={styles.row}>
@@ -372,7 +571,62 @@ function CraftingRequestDetail() {
                   <div className={styles.field}>Khắc chữ</div>
                   <div className={styles.value}>{femaleRequest.engraving}</div>
                 </div>
+
+                <Divider sx={{ backgroundColor: "#ccc", my: 2 }} />
+                <Grid container mb={1} className={styles.row}>
+                  <div className={styles.field}>Giá vàng (/gram)</div>
+                  <div className={styles.value}>
+                    {currencyFormatter(
+                      femaleRequest.metalSpecification.pricePerUnit
+                    )}
+                  </div>
+                </Grid>
+                <Grid container mb={1} className={styles.row}>
+                  <div className={styles.field}>Kim cương chính</div>
+                  <div className={styles.value}>
+                    {currencyFormatter(
+                      femaleRequest.diamondSpecification.price
+                    )}
+                  </div>
+                </Grid>
+                <Grid container mb={1} className={styles.row}>
+                  <div className={styles.field}>Kim cương phụ</div>
+                  <div className={styles.value}>
+                    {currencyFormatter(
+                      femaleRequest.customDesign.sideDiamondsCount *
+                        +sideDiamondPrice
+                    )}
+                  </div>
+                </Grid>
+                <Grid container mb={1} className={styles.row}>
+                  <div className={styles.field}>Phí gia công</div>
+                  <div className={styles.value}>
+                    {femaleDifficulty === CraftingDifficulty.Normal
+                      ? currencyFormatter(+craftingFee)
+                      : currencyFormatter(+craftingFee * +difficultyMultiply)}
+                  </div>
+                </Grid>
+
+                <Divider sx={{ backgroundColor: "#ccc", my: 2 }} />
+                <div className={styles.row}>
+                  <div className={styles.field}>Tổng tiền</div>
+                  <div className={styles.value}>
+                    {currencyFormatter(femalePrice)}
+                  </div>
+                </div>
               </div>
+            </Grid>
+
+            <Grid container flexDirection={"column"} gap={1} mt={3} mb={6}>
+              <FormLabel>
+                Tổng tiền = (Giá vàng x Lượng vàng x 3.75 + Giá kim cương chính
+                + Giá kim cương phụ + Phí gia công) x Tỷ lệ lợi nhuận
+              </FormLabel>
+              <FormLabel>* 1 chỉ = {metalWeightUnit} gram</FormLabel>
+              <FormLabel>* Tỷ lệ lợi nhuận = {profitRatio} </FormLabel>
+              <FormLabel>
+                * Kim cương phụ: {currencyFormatter(+sideDiamondPrice)}/viên
+              </FormLabel>
             </Grid>
 
             <Grid
@@ -495,10 +749,18 @@ const PastRequests = (props: IPastRequestsProps) => {
                     <Grid
                       container
                       justifyContent={"space-between"}
-                      alignItems={"center"}
+                      alignItems={"flex-start"}
                     >
-                      <Grid item>
-                        Dành cho: {item.customDesign.spouse.fullName}
+                      <Grid container item xs={8}>
+                        <Grid item xs={12}>
+                          Dành cho: {item.customDesign.spouse.fullName}
+                        </Grid>
+
+                        <Grid item xs={12}>
+                          <FormLabel>
+                            Số CCCD: {item.customDesign.spouse.citizenId}
+                          </FormLabel>
+                        </Grid>
                       </Grid>
 
                       <Chip
