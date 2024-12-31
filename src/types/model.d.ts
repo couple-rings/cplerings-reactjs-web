@@ -15,6 +15,7 @@ import {
   Status,
   TransportOrderStatus,
   VersionOwner,
+  CraftingDifficulty,
 } from "src/utils/enums";
 
 export {};
@@ -316,6 +317,7 @@ declare global {
     id: number;
     customerId?: number;
     fullName: string;
+    citizenId: string;
   }
 
   interface ICustomDesign {
@@ -395,6 +397,11 @@ declare global {
     metalSpecification: IMetalSpec;
     diamonds: IDiamond[];
     branch: IBranch;
+    difficulty: CraftingDifficulty;
+    craftingFee: { amount: number };
+    metalPricePerUnit: { amount: number };
+    diamondPrice: { amount: number };
+    sideDiamondPrice: { amount: number };
     price: { amount: number };
   }
 
@@ -428,6 +435,10 @@ declare global {
     createdAt: string;
     refund?: IRefund;
     customOrderHistories: IStatusHistory<CustomOrderStatus>[];
+    shippingFee: {
+      amount: number;
+    };
+    priceApplicationRatio: number;
   }
 
   interface ICraftingStage {
