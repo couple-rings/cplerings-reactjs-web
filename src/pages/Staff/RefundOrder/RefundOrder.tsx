@@ -244,6 +244,10 @@ function RefundOrder() {
       </div>
 
       <DataGrid
+        sx={{
+          display: "grid",
+          gridTemplateRows: "auto 1f auto",
+        }}
         loading={isLoading}
         getRowHeight={() => "auto"}
         rows={response?.data?.items ? response.data.items : []}

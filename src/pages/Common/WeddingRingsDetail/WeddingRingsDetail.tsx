@@ -26,6 +26,7 @@ import { useEffect, useState } from "react";
 import CustomExpandIcon from "src/components/icon/CustomExpandIcon";
 import {
   ConfigurationKey,
+  CraftingRequestStatus,
   CustomOrderStatus,
   CustomRequestStatus,
   GoldColor,
@@ -42,6 +43,7 @@ import { metalWeightUnit } from "src/utils/constants";
 import { useAppSelector, useScrollTop } from "src/utils/hooks";
 import { useQuery } from "@tanstack/react-query";
 import {
+  fetchCraftingRequests,
   fetchCustomOrders,
   fetchCustomRequests,
   fetchDesignDetail,
@@ -52,6 +54,7 @@ import { getDesignDetail } from "src/services/design.service";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { toast } from "react-toastify";
 import SpouseModal from "src/components/modal/redirect/Spouse.modal";
+import { getCraftingRequests } from "src/services/craftingRequest.service";
 
 const sizeMenuPaperStyle: SxProps = {
   ...menuPaperStyle,
@@ -91,6 +94,8 @@ function WeddingRingsDetail() {
     useState<ICustomRequestFilter | null>(null);
   const [customOrderFilterObj, setCustomOrderFilterObj] =
     useState<ICustomOrderFilter | null>(null);
+  const [craftingRequestsFilterObj, setCraftingRequestsFilterObj] =
+    useState<ICraftingRequestFilter | null>(null);
 
   const [firstMetal, setFirstMetal] = useState(initMetal);
   const [firstDiamond, setFirstDiamond] = useState(initDiamond);
@@ -173,6 +178,16 @@ function WeddingRingsDetail() {
       if (customOrderFilterObj) return getCustomOrders(customOrderFilterObj);
     },
     enabled: !!customOrderFilterObj,
+  });
+
+  const { data: craftingRequestsResponse } = useQuery({
+    queryKey: [fetchCraftingRequests, craftingRequestsFilterObj],
+
+    queryFn: () => {
+      if (craftingRequestsFilterObj)
+        return getCraftingRequests(craftingRequestsFilterObj);
+    },
+    enabled: !!craftingRequestsFilterObj,
   });
 
   const handlePayDesignFee = () => {
@@ -324,9 +339,14 @@ function WeddingRingsDetail() {
   ]);
 
   useEffect(() => {
-    if (customRequestResponse?.data && customOrderResponse?.data) {
+    if (
+      customRequestResponse?.data &&
+      customOrderResponse?.data &&
+      craftingRequestsResponse?.data
+    ) {
       const { items: requests } = customRequestResponse.data;
       const { items: orders } = customOrderResponse.data;
+      const { items: craftingRequests } = craftingRequestsResponse.data;
 
       if (requests.length !== 0) {
         const inProgress = requests.find(
@@ -352,8 +372,22 @@ function WeddingRingsDetail() {
           setAllow(false);
         }
       }
+
+      if (craftingRequests.length !== 0) setAllow(false);
     }
-  }, [customRequestResponse, customOrderResponse]);
+  }, [customRequestResponse, customOrderResponse, craftingRequestsResponse]);
+
+  useEffect(() => {
+    if (userId)
+      setCraftingRequestsFilterObj({
+        page: 0,
+        pageSize: 100,
+        status: CraftingRequestStatus.Pending,
+        customerId: +userId,
+      });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     setCustomRequestFilterObj({
