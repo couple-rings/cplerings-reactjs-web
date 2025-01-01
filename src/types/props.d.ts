@@ -585,8 +585,18 @@ declare global {
   }
 
   interface IManagerChartFinanceProps {
-    uData: number[];
+    uData:  (number | null)[];
     xLabels: string[];
-    totalRevenue: number;
+    totalRevenue: string;
+  }
+
+  interface ITotalOrderPieChartProps {
+    orderPieChartData : {
+      label : string;
+      value : number;
+    }[],
+    totalOrder : string;
+    totalRevenue : string;
+    
   }
 }

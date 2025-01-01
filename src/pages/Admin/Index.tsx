@@ -8,7 +8,7 @@ import chartArrowRise from "src/assets/ChartArrowRise.png";
 import chartArrowDescent from "src/assets/ChartArrowDescent.png";
 import ManagerTopProductTable from "src/pages/Manager/ManagerTopProductTable/ManagerTopProductTable";
 // import ManagerChartFinace from "src/components/chart/ManagerChartFinance/ManagerChartFinance";
-import ManagerPieChartCategory from "src/components/chart/ManagerPieChartCategory/ManagerPieChartCategory";
+// import ManagerPieChartCategory from "src/components/chart/ManagerPieChartCategory/ManagerPieChartCategory";
 
 function Index() {
 
@@ -126,7 +126,7 @@ function Index() {
               <ManagerTopProductTable />
             </Grid>
             <Grid item xs={4.8} className={styles.section} mt={3} p={3}>
-              <ManagerPieChartCategory />
+              {/* <ManagerPieChartCategory /> */}
             </Grid>
           </Grid>
         </div>

@@ -1,19 +1,48 @@
 import { PieChart } from "@mui/x-charts/PieChart";
-import { mobileOS } from "./webUsageStats";
+// import { mobileOS } from "./webUsageStats";
 import styles from "./ManagerPieChartCategory.module.scss";
 import { useNavigate } from "react-router-dom";
 
-function ManagerPieChartCategory() {
+// const mobileOS = [
+//   {
+//     label: "Đơn Gia Công",
+//     value: 2.42,
+//   },
+//   {
+//     label: "Đơn Hoàn Tiền",
+//     value: 72.72,
+//   },
+//   {
+//     label: "Đơn Bán Lại",
+//     value: 28.8,
+//   },
+// ];
+
+function ManagerPieChartCategory(props: ITotalOrderPieChartProps) {
+  const { totalOrder, totalRevenue, orderPieChartData } = props;
+
+  
+
+
   const navigate = useNavigate();
+
+
+
   return (
     <>
       <div className={styles.container}>
-        <div className="title" style={{fontSize:"30px"}} onClick={() => navigate('/manager/product')}>Thể loại</div>
+        <div
+          className="title"
+          style={{ fontSize: "30px" }}
+          onClick={() => navigate("/manager/product")}
+        >
+          Các loại đơn
+        </div>
         <PieChart
           sx={{ marginLeft: "100px" }}
           series={[
             {
-              data: mobileOS,
+              data: orderPieChartData,
               highlightScope: { fade: "global", highlight: "item" },
               faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
               innerRadius: 80,
@@ -27,19 +56,19 @@ function ManagerPieChartCategory() {
         />
 
         <div className={styles.revenueContainer}>
-          <p className={styles.date}>Tháng 12, 2024</p>
-          <p className={styles.revenue}>20,000,000 ₫</p>
+          <p className={styles.date}>{totalOrder} Đơn</p>
+          <p className={styles.revenue}>{totalRevenue} ₫</p>
         </div>
 
         <div className={styles.categoryNote}>
           <div className={styles.categoryItem1}>
-            <p className="item">Thể loại 2</p>
+            <p className="item">Đơn Gia Công</p>
           </div>
           <div className={styles.categoryItem2}>
-            <p className="item">Thể loại 1</p>
+            <p className="item">Đơn Mua Lại</p>
           </div>
           <div className={styles.categoryItem3}>
-            <p className="item">Thể loại 3</p>
+            <p className="item">Đơn Hoàn Tiền</p>
           </div>
         </div>
       </div>

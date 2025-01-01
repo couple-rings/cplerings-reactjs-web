@@ -1,11 +1,18 @@
 .container {
-    padding: 1.5rem;
+    // padding: 1.5rem;
     .content {
         background-color: #f5f5f5;
         border-radius: 10px;
         padding: 1.5rem;
-        .revenueContainer {
-            background-color: #FFF6ED;
+
+        .topBox {
+            padding: 1.5rem;
+            background-color: #fff;
+            margin-bottom: 1.5rem;
+        }
+
+        .customOrderContainer {
+            background-color: #EEF9FB;
             border-radius: 10px;
             padding: 10px 25px;
             padding-bottom: 10px;
@@ -33,7 +40,145 @@
                     }
                 }
                 .title {
-                    color: #E6A768 ;
+                    color: #4e94f7 ;
+                    padding: 0;
+                    margin: 0;
+                    font-size: 16px;
+                }
+            }
+
+            .numberContainer {
+                display: flex;
+                align-items: baseline;
+                gap: 10px;
+                p {
+                    font-size: 30px;
+                    padding: 0;
+                    margin: 0;
+                }
+            }
+
+            .trendContainer {
+                .numberTrendUp {
+                    color: #48742c;
+                    display: flex;
+                    gap: 5px;
+                    font-size: 12px;
+                }
+
+                .numberTrendDown {
+                    color: #bb271a;
+                    display: flex;
+                    gap: 5px;
+                    font-size: 12px;
+                }
+
+                .timeTrend {
+                    font-size: 10px;
+                    color: #a8a7a7;
+                }
+            }
+        }
+
+        .resellOrderContainer {
+            background-color: #f8e7fa;
+            border-radius: 10px;
+            padding: 10px 25px;
+            padding-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+
+            .boxTitle {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .boxIcon {
+                    width: 40px;
+                    height: 40px;
+                    background-color: #ffff;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 10px;
+                    img {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+                .title {
+                    color: #d955f0 ;
+                    padding: 0;
+                    margin: 0;
+                    font-size: 16px;
+                }
+            }
+
+            .numberContainer {
+                display: flex;
+                align-items: baseline;
+                gap: 10px;
+                p {
+                    font-size: 30px;
+                    padding: 0;
+                    margin: 0;
+                }
+            }
+
+            .trendContainer {
+                .numberTrendUp {
+                    color: #48742c;
+                    display: flex;
+                    gap: 5px;
+                    font-size: 12px;
+                }
+
+                .numberTrendDown {
+                    color: #bb271a;
+                    display: flex;
+                    gap: 5px;
+                    font-size: 12px;
+                }
+
+                .timeTrend {
+                    font-size: 10px;
+                    color: #a8a7a7;
+                }
+            }
+        }
+
+        .refundOrderContainer {
+            background-color: #f5fdf5;
+            border-radius: 10px;
+            padding: 10px 25px;
+            padding-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+
+            .boxTitle {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .boxIcon {
+                    width: 40px;
+                    height: 40px;
+                    background-color: #ffff;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 10px;
+                    img {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+                .title {
+                    color: #69adad ;
                     padding: 0;
                     margin: 0;
                     font-size: 16px;

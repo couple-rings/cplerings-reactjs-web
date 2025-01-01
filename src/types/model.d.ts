@@ -621,7 +621,27 @@ declare global {
       amount: number;
     };
     revenueForEach: {
-      amount: number;
-    }[];
+      [date: string]: {
+        amount: number;
+      };
+    };
   }
+
+  interface ITotalOrder {
+    orders: {
+      totalCustomOrder : number;
+      totalResellOrder : number;
+      totalRefundOrder : number;
+      cuscustomOrdersForEach : {
+        [date : string] : number;
+      };
+      resellOrdersForEach : {
+        [date : string] : number;
+      };
+      refundOrdersForEach : {
+        [date : string] : number;
+      }
+    }
+  }
+  
 }

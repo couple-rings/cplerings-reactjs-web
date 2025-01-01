@@ -11,11 +11,11 @@ import ManagerChartFinace from "src/components/chart/ManagerChartFinance/Manager
 import ManagerPieChartCategory from "src/components/chart/ManagerPieChartCategory/ManagerPieChartCategory";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchRevenueFollowingBranch } from "src/utils/querykey";
-import { getTotalRevenueFollowingBranch } from "src/services/dashboard.service";
-
-let uData: number[] = [];
-let xLabels: string[] = [];
+import { fetchRevenueFollowingBranch, fetchTotalOrderFollowingBranch } from "src/utils/querykey";
+import {
+  getTotalOrderFollowingBranch,
+  getTotalRevenueFollowingBranch,
+} from "src/services/dashboard.service";
 
 function Index() {
   const [filterObj, setFilterObj] = useState<IRevenueFilter>({
@@ -25,24 +25,15 @@ function Index() {
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-
-  const generateDatesInRange = (startDate: string, endDate: string) => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const dates: string[] = [];
-
-    if (start > end) {
-      console.error("Start date must be before or equal to end date.");
-      return dates;
-    }
-
-    xLabels = [];
-
-    while (start <= end) {
-      xLabels.push(new Date(start).toISOString().split("T")[0]);
-      start.setDate(start.getDate() + 1);
-    }
-  };
+  const [chartData, setChartData] = useState<{
+    xLabels: string[];
+    uData: (number | null)[];
+  }>({ xLabels: [], uData: [] });
+  const [pieChartData, setPieChartData] = useState<ITotalOrderPieChartProps>({
+    orderPieChartData: [],
+    totalOrder: "0",
+    totalRevenue: "0",
+  });
 
   useEffect(() => {
     const initialStartDate = new Date(
@@ -50,34 +41,91 @@ function Index() {
     ).toISOString();
     const initialEndDate = new Date().toISOString();
 
-    generateDatesInRange(initialStartDate, initialEndDate);
-
     setFilterObj({
       startDate: initialStartDate,
       endDate: initialEndDate,
     });
   }, []);
 
+  // useEffect(() => {
+  //   const initialStartDate = new Date(
+  //     new Date().setDate(new Date().getDate() - 7)
+  //   ).toISOString();
+  //   const initialEndDate = new Date().toISOString();
+
+  //   setFilterObj({
+  //     startDate: initialStartDate,
+  //     endDate: initialEndDate,
+  //   });
+  // }, []);
+
   const { data: response } = useQuery({
     queryKey: [fetchRevenueFollowingBranch, filterObj],
     queryFn: () => getTotalRevenueFollowingBranch(filterObj),
   });
 
+  const { data: pieChartResponse } = useQuery({
+    queryKey: [fetchTotalOrderFollowingBranch, filterObj],
+    queryFn: () => getTotalOrderFollowingBranch(filterObj),
+  });
+
   useEffect(() => {
     if (response && response.data) {
-      console.log("response", response.data);
       const items = response.data;
-      console.log("items", items);
+
+      const labels = Object.keys(items.revenueForEach || {}).sort(
+        (a: string, b: string) => new Date(a).getTime() - new Date(b).getTime()
+      );
+      const data = labels.map(
+        (date) => items.revenueForEach[date]?.amount || null
+      );
+
+      setChartData({
+        xLabels: labels,
+        uData: data,
+      });
+
+      if (pieChartResponse && pieChartResponse.data) {
+        const pieItems = pieChartResponse.data.orders;
+        
+        const totalCustom = pieItems?.totalCustomOrder || 0;
+        const totalRefund = pieItems?.totalRefundOrder || 0;
+        const totalResell = pieItems?.totalResellOrder || 0;
+        const total = totalCustom + totalRefund + totalResell;
+
+        const updateOrderPieChartData = {
+          orderPieChartData: [
+            {
+              label: "Đơn Gia Công",
+              value: Number(((totalCustom / total) * 100).toFixed(2)),
+              // value: 15,
+            },
+            {
+              label: "Đơn Hoàn Tiền",
+              value: Number(((totalRefund / total) * 100).toFixed(2)),
+              // value: 15,
+            },
+            {
+              label: "Đơn Bán Lại",
+              value: Number(((totalResell / total) * 100).toFixed(2)),
+              // value: 75,
+            },
+          ],
+          totalOrder: total.toLocaleString(),
+          totalRevenue: response?.data?.totalRevenue?.amount.toLocaleString(),
+        };
+
+        setPieChartData(updateOrderPieChartData);
+      }
 
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  }, [response]);
+  }, [response, pieChartResponse]);
 
   const handleChangeDate = (startDate: string, endDate: string) => {
     console.log("startDate", startDate);
     console.log("endDate", endDate);
 
-    generateDatesInRange(startDate, endDate);
     setStartDate(startDate);
     setEndDate(endDate);
     setFilterObj({
@@ -86,12 +134,7 @@ function Index() {
     });
   };
 
-  const total = response?.data?.totalRevenue?.amount;
-
-  response?.data?.revenueForEach.forEach((data) => {
-    uData = [];
-    uData.push(data.amount);
-  });
+  const total = response?.data?.totalRevenue?.amount.toLocaleString();
 
   return (
     <div className={styles.container}>
@@ -200,7 +243,11 @@ function Index() {
 
           <Grid container justifyContent={"space-between"}>
             <Grid item xs={12} className={styles.section}>
-              <ManagerChartFinace uData={uData} xLabels={xLabels} totalRevenue={total ?? 0} />
+              <ManagerChartFinace
+                uData={chartData.uData}
+                xLabels={chartData.xLabels}
+                totalRevenue={total ?? "0"}
+              />
 
               <div
                 style={{
@@ -263,7 +310,11 @@ function Index() {
               <ManagerTopProductTable />
             </Grid>
             <Grid item xs={4.8} className={styles.section} mt={3} p={3}>
-              <ManagerPieChartCategory />
+              <ManagerPieChartCategory
+                totalOrder={pieChartData.totalOrder}
+                totalRevenue={pieChartData.totalRevenue}
+                orderPieChartData={pieChartData.orderPieChartData}
+              />
             </Grid>
           </Grid>
         </div>

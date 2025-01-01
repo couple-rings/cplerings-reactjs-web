@@ -24,15 +24,15 @@ export const desktopOS = [
   export const mobileOS = [
     
     {
-        label: 'Chrome OS',
+        label: 'Đơn Gia Công',
         value: 2.42,
       },
     {
-        label: 'Windows',
+        label: 'Đơn Hoàn Tiền',
         value: 72.72,
       },
     {
-      label: 'iOS',
+      label: 'Đơn Bán Lại',
       value: 28.8,
     },
     
