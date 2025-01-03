@@ -231,3 +231,10 @@ export enum PaymentMethod {
   Cash = "CASH",
   Transfer = "TRANSFER",
 }
+
+export enum OrderTypeForTableOrderList {
+  Resell = "RESELL",
+  Refund = "REFUND",
+  Custom = "CUSTOM",
+  Payment = "PAYMENT",
+}

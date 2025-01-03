@@ -14,14 +14,23 @@ import Paper from "@mui/material/Paper";
 import ManagerPieChartCategory from "src/components/chart/ManagerPieChartCategory/ManagerPieChartCategory";
 import { useEffect, useState } from "react";
 import {
+  // fetchCustomOrderStatistic,
+  // fetchPaymentOrderStatistic,
+  // fetchRefundOrderStatistic,
+  // fetchResellOrderStatistic,
   fetchRevenueFollowingBranch,
   fetchTotalOrderFollowingBranch,
 } from "src/utils/querykey";
 import {
+  // getCustomOrderStatistic,
+  // getPaymentOrderStatistic,
+  // getRefundOrderStatistic,
+  // getResellOrderStatistic,
   getTotalOrderFollowingBranch,
   getTotalRevenueFollowingBranch,
 } from "src/services/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
+// import { pageSize } from "src/utils/constants";
 
 function createData(
   id: string,
@@ -40,6 +49,11 @@ const rows = [
   createData("#281", "My name is Ring", 237, 11000000, 100000000),
   createData("#281", "My name is Ring", 159, 11000000, 100000000),
 ];
+
+// const initFilter: IOrderStatisticFilter = {
+//   page: 0,
+//   pageSize: pageSize,
+// };
 
 function ManagerProductPage() {
   const [filterObj, setFilterObj] = useState<IRevenueFilter>({
@@ -66,6 +80,8 @@ function ManagerProductPage() {
     totalOrder: "",
   });
 
+  // const [filterOrderStatisticObj,setFilterOrderStatisticObj] = useState<IOrderStatisticFilter>(initFilter);
+
   useEffect(() => {
     const initialStartDate = new Date(
       new Date().setDate(new Date().getDate() - 7)
@@ -87,6 +103,29 @@ function ManagerProductPage() {
     queryKey: [fetchRevenueFollowingBranch, filterObj],
     queryFn: () => getTotalRevenueFollowingBranch(filterObj),
   });
+
+  // const { data: resellOrderStatisticResponse } = useQuery({
+  //   queryKey: [fetchResellOrderStatistic, filterOrderStatisticObj],
+  //   queryFn: () => getResellOrderStatistic(filterOrderStatisticObj),
+  // });
+
+  // const { data: refundOrderStatisticResponse } = useQuery({
+  //   queryKey: [fetchRefundOrderStatistic, filterOrderStatisticObj],
+  //   queryFn: () => getRefundOrderStatistic(filterOrderStatisticObj),
+  // });
+
+  // const { data: customOrderStatisticResponse } = useQuery({
+  //   queryKey: [fetchCustomOrderStatistic, filterOrderStatisticObj],
+  //   queryFn: () => getCustomOrderStatistic(filterOrderStatisticObj),
+  // });
+
+  // const { data: paymentOrderStatisticResponse } = useQuery({
+  //   queryKey: [fetchPaymentOrderStatistic, filterOrderStatisticObj],
+  //   queryFn: () => getPaymentOrderStatistic(filterOrderStatisticObj),
+  // });
+
+
+
 
   useEffect(() => {
     if (response && response.data) {

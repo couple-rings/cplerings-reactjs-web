@@ -144,4 +144,11 @@ declare global {
     startDate: string;
     endDate: string;
   }
+
+  interface IOrderStatisticFilter extends IPaginationFilter {
+    startDate?: string;
+    endDate?: string;
+  }
+
+  
 }

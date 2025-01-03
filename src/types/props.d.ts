@@ -3,6 +3,7 @@ import {
   AccountStatus,
   CustomRequestStatus,
   DesignCharacteristic,
+  OrderTypeForTableOrderList,
   ProductType,
 } from "src/utils/enums";
 
@@ -598,5 +599,16 @@ declare global {
     totalOrder : string;
     totalRevenue : string;
     
+  }
+
+  interface ITableOrderListProps {
+    startDateData?: string;
+    endDateData?: string;
+    selectedOrderType?: OrderTypeForTableOrderList;
+    selectedFilterPaymentType?: string;
+  }
+
+  interface IRevenueMenuPaymentType {
+    setFilterPaymentMethod : (v : string) => void;
   }
 }

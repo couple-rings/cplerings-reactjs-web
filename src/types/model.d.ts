@@ -643,5 +643,49 @@ declare global {
       }
     }
   }
+
+  interface IResellOrderStatistic {
+    orderId : number;
+    amount : {
+      amount : number;
+    };
+    orderType : string;
+    paymentMethod : string;
+    orderNo : string;
+    createdAt : string;
+  }
+
+  interface IRefundOrderStatistic {
+    orderId : number;
+    amount : {
+      amount : number;
+    };
+    orderType : string;
+    paymentMethod : PaymentMethod;
+    orderNo : string;
+    createdAt : string;
+  }
+
+  interface ICustomOrderStatistic {
+    orderId : number;
+    amount : {
+      amount : number;
+    };
+    orderType : string;
+    paymentMethod : PaymentMethod;
+    orderNo : string;
+    createdAt : string;
+  }
+
+  interface IPaymentOrderStatistic {
+    paymentId : number;
+    amount : {
+      amount : number;
+    };
+    orderType : string;
+    paymentMethod : PaymentMethod;
+    orderNo : string;
+    createdAt : string;
+  }
   
 }

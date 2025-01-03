@@ -11,60 +11,7 @@ import { getTotalRevenueFollowingBranch } from "src/services/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
 import RevenueTypeMenu from "src/components/menu/hover/RevenueTypeMenu";
 import TableOrderList from "./TableOrderList";
-
-function createData(
-  id: string,
-  name: string,
-  email: string,
-  phoneNumber: string,
-  role: string,
-  status: string
-) {
-  return { id, name, email, phoneNumber, role, status };
-}
-
-const rows = [
-  createData(
-    "#281",
-    "Bean Nguyen",
-    "ndthung281@gmail.com",
-    "0903448630",
-    "Customer",
-    "Active"
-  ),
-  createData(
-    "#282",
-    "John Doe",
-    "johndoe@gmail.com",
-    "0903448611",
-    "Design Staff",
-    "Active"
-  ),
-  createData(
-    "#283",
-    "Jane Smith",
-    "janesmith@gmail.com",
-    "0903448622",
-    "Sale Staff",
-    "Active"
-  ),
-  createData(
-    "#284",
-    "Alice Brown",
-    "alicebrown@gmail.com",
-    "0903448633",
-    "Jeweler",
-    "Inactive"
-  ),
-  createData(
-    "#285",
-    "Bob White",
-    "bobwhite@gmail.com",
-    "0903448644",
-    "Transporter",
-    "Active"
-  ),
-];
+import { OrderTypeForTableOrderList } from "src/utils/enums";
 
 function ManagerFiancePage() {
   const [filterObj, setFilterObj] = useState<IRevenueFilter>({
@@ -74,7 +21,10 @@ function ManagerFiancePage() {
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [selectedItem, setSelectedItem] = useState("Tất Cả");
+  const [filterPaymentMethod, setFilterPaymentMethod] = useState<string>("All");
+  const [selectedItem, setSelectedItem] = useState<OrderTypeForTableOrderList>(
+    OrderTypeForTableOrderList.Custom
+  );
   const [chartData, setChartData] = useState<{
     xLabels: string[];
     uData: (number | null)[];
@@ -113,6 +63,8 @@ function ManagerFiancePage() {
         uData: data,
       });
 
+      console.log(">>>DATA OF REVENUE", items);
+
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [response]);
@@ -128,7 +80,20 @@ function ManagerFiancePage() {
 
   const total = response?.data?.totalRevenue?.amount.toLocaleString();
 
-  const tabName = ["Tất Cả", "Gia Công", "Hoàn Tiền", "Mua Lại"];
+  const tabName = [
+    {
+      name: "Gia Công",
+      key: OrderTypeForTableOrderList.Custom,
+    },
+    {
+      name: "Hoàn Tiền",
+      key: OrderTypeForTableOrderList.Refund,
+    },
+    {
+      name: "Mua Lại",
+      key: OrderTypeForTableOrderList.Resell,
+    },
+  ];
 
   return (
     <div className={styles.container}>
@@ -312,24 +277,29 @@ function ManagerFiancePage() {
                       <div className={styles.tabBar}>
                         {tabName?.map((item) => (
                           <p
-                            key={item}
+                            key={item.key}
                             className={
-                              selectedItem === item
+                              selectedItem === item.key
                                 ? styles.itemSelected
                                 : styles.item
                             }
-                            onClick={() => setSelectedItem(item)}
+                            onClick={() => setSelectedItem(item.key)}
                           >
-                            {item}
+                            {item.name}
                           </p>
                         ))}
                       </div>
 
-                      <RevenueTypeMenu />
+                      <RevenueTypeMenu setFilterPaymentMethod={setFilterPaymentMethod} />
                     </div>
 
                     <div className={styles.transactionContainer}>
-                      <TableOrderList rows={rows} selectedRole={selectedItem} />
+                      <TableOrderList
+                        selectedOrderType={selectedItem}
+                        startDateData={filterObj.startDate}
+                        endDateData={filterObj.endDate}
+                        selectedFilterPaymentType={filterPaymentMethod}
+                      />
                     </div>
                   </div>
                 </div>

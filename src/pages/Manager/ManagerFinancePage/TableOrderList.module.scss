@@ -1,3 +1,5 @@
+@use 'src/index.scss'as *;
+
 .statusActive {
     background-color: #D9ECC0;
     color: #35714E;
@@ -10,4 +12,9 @@
     color: #B43620;
     padding: 5px 0;
     border-radius: 5px;
+}
+
+.empty {
+    font-size: 1.2rem;
+    color    : $primaryColor;
 }
