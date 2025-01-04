@@ -123,7 +123,7 @@ function CraftingProcess() {
         <div className={styles.title}>Quá Trình Gia Công</div>
 
         <Grid container>
-          <Grid item md={4} mb={{ xs: 5, md: 0 }}>
+          <Grid item md={5} mb={{ xs: 5, md: 0 }}>
             {stageResponse.data && stageResponse.data.items.length > 0 && (
               <CustomerCustomOrderTimeline
                 order={order}
@@ -133,7 +133,7 @@ function CraftingProcess() {
             )}
           </Grid>
 
-          <Grid item md={8}>
+          <Grid item md={7}>
             {stageResponse.data?.items.map((item, index, list) => {
               let steps: string[] = [];
               let name = "";
@@ -166,7 +166,7 @@ function CraftingProcess() {
                     data={item}
                     steps={steps}
                     name={name ? name : item.name}
-                    orderId={order.id}
+                    order={order}
                     previousStage={index !== 0 ? list[index - 1] : undefined}
                   />
                 </div>
