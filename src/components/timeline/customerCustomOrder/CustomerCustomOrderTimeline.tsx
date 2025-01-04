@@ -7,8 +7,10 @@ import TimelineOppositeContent, {
   timelineOppositeContentClasses,
 } from "@mui/lab/TimelineOppositeContent";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
+import { IconButton } from "@mui/material";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import ViewModal from "src/components/modal/payment/View.modal";
 import {
   ConfigurationKey,
   CraftingStageStatus,
@@ -16,6 +18,7 @@ import {
   TransportOrderStatus,
 } from "src/utils/enums";
 import { useAppSelector } from "src/utils/hooks";
+import RemoveRedEyeRoundedIcon from "@mui/icons-material/RemoveRedEyeRounded";
 
 function CustomerCustomOrderTimeline(props: ICustomerCustomOrderTimelineProps) {
   const { order, stages, transportOrder } = props;
@@ -23,6 +26,9 @@ function CustomerCustomOrderTimeline(props: ICustomerCustomOrderTimelineProps) {
   const [firstStage, setFirstStage] = useState<ICraftingStage | null>(null);
   const [secondStage, setSecondStage] = useState<ICraftingStage | null>(null);
   const [thirdStage, setThirdStage] = useState<ICraftingStage | null>(null);
+
+  const [payment, setPayment] = useState<IPayment | null>(null);
+  const [open, setOpen] = useState(false);
 
   const { configs } = useAppSelector((state) => state.config);
 
@@ -110,7 +116,19 @@ function CustomerCustomOrderTimeline(props: ICustomerCustomOrderTimelineProps) {
             <TimelineDot color="info" />
             <TimelineConnector />
           </TimelineSeparator>
-          <TimelineContent>Hoàn tất đặt cọc giai đoạn 1</TimelineContent>
+          <TimelineContent>
+            Hoàn tất đặt cọc giai đoạn 1
+            {firstStage && (
+              <IconButton
+                onClick={() => {
+                  setPayment(firstStage.payment);
+                  setOpen(true);
+                }}
+              >
+                <RemoveRedEyeRoundedIcon />
+              </IconButton>
+            )}
+          </TimelineContent>
         </TimelineItem>
       )}
 
@@ -164,7 +182,19 @@ function CustomerCustomOrderTimeline(props: ICustomerCustomOrderTimelineProps) {
             <TimelineDot color="info" />
             <TimelineConnector />
           </TimelineSeparator>
-          <TimelineContent>Hoàn tất đặt cọc giai đoạn 2</TimelineContent>
+          <TimelineContent>
+            Hoàn tất đặt cọc giai đoạn 2
+            {secondStage && (
+              <IconButton
+                onClick={() => {
+                  setPayment(secondStage.payment);
+                  setOpen(true);
+                }}
+              >
+                <RemoveRedEyeRoundedIcon />
+              </IconButton>
+            )}
+          </TimelineContent>
         </TimelineItem>
       )}
 
@@ -198,7 +228,19 @@ function CustomerCustomOrderTimeline(props: ICustomerCustomOrderTimelineProps) {
             <TimelineDot color="info" />
             <TimelineConnector />
           </TimelineSeparator>
-          <TimelineContent>Hoàn tất đặt cọc giai đoạn 3</TimelineContent>
+          <TimelineContent>
+            Hoàn tất đặt cọc giai đoạn 3
+            {thirdStage && (
+              <IconButton
+                onClick={() => {
+                  setPayment(thirdStage.payment);
+                  setOpen(true);
+                }}
+              >
+                <RemoveRedEyeRoundedIcon />
+              </IconButton>
+            )}
+          </TimelineContent>
         </TimelineItem>
       )}
 
@@ -308,6 +350,18 @@ function CustomerCustomOrderTimeline(props: ICustomerCustomOrderTimelineProps) {
           </TimelineSeparator>
           <TimelineContent>Hủy đơn gia công</TimelineContent>
         </TimelineItem>
+      )}
+
+      {payment && (
+        <ViewModal
+          open={open}
+          setOpen={setOpen}
+          amount={payment.vnPayTransaction.amount.amount}
+          status={payment.status}
+          date={payment.vnPayTransaction.payDate}
+          description={payment.description}
+          type={payment.type}
+        />
       )}
     </Timeline>
   );

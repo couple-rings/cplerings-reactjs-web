@@ -10,6 +10,7 @@ import {
   GoldColor,
   JewelryStatus,
   PaymentMethod,
+  PaymentStatus,
   StandardOrderStatus,
   TransportOrderStatus,
 } from "./enums";
@@ -437,5 +438,20 @@ export const formatJewelryStatusLabel = (status: JewelryStatus) => {
   return {
     text: "Đang Bán",
     color: "#07bc0c",
+  };
+};
+
+export const formatPaymentStatus = (
+  status: PaymentStatus
+): { text: string; color: ChipColor } => {
+  if (status === PaymentStatus.Successful)
+    return {
+      text: "Thành công",
+      color: "success",
+    };
+
+  return {
+    text: "Thất Bại",
+    color: "error",
   };
 };

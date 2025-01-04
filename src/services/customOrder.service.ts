@@ -37,3 +37,7 @@ export const putCompleteCustomOrder = (orderId: number) => {
     orderType: OrderType.Custom,
   });
 };
+
+export const cancelCustomOrder = (orderId: number) => {
+  return axios.delete<unknown, IResponse<object>>(`custom-orders/${orderId}`);
+};

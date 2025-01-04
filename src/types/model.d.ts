@@ -16,6 +16,7 @@ import {
   TransportOrderStatus,
   VersionOwner,
   CraftingDifficulty,
+  PaymentType,
 } from "src/utils/enums";
 
 export {};
@@ -452,6 +453,7 @@ declare global {
       url: string;
     };
     status: CraftingStageStatus;
+    payment: IPayment;
     craftingStageHistories: IStatusHistory<CraftingStageStatus>[];
   }
 
@@ -584,6 +586,12 @@ declare global {
       amount: number;
     };
     status: PaymentStatus;
+    vnPayTransaction: {
+      amount: {
+        amount: number;
+      };
+      payDate: string;
+    };
     customRequest?: ICustomRequest;
     craftingStage?: ICraftingStage;
     standardOrder?: IStandardOrder;

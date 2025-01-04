@@ -20,6 +20,9 @@ import {
 } from "src/utils/enums";
 import { useAppSelector } from "src/utils/hooks";
 import { fetchCraftingStages } from "src/utils/querykey";
+import RemoveRedEyeRoundedIcon from "@mui/icons-material/RemoveRedEyeRounded";
+import { IconButton } from "@mui/material";
+import ViewModal from "src/components/modal/payment/View.modal";
 
 function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
   const { order, transportOrder } = props;
@@ -27,6 +30,9 @@ function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
   const [firstStage, setFirstStage] = useState<ICraftingStage | null>(null);
   const [secondStage, setSecondStage] = useState<ICraftingStage | null>(null);
   const [thirdStage, setThirdStage] = useState<ICraftingStage | null>(null);
+
+  const [payment, setPayment] = useState<IPayment | null>(null);
+  const [open, setOpen] = useState(false);
 
   const [stageFilterObj, setStageFilterObj] =
     useState<ICraftingStageFilter | null>(null);
@@ -143,7 +149,19 @@ function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
             <TimelineDot color="info" />
             <TimelineConnector />
           </TimelineSeparator>
-          <TimelineContent>Đặt cọc giai đoạn 1</TimelineContent>
+          <TimelineContent>
+            Đặt cọc giai đoạn 1{" "}
+            {firstStage && (
+              <IconButton
+                onClick={() => {
+                  setPayment(firstStage.payment);
+                  setOpen(true);
+                }}
+              >
+                <RemoveRedEyeRoundedIcon />
+              </IconButton>
+            )}
+          </TimelineContent>
         </TimelineItem>
       )}
 
@@ -197,7 +215,19 @@ function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
             <TimelineDot color="info" />
             <TimelineConnector />
           </TimelineSeparator>
-          <TimelineContent>Hoàn tất đặt cọc giai đoạn 2</TimelineContent>
+          <TimelineContent>
+            Hoàn tất đặt cọc giai đoạn 2
+            {secondStage && (
+              <IconButton
+                onClick={() => {
+                  setPayment(secondStage.payment);
+                  setOpen(true);
+                }}
+              >
+                <RemoveRedEyeRoundedIcon />
+              </IconButton>
+            )}
+          </TimelineContent>
         </TimelineItem>
       )}
 
@@ -231,7 +261,19 @@ function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
             <TimelineDot color="info" />
             <TimelineConnector />
           </TimelineSeparator>
-          <TimelineContent>Hoàn tất đặt cọc giai đoạn 3</TimelineContent>
+          <TimelineContent>
+            Hoàn tất đặt cọc giai đoạn 3
+            {thirdStage && (
+              <IconButton
+                onClick={() => {
+                  setPayment(thirdStage.payment);
+                  setOpen(true);
+                }}
+              >
+                <RemoveRedEyeRoundedIcon />
+              </IconButton>
+            )}
+          </TimelineContent>
         </TimelineItem>
       )}
 
@@ -341,6 +383,18 @@ function StaffCustomOrderTimeline(props: IStaffCustomOrderTimelineProps) {
           </TimelineSeparator>
           <TimelineContent>Hủy đơn gia công</TimelineContent>
         </TimelineItem>
+      )}
+
+      {payment && (
+        <ViewModal
+          open={open}
+          setOpen={setOpen}
+          amount={payment.vnPayTransaction.amount.amount}
+          status={payment.status}
+          date={payment.vnPayTransaction.payDate}
+          description={payment.description}
+          type={payment.type}
+        />
       )}
     </Timeline>
   );
