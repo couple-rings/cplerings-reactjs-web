@@ -74,7 +74,6 @@ function ResellCustomOrderDetail() {
                                     {currencyFormatter(order.amount.amount)}
                                 </div>
                                 <div className={styles.priceNote}>
-                                    Tỷ lệ áp giá: {(order.amount.amount / order.customOrder.totalPrice.amount * 100).toFixed(1)}% giá gốc
                                     {(order.amount.amount / order.customOrder.totalPrice.amount) > 0.3 && (
                                         <div className={styles.warningNote}>
                                             * Lưu ý: Tỷ lệ giảm 30% so với giá gốc
@@ -157,6 +156,13 @@ function ResellCustomOrderDetail() {
                             <div className={styles.card}>
                                 <div className={styles.cardTitle}>Nhẫn Nam</div>
                                 <div className={styles.cardContent}>
+                                    {order.customOrder.firstRing.customDesign?.designVersion?.image?.url && (
+                                        <img 
+                                            src={order.customOrder.firstRing.customDesign.designVersion.image.url} 
+                                            alt="Male Ring Design"
+                                            className={styles.ringImage}
+                                        />
+                                    )}
                                     <div className={styles.infoRow}>
                                         <span>Kích thước:</span>
                                         <span>{order.customOrder.firstRing.fingerSize}</span>
@@ -200,6 +206,13 @@ function ResellCustomOrderDetail() {
                             <div className={styles.card}>
                                 <div className={styles.cardTitle}>Nhẫn Nữ</div>
                                 <div className={styles.cardContent}>
+                                    {order.customOrder.secondRing.customDesign?.designVersion?.image?.url && (
+                                        <img 
+                                            src={order.customOrder.secondRing.customDesign.designVersion.image.url} 
+                                            alt="Female Ring Design"
+                                            className={styles.ringImage}
+                                        />
+                                    )}
                                     <div className={styles.infoRow}>
                                         <span>Kích thước:</span>
                                         <span>{order.customOrder.secondRing.fingerSize}</span>

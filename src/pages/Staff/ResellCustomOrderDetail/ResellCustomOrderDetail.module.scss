@@ -152,4 +152,16 @@
     color: #d32f2f;
     font-size: 0.85rem;
   }
+
+  .ringImage {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    background: rgba($primaryColor, 0.02);
+    padding: 1rem;
+    border: 1px solid rgba($primaryColor, 0.1);
+  }
 }
