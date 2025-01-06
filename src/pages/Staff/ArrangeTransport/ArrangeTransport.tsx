@@ -659,6 +659,10 @@ function ArrangeTransport() {
       )}
 
       <DataGrid
+        sx={{
+          display: "grid",
+          gridTemplateRows: "auto 1f auto",
+        }}
         editMode="row"
         loading={isLoading || transporterLoading}
         getRowHeight={() => "auto"}

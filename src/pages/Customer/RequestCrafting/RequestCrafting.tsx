@@ -74,6 +74,19 @@ function RequestCrafting() {
 
   const { maleRequest, femaleRequest } = location.state || {};
 
+  const profitRatio = configs.find(
+    (item) => item.key === ConfigurationKey.ProfitRatio
+  )?.value;
+  const sideDiamondPrice = configs.find(
+    (item) => item.key === ConfigurationKey.SideDiamondPrice
+  )?.value;
+  const shippingFee = configs.find(
+    (item) => item.key === ConfigurationKey.ShippingFee
+  )?.value;
+  const craftingFee = configs.find(
+    (item) => item.key === ConfigurationKey.CraftingFee
+  )?.value;
+
   const { data: maleResponse } = useQuery({
     queryKey: [fetchDesignDetail, maleRequest?.designId],
 
@@ -221,24 +234,10 @@ function RequestCrafting() {
     if (
       maleResponse?.data &&
       femaleResponse?.data &&
-      configs.length > 0 &&
       maleRequest &&
       femaleRequest
     ) {
-      const profitRatio = configs.find(
-        (item) => item.key === ConfigurationKey.ProfitRatio
-      )?.value;
-      const sideDiamondPrice = configs.find(
-        (item) => item.key === ConfigurationKey.SideDiamondPrice
-      )?.value;
-      const shippingFee = configs.find(
-        (item) => item.key === ConfigurationKey.ShippingFee
-      )?.value;
-      const craftingFee = configs.find(
-        (item) => item.key === ConfigurationKey.CraftingFee
-      )?.value;
-
-      if (profitRatio && sideDiamondPrice && shippingFee && craftingFee) {
+      if (profitRatio && sideDiamondPrice && craftingFee) {
         const maleDesign = maleResponse.data;
         const femaleDesign = femaleResponse.data;
 
@@ -248,17 +247,15 @@ function RequestCrafting() {
             maleRequest.metalSpec.metalSpecification.pricePerUnit +
             maleRequest.diamondSpec.price +
             maleDesign.sideDiamondsCount * +sideDiamondPrice +
-            +shippingFee +
             +craftingFee) *
           +profitRatio;
 
         const secondDesignPrice =
-          (femaleResponse.data.metalWeight *
+          (femaleDesign.metalWeight *
             metalWeightUnit *
             femaleRequest.metalSpec.metalSpecification.pricePerUnit +
             femaleRequest.diamondSpec.price +
             femaleDesign.sideDiamondsCount * +sideDiamondPrice +
-            +shippingFee +
             +craftingFee) *
           +profitRatio;
 
@@ -269,11 +266,27 @@ function RequestCrafting() {
         setFemalePrice(femalePrice);
       }
     }
-  }, [maleResponse, femaleResponse, configs, maleRequest, femaleRequest]);
+  }, [
+    maleResponse,
+    femaleResponse,
+    maleRequest,
+    femaleRequest,
+    profitRatio,
+    sideDiamondPrice,
+    craftingFee,
+  ]);
 
   useScrollTop();
 
-  if (maleRequest && femaleRequest)
+  if (
+    maleRequest &&
+    femaleRequest &&
+    maleResponse?.data &&
+    femaleResponse?.data &&
+    sideDiamondPrice &&
+    shippingFee &&
+    craftingFee
+  )
     return (
       <Grid container className={styles.container}>
         <Grid container item xs={10}>
@@ -415,6 +428,43 @@ function RequestCrafting() {
 
               <Box>
                 <div className={styles.info}>
+                  <Grid
+                    container
+                    className={styles.label}
+                    justifyContent={"space-between"}
+                  >
+                    <Grid item>Giá vàng:</Grid>
+
+                    <Grid item>
+                      {currencyFormatter(
+                        maleRequest.metalSpec.metalSpecification.pricePerUnit *
+                          maleResponse.data.metalWeight *
+                          metalWeightUnit
+                      )}
+                    </Grid>
+                  </Grid>
+                  <Grid
+                    container
+                    className={styles.label}
+                    justifyContent={"space-between"}
+                  >
+                    <Grid item>Kim cương chính:</Grid>
+
+                    <Grid item>
+                      {currencyFormatter(maleRequest.diamondSpec.price)}
+                    </Grid>
+                  </Grid>
+                  <Grid
+                    container
+                    className={styles.label}
+                    justifyContent={"space-between"}
+                  >
+                    <Grid item>Kim cương phụ:</Grid>
+
+                    <Grid item>
+                      {currencyFormatter(+sideDiamondPrice)}/viên
+                    </Grid>
+                  </Grid>
                   <Grid
                     container
                     className={styles.label}
@@ -568,12 +618,64 @@ function RequestCrafting() {
                     className={styles.label}
                     justifyContent={"space-between"}
                   >
+                    <Grid item>Giá vàng:</Grid>
+
+                    <Grid item>
+                      {currencyFormatter(
+                        femaleRequest.metalSpec.metalSpecification
+                          .pricePerUnit *
+                          femaleResponse.data.metalWeight *
+                          metalWeightUnit
+                      )}
+                    </Grid>
+                  </Grid>
+                  <Grid
+                    container
+                    className={styles.label}
+                    justifyContent={"space-between"}
+                  >
+                    <Grid item>Kim cương chính:</Grid>
+
+                    <Grid item>
+                      {currencyFormatter(femaleRequest.diamondSpec.price)}
+                    </Grid>
+                  </Grid>
+                  <Grid
+                    container
+                    className={styles.label}
+                    justifyContent={"space-between"}
+                  >
+                    <Grid item>Kim cương phụ:</Grid>
+
+                    <Grid item>
+                      {currencyFormatter(+sideDiamondPrice)}/viên
+                    </Grid>
+                  </Grid>
+                  <Grid
+                    container
+                    className={styles.label}
+                    justifyContent={"space-between"}
+                  >
                     <Grid item>Dự Trù Chi Phí:</Grid>
 
                     <Grid item>{currencyFormatter(femalePrice)}</Grid>
                   </Grid>
                 </div>
               </Box>
+
+              <Divider sx={{ backgroundColor: "#ccc" }} />
+
+              <Grid container my={3}>
+                <FormLabel>
+                  Lưu ý: Mức giá trên chỉ mang tính tham khảo và có thể thay đổi
+                  tùy theo mức độ phức tạp khi gia công.
+                </FormLabel>
+                <FormLabel sx={{ fontStyle: "italic", mt: 3 }}>
+                  Phí gia công hiện đang áp dụng là{" "}
+                  {currencyFormatter(+craftingFee)} và có thể tăng đối với từng
+                  chiếc nhẫn.
+                </FormLabel>
+              </Grid>
 
               <Divider sx={{ backgroundColor: "#ccc" }} />
 
