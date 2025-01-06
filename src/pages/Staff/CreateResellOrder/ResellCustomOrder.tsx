@@ -21,6 +21,7 @@ import {
 import {
     currencyFormatter,
     formatRefundMethodTitle,
+    getDiamondSpec,
     toBase64,
 } from "src/utils/functions";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -37,6 +38,8 @@ import { postUploadFile } from "src/services/file.service";
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import AssignmentReturnIcon from '@mui/icons-material/AssignmentReturn';
 import moment from "moment";
+import InfoIcon from '@mui/icons-material/Info';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 interface IFormInput {
     note: string;
@@ -135,8 +138,6 @@ const ResellCustomOrder = () => {
         if (productNoWatch.length === 0) setProductNo("");
     }, [productNoWatch]);
 
-    const isOrderAlreadyRefunded = response?.data?.customOrder.status === CustomOrderStatus.Resold;
-
     return (
         <Grid container justifyContent="center" my={4}>
             <Grid container item md={8} className={styles.card} sx={{ p: 4, boxShadow: 2, borderRadius: 2 }}>
@@ -209,71 +210,262 @@ const ResellCustomOrder = () => {
                     </Grid>
                 )}
 
-                {response?.data && isOrderAlreadyRefunded && (
-                    <Grid
-                        container
-                        direction="column"
-                        alignItems="center"
-                        py={6}
-                        sx={{
-                            backgroundColor: '#FFF3E0',
-                            borderRadius: 1,
-                            mt: 3
-                        }}
-                    >
-                        <AssignmentReturnIcon
-                            sx={{
-                                fontSize: 48,
-                                color: '#E65100',
-                                mb: 2
-                            }}
-                        />
-                        <Typography variant="h6" color="#E65100" gutterBottom>
-                            Đơn hàng đã được mua lại
-                        </Typography>
-                        <Typography variant="body1" color="#E65100" textAlign="center">
-                            Đơn hàng này đã được xử lý mua lại trước đó.
-                            <br />
-                            Vui lòng kiểm tra lại hoặc chọn đơn hàng khác.
-                        </Typography>
-                    </Grid>
+                {response?.data && (
+                    <>
+                        {/* Already Resold Status */}
+                        {response.data.customOrder.status === CustomOrderStatus.Resold && (
+                            <Grid>
+                                <Grid
+                                    container
+                                    direction="column"
+                                    alignItems="center"
+                                    py={6}
+                                    sx={{
+                                        backgroundColor: '#FFF3E0',
+                                        borderRadius: 1,
+                                        mt: 3
+                                    }}
+                                >
+                                    <AssignmentReturnIcon
+                                        sx={{
+                                            fontSize: 48,
+                                            color: '#E65100',
+                                            mb: 2
+                                        }}
+                                    />
+                                    <Typography variant="h6" color="#E65100" gutterBottom>
+                                        Đơn hàng đã được mua lại
+                                    </Typography>
+                                    <Typography variant="body1" color="#E65100" textAlign="center">
+                                        Đơn hàng này đã được xử lý mua lại trước đó.
+                                        <br />
+                                        Vui lòng kiểm tra lại hoặc chọn đơn hàng khác.
+                                    </Typography>
+                                </Grid>
+
+                                <Grid item xs={12}>
+                                    <fieldset style={{ margin: 0 }}>
+                                        <legend>Thông Tin Đơn Hàng Gốc</legend>
+                                        <Grid container p={2}>
+                                            <Grid container justifyContent="space-between" mb={1}>
+                                                <Grid item xs={4}>Mã đơn:</Grid>
+                                                <Grid item>{response.data.customOrder.orderNo}</Grid>
+                                            </Grid>
+
+                                            <Grid container justifyContent="space-between" mb={1}>
+                                                <Grid item xs={4}>Ngày hoàn thành đơn:</Grid>
+                                                <Grid item>
+                                                    {moment(
+                                                        response.data.customOrder.customOrderHistories.find(
+                                                            (item) => item.status === CustomOrderStatus.Done
+                                                        )?.createdAt
+                                                    ).format("DD/MM/YYYY HH:mm")}
+                                                </Grid>
+                                            </Grid>
+
+                                            <Grid container justifyContent="space-between" mb={1}>
+                                                <Grid item xs={4}>Ngày được mua lại:</Grid>
+                                                <Grid item>
+                                                    {moment(
+                                                        response.data.customOrder.customOrderHistories.find(
+                                                            (item) => item.status === CustomOrderStatus.Resold
+                                                        )?.createdAt
+                                                    ).format("DD/MM/YYYY HH:mm")}
+                                                </Grid>
+                                            </Grid>
+
+                                            <Grid container justifyContent="space-between" mb={1}>
+                                                <Grid item xs={4}>Giá ban đầu:</Grid>
+                                                <Grid item className={styles.originalPrice}>
+                                                    {currencyFormatter(response.data.customOrder.totalPrice.amount)}
+                                                </Grid>
+                                            </Grid>
+
+                                            <Grid container justifyContent="space-between" mb={1}>
+                                                <Grid item xs={4}>Tỷ lệ mua lại:</Grid>
+                                                <Grid item className={styles.resellRatio}>
+                                                    {resellRatio}%
+                                                </Grid>
+                                            </Grid>
+
+                                            <Grid container justifyContent="space-between" mb={1}>
+                                                <Grid item xs={4}>Giá mua lại:</Grid>
+                                                <Grid item className={styles.resellPrice}>
+                                                    {currencyFormatter(
+                                                        (response.data.customOrder.totalPrice.amount * + (resellRatio ?? 0)) / 100
+                                                    )}
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                    </fieldset>
+                                </Grid>
+                            </Grid>
+                        )}
+
+                        {/* Pending/Waiting/InProgress Status */}
+                        {[CustomOrderStatus.Pending, CustomOrderStatus.Waiting, CustomOrderStatus.InProgress].includes(
+                            response.data.customOrder.status
+                        ) && (
+                                <Grid
+                                    container
+                                    direction="column"
+                                    alignItems="center"
+                                    py={6}
+                                    sx={{
+                                        backgroundColor: '#E3F2FD',
+                                        borderRadius: 1,
+                                        mt: 3
+                                    }}
+                                >
+                                    <InfoIcon
+                                        sx={{
+                                            fontSize: 48,
+                                            color: '#1976D2',
+                                            mb: 2
+                                        }}
+                                    />
+                                    <Typography variant="h6" color="#1976D2" gutterBottom>
+                                        Đơn hàng chưa hoàn thành
+                                    </Typography>
+                                    <Typography variant="body1" color="#1976D2" textAlign="center">
+                                        Đơn hàng này đang trong quá trình xử lý.
+                                        <br />
+                                        Chỉ có thể mua lại đơn hàng đã hoàn thành.
+                                    </Typography>
+                                </Grid>
+                            )}
+
+                        {/* Canceled Status */}
+                        {response.data.customOrder.status === CustomOrderStatus.Canceled && (
+                            <Grid
+                                container
+                                direction="column"
+                                alignItems="center"
+                                py={6}
+                                sx={{
+                                    backgroundColor: '#FFEBEE',
+                                    borderRadius: 1,
+                                    mt: 3
+                                }}
+                            >
+                                <CancelIcon
+                                    sx={{
+                                        fontSize: 48,
+                                        color: '#D32F2F',
+                                        mb: 2
+                                    }}
+                                />
+                                <Typography variant="h6" color="#D32F2F" gutterBottom>
+                                    Đơn hàng đã bị hủy
+                                </Typography>
+                                <Typography variant="body1" color="#D32F2F" textAlign="center">
+                                    Không thể mua lại đơn hàng đã bị hủy.
+                                    <br />
+                                    Vui lòng chọn đơn hàng khác.
+                                </Typography>
+                            </Grid>
+                        )}
+
+                        {/* Refunded Status */}
+                        {response.data.customOrder.status === CustomOrderStatus.Refunded && (
+                            <Grid>
+                                <Grid
+                                    container
+                                    direction="column"
+                                    alignItems="center"
+                                    py={6}
+                                    sx={{
+                                        backgroundColor: '#E0B3F0',
+                                        borderRadius: 1,
+                                        mt: 3,
+                                        mb: 3
+                                    }}
+                                >
+                                    <AssignmentReturnIcon
+                                        sx={{
+                                            fontSize: 48,
+                                            color: '#6A1B9A',
+                                            mb: 2
+                                        }}
+                                    />
+                                    <Typography variant="h6" color="#6A1B9A" gutterBottom>
+                                        Đơn hàng đã được hoàn tiền
+                                    </Typography>
+                                    <Typography variant="body1" color="#6A1B9A" textAlign="center">
+                                        Đơn hàng này đã được hoàn tiền trước đó.
+                                        <br />
+                                        Vui lòng chọn đơn hàng khác.
+                                    </Typography>
+                                </Grid>
+
+                                <Grid item xs={12}>
+                                    <fieldset style={{ margin: 0 }}>
+                                        <legend>Thông Tin Đơn Hàng Gốc</legend>
+                                        <Grid container p={2}>
+                                            <Grid container justifyContent="space-between" mb={1}>
+                                                <Grid item xs={4}>Mã đơn:</Grid>
+                                                <Grid item>{response.data.customOrder.orderNo}</Grid>
+                                            </Grid>
+
+                                            <Grid container justifyContent="space-between" mb={1}>
+                                                <Grid item xs={4}>Ngày hoàn thành đơn:</Grid>
+                                                <Grid item>
+                                                    {moment(
+                                                        response.data.customOrder.customOrderHistories.find(
+                                                            (item) => item.status === CustomOrderStatus.Done
+                                                        )?.createdAt
+                                                    ).format("DD/MM/YYYY HH:mm")}
+                                                </Grid>
+                                            </Grid>
+
+                                            <Grid container justifyContent="space-between" mb={1}>
+                                                <Grid item xs={4}>Ngày hoàn tiền:</Grid>
+                                                <Grid item>
+                                                    {moment(
+                                                        response.data.customOrder.customOrderHistories.find(
+                                                            (item) => item.status === CustomOrderStatus.Refunded
+                                                        )?.createdAt
+                                                    ).format("DD/MM/YYYY HH:mm")}
+                                                </Grid>
+                                            </Grid>
+
+                                            <Grid container justifyContent="space-between" mb={1}>
+                                                <Grid item xs={4}>Giá ban đầu:</Grid>
+                                                <Grid item className={styles.originalPrice}>
+                                                    {currencyFormatter(response.data.customOrder.totalPrice.amount)}
+                                                </Grid>
+                                            </Grid>
+
+                                            <Grid container justifyContent="space-between" mb={1}>
+                                                <Grid item xs={4}>Tỷ lệ hoàn tiền:</Grid>
+                                                <Grid item className={styles.resellRatio}>
+                                                    {resellRatio}%
+                                                </Grid>
+                                            </Grid>
+
+                                            <Grid container justifyContent="space-between" mb={1}>
+                                                <Grid item xs={4}>Giá được hoàn tiền:</Grid>
+                                                <Grid item className={styles.resellPrice}>
+                                                    {currencyFormatter(
+                                                        (response.data.customOrder.totalPrice.amount * + (resellRatio ?? 0)) / 100
+                                                    )}
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                    </fieldset>
+                                </Grid>
+                            </Grid>
+                        )}
+                    </>
                 )}
 
-                {response?.data && !isOrderAlreadyRefunded && (
+                {response?.data && (
                     <Grid container spacing={3} mt={2}>
-                        <Grid item xs={12}>
-                            <fieldset style={{ margin: 0 }}>
-                                <legend>Thông Tin Đơn Hàng</legend>
-                                <Grid container p={2}>
-                                    <Grid container justifyContent="space-between" mb={1}>
-                                        <Grid item xs={4}>Mã đơn:</Grid>
-                                        <Grid item>{response.data.customOrder.orderNo}</Grid>
-                                    </Grid>
-
-                                    <Grid container justifyContent="space-between" mb={1}>
-                                        <Grid item xs={4}>Ngày hoàn tất:</Grid>
-                                        <Grid item>
-                                            {moment(
-                                                response.data.customOrder.customOrderHistories.find(
-                                                    (item) => item.status === CustomOrderStatus.Done
-                                                )?.createdAt
-                                            ).format("DD/MM/YYYY HH:mm")}
-                                        </Grid>
-                                    </Grid>
-
-                                    <Grid container justifyContent="space-between" mb={1}>
-                                        <Grid item xs={4}>Tổng tiền:</Grid>
-                                        <Grid item className={styles.totalPrice}>
-                                            {currencyFormatter(response.data.customOrder.totalPrice.amount)}
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                            </fieldset>
-                        </Grid>
-
                         <Grid item xs={12} md={5.7}>
                             <fieldset style={{ margin: 0, width: "100%" }}>
-                                <legend>Khách Hàng</legend>
+                                <legend>Thông Tin Khách Hàng</legend>
                                 <Grid container p={2}>
                                     <Grid container justifyContent="space-between" mb={1}>
                                         <Grid item>Tên tài khoản:</Grid>
@@ -289,6 +481,13 @@ const ResellCustomOrder = () => {
                                         <Grid item>Số điện thoại:</Grid>
                                         <Grid item>
                                             {response.data.customOrder.customer.phone || "--"}
+                                        </Grid>
+                                    </Grid>
+
+                                    <Grid container justifyContent="space-between" mb={1}>
+                                        <Grid item>CCCD:</Grid>
+                                        <Grid item>
+                                            {response.data.customOrder.firstRing.spouse.citizenId || "--"}
                                         </Grid>
                                     </Grid>
                                 </Grid>
@@ -323,16 +522,23 @@ const ResellCustomOrder = () => {
                                                             <span>{response.data.customOrder.firstRing.metalSpecification.name}</span>
                                                         </div>
                                                         <div className={styles.detailRow}>
+                                                            <span>Kim cương:</span>
+                                                            <span>
+                                                                {response.data.customOrder.firstRing.diamonds.length > 0 &&
+                                                                    response.data.customOrder.firstRing.diamonds[0].diamondSpecification.shape}{" "}
+                                                                {response.data.customOrder.firstRing.diamonds.length > 0 &&
+                                                                    getDiamondSpec(
+                                                                        response.data.customOrder.firstRing.diamonds[0].diamondSpecification
+                                                                    )}
+                                                            </span>
+                                                        </div>
+                                                        <div className={styles.detailRow}>
                                                             <span>Khắc tên:</span>
                                                             <span>{response.data.customOrder.firstRing.engraving || "Không có"}</span>
                                                         </div>
                                                         <div className={styles.detailRow}>
-                                                            <span>Màu sắc:</span>
-                                                            <span>{response.data.customOrder.firstRing.metalSpecification.color}</span>
-                                                        </div>
-                                                        <div className={styles.detailRow}>
                                                             <span>Khối lượng:</span>
-                                                            <span>{response.data.customOrder.firstRing.customDesign.metalWeight}g</span>
+                                                            <span>{response.data.customOrder.firstRing.customDesign.metalWeight} Chỉ</span>
                                                         </div>
                                                         <div className={styles.detailRow}>
                                                             <span>Số kim cương phụ:</span>
@@ -368,16 +574,23 @@ const ResellCustomOrder = () => {
                                                             <span>{response.data.customOrder.secondRing.metalSpecification.name}</span>
                                                         </div>
                                                         <div className={styles.detailRow}>
+                                                            <span>Kim cương:</span>
+                                                            <span>
+                                                                {response.data.customOrder.secondRing.diamonds.length > 0 &&
+                                                                    response.data.customOrder.secondRing.diamonds[0].diamondSpecification.shape}{" "}
+                                                                {response.data.customOrder.secondRing.diamonds.length > 0 &&
+                                                                    getDiamondSpec(
+                                                                        response.data.customOrder.secondRing.diamonds[0].diamondSpecification
+                                                                    )}
+                                                            </span>
+                                                        </div>
+                                                        <div className={styles.detailRow}>
                                                             <span>Khắc tên:</span>
                                                             <span>{response.data.customOrder.secondRing.engraving || "Không có"}</span>
                                                         </div>
                                                         <div className={styles.detailRow}>
-                                                            <span>Màu sắc:</span>
-                                                            <span>{response.data.customOrder.secondRing.metalSpecification.color}</span>
-                                                        </div>
-                                                        <div className={styles.detailRow}>
                                                             <span>Khối lượng:</span>
-                                                            <span>{response.data.customOrder.secondRing.customDesign.metalWeight}g</span>
+                                                            <span>{response.data.customOrder.secondRing.customDesign.metalWeight} Chỉ</span>
                                                         </div>
                                                         <div className={styles.detailRow}>
                                                             <span>Số kim cương phụ:</span>
@@ -512,7 +725,7 @@ const ResellCustomOrder = () => {
                                         <span>Giá mua lại:</span>
                                         <span className={styles.amount}>
                                             {currencyFormatter(
-                                                (response.data.customOrder.totalPrice.amount * +resellRatio) / 100
+                                                (response.data.customOrder.totalPrice.amount * +(resellRatio ?? 0)) / 100
                                             )}
                                         </span>
                                     </Grid>

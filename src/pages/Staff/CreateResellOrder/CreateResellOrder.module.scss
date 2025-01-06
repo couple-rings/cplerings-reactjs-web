@@ -325,3 +325,20 @@
         }
     }
 }
+
+.originalPrice {
+    color: #64748b;
+    font-weight: 600;
+    text-decoration: line-through;
+}
+
+.resellRatio {
+    color: #0891b2;
+    font-weight: 600;
+}
+
+.resellPrice {
+    color: $secondaryColor;
+    font-weight: 700;
+    font-size: 1.1rem;
+}

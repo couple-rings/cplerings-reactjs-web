@@ -4,9 +4,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getResellCustomOrderDetail } from "src/services/resell.service";
 import { fetchResellCustomOrderDetail } from "src/utils/querykey";
 import styles from "./ResellCustomOrderDetail.module.scss";
-import { currencyFormatter, formatRefundMethodTitle } from "src/utils/functions";
+import { currencyFormatter, formatRefundMethodTitle, getDiamondSpec } from "src/utils/functions";
 import moment from "moment";
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import { CustomOrderStatus } from "src/utils/enums";
 
 function ResellCustomOrderDetail() {
     const { id } = useParams();
@@ -39,9 +40,9 @@ function ResellCustomOrderDetail() {
                     <div className={styles.title}>Chi Tiết Đơn Mua Lại</div>
                 </Grid>
 
-                <Button 
-                    variant="outlined" 
-                    color="primary" 
+                <Button
+                    variant="outlined"
+                    color="primary"
                     onClick={() => navigate("/staff/resell-order")}
                     style={{ marginBottom: '1rem' }}
                 >
@@ -60,7 +61,11 @@ function ResellCustomOrderDetail() {
                             <div className={styles.infoCard}>
                                 <div className={styles.label}>Ngày mua lại:</div>
                                 <div className={styles.value}>
-                                    {moment(order.proofImage.createdAt).format("DD/MM/YYYY")}
+                                    {moment(
+                                        response.data.customOrder.customOrderHistories.find(
+                                            (item) => item.status === CustomOrderStatus.Refunded
+                                        )?.createdAt
+                                    ).format("DD/MM/YYYY")}
                                 </div>
                             </div>
                         </Grid>
@@ -111,6 +116,10 @@ function ResellCustomOrderDetail() {
                                 <div className={styles.infoRow}>
                                     <span>Số điện thoại:</span>
                                     <span>{order.customer.phone || "--"}</span>
+                                </div>
+                                <div className={styles.infoRow}>
+                                    <span>CCCD:</span>
+                                    <span>{order.customOrder.firstRing.spouse.citizenId || "--"}</span>
                                 </div>
                             </div>
                         </div>
@@ -167,8 +176,8 @@ function ResellCustomOrderDetail() {
                                 <div className={styles.cardTitle}>Nhẫn Nam</div>
                                 <div className={styles.cardContent}>
                                     {order.customOrder.firstRing.customDesign?.designVersion?.image?.url && (
-                                        <img 
-                                            src={order.customOrder.firstRing.customDesign.designVersion.image.url} 
+                                        <img
+                                            src={order.customOrder.firstRing.customDesign.designVersion.image.url}
                                             alt="Male Ring Design"
                                             className={styles.ringImage}
                                         />
@@ -186,12 +195,8 @@ function ResellCustomOrderDetail() {
                                         <span>{order.customOrder.firstRing.metalSpecification.name}</span>
                                     </div>
                                     <div className={styles.infoRow}>
-                                        <span>Màu sắc:</span>
-                                        <span>{order.customOrder.firstRing.metalSpecification.color}</span>
-                                    </div>
-                                    <div className={styles.infoRow}>
                                         <span>Khối lượng:</span>
-                                        <span>{order.customOrder.firstRing.customDesign.metalWeight}g</span>
+                                        <span>{order.customOrder.firstRing.customDesign.metalWeight} Chỉ</span>
                                     </div>
                                     <div className={styles.infoRow}>
                                         <span>Số kim cương phụ:</span>
@@ -201,10 +206,23 @@ function ResellCustomOrderDetail() {
                                         <div className={styles.diamondSection}>
                                             <div className={styles.subTitle}>Kim Cương Chính</div>
                                             {order.customOrder.firstRing.diamonds.map((diamond, index) => (
-                                                <div key={index} className={styles.infoRow}>
-                                                    <span>GIA {index + 1}:</span>
-                                                    <span>{diamond.giaReportNumber}</span>
-                                                </div>
+                                                <>
+                                                    <div key={index} className={styles.infoRow}>
+                                                        <span>Giấy chứng nhận kim cương G.I.A:</span>
+                                                        <span>{diamond.giaReportNumber}</span>
+                                                    </div>
+                                                    <div key={index} className={styles.infoRow}>
+                                                        <span>Kim cương:</span>
+                                                        <span>
+                                                            {diamond && (
+                                                                <>
+                                                                    {diamond.diamondSpecification.shape}{" "}
+                                                                    {getDiamondSpec(diamond.diamondSpecification)}
+                                                                </>
+                                                            )}
+                                                        </span>
+                                                    </div>
+                                                </>
                                             ))}
                                         </div>
                                     )}
@@ -217,8 +235,8 @@ function ResellCustomOrderDetail() {
                                 <div className={styles.cardTitle}>Nhẫn Nữ</div>
                                 <div className={styles.cardContent}>
                                     {order.customOrder.secondRing.customDesign?.designVersion?.image?.url && (
-                                        <img 
-                                            src={order.customOrder.secondRing.customDesign.designVersion.image.url} 
+                                        <img
+                                            src={order.customOrder.secondRing.customDesign.designVersion.image.url}
                                             alt="Female Ring Design"
                                             className={styles.ringImage}
                                         />
@@ -236,12 +254,8 @@ function ResellCustomOrderDetail() {
                                         <span>{order.customOrder.secondRing.metalSpecification.name}</span>
                                     </div>
                                     <div className={styles.infoRow}>
-                                        <span>Màu sắc:</span>
-                                        <span>{order.customOrder.secondRing.metalSpecification.color}</span>
-                                    </div>
-                                    <div className={styles.infoRow}>
                                         <span>Khối lượng:</span>
-                                        <span>{order.customOrder.secondRing.customDesign.metalWeight}g</span>
+                                        <span>{order.customOrder.secondRing.customDesign.metalWeight} Chỉ</span>
                                     </div>
                                     <div className={styles.infoRow}>
                                         <span>Số kim cương phụ:</span>
@@ -251,10 +265,23 @@ function ResellCustomOrderDetail() {
                                         <div className={styles.diamondSection}>
                                             <div className={styles.subTitle}>Kim Cương Chính</div>
                                             {order.customOrder.secondRing.diamonds.map((diamond, index) => (
-                                                <div key={index} className={styles.infoRow}>
-                                                    <span>GIA {index + 1}:</span>
-                                                    <span>{diamond.giaReportNumber}</span>
-                                                </div>
+                                                <>
+                                                    <div key={index} className={styles.infoRow}>
+                                                        <span>Giấy chứng nhận kim cương G.I.A:</span>
+                                                        <span>{diamond.giaReportNumber}</span>
+                                                    </div>
+                                                    <div key={index} className={styles.infoRow}>
+                                                        <span>Kim cương:</span>
+                                                        <span>
+                                                            {diamond && (
+                                                                <>
+                                                                    {diamond.diamondSpecification.shape}{" "}
+                                                                    {getDiamondSpec(diamond.diamondSpecification)}
+                                                                </>
+                                                            )}
+                                                        </span>
+                                                    </div>
+                                                </>
                                             ))}
                                         </div>
                                     )}
