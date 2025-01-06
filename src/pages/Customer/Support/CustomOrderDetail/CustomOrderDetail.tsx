@@ -2,7 +2,13 @@ import {
   Box,
   Button,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
+  FormHelperText,
   FormLabel,
   Grid,
   OutlinedInput,
@@ -17,33 +23,43 @@ import {
   formatRefundMethodTitle,
   getDiamondSpec,
 } from "src/utils/functions";
-import { secondaryBtn } from "src/utils/styles";
+import { outlinedBtn, secondaryBtn } from "src/utils/styles";
 import DownloadForOfflineRoundedIcon from "@mui/icons-material/DownloadForOfflineRounded";
-import { useQuery } from "@tanstack/react-query";
-import { getCustomOrderDetail } from "src/services/customOrder.service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  cancelCustomOrder,
+  getCustomOrderDetail,
+} from "src/services/customOrder.service";
 import {
   fetchCustomOrderDetail,
   fetchTransportOrdersWithCustomOrder,
 } from "src/utils/querykey";
 import { useEffect, useState } from "react";
 import {
+  CraftingDifficulty,
   CustomOrderStatus,
   DesignCharacteristic,
+  ResponseType,
   TransportOrderStatus,
 } from "src/utils/enums";
 import { useAppSelector } from "src/utils/hooks";
 import DownloadIcon from "@mui/icons-material/Download";
 import { getTransportOrderWithCustomOrder } from "src/services/transportOrder.service";
 import HoverCard from "src/components/product/HoverCard";
+import { toast } from "react-toastify";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 function CustomOrderDetail() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
   const [maleRing, setMaleRing] = useState<IRing | null>(null);
   const [femaleRing, setFemaleRing] = useState<IRing | null>(null);
 
+  const [open, setOpen] = useState(false);
+
   const { id } = useParams<{ id: string }>();
 
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { id: userId } = useAppSelector((state) => state.auth.userInfo);
 
@@ -64,6 +80,42 @@ function CustomOrderDetail() {
     },
     enabled: !!order?.id,
   });
+
+  const mutation = useMutation({
+    mutationFn: (orderId: number) => {
+      return cancelCustomOrder(orderId);
+    },
+    onSuccess: (response) => {
+      if (response.type === ResponseType.Info) {
+        toast.success("Đã hủy đơn gia công");
+
+        if (id)
+          queryClient.invalidateQueries({
+            queryKey: [fetchCustomOrderDetail, id],
+          });
+
+        handleClose();
+      }
+
+      if (response.errors) {
+        response.errors.forEach((err) => toast.error(err.description));
+      }
+    },
+  });
+
+  const handleCancelOrder = () => {
+    if (id) {
+      mutation.mutate(+id);
+    }
+  };
+
+  const handleClose = (
+    event?: object,
+    reason?: "backdropClick" | "escapeKeyDown"
+  ) => {
+    if (reason && reason === "backdropClick") return;
+    setOpen(false);
+  };
 
   useEffect(() => {
     if (response && response.data) {
@@ -390,6 +442,18 @@ function CustomOrderDetail() {
               <Grid item xs={10} mt={3}>
                 <Grid container justifyContent={"space-between"}>
                   <Grid item className={styles.label}>
+                    Độ Phức Tạp
+                  </Grid>
+                  <Grid item>
+                    {maleRing.difficulty === CraftingDifficulty.Normal
+                      ? "Bình thường"
+                      : "Khó"}
+                  </Grid>
+                </Grid>
+                <Divider sx={{ my: 2 }} />
+
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item className={styles.label}>
                     Chất Liệu
                   </Grid>
                   <Grid item>{maleRing.metalSpecification.name}</Grid>
@@ -450,7 +514,17 @@ function CustomOrderDetail() {
                 <Divider sx={{ my: 2 }} />
                 <Grid container justifyContent={"space-between"}>
                   <Grid item className={styles.label}>
-                    Giá Tiền
+                    Phí Gia Công
+                  </Grid>
+                  <Grid item>
+                    {currencyFormatter(maleRing.craftingFee.amount)}
+                  </Grid>
+                </Grid>
+
+                <Divider sx={{ my: 2 }} />
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item className={styles.label}>
+                    Tổng Tiền
                   </Grid>
                   <Grid item>{currencyFormatter(maleRing.price.amount)}</Grid>
                 </Grid>
@@ -494,6 +568,18 @@ function CustomOrderDetail() {
               )}
 
               <Grid item xs={10} mt={3}>
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item className={styles.label}>
+                    Độ Phức Tạp
+                  </Grid>
+                  <Grid item>
+                    {femaleRing.difficulty === CraftingDifficulty.Normal
+                      ? "Bình thường"
+                      : "Khó"}
+                  </Grid>
+                </Grid>
+                <Divider sx={{ my: 2 }} />
+
                 <Grid container justifyContent={"space-between"}>
                   <Grid item className={styles.label}>
                     Chất Liệu
@@ -559,11 +645,31 @@ function CustomOrderDetail() {
                 <Divider sx={{ my: 2 }} />
                 <Grid container justifyContent={"space-between"}>
                   <Grid item className={styles.label}>
-                    Giá Tiền
+                    Phí Gia Công
+                  </Grid>
+                  <Grid item>
+                    {currencyFormatter(femaleRing.craftingFee.amount)}
+                  </Grid>
+                </Grid>
+
+                <Divider sx={{ my: 2 }} />
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item className={styles.label}>
+                    Tổng Tiền
                   </Grid>
                   <Grid item>{currencyFormatter(femaleRing.price.amount)}</Grid>
                 </Grid>
               </Grid>
+            </Grid>
+
+            <Grid container px={4} flexDirection={"column"} gap={1} mb={2}>
+              <FormLabel>
+                * Phí vận chuyển: {currencyFormatter(order.shippingFee.amount)}
+              </FormLabel>
+              <FormLabel>
+                * Kim cương phụ:{" "}
+                {currencyFormatter(maleRing.sideDiamondPrice.amount)}/viên
+              </FormLabel>
             </Grid>
 
             {order.contract.document && (
@@ -580,6 +686,18 @@ function CustomOrderDetail() {
             )}
 
             <Grid container justifyContent={"center"} mt={5} gap={3}>
+              {order.status !== CustomOrderStatus.Canceled &&
+                order.status !== CustomOrderStatus.Completed &&
+                order.status !== CustomOrderStatus.Refunded && (
+                  <Button
+                    variant="outlined"
+                    sx={outlinedBtn}
+                    onClick={() => setOpen(true)}
+                  >
+                    Hủy Gia Công
+                  </Button>
+                )}
+
               {order.contract.signature ? (
                 <Button
                   variant="contained"
@@ -616,6 +734,47 @@ function CustomOrderDetail() {
           </Grid>
         </Grid>
       </Grid>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperProps={{
+          sx: { p: 1 },
+        }}
+      >
+        <DialogTitle>Xác Nhận Hủy</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Bạn có chắc chắn muốn hủy đơn gia công không?
+          </DialogContentText>
+          <Box sx={{ mt: 3 }}>
+            Sau khi nhấn nút <b>"Xác Nhận"</b>, toàn bộ quy trình gia công sẽ bị
+            hủy, tiền đặt cọc sẽ không được hoàn trả.
+          </Box>
+          <FormHelperText sx={{ my: 2 }}>
+            * Vui lòng xem thêm chi tiết trong hợp đồng
+          </FormHelperText>
+          <div>
+            Nhấn <b>"Xác Nhận"</b> nếu bạn đã chắc chắn.
+          </div>
+        </DialogContent>
+        <DialogActions sx={{ mt: 3 }}>
+          <Button
+            disabled={mutation.isPending}
+            variant="outlined"
+            onClick={handleClose}
+          >
+            Đóng
+          </Button>
+          <LoadingButton
+            loading={mutation.isPending}
+            variant="contained"
+            onClick={handleCancelOrder}
+          >
+            Xác Nhận
+          </LoadingButton>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 }

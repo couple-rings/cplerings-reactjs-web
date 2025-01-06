@@ -4,6 +4,8 @@ import {
   CustomRequestStatus,
   DesignCharacteristic,
   OrderTypeForTableOrderList,
+  PaymentStatus,
+  PaymentType,
   ProductType,
 } from "src/utils/enums";
 
@@ -391,7 +393,7 @@ declare global {
 
     name: string;
 
-    orderId: number;
+    order: ICustomOrder;
 
     previousStage?: ICraftingStage;
   }
@@ -583,6 +585,18 @@ declare global {
     ring: IRing;
 
     gender: DesignCharacteristic;
+  }
+
+  interface IPaymentModalProps extends IModalProps {
+    status: PaymentStatus;
+    amount: number;
+    date: string;
+    description: string;
+    type: PaymentType;
+  }
+
+  interface IPaymentsProps {
+    orderId: number;
   }
 
   interface IManagerChartFinanceProps {

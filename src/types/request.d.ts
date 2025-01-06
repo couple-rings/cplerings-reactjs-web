@@ -1,4 +1,5 @@
 import {
+  CraftingDifficulty,
   CraftingRequestStatus,
   CustomRequestStatus,
   DesignCharacteristic,
@@ -172,6 +173,8 @@ declare global {
     status: CraftingRequestStatus;
     firstCommentCrafting: string;
     secondCommentCrafting: string;
+    firstCraftingRequestDifficulty: CraftingDifficulty;
+    secondCraftingRequestDifficulty: CraftingDifficulty;
   }
 
   interface IUpdateContractRequest {

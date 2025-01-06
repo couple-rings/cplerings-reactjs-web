@@ -219,6 +219,7 @@ export enum ConfigurationKey {
   FirstStageProgress = "CSP1",
   SecondStageProgress = "CSP2",
   ThirdStageProgress = "CSP3",
+  DifficultyMultiply = "CFHM",
 }
 
 export enum OrderType {
@@ -238,3 +239,8 @@ export enum OrderTypeForTableOrderList {
   Custom = "CUSTOM",
   Payment = "PAYMENT",
 }
+export enum CraftingDifficulty {
+  Normal = "NORMAL",
+  Hard = "HARD",
+}
+

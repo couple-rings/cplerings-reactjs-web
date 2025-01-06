@@ -3,11 +3,11 @@ import styles from "./CraftingStage.module.scss";
 import { secondaryBtn } from "src/utils/styles";
 import VerifiedRoundedIcon from "@mui/icons-material/VerifiedRounded";
 import placeholder from "src/assets/stageplaceholder.png";
-import { CraftingStageStatus } from "src/utils/enums";
+import { CraftingStageStatus, CustomOrderStatus } from "src/utils/enums";
 import { useNavigate } from "react-router-dom";
 
 function CraftingStage(props: ICraftingStageProps) {
-  const { steps, data, name, previousStage, orderId } = props;
+  const { steps, data, name, previousStage, order } = props;
   const { image, status, completionDate } = data;
 
   const navigate = useNavigate();
@@ -37,9 +37,16 @@ function CraftingStage(props: ICraftingStageProps) {
               {name}
             </Grid>
             <Grid item mb={{ xs: 2, md: 0 }}>
-              {status === CraftingStageStatus.Paid && !completionDate && (
-                <Chip label={"Đang Tiến Hành"} color="info" />
-              )}
+              {status === CraftingStageStatus.Paid &&
+                !completionDate &&
+                order.status !== CustomOrderStatus.Canceled && (
+                  <Chip label={"Đang Tiến Hành"} color="info" />
+                )}
+              {status === CraftingStageStatus.Paid &&
+                !completionDate &&
+                order.status === CustomOrderStatus.Canceled && (
+                  <Chip label={"Đã Hủy"} color="error" />
+                )}
               {status === CraftingStageStatus.Pending && (
                 <Chip label={"Chưa Thanh Toán"} color="warning" />
               )}
@@ -85,7 +92,7 @@ function CraftingStage(props: ICraftingStageProps) {
                     sx={secondaryBtn}
                     onClick={() =>
                       navigate(
-                        `/customer/support/custom-order/${orderId}/deposit/${data.id}`
+                        `/customer/support/custom-order/${order.id}/deposit/${data.id}`
                       )
                     }
                   >
