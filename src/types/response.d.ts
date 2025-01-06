@@ -157,4 +157,5 @@ declare global {
   interface ITransporterResponse extends IUser {
     numberOfHandleTransportOrder: number;
   }
+
 }
