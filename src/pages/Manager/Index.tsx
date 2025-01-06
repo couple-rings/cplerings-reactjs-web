@@ -3,7 +3,7 @@ import styles from "./Index.module.scss";
 import moneyBag from "src/assets/moneyBag.png";
 import transactionIcon from "src/assets/TransactionIcon.png";
 import customerIcon from "src/assets/CustomerIcon.png";
-import productIcon from "src/assets/ProductIcon.png";
+// import productIcon from "src/assets/ProductIcon.png";
 import chartArrowRise from "src/assets/ChartArrowRise.png";
 import chartArrowDescent from "src/assets/ChartArrowDescent.png";
 import ManagerTopProductTable from "./ManagerTopProductTable/ManagerTopProductTable";
@@ -11,10 +11,19 @@ import ManagerChartFinace from "src/components/chart/ManagerChartFinance/Manager
 import ManagerPieChartCategory from "src/components/chart/ManagerPieChartCategory/ManagerPieChartCategory";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchRevenueFollowingBranch, fetchTotalOrderFollowingBranch } from "src/utils/querykey";
+import {
+  fetchRevenueFollowingBranch,
+  fetchTotalOrderFollowingBranch,
+  fetchTotalOrderOfAllTimeFollowingBranch,
+  fetchTotalRevenueOfAllTimeFollowingBranch,
+  fetchTotalTransactionOfAllTimeFollowingBranch,
+} from "src/utils/querykey";
 import {
   getTotalOrderFollowingBranch,
+  getTotalOrderOfAllTimeFollowingBranch,
   getTotalRevenueFollowingBranch,
+  getTotalRevenueOfAllTimeFollowingBranch,
+  getTotalTransactionOfAllTimeFollowingBranch,
 } from "src/services/dashboard.service";
 
 function Index() {
@@ -25,6 +34,9 @@ function Index() {
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [totalRevenueAll, setTotalRevenueAll] = useState("0");
+  const [totalTransactionAll, setTotalTransactionAll] = useState("0");
+  const [totalOrderAll, setTotalOrderAll] = useState("0");
   const [chartData, setChartData] = useState<{
     xLabels: string[];
     uData: (number | null)[];
@@ -47,18 +59,6 @@ function Index() {
     });
   }, []);
 
-  // useEffect(() => {
-  //   const initialStartDate = new Date(
-  //     new Date().setDate(new Date().getDate() - 7)
-  //   ).toISOString();
-  //   const initialEndDate = new Date().toISOString();
-
-  //   setFilterObj({
-  //     startDate: initialStartDate,
-  //     endDate: initialEndDate,
-  //   });
-  // }, []);
-
   const { data: response } = useQuery({
     queryKey: [fetchRevenueFollowingBranch, filterObj],
     queryFn: () => getTotalRevenueFollowingBranch(filterObj),
@@ -69,12 +69,31 @@ function Index() {
     queryFn: () => getTotalOrderFollowingBranch(filterObj),
   });
 
+  const { data: totalRevenueOfAllTime } = useQuery({
+    queryKey: [fetchTotalRevenueOfAllTimeFollowingBranch],
+    queryFn: getTotalRevenueOfAllTimeFollowingBranch,
+  });
+
+  const { data: totalTransactionOfAllTime } = useQuery({
+    queryKey: [fetchTotalTransactionOfAllTimeFollowingBranch],
+    queryFn: getTotalTransactionOfAllTimeFollowingBranch,
+  });
+
+  const { data: totalOrderOfAllTime } = useQuery({
+    queryKey: [fetchTotalOrderOfAllTimeFollowingBranch],
+    queryFn: getTotalOrderOfAllTimeFollowingBranch,
+  });
+
   useEffect(() => {
     if (response && response.data) {
       const items = response.data;
 
-      const labels = Object.keys(items.revenueForEach || {}).sort(
-        (a: string, b: string) => new Date(a).getTime() - new Date(b).getTime()
+      const labels: string[] = Object.keys(items.revenueForEach || {}).sort(
+        (a, b) => {
+          const startDateA = new Date(a.split(" - ")[0]).getTime();
+          const startDateB = new Date(b.split(" - ")[0]).getTime();
+          return startDateA - startDateB;
+        }
       );
       const data = labels.map(
         (date) => items.revenueForEach[date]?.amount || null
@@ -87,7 +106,7 @@ function Index() {
 
       if (pieChartResponse && pieChartResponse.data) {
         const pieItems = pieChartResponse.data.orders;
-        
+
         const totalCustom = pieItems?.totalCustomOrder || 0;
         const totalRefund = pieItems?.totalRefundOrder || 0;
         const totalResell = pieItems?.totalResellOrder || 0;
@@ -119,8 +138,29 @@ function Index() {
       }
 
       window.scrollTo({ top: 0, behavior: "smooth" });
+
+      if (totalRevenueOfAllTime && totalRevenueOfAllTime.data) {
+        const total = totalRevenueOfAllTime.data;
+        setTotalRevenueAll(total.totalRevenue.amount.toLocaleString());
+      }
+
+      if (totalTransactionOfAllTime && totalTransactionOfAllTime.data) {
+        const total = totalTransactionOfAllTime.data;
+        setTotalTransactionAll(total.totalTransaction.toLocaleString());
+      }
+
+      if (totalOrderOfAllTime && totalOrderOfAllTime.data) {
+        const total = totalOrderOfAllTime.data;
+        setTotalOrderAll(total.totalOrders.toLocaleString());
+      }
     }
-  }, [response, pieChartResponse]);
+  }, [
+    response,
+    pieChartResponse,
+    totalRevenueOfAllTime,
+    totalTransactionOfAllTime,
+    totalOrderOfAllTime,
+  ]);
 
   const handleChangeDate = (startDate: string, endDate: string) => {
     console.log("startDate", startDate);
@@ -143,7 +183,7 @@ function Index() {
           <div className={styles.topBox}>
             <div className={styles.title}>Thống Kê</div>
             <Grid container justifyContent={"space-between"}>
-              <Grid item lg={2.8}>
+              <Grid item lg={3.8}>
                 <div className={styles.revenueContainer}>
                   <div className={styles.boxTitle}>
                     <div className={styles.boxIcon}>
@@ -155,7 +195,7 @@ function Index() {
                   </div>
 
                   <div className={styles.numberContainer}>
-                    <p>280,012,003</p>₫
+                    <p>{totalRevenueAll}</p>₫
                   </div>
                   <div className={styles.trendContainer}>
                     <div className={styles.numberTrendUp}>
@@ -167,7 +207,31 @@ function Index() {
                 </div>
               </Grid>
 
-              <Grid item lg={2.8}>
+              <Grid item lg={3.8}>
+                <div className={styles.customerContainer}>
+                  <div className={styles.boxTitle}>
+                    <div className={styles.boxIcon}>
+                      <img src={customerIcon} alt="" />
+                    </div>
+                    <div className={styles.title}>
+                      <p>Tổng số đơn</p>
+                    </div>
+                  </div>
+
+                  <div className={styles.numberContainer}>
+                    <p>{totalOrderAll}</p>đơn
+                  </div>
+                  <div className={styles.trendContainer}>
+                    <div className={styles.numberTrendUp}>
+                      <img src={chartArrowRise} alt="" />
+                      28%
+                    </div>
+                    <div className={styles.timeTrend}>so với 7 ngày</div>
+                  </div>
+                </div>
+              </Grid>
+
+              <Grid item lg={3.8}>
                 <div className={styles.transactionContainer}>
                   <div className={styles.boxTitle}>
                     <div className={styles.boxIcon}>
@@ -179,7 +243,7 @@ function Index() {
                   </div>
 
                   <div className={styles.numberContainer}>
-                    <p>281</p>giao dịch
+                    <p>{totalTransactionAll}</p>giao dịch
                   </div>
                   <div className={styles.trendContainer}>
                     <div className={styles.numberTrendDown}>
@@ -191,31 +255,7 @@ function Index() {
                 </div>
               </Grid>
 
-              <Grid item lg={2.8}>
-                <div className={styles.customerContainer}>
-                  <div className={styles.boxTitle}>
-                    <div className={styles.boxIcon}>
-                      <img src={customerIcon} alt="" />
-                    </div>
-                    <div className={styles.title}>
-                      <p>Tổng khách hàng</p>
-                    </div>
-                  </div>
-
-                  <div className={styles.numberContainer}>
-                    <p>2,813</p>khách hàng
-                  </div>
-                  <div className={styles.trendContainer}>
-                    <div className={styles.numberTrendUp}>
-                      <img src={chartArrowRise} alt="" />
-                      28%
-                    </div>
-                    <div className={styles.timeTrend}>so với 7 ngày</div>
-                  </div>
-                </div>
-              </Grid>
-
-              <Grid item lg={2.8}>
+              {/* <Grid item lg={2.8}>
                 <div className={styles.productContainer}>
                   <div className={styles.boxTitle}>
                     <div className={styles.boxIcon}>
@@ -237,7 +277,7 @@ function Index() {
                     <div className={styles.timeTrend}>so với 7 ngày</div>
                   </div>
                 </div>
-              </Grid>
+              </Grid> */}
             </Grid>
           </div>
 

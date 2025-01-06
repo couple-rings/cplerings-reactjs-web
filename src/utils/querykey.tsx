@@ -83,4 +83,8 @@ export const fetchResellOrderStatistic = "fetchResellOrderStatistic";
 export const fetchRefundOrderStatistic = "fetchRefundOrderStatistic";
 export const fetchCustomOrderStatistic = "fetchCustomOrderStatistic";
 export const fetchPaymentOrderStatistic = "fetchPaymentOrderStatistic";
+export const fetchTotalRevenueOfAllTimeFollowingBranch = "fetchTotalRevenueOfAllTimeFollowingBranch";
+export const fetchTotalTransactionOfAllTimeFollowingBranch = "fetchTotalTransactionOfAllTimeFollowingBranch";
+export const fetchTotalOrderOfAllTimeFollowingBranch = "fetchTotalOrderOfAllTimeFollowingBranch";
+export const fetchRevenueTransferPaymentTypeFollowingBranch = "fetchRevenueTransferPaymentTypeFollowingBranch";
 

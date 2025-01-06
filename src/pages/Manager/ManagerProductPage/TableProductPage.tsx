@@ -10,16 +10,16 @@ import { useEffect, useState } from "react";
 import { pageSize } from "src/utils/constants";
 import { useQuery } from "@tanstack/react-query";
 import {
-  fetchPaymentOrderStatistic,
+  fetchCustomOrderStatistic,
   fetchRefundOrderStatistic,
   fetchResellOrderStatistic,
 } from "src/utils/querykey";
 import {
-  getPaymentOrderStatistic,
+  getCustomOrderStatistic,
   getRefundOrderStatistic,
   getResellOrderStatistic,
 } from "src/services/dashboard.service";
-import styles from "./TableOrderList.module.scss";
+import styles from "./TableProductPage.module.scss";
 
 const initMetaData = {
   page: 0,
@@ -45,7 +45,7 @@ const defaultStartDate = new Date(
 ).toISOString();
 const defaultEndDate = new Date().toISOString();
 
-function TableOrderList(props: ITableOrderListProps) {
+function TableProductPage(props: ITableOrderListProps) {
   const {
     selectedOrderType,
     endDateData,
@@ -70,8 +70,8 @@ function TableOrderList(props: ITableOrderListProps) {
       queryFn: getRefundOrderStatistic,
     },
     CUSTOM: {
-      queryKey: fetchPaymentOrderStatistic,
-      queryFn: getPaymentOrderStatistic,
+      queryKey: fetchCustomOrderStatistic,
+      queryFn: getCustomOrderStatistic,
     },
   };
 
@@ -219,7 +219,7 @@ function TableOrderList(props: ITableOrderListProps) {
                   <TableCell align="center" style={{ fontWeight: "500" }}>
                     {row.orderNo}
                   </TableCell>
-                  <TableCell align="center" style={{ fontWeight: "500" }}>
+                  <TableCell align="center">
                     <div
                       style={{
                         display: "flex",
@@ -245,7 +245,7 @@ function TableOrderList(props: ITableOrderListProps) {
                       </p>
                     </div>
                   </TableCell>
-                  <TableCell align="center" style={{ fontWeight: "500" }}>
+                  <TableCell align="center">
                     <div
                       style={{
                         display: "flex",
@@ -293,4 +293,4 @@ function TableOrderList(props: ITableOrderListProps) {
   );
 }
 
-export default TableOrderList;
+export default TableProductPage;

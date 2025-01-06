@@ -687,5 +687,28 @@ declare global {
     orderNo : string;
     createdAt : string;
   }
+
+  interface ITotalRevenueOfAllTime {
+    totalRevenue : {
+      amount : number;
+    };
+  }
+
+  interface ITotalTransactionOfAllTime {
+    totalTransaction : number;
+  }
+
+  interface ITotalOrderOfAllTime {
+    totalOrders : number;
+  }
+
+  interface IRevenuePaymentType {
+    totalByCash : {
+      amount : number;
+    };
+    totalByTransfer : {
+      amount : number;
+    }
+  }
   
 }

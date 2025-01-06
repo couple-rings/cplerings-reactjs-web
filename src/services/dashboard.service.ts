@@ -18,6 +18,31 @@ export const getTotalOrderFollowingBranch = (queryObj: IRevenueFilter) => {
   );
 };
 
+export const getTotalRevenueOfAllTimeFollowingBranch = () => {
+  return axios.get<unknown, IResponse<ITotalRevenueOfAllTime>>(
+    `revenue/total`
+  );
+};
+
+export const getTotalTransactionOfAllTimeFollowingBranch = () => {
+  return axios.get<unknown, IResponse<ITotalTransactionOfAllTime>>(
+    `revenue/transactions/total`
+  );
+};
+
+export const getTotalOrderOfAllTimeFollowingBranch = () => {
+  return axios.get<unknown, IResponse<ITotalOrderOfAllTime>>(
+    `orders/statistic/total`
+  );
+}
+
+export const getRevenueTransferPaymentTypeFollowingBranch = (queryObj: IRevenueFilter) => {
+  const queryUrl = queryString.stringify(queryObj);
+
+  return axios.get<unknown, IResponse<IRevenuePaymentType>>(
+    `orders/statistic/payments/type?${queryUrl}`
+  )
+};
 
 export const getResellOrderStatistic = (queryObj: IOrderStatisticFilter) => {
   const queryUrl = queryString.stringify(queryObj);
@@ -50,3 +75,4 @@ export const getPaymentOrderStatistic = (queryObj: IOrderStatisticFilter) => {
     `orders/statistic/payments?${queryUrl}`
   );
 }
+

@@ -6,8 +6,14 @@ import transactionIcon from "src/assets/TransactionIcon.png";
 import cashIcon from "src/assets/Cash.png";
 import ManagerChartFinace from "src/components/chart/ManagerChartFinance/ManagerChartFinance";
 import { useEffect, useState } from "react";
-import { fetchRevenueFollowingBranch } from "src/utils/querykey";
-import { getTotalRevenueFollowingBranch } from "src/services/dashboard.service";
+import {
+  fetchRevenueFollowingBranch,
+  fetchRevenueTransferPaymentTypeFollowingBranch,
+} from "src/utils/querykey";
+import {
+  getRevenueTransferPaymentTypeFollowingBranch,
+  getTotalRevenueFollowingBranch,
+} from "src/services/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
 import RevenueTypeMenu from "src/components/menu/hover/RevenueTypeMenu";
 import TableOrderList from "./TableOrderList";
@@ -18,9 +24,9 @@ function ManagerFiancePage() {
     startDate: "",
     endDate: "",
   });
-
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [paymentType, setPaymentType] = useState<IRevenuePaymentType>();
   const [filterPaymentMethod, setFilterPaymentMethod] = useState<string>("All");
   const [selectedItem, setSelectedItem] = useState<OrderTypeForTableOrderList>(
     OrderTypeForTableOrderList.Custom
@@ -47,12 +53,21 @@ function ManagerFiancePage() {
     queryFn: () => getTotalRevenueFollowingBranch(filterObj),
   });
 
+  const { data: responseREvenueTransferPaymentType } = useQuery({
+    queryKey: [fetchRevenueTransferPaymentTypeFollowingBranch, filterObj],
+    queryFn: () => getRevenueTransferPaymentTypeFollowingBranch(filterObj),
+  });
+
   useEffect(() => {
     if (response && response.data) {
       const items = response.data;
 
-      const labels = Object.keys(items.revenueForEach || {}).sort(
-        (a: string, b: string) => new Date(a).getTime() - new Date(b).getTime()
+      const labels: string[] = Object.keys(items.revenueForEach || {}).sort(
+        (a, b) => {
+          const startDateA = new Date(a.split(" - ")[0]).getTime();
+          const startDateB = new Date(b.split(" - ")[0]).getTime();
+          return startDateA - startDateB;
+        }
       );
       const data = labels.map(
         (date) => items.revenueForEach[date]?.amount || null
@@ -65,9 +80,16 @@ function ManagerFiancePage() {
 
       console.log(">>>DATA OF REVENUE", items);
 
+      if (
+        responseREvenueTransferPaymentType &&
+        responseREvenueTransferPaymentType.data
+      ) {
+        setPaymentType(responseREvenueTransferPaymentType.data);
+      }
+
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  }, [response]);
+  }, [response, responseREvenueTransferPaymentType]);
 
   const handleChangeDate = (startDate: string, endDate: string) => {
     setStartDate(startDate);
@@ -158,7 +180,10 @@ function ManagerFiancePage() {
                     }}
                   >
                     <div className={styles.numberContainer}>
-                      <p>280,012,003</p>₫
+                      <p>
+                        {paymentType?.totalByTransfer.amount.toLocaleString()}
+                      </p>
+                      ₫
                     </div>
                     <div className={styles.trendContainer}>
                       <div className={styles.numberTrendUp}>
@@ -189,7 +214,7 @@ function ManagerFiancePage() {
                     }}
                   >
                     <div className={styles.numberContainer}>
-                      <p>280,012,003</p>₫
+                      <p>{paymentType?.totalByCash.amount.toLocaleString()}</p>₫
                     </div>
                     <div className={styles.trendContainer}>
                       <div className={styles.numberTrendUp}>
@@ -290,7 +315,9 @@ function ManagerFiancePage() {
                         ))}
                       </div>
 
-                      <RevenueTypeMenu setFilterPaymentMethod={setFilterPaymentMethod} />
+                      <RevenueTypeMenu
+                        setFilterPaymentMethod={setFilterPaymentMethod}
+                      />
                     </div>
 
                     <div className={styles.transactionContainer}>

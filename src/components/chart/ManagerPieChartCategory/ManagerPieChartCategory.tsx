@@ -3,30 +3,11 @@ import { PieChart } from "@mui/x-charts/PieChart";
 import styles from "./ManagerPieChartCategory.module.scss";
 import { useNavigate } from "react-router-dom";
 
-// const mobileOS = [
-//   {
-//     label: "Đơn Gia Công",
-//     value: 2.42,
-//   },
-//   {
-//     label: "Đơn Hoàn Tiền",
-//     value: 72.72,
-//   },
-//   {
-//     label: "Đơn Bán Lại",
-//     value: 28.8,
-//   },
-// ];
 
 function ManagerPieChartCategory(props: ITotalOrderPieChartProps) {
   const { totalOrder, totalRevenue, orderPieChartData } = props;
 
-  
-
-
   const navigate = useNavigate();
-
-
 
   return (
     <>
