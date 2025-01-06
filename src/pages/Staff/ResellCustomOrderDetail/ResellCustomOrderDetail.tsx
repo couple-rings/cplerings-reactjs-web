@@ -1,6 +1,6 @@
-import { Chip, Grid, Skeleton } from "@mui/material";
+import { Button, Chip, Grid, Skeleton } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getResellCustomOrderDetail } from "src/services/resell.service";
 import { fetchResellCustomOrderDetail } from "src/utils/querykey";
 import styles from "./ResellCustomOrderDetail.module.scss";
@@ -10,6 +10,7 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 
 function ResellCustomOrderDetail() {
     const { id } = useParams();
+    const navigate = useNavigate();
 
     const { data: response, isLoading } = useQuery({
         queryKey: [fetchResellCustomOrderDetail, id],
@@ -37,6 +38,15 @@ function ResellCustomOrderDetail() {
                     <ReceiptLongIcon className={styles.headerIcon} />
                     <div className={styles.title}>Chi Tiết Đơn Mua Lại</div>
                 </Grid>
+
+                <Button 
+                    variant="outlined" 
+                    color="primary" 
+                    onClick={() => navigate("/staff/resell-order")}
+                    style={{ marginBottom: '1rem' }}
+                >
+                    Quay lại danh sách đơn mua lại
+                </Button>
 
                 <div className={styles.section}>
                     <Grid container spacing={2} mb={4}>

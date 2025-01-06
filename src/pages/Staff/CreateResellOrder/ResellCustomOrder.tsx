@@ -36,6 +36,7 @@ import { postResellCustomOrder } from "src/services/resell.service";
 import { postUploadFile } from "src/services/file.service";
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import AssignmentReturnIcon from '@mui/icons-material/AssignmentReturn';
+import moment from "moment";
 
 interface IFormInput {
     note: string;
@@ -51,7 +52,7 @@ const ResellCustomOrder = () => {
     const { configs } = useAppSelector((state) => state.config);
 
     const resellRatio = configs.find(
-        (item) => item.key === ConfigurationKey.ResellRatio
+        (item: { key: ConfigurationKey; value: string }) => item.key === ConfigurationKey.ResellRatio
     )?.value;
 
     const {
@@ -181,10 +182,10 @@ const ResellCustomOrder = () => {
                 )}
 
                 {productNo && !response?.data && !isLoading && (
-                    <Grid 
-                        container 
-                        direction="column" 
-                        alignItems="center" 
+                    <Grid
+                        container
+                        direction="column"
+                        alignItems="center"
                         py={6}
                         sx={{
                             backgroundColor: 'grey.50',
@@ -192,12 +193,12 @@ const ResellCustomOrder = () => {
                             mt: 3
                         }}
                     >
-                        <ErrorOutlineIcon 
-                            sx={{ 
-                                fontSize: 48, 
+                        <ErrorOutlineIcon
+                            sx={{
+                                fontSize: 48,
                                 color: 'error.main',
                                 mb: 2
-                            }} 
+                            }}
                         />
                         <Typography variant="h6" color="error.main" gutterBottom>
                             Không tìm thấy đơn hàng
@@ -209,10 +210,10 @@ const ResellCustomOrder = () => {
                 )}
 
                 {response?.data && isOrderAlreadyRefunded && (
-                    <Grid 
-                        container 
-                        direction="column" 
-                        alignItems="center" 
+                    <Grid
+                        container
+                        direction="column"
+                        alignItems="center"
                         py={6}
                         sx={{
                             backgroundColor: '#FFF3E0',
@@ -220,12 +221,12 @@ const ResellCustomOrder = () => {
                             mt: 3
                         }}
                     >
-                        <AssignmentReturnIcon 
-                            sx={{ 
-                                fontSize: 48, 
+                        <AssignmentReturnIcon
+                            sx={{
+                                fontSize: 48,
                                 color: '#E65100',
                                 mb: 2
-                            }} 
+                            }}
                         />
                         <Typography variant="h6" color="#E65100" gutterBottom>
                             Đơn hàng đã được mua lại
@@ -235,6 +236,161 @@ const ResellCustomOrder = () => {
                             <br />
                             Vui lòng kiểm tra lại hoặc chọn đơn hàng khác.
                         </Typography>
+                    </Grid>
+                )}
+
+                {response?.data && !isOrderAlreadyRefunded && (
+                    <Grid container spacing={3} mt={2}>
+                        <Grid item xs={12}>
+                            <fieldset style={{ margin: 0 }}>
+                                <legend>Thông Tin Đơn Hàng</legend>
+                                <Grid container p={2}>
+                                    <Grid container justifyContent="space-between" mb={1}>
+                                        <Grid item xs={4}>Mã đơn:</Grid>
+                                        <Grid item>{response.data.customOrder.orderNo}</Grid>
+                                    </Grid>
+
+                                    <Grid container justifyContent="space-between" mb={1}>
+                                        <Grid item xs={4}>Ngày hoàn tất:</Grid>
+                                        <Grid item>
+                                            {moment(
+                                                response.data.customOrder.customOrderHistories.find(
+                                                    (item) => item.status === CustomOrderStatus.Done
+                                                )?.createdAt
+                                            ).format("DD/MM/YYYY HH:mm")}
+                                        </Grid>
+                                    </Grid>
+
+                                    <Grid container justifyContent="space-between" mb={1}>
+                                        <Grid item xs={4}>Tổng tiền:</Grid>
+                                        <Grid item className={styles.totalPrice}>
+                                            {currencyFormatter(response.data.customOrder.totalPrice.amount)}
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </fieldset>
+                        </Grid>
+
+                        <Grid item xs={12} md={5.7}>
+                            <fieldset style={{ margin: 0, width: "100%" }}>
+                                <legend>Khách Hàng</legend>
+                                <Grid container p={2}>
+                                    <Grid container justifyContent="space-between" mb={1}>
+                                        <Grid item>Tên tài khoản:</Grid>
+                                        <Grid item>{response.data.customOrder.customer.username}</Grid>
+                                    </Grid>
+
+                                    <Grid container justifyContent="space-between" mb={1}>
+                                        <Grid item>Email:</Grid>
+                                        <Grid item>{response.data.customOrder.customer.email}</Grid>
+                                    </Grid>
+
+                                    <Grid container justifyContent="space-between" mb={1}>
+                                        <Grid item>Số điện thoại:</Grid>
+                                        <Grid item>
+                                            {response.data.customOrder.customer.phone || "--"}
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </fieldset>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <fieldset style={{ margin: 0 }}>
+                                <legend>Chi Tiết Nhẫn</legend>
+                                <Grid container spacing={3} p={2}>
+                                    <Grid item xs={12} md={6}>
+                                        <div className={styles.ringCard}>
+                                            <Typography variant="subtitle1" className={styles.ringTitle}>
+                                                Nhẫn Nam
+                                            </Typography>
+                                            <Grid container spacing={2}>
+                                                <Grid item xs={12}>
+                                                    <img
+                                                        src={response.data.customOrder.firstRing.customDesign.designVersion.image.url}
+                                                        alt="Male Ring"
+                                                        className={styles.ringImage}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                    <div className={styles.ringDetails}>
+                                                        <div className={styles.detailRow}>
+                                                            <span>Size:</span>
+                                                            <span>{response.data.customOrder.firstRing.fingerSize}</span>
+                                                        </div>
+                                                        <div className={styles.detailRow}>
+                                                            <span>Kim loại:</span>
+                                                            <span>{response.data.customOrder.firstRing.metalSpecification.name}</span>
+                                                        </div>
+                                                        <div className={styles.detailRow}>
+                                                            <span>Khắc tên:</span>
+                                                            <span>{response.data.customOrder.firstRing.engraving || "Không có"}</span>
+                                                        </div>
+                                                        <div className={styles.detailRow}>
+                                                            <span>Màu sắc:</span>
+                                                            <span>{response.data.customOrder.firstRing.metalSpecification.color}</span>
+                                                        </div>
+                                                        <div className={styles.detailRow}>
+                                                            <span>Khối lượng:</span>
+                                                            <span>{response.data.customOrder.firstRing.customDesign.metalWeight}g</span>
+                                                        </div>
+                                                        <div className={styles.detailRow}>
+                                                            <span>Số kim cương phụ:</span>
+                                                            <span>{response.data.customOrder.firstRing.customDesign.sideDiamondsCount}</span>
+                                                        </div>
+                                                    </div>
+                                                </Grid>
+                                            </Grid>
+                                        </div>
+                                    </Grid>
+
+                                    <Grid item xs={12} md={6}>
+                                        <div className={styles.ringCard}>
+                                            <Typography variant="subtitle1" className={styles.ringTitle}>
+                                                Nhẫn Nữ
+                                            </Typography>
+                                            <Grid container spacing={2}>
+                                                <Grid item xs={12}>
+                                                    <img
+                                                        src={response.data.customOrder.secondRing.customDesign.designVersion.image.url}
+                                                        alt="Female Ring"
+                                                        className={styles.ringImage}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                    <div className={styles.ringDetails}>
+                                                        <div className={styles.detailRow}>
+                                                            <span>Size:</span>
+                                                            <span>{response.data.customOrder.secondRing.fingerSize}</span>
+                                                        </div>
+                                                        <div className={styles.detailRow}>
+                                                            <span>Kim loại:</span>
+                                                            <span>{response.data.customOrder.secondRing.metalSpecification.name}</span>
+                                                        </div>
+                                                        <div className={styles.detailRow}>
+                                                            <span>Khắc tên:</span>
+                                                            <span>{response.data.customOrder.secondRing.engraving || "Không có"}</span>
+                                                        </div>
+                                                        <div className={styles.detailRow}>
+                                                            <span>Màu sắc:</span>
+                                                            <span>{response.data.customOrder.secondRing.metalSpecification.color}</span>
+                                                        </div>
+                                                        <div className={styles.detailRow}>
+                                                            <span>Khối lượng:</span>
+                                                            <span>{response.data.customOrder.secondRing.customDesign.metalWeight}g</span>
+                                                        </div>
+                                                        <div className={styles.detailRow}>
+                                                            <span>Số kim cương phụ:</span>
+                                                            <span>{response.data.customOrder.secondRing.customDesign.sideDiamondsCount}</span>
+                                                        </div>
+                                                    </div>
+                                                </Grid>
+                                            </Grid>
+                                        </div>
+                                    </Grid>
+                                </Grid>
+                            </fieldset>
+                        </Grid>
                     </Grid>
                 )}
 
