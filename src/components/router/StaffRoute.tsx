@@ -23,6 +23,7 @@ import StandardOrderDetail from "src/pages/Staff/StandardOrderDetail/StandardOrd
 import ResellOrders from "src/pages/Staff/ResellOrders/ResellOrders";
 // import CreateResellOrder from "src/pages/Staff/CreateResellOrder/CreateResellOrder";
 import ResellCustomOrder from "src/pages/Staff/CreateResellOrder/ResellCustomOrder";
+import ResellCustomOrderDetail from "src/pages/Staff/ResellCustomOrderDetail/ResellCustomOrderDetail";
 
 const StaffRouteObject: RouteObject = {
   path: "/staff",
@@ -79,6 +80,10 @@ const StaffRouteObject: RouteObject = {
     {
       path: "resell-order",
       element: <ResellOrders />,
+    },
+    {
+      path: "resell-order/detail/:id",
+      element: <ResellCustomOrderDetail />,
     },
     // {
     //   path: "resell-order/create",

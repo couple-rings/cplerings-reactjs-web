@@ -649,5 +649,6 @@ declare global {
       createdAt: string;
     };
     note: string;
+    customOrder: ICustomOrder;
   }
 }

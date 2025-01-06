@@ -28,3 +28,9 @@ export const getResellOrders = (queryObj: IResellFilter) => {
     `resell-orders?${queryUrl}`
   );
 };
+
+export const getResellCustomOrderDetail = (id: number) => {
+  return axios.get<unknown, IResponse<IResellCustomOrder>>(
+    `resell-orders/${id}`
+  );
+};
