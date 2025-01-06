@@ -11,6 +11,16 @@ export const postResellJewelry = (
   );
 };
 
+export const postResellCustomOrder = (
+  customOrderId: number,
+  data: ICustomOrderResellRequest
+) => {
+  return axios.post<unknown, IResponse<IResellCustomOrder>>(
+    `custom-orders/${customOrderId}/resell`,
+    data
+  );
+};
+
 export const getResellOrders = (queryObj: IResellFilter) => {
   const queryUrl = queryString.stringify(queryObj);
 

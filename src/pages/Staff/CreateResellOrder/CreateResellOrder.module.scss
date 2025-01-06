@@ -1,56 +1,190 @@
-@use "src/index.scss"as *;
+@use "src/index.scss" as *;
 
 .container {
-    padding        : 3rem 0;
-    color          : $primaryColor;
+    padding: 3rem 2rem;
+    color: $primaryColor;
     justify-content: center;
+    background: #f8f9fa;
+    min-height: calc(100vh - 64px);
 
     .title {
-        font-size    : 1.5rem;
-        color        : $primaryColor;
-        margin-bottom: 1rem;
-        font-weight  : 500;
-    }
-
-    .select {
-        width : 100%;
-        margin: 1rem 0;
+        font-size: 2rem;
+        color: $primaryColor;
+        margin-bottom: 2rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-align: center;
+        position: relative;
+        
+        &:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: $primaryColor;
+            border-radius: 2px;
+        }
     }
 
     .card {
-        box-shadow: $boxShadow;
-        gap       : 1rem;
-        padding   : 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        gap: 2rem;
+        padding: 3rem;
+        background: #fff;
+        border-radius: 12px;
+        transition: all 0.3s ease;
 
+        &:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
     }
 
     .status {
         color: $secondaryColor;
+        font-weight: 600;
+        padding: 0.6rem 1.2rem;
+        border-radius: 6px;
+        background: rgba($secondaryColor, 0.12);
+        display: inline-block;
+        font-size: 0.95rem;
+        letter-spacing: 0.5px;
     }
 
     .sectionTitle {
-        font-weight: 500;
-        font-size  : 1.2rem;
+        font-weight: 700;
+        font-size: 1.4rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 2px solid rgba($primaryColor, 0.1);
+        color: $primaryColor;
     }
 
-    .totalPrice {
-        color      : $secondaryColor;
-        font-size  : 1.2rem;
-        font-weight: 600;
+    .ratio, .resellAmount {
+        border-radius: 8px;
+        padding: 1.2rem 1.5rem;
+        margin-top: 1.5rem;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba($primaryColor, 0.1);
     }
 
     .ratio {
-        font-size  : 1.2rem;
-        color      : #555;
-        font-weight: 300;
+        font-size: 1.2rem;
+        color: #2c3e50;
+        font-weight: 500;
+        background: rgba($primaryColor, 0.04);
+        
+        span:last-child {
+            font-weight: 600;
+            color: $primaryColor;
+        }
     }
 
     .resellAmount {
         font-size: 1.3rem;
+        background: rgba($secondaryColor, 0.04);
+        border-color: rgba($secondaryColor, 0.1);
 
         .amount {
-            color      : $secondaryColor;
-            font-weight: 600;
+            color: $secondaryColor;
+            font-weight: 700;
+            font-size: 1.6rem;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
+    }
+
+    :global {
+        .MuiOutlinedInput-root {
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: #fff;
+
+            &:hover {
+                border-color: $primaryColor;
+                box-shadow: 0 0 0 1px rgba($primaryColor, 0.2);
+            }
+
+            &.Mui-focused {
+                box-shadow: 0 0 0 2px rgba($primaryColor, 0.2);
+            }
+        }
+
+        .MuiButton-contained {
+            text-transform: none;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 0.8rem 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba($primaryColor, 0.2);
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 15px rgba($primaryColor, 0.25);
+            }
+        }
+
+        .MuiFormLabel-root {
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+
+        .MuiSelect-select {
+            padding: 1rem;
+        }
+
+        .MuiMenuItem-root {
+            padding: 1rem;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: rgba($primaryColor, 0.08);
+            }
+        }
+    }
+
+    .imageUpload {
+        border: 2px dashed rgba($primaryColor, 0.2);
+        padding: 2rem;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: rgba($primaryColor, 0.02);
+
+        &:hover {
+            border-color: $primaryColor;
+            background: rgba($primaryColor, 0.04);
+        }
+
+        img {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+    }
+
+    .searchSection {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+
+        .searchInput {
+            flex: 1;
+        }
+
+        .searchButton {
+            min-width: 120px;
+        }
+    }
+
+    .errorText {
+        color: #e74c3c;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        font-weight: 500;
     }
 }

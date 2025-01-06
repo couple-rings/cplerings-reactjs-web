@@ -634,4 +634,20 @@ declare global {
     };
     note: string;
   }
+
+  interface IResellCustomOrder {
+    id: number;
+    jewelry: IJewelry;
+    staff: IUser;
+    customer: IUser;
+    paymentMethod: PaymentMethod;
+    amount: {
+      amount: number;
+    };
+    proofImage: {
+      url: string;
+      createdAt: string;
+    };
+    note: string;
+  }
 }
