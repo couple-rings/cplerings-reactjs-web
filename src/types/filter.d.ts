@@ -139,4 +139,16 @@ declare global {
     customerId?: number;
     staffId?: number;
   }
+
+  interface IRevenueFilter {
+    startDate: string;
+    endDate: string;
+  }
+
+  interface IOrderStatisticFilter extends IPaginationFilter {
+    startDate?: string;
+    endDate?: string;
+  }
+
+  
 }
