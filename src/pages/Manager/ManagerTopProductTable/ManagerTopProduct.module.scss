@@ -1,31 +1,10 @@
-@use 'src/index.scss'as *;
-
-.statusActive {
-    background-color: #D9ECC0;
-    color: #35714E;
-    padding: 5px 0;
-    border-radius: 5px;
-}
-
-.statusInactive {
-    background-color: #FBA8A8;
-    color: #B43620;
-    padding: 5px 0;
-    border-radius: 5px;
-}
-
-.empty {
-    font-size: 1.2rem;
-    color    : $primaryColor;
-}
-
 .tableCashPayment {
     background-color: #FFF6ED;
     color: #E6A768;
     padding: 5px;
     font-weight: 500;
     border-radius: 5px;
-    width: 60%;
+    width: 100%;
 }
 
 .tableTransferPayment {
@@ -34,7 +13,7 @@
     padding: 5px;
     font-weight: 500;
     border-radius: 5px;
-    width: 60%;
+    width: 100%;
 }
 
 .tableMoneyIn {
@@ -43,7 +22,7 @@
     padding: 5px;
     font-weight: 500;
     border-radius: 5px;
-    width: 60%;
+    width: 100%;
 }
 
 .tableMoneyOut {
@@ -52,7 +31,7 @@
     padding: 5px;
     font-weight: 500;
     border-radius: 5px;
-    width: 60%;
+    width: 100%;
 }
 
 .tableCustomType {
@@ -61,7 +40,7 @@
     padding: 5px;
     font-weight: 500;
     border-radius: 5px;
-    width: 60%;
+    width: 100%;
 }
 
 .tableRefundType {
@@ -70,7 +49,7 @@
     padding: 5px;
     font-weight: 500;
     border-radius: 5px;
-    width: 60%;
+    width: 100%;
 }
 
 .tableResellType {
@@ -79,5 +58,5 @@
     padding: 5px;
     font-weight: 500;
     border-radius: 5px;
-    width: 60%;
+    width: 100%;
 }

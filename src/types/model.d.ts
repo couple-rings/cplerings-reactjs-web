@@ -729,5 +729,55 @@ declare global {
       amount : number;
     }
   }
+
+  interface ITotalIncomeOfAllTime {
+    totalIn : {
+      amount : number;
+    }
+  }
+
+  interface ITotalExpenditureOfAllTime {
+    totalExpenditure : {
+      amount : number;
+    };
+    totalExpenditureWithTransferType : {
+      amount : number;
+    };
+    totalExpenditureWithCashType : {
+      amount : number;
+    }
+  }
+
+  interface ITotalIncomeFollowingTime {
+    totalIn : {
+      amount : number;
+    }
+  }
+
+  interface ITotalExpenditureFollowingTime {
+    totalExpenditure : {
+      amount : number;
+    };
+    totalExpenditureWithTransferType : {
+      amount : number;
+    };
+    totalExpenditureWithCashType : {
+      amount : number;
+    }
+  }
+
+  interface ICustomOrderDashBoard {
+    totalPrice: {
+      amount: number;
+    };
+    createdAt: string;
+    orderType: string;
+    paymentMethod: string;
+    orderNo: string;
+  }
+
+  interface ITop5CustomOrder {
+    top5CustomOrder : ICustomOrderDashBoard[];
+  }
   
 }
