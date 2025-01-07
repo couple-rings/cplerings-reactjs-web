@@ -21,7 +21,9 @@ import RefundCreateForm from "src/pages/Staff/RefundCreateForm/RefundCreateForm"
 import StandardOrder from "src/pages/Staff/StandardOrder/StandardOrder";
 import StandardOrderDetail from "src/pages/Staff/StandardOrderDetail/StandardOrderDetail";
 import ResellOrders from "src/pages/Staff/ResellOrders/ResellOrders";
-import CreateResellOrder from "src/pages/Staff/CreateResellOrder/CreateResellOrder";
+// import CreateResellOrder from "src/pages/Staff/CreateResellOrder/CreateResellOrder";
+import ResellCustomOrder from "src/pages/Staff/CreateResellOrder/ResellCustomOrder";
+import ResellCustomOrderDetail from "src/pages/Staff/ResellCustomOrderDetail/ResellCustomOrderDetail";
 
 const StaffRouteObject: RouteObject = {
   path: "/staff",
@@ -80,8 +82,16 @@ const StaffRouteObject: RouteObject = {
       element: <ResellOrders />,
     },
     {
+      path: "resell-order/detail/:id",
+      element: <ResellCustomOrderDetail />,
+    },
+    // {
+    //   path: "resell-order/create",
+    //   element: <CreateResellOrder />,
+    // },
+    {
       path: "resell-order/create",
-      element: <CreateResellOrder />,
+      element: <ResellCustomOrder />,
     },
     {
       path: "maintenance-order",

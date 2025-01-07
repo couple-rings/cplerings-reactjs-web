@@ -240,11 +240,11 @@ function ResellOrders() {
         width: 200,
         headerAlign: "center",
         align: "center",
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         renderCell: ({ row }) => (
           <Button
             variant="contained"
             sx={{ ...primaryBtn, py: 1, m: 2, borderRadius: 5 }}
+            onClick={() => navigate(`/staff/resell-order/detail/${row.id}`)}
           >
             Chi Tiết
           </Button>
@@ -258,6 +258,7 @@ function ResellOrders() {
       staffAnchorEl,
       staffOpenPopover,
       staffPopoverId,
+      navigate,
     ]
   );
 
@@ -293,7 +294,7 @@ function ResellOrders() {
         alignItems={"center"}
         mb={3}
       >
-        <div className={styles.title}>Đơn Mua Trang Sức</div>
+        <div className={styles.title}>Đơn Mua Nhẫn</div>
 
         <Button
           variant="contained"

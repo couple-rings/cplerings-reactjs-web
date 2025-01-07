@@ -46,7 +46,7 @@ const saleStaffSidebarList = [
     path: "/staff/standard-order",
   },
   {
-    text: "Đơn Mua Trang Sức",
+    text: "Đơn Mua Lại Nhẫn",
     icon: <PointOfSaleSharpIcon />,
     path: "/staff/resell-order",
   },
