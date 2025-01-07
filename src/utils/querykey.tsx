@@ -77,4 +77,27 @@ export const fetchPayments = "fetchPayments";
 
 export const fetchRefunds = "fetchRefunds";
 export const fetchResellOrders = "fetchResellOrders";
+<<<<<<< HEAD
 export const fetchResellCustomOrderDetail = "fetchResellCustomOrderDetail";
+=======
+
+export const fetchRevenueFollowingBranch = "fetchRevenueFollowingBranch";
+export const fetchTotalOrderFollowingBranch = "fetchTotalOrderFollowingBranch";
+export const fetchResellOrderStatistic = "fetchResellOrderStatistic";
+export const fetchRefundOrderStatistic = "fetchRefundOrderStatistic";
+export const fetchCustomOrderStatistic = "fetchCustomOrderStatistic";
+export const fetchPaymentOrderStatistic = "fetchPaymentOrderStatistic";
+export const fetchTotalRevenueOfAllTimeFollowingBranch = "fetchTotalRevenueOfAllTimeFollowingBranch";
+export const fetchTotalTransactionOfAllTimeFollowingBranch = "fetchTotalTransactionOfAllTimeFollowingBranch";
+export const fetchTotalOrderOfAllTimeFollowingBranch = "fetchTotalOrderOfAllTimeFollowingBranch";
+export const fetchRevenueTransferPaymentTypeFollowingBranch = "fetchRevenueTransferPaymentTypeFollowingBranch";
+
+export const fetchTotalIncomeOfAllTimeFollowingBranch = "fetchTotalIncomeOfAllTimeFollowingBranch";
+export const fetchTotalExpenditureOfAllTimeFollowingBranch = "fetchTotalExpenditureOfAllTimeFollowingBranch";
+
+export const fetchTotalIncomeFollowingTime = "fetchTotalIncomeFollowingTime";
+export const fetchTotalExpenditureFollowingTime = "fetchTotalExpenditureFollowingTime";
+
+export const fetchTop5CustomOrder = "fetchTop5CustomOrder";
+
+>>>>>>> 2f872d397831a79eec5937e718904910af6a2cfd

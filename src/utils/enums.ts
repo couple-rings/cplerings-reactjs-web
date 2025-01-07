@@ -234,7 +234,14 @@ export enum PaymentMethod {
   Transfer = "TRANSFER",
 }
 
+export enum OrderTypeForTableOrderList {
+  Resell = "RESELL",
+  Refund = "REFUND",
+  Custom = "CUSTOM",
+  Payment = "PAYMENT",
+}
 export enum CraftingDifficulty {
   Normal = "NORMAL",
   Hard = "HARD",
 }
+

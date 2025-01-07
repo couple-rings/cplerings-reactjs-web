@@ -1,0 +1,83 @@
+@use 'src/index.scss'as *;
+
+.statusActive {
+    background-color: #D9ECC0;
+    color: #35714E;
+    padding: 5px 0;
+    border-radius: 5px;
+}
+
+.statusInactive {
+    background-color: #FBA8A8;
+    color: #B43620;
+    padding: 5px 0;
+    border-radius: 5px;
+}
+
+.empty {
+    font-size: 1.2rem;
+    color    : $primaryColor;
+}
+
+.tableCashPayment {
+    background-color: #FFF6ED;
+    color: #E6A768;
+    padding: 5px;
+    font-weight: 500;
+    border-radius: 5px;
+    width: 60%;
+}
+
+.tableTransferPayment {
+    background-color: #EEF9FB;
+    color: #7BA7D7;
+    padding: 5px;
+    font-weight: 500;
+    border-radius: 5px;
+    width: 60%;
+}
+
+.tableMoneyIn {
+    background-color: #D9ECC0;
+    color: #35714E;
+    padding: 5px;
+    font-weight: 500;
+    border-radius: 5px;
+    width: 60%;
+}
+
+.tableMoneyOut {
+    background-color: #FBA8A8;
+    color: #BB271A;
+    padding: 5px;
+    font-weight: 500;
+    border-radius: 5px;
+    width: 60%;
+}
+
+.tableCustomType {
+    background-color: #50afae;
+    color: #fff;
+    padding: 5px;
+    font-weight: 500;
+    border-radius: 5px;
+    width: 60%;
+}
+
+.tableRefundType {
+    background-color: #a822d0;
+    color: #fff;
+    padding: 5px;
+    font-weight: 500;
+    border-radius: 5px;
+    width: 60%;
+}
+
+.tableResellType {
+    background-color: #4e94f7;
+    color: #fff;
+    padding: 5px;
+    font-weight: 500;
+    border-radius: 5px;
+    width: 60%;
+}
