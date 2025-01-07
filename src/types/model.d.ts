@@ -780,4 +780,22 @@ declare global {
     top5CustomOrder : ICustomOrderDashBoard[];
   }
   
+
+  interface IResellCustomOrder {
+    id: number;
+    orderNo: string;
+    jewelry: IJewelry;
+    staff: IUser;
+    customer: IUser;
+    paymentMethod: PaymentMethod;
+    amount: {
+      amount: number;
+    };
+    proofImage: {
+      url: string;
+      createdAt: string;
+    };
+    note: string;
+    customOrder: ICustomOrder;
+  }
 }

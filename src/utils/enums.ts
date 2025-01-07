@@ -74,6 +74,7 @@ export enum CustomOrderStatus {
   Completed = "COMPLETED",
   Canceled = "CANCELED",
   Refunded = "REFUNDED",
+  Resold = "RESOLD",
 }
 
 export enum MaintenanceOrderStatus {

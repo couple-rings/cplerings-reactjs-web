@@ -291,4 +291,11 @@ declare global {
     proofImageId: number;
     paymentMethod: PaymentMethod;
   }
+
+  interface ICustomOrderResellRequest {
+    customerId: number;
+    proofImageId: number;
+    paymentMethod: PaymentMethod;
+    note: string;
+  }
 }

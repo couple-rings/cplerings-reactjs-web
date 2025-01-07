@@ -1,56 +1,422 @@
-@use "src/index.scss"as *;
+@use "src/index.scss" as *;
 
 .container {
-    padding        : 3rem 0;
-    color          : $primaryColor;
+    padding: 3rem 2rem;
+    color: $primaryColor;
     justify-content: center;
+    background: #f8f9fa;
+    min-height: calc(100vh - 64px);
 
     .title {
-        font-size    : 1.5rem;
-        color        : $primaryColor;
-        margin-bottom: 1rem;
-        font-weight  : 500;
-    }
+        font-size: 2rem;
+        color: $primaryColor;
+        margin-bottom: 2rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-align: center;
+        position: relative;
 
-    .select {
-        width : 100%;
-        margin: 1rem 0;
+        &:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: $primaryColor;
+            border-radius: 2px;
+        }
     }
 
     .card {
-        box-shadow: $boxShadow;
-        gap       : 1rem;
-        padding   : 2rem;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
 
+        fieldset {
+            border: 1px solid rgba($primaryColor, 0.12);
+            border-radius: 8px;
+            padding: 0;
+
+            legend {
+                color: $primaryColor;
+                font-weight: 600;
+                font-size: 1.1rem;
+                padding: 0 0.5rem;
+                margin-left: 1rem;
+            }
+        }
+
+        .totalPrice {
+            color: $secondaryColor;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
     }
 
     .status {
         color: $secondaryColor;
+        font-weight: 600;
+        padding: 0.6rem 1.2rem;
+        border-radius: 6px;
+        background: rgba($secondaryColor, 0.12);
+        display: inline-block;
+        font-size: 0.95rem;
+        letter-spacing: 0.5px;
     }
 
     .sectionTitle {
-        font-weight: 500;
-        font-size  : 1.2rem;
+        font-weight: 700;
+        font-size: 1.4rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 2px solid rgba($primaryColor, 0.1);
+        color: $primaryColor;
     }
 
-    .totalPrice {
-        color      : $secondaryColor;
-        font-size  : 1.2rem;
-        font-weight: 600;
-    }
+    .ratio,
+    .resellAmount {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 1.2rem 1.5rem;
+        border: 1px solid rgba($primaryColor, 0.08);
 
-    .ratio {
-        font-size  : 1.2rem;
-        color      : #555;
-        font-weight: 300;
+        span {
+            font-size: 1.1rem;
+            color: #475569;
+
+            &:last-child {
+                font-weight: 600;
+                color: $primaryColor;
+            }
+        }
     }
 
     .resellAmount {
-        font-size: 1.3rem;
+        background: rgba($secondaryColor, 0.04);
+        border-color: rgba($secondaryColor, 0.12);
 
         .amount {
-            color      : $secondaryColor;
-            font-weight: 600;
+            color: $secondaryColor;
+            font-weight: 700;
+            font-size: 1.4rem;
         }
+    }
+
+    :global {
+        .MuiOutlinedInput-root {
+            background: #fff;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: #fafafa;
+            }
+
+            &.Mui-focused {
+                background: #fff;
+                box-shadow: 0 0 0 2px rgba($primaryColor, 0.2);
+            }
+        }
+
+        .MuiSelect-select {
+            padding: 0.8rem 1rem;
+        }
+
+        .MuiButton-contained {
+            border-radius: 8px;
+            text-transform: none;
+            font-weight: 600;
+            padding: 0.6rem 1.5rem;
+            box-shadow: 0 4px 12px rgba($primaryColor, 0.15);
+            transition: all 0.3s ease;
+
+            &:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 6px 16px rgba($primaryColor, 0.2);
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
+
+            &.Mui-disabled {
+                background: #e2e8f0;
+                color: #94a3b8;
+            }
+        }
+
+        .MuiFormLabel-root {
+            color: #475569;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .MuiFormHelperText-root {
+            margin-top: 0.4rem;
+            font-size: 0.85rem;
+
+            &.Mui-error {
+                color: #ef4444;
+            }
+        }
+    }
+
+    .imageUploadContainer {
+        border: 2px dashed rgba($primaryColor, 0.15);
+        border-radius: 12px;
+        padding: 1rem;
+        background: rgba($primaryColor, 0.02);
+        transition: all 0.2s ease;
+        cursor: pointer;
+
+        &:hover {
+            border-color: rgba($primaryColor, 0.3);
+            background: rgba($primaryColor, 0.04);
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+    }
+
+    .searchSection {
+        margin-bottom: 1.5rem;
+
+        div {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: $primaryColor;
+            margin-bottom: 0.5rem;
+        }
+    }
+
+    .errorText {
+        color: #e74c3c;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        font-weight: 500;
+    }
+}
+
+.errorContainer {
+    background-color: #fef2f2;
+    border: 1px solid #fee2e2;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+
+    .errorIcon {
+        color: #dc2626;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .errorTitle {
+        color: #dc2626;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .errorMessage {
+        color: #ef4444;
+    }
+}
+
+.loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+
+    .loadingSpinner {
+        color: $primaryColor;
+    }
+}
+
+.ringCard {
+    background: #fff;
+    border: 1px solid rgba($primaryColor, 0.12);
+    border-radius: 12px;
+    padding: 1.5rem;
+    height: 100%;
+    transition: all 0.2s ease;
+
+    &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        transform: translateY(-2px);
+    }
+
+    .ringTitle {
+        color: $primaryColor;
+        font-weight: 600;
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 1px solid rgba($primaryColor, 0.12);
+    }
+
+    .ringImage {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .ringDetails {
+        .idSection {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba($primaryColor, 0.1);
+
+            .subTitle {
+                font-weight: 500;
+                color: $primaryColor;
+                margin-bottom: 1rem;
+                font-size: 0.95rem;
+            }
+
+            .infoRow {
+                display: flex;
+                justify-content: space-between;
+                padding: 0.7rem 0;
+                border-bottom: 1px solid rgba($primaryColor, 0.05);
+
+                &:last-child {
+                    border-bottom: none;
+                }
+
+                span:first-child {
+                    color: rgba($primaryColor, 0.7);
+                }
+
+                span:last-child {
+                    font-weight: 500;
+                }
+            }
+        }
+
+        .detailRow {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba($primaryColor, 0.08);
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            span {
+                &:first-child {
+                    color: #64748b;
+                    font-weight: 500;
+                }
+
+                &:last-child {
+                    color: #1e293b;
+                    font-weight: 600;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .card {
+        padding: 1.5rem !important;
+    }
+
+    .ratio,
+    .resellAmount {
+        padding: 1rem;
+
+        span {
+            font-size: 1rem;
+        }
+    }
+
+    .resellAmount .amount {
+        font-size: 1.2rem;
+    }
+
+    .ringCard {
+        padding: 1rem;
+
+        .ringImage {
+            height: 160px;
+        }
+
+        .ringDetails .detailRow {
+            padding: 0.6rem 0;
+            font-size: 0.9rem;
+        }
+    }
+}
+
+.originalPrice {
+    color: #64748b;
+    font-weight: 600;
+    text-decoration: line-through;
+}
+
+.resellRatio {
+    color: #0891b2;
+    font-weight: 600;
+}
+
+.resellPrice {
+    color: $secondaryColor;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.statusBadge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    
+    &.done, &.completed {
+        background-color: #DEF7EC;
+        color: #03543F;
+    }
+    
+    &.resold {
+        background-color: #FEF3C7;
+        color: #92400E;
+    }
+    
+    &.refunded {
+        background-color: #E0B3F0;
+        color: #6A1B9A;
+    }
+    
+    &.canceled {
+        background-color: #FEE2E2;
+        color: #991B1B;
+    }
+    
+    &.pending {
+        background-color: #E0F2FE;
+        color: #075985;
+    }
+    
+    &.waiting {
+        background-color: #FEF9C3;
+        color: #854D0E;
+    }
+    
+    &.inProgress {
+        background-color: #E0E7FF;
+        color: #3730A3;
     }
 }
