@@ -1,24 +1,34 @@
 import { PieChart } from "@mui/x-charts/PieChart";
 // import { mobileOS } from "./webUsageStats";
 import styles from "./ManagerPieChartCategory.module.scss";
-import { useNavigate } from "react-router-dom";
-
+import { useLocation, useNavigate } from "react-router-dom";
 
 function ManagerPieChartCategory(props: ITotalOrderPieChartProps) {
   const { totalOrder, totalRevenue, orderPieChartData } = props;
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isManagerProductPage = location.pathname === "/manager/product";
 
   return (
     <>
       <div className={styles.container}>
-        <div
-          className="title"
-          style={{ fontSize: "30px" }}
-          onClick={() => navigate("/manager/product")}
-        >
-          Các loại đơn
+        <div className={styles.header}>
+          <div className="title" style={{ fontSize: "30px" }}>
+            Các loại đơn
+          </div>
+          {!isManagerProductPage && (
+            <div
+              className={styles.button}
+              onClick={() => navigate("/manager/product")}
+            >
+              {" "}
+              Xem Chi Tiết
+            </div>
+          )}
         </div>
+
         <PieChart
           sx={{ marginLeft: "100px" }}
           series={[

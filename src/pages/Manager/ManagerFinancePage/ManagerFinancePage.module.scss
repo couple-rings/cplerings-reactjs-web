@@ -218,6 +218,74 @@
             }
         }
 
+        .revenueExpenditureContainer {
+            background-color: #fff0ed;
+            border-radius: 10px;
+            padding: 25px;
+            // padding-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+
+            .boxTitle {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .boxIcon {
+                    width: 40px;
+                    height: 40px;
+                    background-color: #ffff;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 10px;
+                    img {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+                .title {
+                    color: #be705d;
+                    padding: 0;
+                    margin: 0;
+                    font-size: 16px;
+                }
+            }
+
+            .numberContainer {
+                display: flex;
+                align-items: baseline;
+                gap: 10px;
+                p {
+                    font-size: 30px;
+                    padding: 0;
+                    margin: 0;
+                }
+            }
+
+            .trendContainer {
+                .numberTrendUp {
+                    color: #48742c;
+                    display: flex;
+                    gap: 5px;
+                    font-size: 12px;
+                }
+
+                .numberTrendDown {
+                    color: #bb271a;
+                    display: flex;
+                    gap: 5px;
+                    font-size: 12px;
+                }
+
+                .timeTrend {
+                    font-size: 10px;
+                    color: #a8a7a7;
+                }
+            }
+        }
+
         .section {
             border-radius: 10px;
             background-color: white;
