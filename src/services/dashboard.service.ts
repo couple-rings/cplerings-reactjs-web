@@ -18,6 +18,8 @@ export const getTotalOrderFollowingBranch = (queryObj: IRevenueFilter) => {
   );
 };
 
+//Total all time
+
 export const getTotalRevenueOfAllTimeFollowingBranch = () => {
   return axios.get<unknown, IResponse<ITotalRevenueOfAllTime>>(
     `revenue/total`
@@ -36,6 +38,42 @@ export const getTotalOrderOfAllTimeFollowingBranch = () => {
   );
 }
 
+export const getTotalIncomeOfAllTimeFollowingBranch = () => {
+  return axios.get<unknown, IResponse<ITotalIncomeOfAllTime>>(
+    `income`
+  );
+}
+
+export const getTotalExpenditureOfAllTimeFollowingBranch = () => {
+  return axios.get<unknown, IResponse<ITotalExpenditureOfAllTime>>(
+    `expenditure`
+  )
+}
+
+export const getTop5CustomOrder = () => {
+  return axios.get<unknown, IResponse<ITop5CustomOrder>>(
+    `custom-orders/top-5`
+  )
+}
+
+//Another
+
+export const getTotalIncomeFollowingTime = (queryObj: IRevenueFilter) => {
+  const queryUrl = queryString.stringify(queryObj);
+
+  return axios.get<unknown, IResponse<ITotalIncomeFollowingTime>>(
+    `income/time?${queryUrl}`
+  )
+}
+
+export const getTotalExpenditureFollowingTime = (queryObj: IRevenueFilter) => {
+  const queryUrl = queryString.stringify(queryObj);
+
+  return axios.get<unknown, IResponse<ITotalExpenditureFollowingTime>>(
+    `expenditure/time?${queryUrl}`
+  )
+}
+
 export const getRevenueTransferPaymentTypeFollowingBranch = (queryObj: IRevenueFilter) => {
   const queryUrl = queryString.stringify(queryObj);
 
@@ -43,6 +81,8 @@ export const getRevenueTransferPaymentTypeFollowingBranch = (queryObj: IRevenueF
     `orders/statistic/payments/type?${queryUrl}`
   )
 };
+
+//Statistic
 
 export const getResellOrderStatistic = (queryObj: IOrderStatisticFilter) => {
   const queryUrl = queryString.stringify(queryObj);

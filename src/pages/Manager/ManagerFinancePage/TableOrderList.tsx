@@ -7,7 +7,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Pagination } from "@mui/material";
 import { useEffect, useState } from "react";
-import { pageSize } from "src/utils/constants";
+// import { pageSize } from "src/utils/constants";
 import { useQuery } from "@tanstack/react-query";
 import {
   fetchPaymentOrderStatistic,
@@ -23,7 +23,7 @@ import styles from "./TableOrderList.module.scss";
 
 const initMetaData = {
   page: 0,
-  pageSize,
+  pageSize: 5,
   totalPages: 0,
   count: 0,
 };
@@ -78,7 +78,7 @@ function TableOrderList(props: ITableOrderListProps) {
   const [filterOrderStatisticObj, setFilterOrderStatisticObj] =
     useState<IOrderStatisticFilter>({
       page: metaData.page,
-      pageSize: 10,
+      pageSize: 5,
       startDate: startDateData || defaultStartDate,
       endDate: endDateData || defaultEndDate,
     });
@@ -115,6 +115,7 @@ function TableOrderList(props: ITableOrderListProps) {
       setWaitingData(items);
 
       setMetaData(rest);
+
     }
   }, [data]);
 
@@ -135,7 +136,6 @@ function TableOrderList(props: ITableOrderListProps) {
     });
   };
 
-  let counter = 1;
 
   return (
     <div className="container">
@@ -179,7 +179,7 @@ function TableOrderList(props: ITableOrderListProps) {
                     scope="row"
                     style={{ fontWeight: "500" }}
                   >
-                    {counter++}
+                    {metaData.page * metaData.pageSize + index + 1}
                   </TableCell>
                   <TableCell align="left" style={{ fontWeight: "500" }}>
                     <div

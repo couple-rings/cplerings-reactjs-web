@@ -446,7 +446,6 @@ function CreateResellOrder() {
             isSearchable
             getOptionLabel={(option) => `${option.username} - ${option.email}`}
             menuPosition="fixed"
-            className={styles.select}
             additional={initMetaData}
             value={value}
             loadOptions={loadPageOptions}
