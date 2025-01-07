@@ -7,7 +7,6 @@ import styles from "./ResellCustomOrderDetail.module.scss";
 import { currencyFormatter, formatRefundMethodTitle, getDiamondSpec } from "src/utils/functions";
 import moment from "moment";
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import { CustomOrderStatus } from "src/utils/enums";
 
 function ResellCustomOrderDetail() {
     const { id } = useParams();
@@ -59,13 +58,11 @@ function ResellCustomOrderDetail() {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <div className={styles.infoCard}>
-                                <div className={styles.label}>Ngày mua lại:</div>
+                                <div className={styles.label}>Ngày đơn mua lại:</div>
                                 <div className={styles.value}>
                                     {moment(
-                                        response.data.customOrder.customOrderHistories.find(
-                                            (item) => item.status === CustomOrderStatus.Refunded
-                                        )?.createdAt
-                                    ).format("DD/MM/YYYY")}
+                                        response.data.customOrder.createdAt
+                                    ).format("DD/MM/YYYY HH:mm")}
                                 </div>
                             </div>
                         </Grid>

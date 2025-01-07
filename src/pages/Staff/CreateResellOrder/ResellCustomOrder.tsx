@@ -267,9 +267,7 @@ const ResellCustomOrder = () => {
                                                 <Grid item xs={4}>Ngày được mua lại:</Grid>
                                                 <Grid item>
                                                     {moment(
-                                                        response.data.customOrder.customOrderHistories.find(
-                                                            (item) => item.status === CustomOrderStatus.Resold
-                                                        )?.createdAt
+                                                        response.data.customOrder.createdAt
                                                     ).format("DD/MM/YYYY HH:mm")}
                                                 </Grid>
                                             </Grid>
