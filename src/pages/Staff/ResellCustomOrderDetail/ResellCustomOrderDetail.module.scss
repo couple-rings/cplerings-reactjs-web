@@ -106,6 +106,19 @@
     max-height: 300px;
   }
 
+  .idSection {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba($primaryColor, 0.1);
+
+    .subTitle {
+      font-weight: 500;
+      color: $primaryColor;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+  }
+
   .diamondSection {
     margin-top: 1.5rem;
     padding-top: 1rem;

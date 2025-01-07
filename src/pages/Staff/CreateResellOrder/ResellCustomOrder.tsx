@@ -212,6 +212,19 @@ const ResellCustomOrder = () => {
 
                 {response?.data && (
                     <>
+                        <Grid container justifyContent="flex-start" mt={2}>
+                            <div className={`${styles.statusBadge} ${styles[response.data.customOrder.status.toLowerCase() as keyof typeof styles]}`}>
+                                {response.data.customOrder.status === CustomOrderStatus.Done && "Hoàn Thành"}
+                                {response.data.customOrder.status === CustomOrderStatus.Completed && "Đã Hoàn Thành"}
+                                {response.data.customOrder.status === CustomOrderStatus.Resold && "Đã Mua Lại"}
+                                {response.data.customOrder.status === CustomOrderStatus.Refunded && "Đã Hoàn Tiền"}
+                                {response.data.customOrder.status === CustomOrderStatus.Canceled && "Đã Hủy"}
+                                {response.data.customOrder.status === CustomOrderStatus.Pending && "Chờ Xử Lý"}
+                                {response.data.customOrder.status === CustomOrderStatus.Waiting && "Đang Chờ"}
+                                {response.data.customOrder.status === CustomOrderStatus.InProgress && "Đang Xử Lý"}
+                            </div>
+                        </Grid>
+
                         {/* Already Resold Status */}
                         {response.data.customOrder.status === CustomOrderStatus.Resold && (
                             <Grid>
@@ -223,7 +236,8 @@ const ResellCustomOrder = () => {
                                     sx={{
                                         backgroundColor: '#FFF3E0',
                                         borderRadius: 1,
-                                        mt: 3
+                                        mt: 3,
+                                        mb: 3,
                                     }}
                                 >
                                     <AssignmentReturnIcon
@@ -436,13 +450,6 @@ const ResellCustomOrder = () => {
                                             </Grid>
 
                                             <Grid container justifyContent="space-between" mb={1}>
-                                                <Grid item xs={4}>Tỷ lệ hoàn tiền:</Grid>
-                                                <Grid item className={styles.resellRatio}>
-                                                    {resellRatio}%
-                                                </Grid>
-                                            </Grid>
-
-                                            <Grid container justifyContent="space-between" mb={1}>
                                                 <Grid item xs={4}>Giá được hoàn tiền:</Grid>
                                                 <Grid item className={styles.resellPrice}>
                                                     {currencyFormatter(
@@ -464,6 +471,7 @@ const ResellCustomOrder = () => {
                         <Grid item xs={12} md={5.7}>
                             <fieldset style={{ margin: 0, width: "100%" }}>
                                 <legend>Thông Tin Khách Hàng</legend>
+
                                 <Grid container p={2}>
                                     <Grid container justifyContent="space-between" mb={1}>
                                         <Grid item>Tên tài khoản:</Grid>
@@ -511,6 +519,18 @@ const ResellCustomOrder = () => {
                                                 </Grid>
                                                 <Grid item xs={12}>
                                                     <div className={styles.ringDetails}>
+
+                                                        <div className={styles.idSection}>
+                                                            <div className={styles.infoRow}>
+                                                                <span>Người sở hữu:</span>
+                                                                <span>{response.data.customOrder.firstRing.spouse.fullName}</span>
+                                                            </div>
+                                                            <div className={styles.infoRow}>
+                                                                <span>CCCD:</span>
+                                                                <span>{response.data.customOrder.firstRing.spouse.citizenId || "--"}</span>
+                                                            </div>
+                                                        </div>
+
                                                         <div className={styles.detailRow}>
                                                             <span>Size:</span>
                                                             <span>{response.data.customOrder.firstRing.fingerSize}</span>
@@ -563,6 +583,18 @@ const ResellCustomOrder = () => {
                                                 </Grid>
                                                 <Grid item xs={12}>
                                                     <div className={styles.ringDetails}>
+
+                                                        <div className={styles.idSection}>
+                                                            <div className={styles.infoRow}>
+                                                                <span>Người sở hữu:</span>
+                                                                <span>{response.data.customOrder.secondRing.spouse.fullName}</span>
+                                                            </div>
+                                                            <div className={styles.infoRow}>
+                                                                <span>CCCD:</span>
+                                                                <span>{response.data.customOrder.secondRing.spouse.citizenId || "--"}</span>
+                                                            </div>
+                                                        </div>
+
                                                         <div className={styles.detailRow}>
                                                             <span>Size:</span>
                                                             <span>{response.data.customOrder.secondRing.fingerSize}</span>

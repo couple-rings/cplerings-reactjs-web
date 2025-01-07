@@ -53,7 +53,7 @@ function ResellCustomOrderDetail() {
                         <Grid item xs={12} sm={6}>
                             <div className={styles.infoCard}>
                                 <div className={styles.label}>Mã đơn:</div>
-                                <div className={styles.value}>{order.id}</div>
+                                <div className={styles.value}>{order.orderNo}</div>
                             </div>
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -179,6 +179,16 @@ function ResellCustomOrderDetail() {
                                             className={styles.ringImage}
                                         />
                                     )}
+                                    <div className={styles.idSection}>
+                                        <div className={styles.infoRow}>
+                                            <span>Người sở hữu:</span>
+                                            <span>{order.customOrder.firstRing.spouse.fullName}</span>
+                                        </div>
+                                        <div className={styles.infoRow}>
+                                            <span>CCCD:</span>
+                                            <span>{order.customOrder.firstRing.spouse.citizenId || "--"}</span>
+                                        </div>
+                                    </div>
                                     <div className={styles.infoRow}>
                                         <span>Kích thước:</span>
                                         <span>{order.customOrder.firstRing.fingerSize}</span>
@@ -238,6 +248,16 @@ function ResellCustomOrderDetail() {
                                             className={styles.ringImage}
                                         />
                                     )}
+                                    <div className={styles.idSection}>
+                                        <div className={styles.infoRow}>
+                                            <span>Người sở hữu:</span>
+                                            <span>{order.customOrder.secondRing.spouse.fullName}</span>
+                                        </div>
+                                        <div className={styles.infoRow}>
+                                            <span>CCCD:</span>
+                                            <span>{order.customOrder.secondRing.spouse.citizenId || "--"}</span>
+                                        </div>
+                                    </div>
                                     <div className={styles.infoRow}>
                                         <span>Kích thước:</span>
                                         <span>{order.customOrder.secondRing.fingerSize}</span>

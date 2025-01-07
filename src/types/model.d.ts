@@ -783,6 +783,7 @@ declare global {
 
   interface IResellCustomOrder {
     id: number;
+    orderNo: string;
     jewelry: IJewelry;
     staff: IUser;
     customer: IUser;
