@@ -1,6 +1,7 @@
 import { Grid } from "@mui/material";
 import moneyBag from "src/assets/moneyBag.png";
-import chartArrowRise from "src/assets/ChartArrowRise.png";
+import expenditureIcon from "src/assets/Cost.png";
+// import chartArrowRise from "src/assets/ChartArrowRise.png";
 import styles from "./ManagerFinancePage.module.scss";
 import transactionIcon from "src/assets/TransactionIcon.png";
 import cashIcon from "src/assets/Cash.png";
@@ -8,10 +9,14 @@ import ManagerChartFinace from "src/components/chart/ManagerChartFinance/Manager
 import { useEffect, useState } from "react";
 import {
   fetchRevenueFollowingBranch,
-  fetchRevenueTransferPaymentTypeFollowingBranch,
+  // fetchRevenueTransferPaymentTypeFollowingBranch,
+  fetchTotalExpenditureFollowingTime,
+  fetchTotalIncomeFollowingTime,
 } from "src/utils/querykey";
 import {
-  getRevenueTransferPaymentTypeFollowingBranch,
+  // getRevenueTransferPaymentTypeFollowingBranch,
+  getTotalExpenditureFollowingTime,
+  getTotalIncomeFollowingTime,
   getTotalRevenueFollowingBranch,
 } from "src/services/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
@@ -26,7 +31,9 @@ function ManagerFiancePage() {
   });
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [paymentType, setPaymentType] = useState<IRevenuePaymentType>();
+  // const [paymentType, setPaymentType] = useState<IRevenuePaymentType>();
+  const [totalIncome, setTotalIncome] = useState("0");
+  const [expenditure, setExpenditure] = useState<ITotalExpenditureFollowingTime>();
   const [filterPaymentMethod, setFilterPaymentMethod] = useState<string>("All");
   const [selectedItem, setSelectedItem] = useState<OrderTypeForTableOrderList>(
     OrderTypeForTableOrderList.Custom
@@ -53,10 +60,20 @@ function ManagerFiancePage() {
     queryFn: () => getTotalRevenueFollowingBranch(filterObj),
   });
 
-  const { data: responseREvenueTransferPaymentType } = useQuery({
-    queryKey: [fetchRevenueTransferPaymentTypeFollowingBranch, filterObj],
-    queryFn: () => getRevenueTransferPaymentTypeFollowingBranch(filterObj),
+  // const { data: responseREvenueTransferPaymentType } = useQuery({
+  //   queryKey: [fetchRevenueTransferPaymentTypeFollowingBranch, filterObj],
+  //   queryFn: () => getRevenueTransferPaymentTypeFollowingBranch(filterObj),
+  // });
+
+  const { data: responseTotalIncome } = useQuery({
+    queryKey: [fetchTotalIncomeFollowingTime, filterObj],
+    queryFn: () => getTotalIncomeFollowingTime(filterObj),
   });
+
+  const { data : responseTotalExpenditure } = useQuery({
+    queryKey: [fetchTotalExpenditureFollowingTime, filterObj],
+    queryFn: () => getTotalExpenditureFollowingTime(filterObj),
+  })
 
   useEffect(() => {
     if (response && response.data) {
@@ -80,16 +97,26 @@ function ManagerFiancePage() {
 
       console.log(">>>DATA OF REVENUE", items);
 
-      if (
-        responseREvenueTransferPaymentType &&
-        responseREvenueTransferPaymentType.data
-      ) {
-        setPaymentType(responseREvenueTransferPaymentType.data);
+      // if (
+      //   responseREvenueTransferPaymentType &&
+      //   responseREvenueTransferPaymentType.data
+      // ) {
+      //   setPaymentType(responseREvenueTransferPaymentType.data);
+      // }
+
+      if (responseTotalIncome && responseTotalIncome.data) {
+        setTotalIncome(responseTotalIncome.data.totalIn.amount.toLocaleString());
       }
+
+      if (responseTotalExpenditure && responseTotalExpenditure.data) {
+        setExpenditure(responseTotalExpenditure.data)
+      }
+
+
 
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  }, [response, responseREvenueTransferPaymentType]);
+  }, [response, responseTotalIncome, responseTotalExpenditure]);
 
   const handleChangeDate = (startDate: string, endDate: string) => {
     setStartDate(startDate);
@@ -131,14 +158,14 @@ function ManagerFiancePage() {
               className={styles.topBox}
               justifyContent={"space-between"}
             >
-              <Grid lg={3.8} item>
+              <Grid lg={2.8} item style={{marginBottom : "20px"}}>
                 <div className={styles.revenueContainer}>
                   <div className={styles.boxTitle}>
                     <div className={styles.boxIcon}>
                       <img src={moneyBag} alt="" />
                     </div>
                     <div className={styles.title}>
-                      <p>Tổng doanh thu</p>
+                      <p>Tổng thu vào</p>
                     </div>
                   </div>
                   <div
@@ -149,27 +176,59 @@ function ManagerFiancePage() {
                     }}
                   >
                     <div className={styles.numberContainer}>
-                      <p>{total}</p>₫
+                      <p>{totalIncome}</p>₫
                     </div>
-                    <div className={styles.trendContainer}>
+                    {/* <div className={styles.trendContainer}>
                       <div className={styles.numberTrendUp}>
                         <img src={chartArrowRise} alt="" />
                         28%
                       </div>
                       <div className={styles.timeTrend}>so với 7 ngày</div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </Grid>
 
-              <Grid lg={3.8} item>
+              <Grid lg={2.8} item>
+                <div className={styles.revenueExpenditureContainer}>
+                  <div className={styles.boxTitle}>
+                    <div className={styles.boxIcon}>
+                      <img src={expenditureIcon} alt="" />
+                    </div>
+                    <div className={styles.title}>
+                      <p>Tổng chi tiêu</p>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "20px",
+                    }}
+                  >
+                    <div className={styles.numberContainer}>
+                      <p>{expenditure?.totalExpenditureWithCashType.amount.toLocaleString()}</p>₫
+                    </div>
+                    {/* <div className={styles.trendContainer}>
+                      <div className={styles.numberTrendUp}>
+                        <img src={chartArrowRise} alt="" />
+                        28%
+                      </div>
+                      <div className={styles.timeTrend}>so với 7 ngày</div>
+                    </div> */}
+                  </div>
+                </div>
+              </Grid>
+
+              <Grid lg={2.8} item>
                 <div className={styles.revenueBankingContainer}>
                   <div className={styles.boxTitle}>
                     <div className={styles.boxIcon}>
                       <img src={transactionIcon} alt="" />
                     </div>
                     <div className={styles.title}>
-                      <p>Tổng chuyển khoản</p>
+                      <p>Chuyển khoản (chi tiêu)</p>
+                
                     </div>
                   </div>
                   <div
@@ -181,29 +240,29 @@ function ManagerFiancePage() {
                   >
                     <div className={styles.numberContainer}>
                       <p>
-                        {paymentType?.totalByTransfer.amount.toLocaleString()}
+                        {expenditure?.totalExpenditureWithTransferType.amount.toLocaleString()}
                       </p>
                       ₫
                     </div>
-                    <div className={styles.trendContainer}>
+                    {/* <div className={styles.trendContainer}>
                       <div className={styles.numberTrendUp}>
                         <img src={chartArrowRise} alt="" />
                         28%
                       </div>
                       <div className={styles.timeTrend}>so với 7 ngày</div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </Grid>
 
-              <Grid lg={3.8} item>
+              <Grid lg={2.8} item>
                 <div className={styles.revenueCashContainer}>
                   <div className={styles.boxTitle}>
                     <div className={styles.boxIcon}>
                       <img src={cashIcon} alt="" />
                     </div>
                     <div className={styles.title}>
-                      <p>Tổng tiền mặt</p>
+                      <p>Tiền mặt (chi tiêu)</p>
                     </div>
                   </div>
                   <div
@@ -214,15 +273,15 @@ function ManagerFiancePage() {
                     }}
                   >
                     <div className={styles.numberContainer}>
-                      <p>{paymentType?.totalByCash.amount.toLocaleString()}</p>₫
+                      <p>{expenditure?.totalExpenditure.amount.toLocaleString()}</p>₫
                     </div>
-                    <div className={styles.trendContainer}>
+                    {/* <div className={styles.trendContainer}>
                       <div className={styles.numberTrendUp}>
                         <img src={chartArrowRise} alt="" />
                         28%
                       </div>
                       <div className={styles.timeTrend}>so với 7 ngày</div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </Grid>

@@ -89,3 +89,11 @@ export const fetchTotalTransactionOfAllTimeFollowingBranch = "fetchTotalTransact
 export const fetchTotalOrderOfAllTimeFollowingBranch = "fetchTotalOrderOfAllTimeFollowingBranch";
 export const fetchRevenueTransferPaymentTypeFollowingBranch = "fetchRevenueTransferPaymentTypeFollowingBranch";
 
+export const fetchTotalIncomeOfAllTimeFollowingBranch = "fetchTotalIncomeOfAllTimeFollowingBranch";
+export const fetchTotalExpenditureOfAllTimeFollowingBranch = "fetchTotalExpenditureOfAllTimeFollowingBranch";
+
+export const fetchTotalIncomeFollowingTime = "fetchTotalIncomeFollowingTime";
+export const fetchTotalExpenditureFollowingTime = "fetchTotalExpenditureFollowingTime";
+
+export const fetchTop5CustomOrder = "fetchTop5CustomOrder";
+
