@@ -3,6 +3,7 @@ import {
   AccountStatus,
   CustomRequestStatus,
   DesignCharacteristic,
+  OrderTypeForTableOrderList,
   PaymentStatus,
   PaymentType,
   ProductType,
@@ -596,5 +597,32 @@ declare global {
 
   interface IPaymentsProps {
     orderId: number;
+  }
+
+  interface IManagerChartFinanceProps {
+    uData:  (number | null)[];
+    xLabels: string[];
+    totalRevenue: string;
+  }
+
+  interface ITotalOrderPieChartProps {
+    orderPieChartData : {
+      label : string;
+      value : number;
+    }[],
+    totalOrder : string;
+    totalRevenue : string;
+    
+  }
+
+  interface ITableOrderListProps {
+    startDateData?: string;
+    endDateData?: string;
+    selectedOrderType?: OrderTypeForTableOrderList;
+    selectedFilterPaymentType?: string;
+  }
+
+  interface IRevenueMenuPaymentType {
+    setFilterPaymentMethod : (v : string) => void;
   }
 }

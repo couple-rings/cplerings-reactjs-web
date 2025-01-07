@@ -634,4 +634,100 @@ declare global {
     };
     note: string;
   }
+
+  interface IRevenue {
+    totalRevenue: {
+      amount: number;
+    };
+    revenueForEach: {
+      [date: string]: {
+        amount: number;
+      };
+    };
+  }
+
+  interface ITotalOrder {
+    orders: {
+      totalCustomOrder : number;
+      totalResellOrder : number;
+      totalRefundOrder : number;
+      cuscustomOrdersForEach : {
+        [date : string] : number;
+      };
+      resellOrdersForEach : {
+        [date : string] : number;
+      };
+      refundOrdersForEach : {
+        [date : string] : number;
+      }
+    }
+  }
+
+  interface IResellOrderStatistic {
+    orderId : number;
+    amount : {
+      amount : number;
+    };
+    orderType : string;
+    paymentMethod : string;
+    orderNo : string;
+    createdAt : string;
+  }
+
+  interface IRefundOrderStatistic {
+    orderId : number;
+    amount : {
+      amount : number;
+    };
+    orderType : string;
+    paymentMethod : PaymentMethod;
+    orderNo : string;
+    createdAt : string;
+  }
+
+  interface ICustomOrderStatistic {
+    orderId : number;
+    amount : {
+      amount : number;
+    };
+    orderType : string;
+    paymentMethod : PaymentMethod;
+    orderNo : string;
+    createdAt : string;
+  }
+
+  interface IPaymentOrderStatistic {
+    paymentId : number;
+    amount : {
+      amount : number;
+    };
+    orderType : string;
+    paymentMethod : PaymentMethod;
+    orderNo : string;
+    createdAt : string;
+  }
+
+  interface ITotalRevenueOfAllTime {
+    totalRevenue : {
+      amount : number;
+    };
+  }
+
+  interface ITotalTransactionOfAllTime {
+    totalTransaction : number;
+  }
+
+  interface ITotalOrderOfAllTime {
+    totalOrders : number;
+  }
+
+  interface IRevenuePaymentType {
+    totalByCash : {
+      amount : number;
+    };
+    totalByTransfer : {
+      amount : number;
+    }
+  }
+  
 }
