@@ -108,7 +108,7 @@ const ResellCustomOrder = () => {
     onSuccess: (response) => {
       if (response.data) {
         toast.success("Đã xác nhận mua lại đơn hàng");
-        navigate("/staff/resell-product");
+        navigate("/staff/resell-order");
       }
       if (response.errors) {
         response.errors.forEach((err) => toast.error(err.description));
