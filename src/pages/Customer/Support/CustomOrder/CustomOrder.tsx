@@ -202,6 +202,14 @@ function CustomOrder() {
                   selected: "selectedCustomRequestTab",
                 }}
                 className={styles.tabLabel}
+                label="Đã Bán Lại"
+                value={CustomOrderStatus.Resold}
+              />
+              <Tab
+                classes={{
+                  selected: "selectedCustomRequestTab",
+                }}
+                className={styles.tabLabel}
                 label="Đã Hủy"
                 value={CustomOrderStatus.Canceled}
               />

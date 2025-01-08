@@ -49,9 +49,7 @@ function Row(props: IResellOrderRowProps) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell align="center">
-          {data.jewelry.design.jewelryCategory.name}
-        </TableCell>
+        <TableCell align="center">{data.orderNo}</TableCell>
         <TableCell align="center">
           {moment(data.proofImage.createdAt).format("DD/MM/YYYY")}
         </TableCell>

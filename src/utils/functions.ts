@@ -294,6 +294,12 @@ export const formatCustomOrderStatus = (
       color: "warning",
     };
 
+  if (status === CustomOrderStatus.Resold)
+    return {
+      text: "Đã Bán Lại",
+      color: "warning",
+    };
+
   return {
     text: "Đã Hủy",
     color: "error",

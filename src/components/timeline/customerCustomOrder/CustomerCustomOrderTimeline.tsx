@@ -356,9 +356,9 @@ function CustomerCustomOrderTimeline(props: ICustomerCustomOrderTimelineProps) {
         <ViewModal
           open={open}
           setOpen={setOpen}
-          amount={payment.vnPayTransaction.amount.amount}
+          amount={payment.vnPayTransaction?.amount.amount ?? 0}
           status={payment.status}
-          date={payment.vnPayTransaction.payDate}
+          date={payment.vnPayTransaction?.payDate ?? ""}
           description={payment.description}
           type={payment.type}
         />

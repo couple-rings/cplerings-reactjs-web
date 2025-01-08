@@ -688,7 +688,7 @@ function CustomOrderDetail() {
             <Grid container justifyContent={"center"} mt={5} gap={3}>
               {order.status !== CustomOrderStatus.Canceled &&
                 order.status !== CustomOrderStatus.Completed &&
-                order.status !== CustomOrderStatus.Refunded && (
+                order.status !== CustomOrderStatus.Resold && (
                   <Button
                     variant="outlined"
                     sx={outlinedBtn}
