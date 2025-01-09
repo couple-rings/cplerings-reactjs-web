@@ -50,7 +50,7 @@ export default function Payments(props: IPaymentsProps) {
           {response?.data?.payments.map((row) => (
             <TableRow key={row.id}>
               <TableCell>
-                {moment(row.vnPayTransaction.payDate).format(
+                {moment(row.vnPayTransaction?.payDate).format(
                   "DD/MM/YYYY HH:mm"
                 )}
               </TableCell>
@@ -63,7 +63,7 @@ export default function Payments(props: IPaymentsProps) {
                 />
               </TableCell>
               <TableCell align="right">
-                {currencyFormatter(row.vnPayTransaction.amount.amount)}
+                {currencyFormatter(row.vnPayTransaction?.amount.amount ?? 0)}
               </TableCell>
             </TableRow>
           ))}
