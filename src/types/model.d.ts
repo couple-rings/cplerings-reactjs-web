@@ -581,13 +581,14 @@ declare global {
 
   interface IPayment {
     id: number;
+    paymentNo: string;
     type: PaymentType;
     description: string;
     amount: {
       amount: number;
     };
     status: PaymentStatus;
-    vnPayTransaction: {
+    vnPayTransaction?: {
       amount: {
         amount: number;
       };
@@ -644,6 +645,7 @@ declare global {
 
   interface IResellOrder {
     id: number;
+    orderNo: string;
     jewelry: IJewelry;
     staff: IUser;
     customer: IUser;
@@ -675,7 +677,7 @@ declare global {
       }
       paymentNo: string;
     }
-    customOrder?: ICustomOrder;
+    customOrder: ICustomOrder;
     orderNo?: string;
     createdAt: string;
   }
@@ -693,52 +695,52 @@ declare global {
 
   interface ITotalOrder {
     orders: {
-      totalCustomOrder : number;
-      totalResellOrder : number;
-      totalRefundOrder : number;
-      cuscustomOrdersForEach : {
-        [date : string] : number;
+      totalCustomOrder: number;
+      totalResellOrder: number;
+      totalRefundOrder: number;
+      cuscustomOrdersForEach: {
+        [date: string]: number;
       };
-      resellOrdersForEach : {
-        [date : string] : number;
+      resellOrdersForEach: {
+        [date: string]: number;
       };
-      refundOrdersForEach : {
-        [date : string] : number;
-      }
-    }
+      refundOrdersForEach: {
+        [date: string]: number;
+      };
+    };
   }
 
   interface IResellOrderStatistic {
-    orderId : number;
-    amount : {
-      amount : number;
+    orderId: number;
+    amount: {
+      amount: number;
     };
-    orderType : string;
-    paymentMethod : string;
-    orderNo : string;
-    createdAt : string;
+    orderType: string;
+    paymentMethod: string;
+    orderNo: string;
+    createdAt: string;
   }
 
   interface IRefundOrderStatistic {
-    orderId : number;
-    amount : {
-      amount : number;
+    orderId: number;
+    amount: {
+      amount: number;
     };
-    orderType : string;
-    paymentMethod : PaymentMethod;
-    orderNo : string;
-    createdAt : string;
+    orderType: string;
+    paymentMethod: PaymentMethod;
+    orderNo: string;
+    createdAt: string;
   }
 
   interface ICustomOrderStatistic {
-    orderId : number;
-    amount : {
-      amount : number;
+    orderId: number;
+    amount: {
+      amount: number;
     };
-    orderType : string;
-    paymentMethod : PaymentMethod;
-    orderNo : string;
-    createdAt : string;
+    orderType: string;
+    paymentMethod: PaymentMethod;
+    orderNo: string;
+    createdAt: string;
   }
 
   interface IPaymentOrderStatistic {
@@ -773,62 +775,62 @@ declare global {
   }
 
   interface ITotalRevenueOfAllTime {
-    totalRevenue : {
-      amount : number;
+    totalRevenue: {
+      amount: number;
     };
   }
 
   interface ITotalTransactionOfAllTime {
-    totalTransaction : number;
+    totalTransaction: number;
   }
 
   interface ITotalOrderOfAllTime {
-    totalOrders : number;
+    totalOrders: number;
   }
 
   interface IRevenuePaymentType {
-    totalByCash : {
-      amount : number;
+    totalByCash: {
+      amount: number;
     };
-    totalByTransfer : {
-      amount : number;
-    }
+    totalByTransfer: {
+      amount: number;
+    };
   }
 
   interface ITotalIncomeOfAllTime {
-    totalIn : {
-      amount : number;
-    }
+    totalIn: {
+      amount: number;
+    };
   }
 
   interface ITotalExpenditureOfAllTime {
-    totalExpenditure : {
-      amount : number;
+    totalExpenditure: {
+      amount: number;
     };
-    totalExpenditureWithTransferType : {
-      amount : number;
+    totalExpenditureWithTransferType: {
+      amount: number;
     };
-    totalExpenditureWithCashType : {
-      amount : number;
-    }
+    totalExpenditureWithCashType: {
+      amount: number;
+    };
   }
 
   interface ITotalIncomeFollowingTime {
-    totalIn : {
-      amount : number;
-    }
+    totalIn: {
+      amount: number;
+    };
   }
 
   interface ITotalExpenditureFollowingTime {
-    totalExpenditure : {
-      amount : number;
+    totalExpenditure: {
+      amount: number;
     };
-    totalExpenditureWithTransferType : {
-      amount : number;
+    totalExpenditureWithTransferType: {
+      amount: number;
     };
-    totalExpenditureWithCashType : {
-      amount : number;
-    }
+    totalExpenditureWithCashType: {
+      amount: number;
+    };
   }
 
   interface ICustomOrderDashBoard {
@@ -842,9 +844,8 @@ declare global {
   }
 
   interface ITop5CustomOrder {
-    top5CustomOrder : ICustomOrderDashBoard[];
+    top5CustomOrder: ICustomOrderDashBoard[];
   }
-  
 
   interface IResellCustomOrder {
     id: number;

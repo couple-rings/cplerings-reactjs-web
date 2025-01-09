@@ -19,7 +19,10 @@ import { fetchResellOrders } from "src/utils/querykey";
 import { getResellOrders } from "src/services/resell.service";
 import { useQuery } from "@tanstack/react-query";
 import Row from "src/components/table/resellOrder/Row";
-import Jewelry from "src/components/product/Jewelry";
+import WeddingRing from "src/components/product/WeddingRing";
+import moment from "moment";
+import { CustomOrderStatus } from "src/utils/enums";
+import { currencyFormatter } from "src/utils/functions";
 
 const initMetaData = {
   page: 0,
@@ -91,7 +94,7 @@ function ResellOrder() {
         </div>
       </Grid>
       <Grid container item xs={9}>
-        <div className={styles.title}>Trang Sức Bán Lại</div>
+        <div className={styles.title}>Nhẫn Cưới Bán Lại</div>
 
         {response?.data && response.data.items.length !== 0 && (
           <Table className={styles.customTable}>
@@ -99,7 +102,7 @@ function ResellOrder() {
               <TableRow>
                 <TableCell />
                 <TableCell className={styles.cell} align="center">
-                  Loại Trang Sức
+                  Mã Đơn
                 </TableCell>
                 <TableCell className={styles.cell} align="center">
                   Ngày Bán
@@ -123,9 +126,9 @@ function ResellOrder() {
                     data={item}
                     expandComponent={
                       <Grid container>
-                        <FormLabel>Hình ảnh giao dịch:</FormLabel>
                         <Grid container justifyContent={"space-between"}>
                           <Grid item xs={4.7}>
+                            <FormLabel>Hình ảnh giao dịch:</FormLabel>
                             <img
                               src={item.proofImage.url}
                               className={styles.proofImage}
@@ -133,7 +136,26 @@ function ResellOrder() {
                           </Grid>
 
                           <Grid item xs={7}>
-                            <fieldset>
+                            <Grid
+                              container
+                              justifyContent={"space-between"}
+                              mb={1}
+                            >
+                              <Grid item>
+                                <FormLabel>Mã giao dịch:</FormLabel>
+                              </Grid>
+
+                              <Grid item>{item.payment?.paymentNo}</Grid>
+                            </Grid>
+
+                            <fieldset style={{ margin: 0, marginBottom: 20 }}>
+                              <legend>Nội dung:</legend>
+                              <Grid container p={3}>
+                                {item.payment?.description}
+                              </Grid>
+                            </fieldset>
+
+                            <fieldset style={{ margin: 0 }}>
                               <legend>Ghi chú:</legend>
                               <Grid container p={3}>
                                 {item.note}
@@ -142,14 +164,97 @@ function ResellOrder() {
                           </Grid>
                         </Grid>
 
-                        <Grid container my={3} fontSize={"1.1rem"}>
-                          Mã sản phẩm:{" "}
-                          <span className={styles.productNo}>
-                            {item.jewelry.productNo}
-                          </span>
+                        <Grid container item xs={6} my={3}>
+                          <fieldset style={{ margin: 0, width: "100%" }}>
+                            <legend>Đơn hàng gốc</legend>
+                            <Grid container p={2}>
+                              <Grid
+                                container
+                                justifyContent={"space-between"}
+                                mb={1}
+                              >
+                                <Grid item>Mã đơn:</Grid>
+
+                                <Grid item>{item.customOrder?.orderNo}</Grid>
+                              </Grid>
+
+                              <Grid
+                                container
+                                justifyContent={"space-between"}
+                                mb={1}
+                              >
+                                <Grid item>Ngày bắt đầu:</Grid>
+
+                                <Grid item>
+                                  {moment(item.customOrder?.createdAt).format(
+                                    "DD/MM/YYYY HH:mm"
+                                  )}
+                                </Grid>
+                              </Grid>
+
+                              <Grid
+                                container
+                                justifyContent={"space-between"}
+                                mb={1}
+                              >
+                                <Grid item>Ngày kết thúc:</Grid>
+
+                                <Grid item>
+                                  {moment(
+                                    item.customOrder?.customOrderHistories.find(
+                                      (item) =>
+                                        item.status ===
+                                        CustomOrderStatus.Completed
+                                    )?.createdAt
+                                  ).format("DD/MM/YYYY HH:mm")}
+                                </Grid>
+                              </Grid>
+
+                              <Grid
+                                container
+                                justifyContent={"space-between"}
+                                mb={1}
+                              >
+                                <Grid item>Tổng tiền:</Grid>
+
+                                <Grid item fontWeight={600}>
+                                  {currencyFormatter(
+                                    item.customOrder?.totalPrice.amount
+                                  )}
+                                </Grid>
+                              </Grid>
+
+                              <Grid container justifyContent={"flex-end"}>
+                                <span
+                                  className={styles.viewMore}
+                                  onClick={() =>
+                                    navigate(
+                                      `/customer/support/custom-order/detail/${item.customOrder.id}`
+                                    )
+                                  }
+                                >
+                                  Xem thêm &gt;
+                                </span>
+                              </Grid>
+                            </Grid>
+                          </fieldset>
                         </Grid>
 
-                        <Jewelry item={item.jewelry} />
+                        <WeddingRing
+                          ring={item.customOrder.firstRing}
+                          gender={
+                            item.customOrder?.firstRing.customDesign
+                              .designVersion.design.characteristic
+                          }
+                        />
+
+                        <WeddingRing
+                          ring={item.customOrder.secondRing}
+                          gender={
+                            item.customOrder.secondRing.customDesign
+                              .designVersion.design.characteristic
+                          }
+                        />
                       </Grid>
                     }
                   />
