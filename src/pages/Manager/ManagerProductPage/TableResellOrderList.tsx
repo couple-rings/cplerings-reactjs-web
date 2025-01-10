@@ -307,7 +307,7 @@ function TableResellOrderList(props: ITableOrderListProps) {
                       </p>
                     </TableCell>
                     <TableCell align="center" style={{ fontWeight: "500" }}>
-                      <button
+                      <button className={styles.button}
                         onClick={() =>
                           navigate(`/manager/resell-order/detail/${row.id}`)
                         }

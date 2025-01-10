@@ -643,6 +643,47 @@ declare global {
     orderNo?: string;
   }
 
+  interface IRefundOrder{
+    refund: {
+      id: number;
+      reason: string;
+      method: PaymentMethod;
+      amount: {
+        amount: number;
+      };
+      staff: IUser;
+      standardOrder?: IStandardOrder;
+      customOrder?: ICustomOrder;
+      orderNo?: string;
+      proofImage: {
+        url: string;
+        createdAt: string;
+      };
+      payment?: {
+        id: number;
+        type: string;
+        description: string;
+        amount: number;
+        status: string;
+        paymentReceiverType: string;
+        vnPayTransaction?: {
+          id: number;
+          amount: {
+            amount: number;
+          };
+          bankCode: string;
+          payDate: string;
+          orderInfo: string;
+          transactionId: string;
+        }
+        paymentNo: string;
+      }
+      createdAt?: string;
+      orderNo?: string;
+    }
+    
+  }
+
   interface IResellOrder {
     id: number;
     orderNo: string;

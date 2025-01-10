@@ -13,6 +13,7 @@ import ManageJewelry from "src/pages/Manager/ManageJewelry/ManageJewelry";
 import ManagerProductPage from "src/pages/Manager/ManagerProductPage/ManagerProductPage";
 import ViewAccountInfo from "src/pages/Manager/ViewAccountInfo/ViewAccountInfo";
 import ResellOrderDetail from "src/pages/Manager/ManagerProductPage/OrderDetail/ResellOrderDetail";
+import RefundOrderDetail from "src/pages/Manager/ManagerProductPage/OrderDetail/RefundOrderDetail";
 
 const ManagerRouteObject: RouteObject = {
   path: "/manager",
@@ -69,7 +70,11 @@ const ManagerRouteObject: RouteObject = {
     {
       path: "resell-order/detail/:id",
       element: <ResellOrderDetail/>
-    }
+    },
+    {
+      path: "refund/detail/:id",
+      element: <RefundOrderDetail/>
+    },
   ],
 };
 

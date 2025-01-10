@@ -99,7 +99,7 @@
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
-button {
+.button {
     background-color: rgb(214, 214, 214);
     border-radius: 5px;
     padding: 8px 7px;
@@ -108,4 +108,5 @@ button {
     font-weight: 550;
     border: none;
     cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }

@@ -286,7 +286,7 @@ function TableCustomOrderList(props: ITableOrderListProps) {
                                 row.status
                               )
                             ? styles.tableStatusCompleted
-                            : ""
+                            : ["CANCELED"].includes(row.status) ? styles.tableMoneyOut : ""
                         }
                       >
                         {["PENDING", "WAITING", "IN_PROGRESS", "DONE"].includes(
@@ -297,7 +297,7 @@ function TableCustomOrderList(props: ITableOrderListProps) {
                               row.status
                             )
                           ? "Đã Hoàn Thành"
-                          : ""}
+                          : ["CANCELED"].includes(row.status) ? "Đã Hủy" : ""}
                       </p>
                     </TableCell>
                     <TableCell align="center" style={{ fontWeight: "500" }}>
@@ -311,7 +311,7 @@ function TableCustomOrderList(props: ITableOrderListProps) {
                       </p>
                     </TableCell>
                     <TableCell align="center" style={{ fontWeight: "500" }}>
-                      <button
+                      <button className={styles.button}
                         onClick={() =>
                           navigate(`/manager/resell-order/detail/${row.id}`)
                         }

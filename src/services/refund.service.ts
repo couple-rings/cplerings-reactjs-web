@@ -25,3 +25,9 @@ export const getRefunds = (queryObj: IRefundFilter) => {
     `refunds?${queryUrl}`
   );
 };
+
+export const getRefundOrderDetail = (id: number) => {
+  return axios.get<unknown, IResponse<IRefundOrder>>(
+    `refunds/${id}`
+  );
+};
