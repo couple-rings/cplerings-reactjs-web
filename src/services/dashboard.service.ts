@@ -87,7 +87,7 @@ export const getRevenueTransferPaymentTypeFollowingBranch = (queryObj: IRevenueF
 export const getResellOrderStatistic = (queryObj: IOrderStatisticFilter) => {
   const queryUrl = queryString.stringify(queryObj);
 
-  return axios.get<unknown, IResponse<IListResponse<IResellOrderStatistic>>> (
+  return axios.get<unknown, IResponse<IListResponse<IResellOrder>>> (
     `orders/statistic/resell-orders?${queryUrl}`
   );
 };
@@ -95,15 +95,15 @@ export const getResellOrderStatistic = (queryObj: IOrderStatisticFilter) => {
 export const getRefundOrderStatistic = (queryObj: IOrderStatisticFilter) => {
   const queryUrl = queryString.stringify(queryObj);
 
-  return axios.get<unknown, IResponse<IListResponse<IRefundOrderStatistic>>> (
+  return axios.get<unknown, IResponse<IListResponse<IRefund>>> (
     `orders/statistic/refund-orders?${queryUrl}`
   );
 }
 
-export const getCustomOrderStatistic = (queryObj: IOrderStatisticFilter) => { 
+export const getCustomOrderStatistic = (queryObj: IOrderStatistic) => { 
   const queryUrl = queryString.stringify(queryObj);
 
-  return axios.get<unknown, IResponse<IListResponse<ICustomOrderStatistic>>> (
+  return axios.get<unknown, IResponse<IListResponse<ICustomOrder>>> (
     `orders/statistic/custom-orders?${queryUrl}`
   );
 }
@@ -114,5 +114,13 @@ export const getPaymentOrderStatistic = (queryObj: IOrderStatisticFilter) => {
   return axios.get<unknown, IResponse<IListResponse<IPaymentOrderStatistic>>> (
     `orders/statistic/payments?${queryUrl}`
   );
+}
+
+export const getTotalPaymentStatistic = (queryObj: ITotalPaymentStatistic) => {
+  const queryUrl = queryString.stringify(queryObj);
+
+  return axios.get<unknown, IResponse<ITotalPayment>> (
+    `orders/statistic/payments/total?${queryUrl}`
+  )
 }
 

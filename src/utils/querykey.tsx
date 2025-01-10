@@ -98,3 +98,5 @@ export const fetchTotalExpenditureFollowingTime = "fetchTotalExpenditureFollowin
 
 export const fetchTop5CustomOrder = "fetchTop5CustomOrder";
 
+export const fetchTotalPaymentStatistic = "fetchTotalPaymentStatistic";
+

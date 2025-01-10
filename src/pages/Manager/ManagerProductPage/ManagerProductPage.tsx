@@ -17,8 +17,10 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import RevenueTypeMenu from "src/components/menu/hover/RevenueTypeMenu";
 import { OrderTypeForTableOrderList } from "src/utils/enums";
-import TableProductPage from "./TableProductPage";
-
+import TableCustomOrderList from "./TableCustomOrderList";
+import TableResellOrderList from "./TableResellOrderList";
+import TableRefundOrderList from "./TableRefundOrderList";
+// import TableProductPage from "./TableProductPage";
 
 function ManagerProductPage() {
   const [filterObj, setFilterObj] = useState<IRevenueFilter>({
@@ -129,19 +131,19 @@ function ManagerProductPage() {
   };
 
   const tabName = [
-      {
-        name: "Gia Công",
-        key: OrderTypeForTableOrderList.Custom,
-      },
-      {
-        name: "Hoàn Tiền",
-        key: OrderTypeForTableOrderList.Refund,
-      },
-      {
-        name: "Mua Lại",
-        key: OrderTypeForTableOrderList.Resell,
-      },
-    ];
+    {
+      name: "Gia Công",
+      key: OrderTypeForTableOrderList.Custom,
+    },
+    {
+      name: "Hoàn Tiền",
+      key: OrderTypeForTableOrderList.Refund,
+    },
+    {
+      name: "Mua Lại",
+      key: OrderTypeForTableOrderList.Resell,
+    },
+  ];
 
   return (
     <div className={styles.container}>
@@ -316,7 +318,45 @@ function ManagerProductPage() {
                   <div>
                     <div className={styles.tableHeader}>
                       <div className={styles.tabBar}>
-                        {tabName?.map((item) => (
+                        {tabName?.map((item) => {
+                          const itemClass =
+                            selectedItem === OrderTypeForTableOrderList.Custom
+                              ? styles.itemSelectedCustom
+                              : selectedItem ===
+                                OrderTypeForTableOrderList.Refund
+                              ? styles.itemSelectedRefund
+                              : selectedItem ===
+                                OrderTypeForTableOrderList.Resell
+                              ? styles.itemSelectedResell
+                              : styles.item;
+
+                          return (
+                            <p
+                              key={item.key}
+                              className={
+                                selectedItem === item.key
+                                  ? itemClass
+                                  : styles.item
+                              }
+                              onClick={() => setSelectedItem(item.key)}
+                            >
+                              {item.name}
+                            </p>
+                          );
+                          // <p
+                          //   key={item.key}
+                          //   className={
+                          //     selectedItem === item.key
+                          //       ? styles.itemSelected
+                          //       : styles.item
+                          //   }
+                          //   onClick={() => setSelectedItem(item.key)}
+                          // >
+                          //   {item.name}
+                          // </p>
+                        })}
+
+                        {/* {tabName?.map((item) => (
                           <p
                             key={item.key}
                             className={
@@ -328,7 +368,22 @@ function ManagerProductPage() {
                           >
                             {item.name}
                           </p>
-                        ))}
+                        ))} */}
+
+                        {/* <div
+                          className="totalInfo"
+                          style={{
+                            // boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
+                            padding: "1px 10px",
+                            height: "fit-content",
+                            borderRadius: "10px",
+                            fontSize: "14px",
+                            fontWeight: "500",
+                            marginLeft: "50px",
+                          }}
+                        >
+                          <p>Tổng: 76,123,000 ₫ _ (10 đơn)</p>
+                        </div> */}
                       </div>
 
                       <RevenueTypeMenu
@@ -336,19 +391,38 @@ function ManagerProductPage() {
                       />
                     </div>
 
-                    <div className={styles.transactionContainer}>
-                      <TableProductPage 
-                        selectedOrderType={selectedItem}
-                        startDateData={filterObj.startDate}
-                        endDateData={filterObj.endDate}
-                        selectedFilterPaymentType={filterPaymentMethod}
-                      />
-                    </div>
+                    {selectedItem === OrderTypeForTableOrderList.Custom ? (
+                      <div className="{styles.transactionContainer}">
+                        <TableCustomOrderList
+                          selectedOrderType={selectedItem}
+                          startDateData={filterObj.startDate}
+                          endDateData={filterObj.endDate}
+                          selectedFilterPaymentType={filterPaymentMethod}
+                        />
+                      </div>
+                    ) : selectedItem === OrderTypeForTableOrderList.Refund ? (
+                      <div className="{styles.transactionContainer}">
+                        <TableRefundOrderList
+                          selectedOrderType={selectedItem}
+                          startDateData={filterObj.startDate}
+                          endDateData={filterObj.endDate}
+                          selectedFilterPaymentType={filterPaymentMethod}
+                        />
+                      </div>
+                    ) : selectedItem === OrderTypeForTableOrderList.Resell ? (
+                      <div className="{styles.transactionContainer}">
+                        <TableResellOrderList
+                          selectedOrderType={selectedItem}
+                          startDateData={filterObj.startDate}
+                          endDateData={filterObj.endDate}
+                          selectedFilterPaymentType={filterPaymentMethod}
+                        />
+                      </div>
+                    ) : (
+                      ""
+                    )}
                   </div>
                 </div>
-
-
-               
               </Grid>
             </Grid>
           </Grid>
