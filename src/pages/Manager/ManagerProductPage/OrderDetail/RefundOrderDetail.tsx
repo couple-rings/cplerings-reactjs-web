@@ -1,7 +1,6 @@
 import { Button, Chip, Divider, Grid, Skeleton } from "@mui/material";
 import styles from "./ResellOrderDetail.module.scss";
 import { useNavigate, useParams } from "react-router-dom";
-// import sample from "src/assets/sampledata/ringdesign.png";
 import { fetchRefundOrderDetail } from "src/utils/querykey";
 import { getRefundOrderDetail } from "src/services/refund.service";
 import { useQuery } from "@tanstack/react-query";
@@ -12,32 +11,6 @@ import {
   formatRefundMethodTitle,
   getDiamondSpec,
 } from "src/utils/functions";
-
-// const refundOrder = {
-//   id: 1,
-//   orderId: "824100998377",
-//   date: "09/10/2024",
-//   customerName: "Nguyễn Văn A",
-//   phone: "0987654321",
-//   address: "123 Đường ABC, Phường XYZ, Quận 1, TP.HCM",
-//   collection: "Bộ Sưu Tập FOREVER",
-//   price: 24000000,
-//   reason: "Kích thước không phù hợp",
-//   description: "Nhẫn nam hơi rộng và nhẫn nữ hơi chật, cần điều chỉnh kích thước cả đôi.",
-//   rings: {
-//     male: {
-//       material: "Vàng Trắng 18K",
-//       size: "15",
-//       diamond: "5PT, F, SI1"
-//     },
-//     female: {
-//       material: "Vàng Trắng 18K",
-//       size: "10",
-//       diamond: "5PT, F, SI1"
-//     }
-//   },
-//   images: [sample, sample, sample]
-// };
 
 function RefundOrderDetail() {
   const navigate = useNavigate();

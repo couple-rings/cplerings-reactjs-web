@@ -62,7 +62,7 @@ function TableCustomOrderList(props: ITableOrderListProps) {
   console.log(">>>Selected Order Type", selectedFilterPaymentType);
 
   const [rowData, setRowData] = useState<OrderStatistic[]>([]);
-  // const [waitingData, setWaitingData] = useState<OrderStatistic[]>([]);
+  const [waitingData, setWaitingData] = useState<OrderStatistic[]>([]);
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
   // const [totalPayment, setTotalPayment] = useState("0");
   const [paymentNumber, setPaymentNumber] = useState("0");
@@ -127,10 +127,10 @@ function TableCustomOrderList(props: ITableOrderListProps) {
       //   items.map((item) => item.paymentMethod)
       // );
 
-      // setWaitingData(items);
+      setWaitingData(items);
       setPaymentNumber(rest.count.toLocaleString());
       setMetaData(rest);
-      setRowData(items);
+      // setRowData(items);
     }
 
     // if (responseTotalPaymentStatistic && responseTotalPaymentStatistic.data) {
@@ -140,15 +140,13 @@ function TableCustomOrderList(props: ITableOrderListProps) {
     // }
   }, [data]);
 
-  // useEffect(() => {
-  //   const filteredItems =
-  //     selectedFilterPaymentType === "All"
-  //       ? waitingData
-  //       : waitingData.filter(
-  //           (item) => item.paymentMethod === selectedFilterPaymentType
-  //         );
-  //   setRowData(filteredItems);
-  // }, [selectedFilterPaymentType, waitingData]);
+  useEffect(() => {
+    const filteredItems =
+      selectedFilterPaymentType === "All"
+        ? waitingData
+        : selectedFilterPaymentType === "TRANSFER" ? waitingData : [];
+    setRowData(filteredItems);
+  }, [selectedFilterPaymentType, waitingData]);
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setFilterOrderStatisticObj({

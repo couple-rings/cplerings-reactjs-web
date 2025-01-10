@@ -64,6 +64,7 @@ function TableRefundPaymentList(props: ITableOrderListProps) {
   const [totalPayment, setTotalPayment] = useState("0");
   const [paymentNumber, setPaymentNumber] = useState("0");
   const [orderNumber, setOrderNumber] = useState("0"); 
+  const [waitingData, setWaitingData] = useState<OrderStatistic[]>([]);
 
   const orderQuery = {
     RESELL: {
@@ -128,7 +129,7 @@ function TableRefundPaymentList(props: ITableOrderListProps) {
       setPaymentNumber(rest.count.toLocaleString());
 
       setMetaData(rest);
-      setRowData(items);
+      setWaitingData(items);
     }
 
     if (responseTotalPaymentStatistic && responseTotalPaymentStatistic.data) {
@@ -141,15 +142,15 @@ function TableRefundPaymentList(props: ITableOrderListProps) {
     }
   }, [data, responseTotalPaymentStatistic]);
 
-  // useEffect(() => {
-  //   const filteredItems =
-  //     selectedFilterPaymentType === "All"
-  //       ? waitingData
-  //       : waitingData.filter(
-  //           (item) => item.paymentMethod === selectedFilterPaymentType
-  //         );
-  //   setRowData(filteredItems);
-  // }, [selectedFilterPaymentType, waitingData]);
+  useEffect(() => {
+    const filteredItems =
+      selectedFilterPaymentType === "All"
+        ? waitingData
+        : waitingData.filter(
+            (item) => item.type === selectedFilterPaymentType
+          );
+    setRowData(filteredItems);
+  }, [selectedFilterPaymentType, waitingData]);
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setFilterOrderStatisticObj({
