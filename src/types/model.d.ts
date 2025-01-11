@@ -590,7 +590,7 @@ declare global {
     status: PaymentStatus;
     vnPayTransaction?: {
       amount: {
-        amount: number;
+        amount: number | undefined;
       };
       payDate: string;
     };

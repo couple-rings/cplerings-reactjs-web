@@ -4,19 +4,30 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import moment from "moment";
 import styles from "./OrderDetail.module.scss";
-import { getCustomOrderDetail } from "src/services/customOrder.service"
-import { fetchCustomOrderDetail } from "src/utils/querykey";
-import { currencyFormatter } from "src/utils/functions";
+import { getCustomOrderDetail } from "src/services/customOrder.service";
+import {
+  fetchCustomOrderDetail,
+  fetchCustomOrderPayments,
+} from "src/utils/querykey";
+import { currencyFormatter, formatPaymentStatus } from "src/utils/functions";
 import { DesignCharacteristic } from "src/utils/enums";
 import { formatCustomOrderStatus, getDiamondSpec } from "src/utils/functions";
 import HoverCard from "src/components/product/HoverCard";
 import MaleIcon from "@mui/icons-material/Male";
 import FemaleIcon from "@mui/icons-material/Female";
+import { getCustomOrderPayments } from "src/services/payment.service";
+
+const description = [
+  "Thanh toán - Giai đoạn gia công thứ nhất - Đúc khuông nhẫn",
+  "Thanh toán - Giai đoạn gia công thứ hai - Gắn kim cương",
+  "Thanh toán - Giai đoạn gia công thứ ba - Hoàn thiện nhẫn",
+];
 
 function OrderDetail() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
   const [maleRing, setMaleRing] = useState<IRing | null>(null);
   const [femaleRing, setFemaleRing] = useState<IRing | null>(null);
+  const [payment, setPayment] = useState<IPayment[]>([]);
 
   const { id } = useParams<{ id: string }>();
 
@@ -24,6 +35,14 @@ function OrderDetail() {
     queryKey: [fetchCustomOrderDetail, id],
     queryFn: () => {
       if (id) return getCustomOrderDetail(+id);
+    },
+    enabled: !!id,
+  });
+
+  const { data: responsePayment } = useQuery({
+    queryKey: [fetchCustomOrderPayments, id],
+    queryFn: () => {
+      if (id) return getCustomOrderPayments(+id);
     },
     enabled: !!id,
   });
@@ -47,8 +66,13 @@ function OrderDetail() {
       else setMaleRing(secondRing);
 
       setOrder(response.data.customOrder);
+
+      if (responsePayment && responsePayment.data) {
+        console.log("ASd", responsePayment.data);
+        setPayment(responsePayment.data.payments);
+      }
     }
-  }, [response]);
+  }, [response, responsePayment]);
 
   if (!order || !maleRing || !femaleRing) return null;
 
@@ -127,23 +151,60 @@ function OrderDetail() {
               <thead>
                 <tr>
                   <th>Ngày</th>
+                  <th>Nội Dung</th>
                   <th>Trạng thái</th>
                   <th>Ghi chú</th>
                 </tr>
               </thead>
               <tbody>
-                {order.customOrderHistories.map((history, index) => (
-                  <tr key={index}>
-                    <td>{moment(history.createdAt).format("DD/MM/YYYY HH:mm")}</td>
-                    <td>
-                      <Chip
-                        label={formatCustomOrderStatus(history.status).text}
-                        color={formatCustomOrderStatus(history.status).color}
-                        size="small"
-                      />
-                    </td>
-                  </tr>
-                ))}
+                {description.map((desc, index) => {
+                  const history = payment?.[index]; // Get the corresponding payment information if available
+                  return (
+                    <tr key={index}>
+                      <td>
+                        {history ? (
+                          moment(history.craftingStage?.completionDate).format(
+                            "DD/MM/YYYY HH:mm"
+                          )
+                        ) : (
+                          <div>- - -</div>
+                        )}
+                      </td>
+                      <td>{desc}</td>
+                      <td>
+                        {history ? (
+                          <Chip
+                            label={formatPaymentStatus(history.status).text}
+                            color={formatPaymentStatus(history.status).color}
+                            size="small"
+                          />
+                        ) : (
+                          <div
+                            style={{
+                              backgroundColor: "#dd732d",
+                              textAlign: "center",
+                              color: "#f6f6ff",
+                              borderRadius: "20px",
+                              padding: "2px 0px",
+                              fontSize: "13px",
+                            }}
+                          >
+                            Chưa Thanh Toán
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        {history ? (
+                          currencyFormatter(
+                            history?.vnPayTransaction?.amount.amount ?? 0
+                          )
+                        ) : (
+                          <div>- - -</div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -195,7 +256,7 @@ function RingDetails({ ring }: { ring: IRing }) {
         <span>{ring.customDesign.spouse.fullName}</span>
       </div>
       <Divider sx={{ my: 1 }} />
-      
+
       <div className={styles.infoRow}>
         <span>Chất liệu:</span>
         <span>{ring.metalSpecification.name}</span>
