@@ -1,25 +1,25 @@
 import { Button, Chip, Divider, Grid, Skeleton } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { useParams, useNavigate } from "react-router-dom";
-import { getResellCustomOrderDetail } from "src/services/resell.service";
-import { fetchResellCustomOrderDetail } from "src/utils/querykey";
 import styles from "./ResellOrderDetail.module.scss";
+import { useNavigate, useParams } from "react-router-dom";
+import { fetchRefundOrderDetail } from "src/utils/querykey";
+import { getRefundOrderDetail } from "src/services/refund.service";
+import { useQuery } from "@tanstack/react-query";
+import moment from "moment";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import {
   currencyFormatter,
   formatRefundMethodTitle,
   getDiamondSpec,
 } from "src/utils/functions";
-import moment from "moment";
-import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 
-function ResellOrderDetail() {
-  const { id } = useParams();
+function RefundOrderDetail() {
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const { data: response, isLoading } = useQuery({
-    queryKey: [fetchResellCustomOrderDetail, id],
+    queryKey: [fetchRefundOrderDetail, id],
     queryFn: () => {
-      if (id) return getResellCustomOrderDetail(+id);
+      if (id) return getRefundOrderDetail(+id);
     },
     enabled: !!id,
   });
@@ -33,14 +33,16 @@ function ResellOrderDetail() {
       </Grid>
     );
 
-  const order = response.data;
+    const order = response.data.refund;
+    console.log(">>>DETAIL", response.data);
+    
 
   return (
     <Grid container className={styles.container} justifyContent={"center"}>
       <Grid item xs={11} md={10}>
         <Grid container className={styles.header} alignItems="center" mb={4}>
           <ReceiptLongIcon className={styles.headerIcon} />
-          <div className={styles.title}>Chi Tiết Đơn Mua Lại</div>
+          <div className={styles.title}>Chi Tiết Đơn Hoàn Tiền</div>
         </Grid>
 
         <Button
@@ -64,7 +66,7 @@ function ResellOrderDetail() {
               <div className={styles.infoCard}>
                 <div className={styles.label}>Ngày đơn mua lại:</div>
                 <div className={styles.value}>
-                  {moment(response.data.customOrder.createdAt).format(
+                  {moment(response.data.refund.customOrder?.createdAt).format(
                     "DD/MM/YYYY HH:mm"
                   )}
                 </div>
@@ -75,7 +77,7 @@ function ResellOrderDetail() {
                 <div className={styles.label}>Phương thức:</div>
                 <div className={styles.value}>
                   <Chip
-                    label={formatRefundMethodTitle(order.paymentMethod)}
+                    label={formatRefundMethodTitle(order.method)}
                     color="primary"
                     variant="outlined"
                     size="small"
@@ -108,20 +110,20 @@ function ResellOrderDetail() {
               <div className={styles.cardContent}>
                 <div className={styles.infoRow}>
                   <span>Tên tài khoản:</span>
-                  <span>{order.customer.username}</span>
+                  <span>{order.customOrder?.customer.username}</span>
                 </div>
                 <div className={styles.infoRow}>
                   <span>Email:</span>
-                  <span>{order.customer.email}</span>
+                  <span>{order.customOrder?.customer.email}</span>
                 </div>
                 <div className={styles.infoRow}>
                   <span>Số điện thoại:</span>
-                  <span>{order.customer.phone || "--"}</span>
+                  <span>{order.customOrder?.customer.phone || "--"}</span>
                 </div>
                 <div className={styles.infoRow}>
                   <span>CCCD:</span>
                   <span>
-                    {order.customOrder.firstRing.spouse.citizenId || "--"}
+                    {order.customOrder?.firstRing.spouse.citizenId || "--"}
                   </span>
                 </div>
               </div>
@@ -153,7 +155,7 @@ function ResellOrderDetail() {
           <div className={styles.cardTitle}>Ghi chú</div>
           <div className={styles.cardContent}>
             <div className={styles.note}>
-              {order.note || "Không có ghi chú"}
+              {order.reason || "Không có ghi chú"}
             </div>
           </div>
         </div>
@@ -173,12 +175,12 @@ function ResellOrderDetail() {
           <div className={styles.sectionTitle}>Thông Tin Đơn Hàng Gốc</div>
           <div className={styles.orderNoRow}>
             <span>Mã đơn:</span>
-            <span>{order.customOrder.orderNo}</span>
+            <span>{order.customOrder?.orderNo}</span>
           </div>
           <div className={styles.orderNoRow}>
             <span>Giá gốc:</span>
             <span>
-              {currencyFormatter(order.customOrder.totalPrice.amount)}
+              {order.customOrder?.totalPrice.amount.toLocaleString()}{" "}₫
             </span>
           </div>
           <Grid container spacing={3}>
@@ -186,7 +188,7 @@ function ResellOrderDetail() {
               <div className={styles.card}>
                 <div className={styles.cardTitle}>Nhẫn Nam</div>
                 <div className={styles.cardContent}>
-                  {order.customOrder.firstRing.customDesign?.designVersion
+                  {order.customOrder?.firstRing.customDesign?.designVersion
                     ?.image?.url && (
                     <img
                       src={
@@ -200,50 +202,50 @@ function ResellOrderDetail() {
                   <div className={styles.idSection}>
                     <div className={styles.infoRow}>
                       <span>Người sở hữu:</span>
-                      <span>{order.customOrder.firstRing.spouse.fullName}</span>
+                      <span>{order.customOrder?.firstRing.spouse.fullName}</span>
                     </div>
                     <div className={styles.infoRow}>
                       <span>CCCD:</span>
                       <span>
-                        {order.customOrder.firstRing.spouse.citizenId || "--"}
+                        {order.customOrder?.firstRing.spouse.citizenId || "--"}
                       </span>
                     </div>
                   </div>
                   <div className={styles.infoRow}>
                     <span>Kích thước:</span>
-                    <span>{order.customOrder.firstRing.fingerSize}</span>
+                    <span>{order.customOrder?.firstRing.fingerSize}</span>
                   </div>
                   <div className={styles.infoRow}>
                     <span>Khắc tên:</span>
                     <span>
-                      {order.customOrder.firstRing.engraving || "Không có"}
+                      {order.customOrder?.firstRing.engraving || "Không có"}
                     </span>
                   </div>
                   <div className={styles.infoRow}>
                     <span>Kim loại:</span>
                     <span>
-                      {order.customOrder.firstRing.metalSpecification.name}
+                      {order.customOrder?.firstRing.metalSpecification.name}
                     </span>
                   </div>
                   <div className={styles.infoRow}>
                     <span>Khối lượng:</span>
                     <span>
-                      {order.customOrder.firstRing.customDesign.metalWeight} Chỉ
+                      {order.customOrder?.firstRing.customDesign.metalWeight} Chỉ
                     </span>
                   </div>
                   <div className={styles.infoRow}>
                     <span>Số kim cương phụ:</span>
                     <span>
                       {
-                        order.customOrder.firstRing.customDesign
+                        order.customOrder?.firstRing.customDesign
                           .sideDiamondsCount
                       }
                     </span>
                   </div>
-                  {order.customOrder.firstRing.diamonds?.length > 0 && (
+                 
                     <div className={styles.diamondSection}>
                       <div className={styles.subTitle}>Kim Cương Chính</div>
-                      {order.customOrder.firstRing.diamonds.map(
+                      {order.customOrder?.firstRing.diamonds.map(
                         (diamond, index) => (
                           <>
                             <div key={index} className={styles.infoRow}>
@@ -267,14 +269,14 @@ function ResellOrderDetail() {
                         )
                       )}
                     </div>
-                  )}
+               
                   <Divider sx={{ my: 2 }} />
                   <div className={styles.infoRow}>
                     <span>Số tiền:</span>
                     <span>
-                      {currencyFormatter(
-                        order.customOrder.firstRing.price.amount
-                      )}
+                      {
+                        order.customOrder?.firstRing.price.amount.toLocaleString() 
+                      }{" "}₫
                     </span>
                   </div>
                 </div>
@@ -285,11 +287,11 @@ function ResellOrderDetail() {
               <div className={styles.card}>
                 <div className={styles.cardTitle}>Nhẫn Nữ</div>
                 <div className={styles.cardContent}>
-                  {order.customOrder.secondRing.customDesign?.designVersion
+                  {order.customOrder?.secondRing.customDesign?.designVersion
                     ?.image?.url && (
                     <img
                       src={
-                        order.customOrder.secondRing.customDesign.designVersion
+                        order.customOrder?.secondRing.customDesign.designVersion
                           .image.url
                       }
                       alt="Female Ring Design"
@@ -300,36 +302,36 @@ function ResellOrderDetail() {
                     <div className={styles.infoRow}>
                       <span>Người sở hữu:</span>
                       <span>
-                        {order.customOrder.secondRing.spouse.fullName}
+                        {order.customOrder?.secondRing.spouse.fullName}
                       </span>
                     </div>
                     <div className={styles.infoRow}>
                       <span>CCCD:</span>
                       <span>
-                        {order.customOrder.secondRing.spouse.citizenId || "--"}
+                        {order.customOrder?.secondRing.spouse.citizenId || "--"}
                       </span>
                     </div>
                   </div>
                   <div className={styles.infoRow}>
                     <span>Kích thước:</span>
-                    <span>{order.customOrder.secondRing.fingerSize}</span>
+                    <span>{order.customOrder?.secondRing.fingerSize}</span>
                   </div>
                   <div className={styles.infoRow}>
                     <span>Khắc tên:</span>
                     <span>
-                      {order.customOrder.secondRing.engraving || "Không có"}
+                      {order.customOrder?.secondRing.engraving || "Không có"}
                     </span>
                   </div>
                   <div className={styles.infoRow}>
                     <span>Kim loại:</span>
                     <span>
-                      {order.customOrder.secondRing.metalSpecification.name}
+                      {order.customOrder?.secondRing.metalSpecification.name}
                     </span>
                   </div>
                   <div className={styles.infoRow}>
                     <span>Khối lượng:</span>
                     <span>
-                      {order.customOrder.secondRing.customDesign.metalWeight}{" "}
+                      {order.customOrder?.secondRing.customDesign.metalWeight}{" "}
                       Chỉ
                     </span>
                   </div>
@@ -337,15 +339,15 @@ function ResellOrderDetail() {
                     <span>Số kim cương phụ:</span>
                     <span>
                       {
-                        order.customOrder.secondRing.customDesign
+                        order.customOrder?.secondRing.customDesign
                           .sideDiamondsCount
                       }
                     </span>
                   </div>
-                  {order.customOrder.secondRing.diamonds?.length > 0 && (
+                  
                     <div className={styles.diamondSection}>
                       <div className={styles.subTitle}>Kim Cương Chính</div>
-                      {order.customOrder.secondRing.diamonds.map(
+                      {order.customOrder?.secondRing.diamonds.map(
                         (diamond, index) => (
                           <>
                             <div key={index} className={styles.infoRow}>
@@ -369,14 +371,14 @@ function ResellOrderDetail() {
                         )
                       )}
                     </div>
-                  )}
+                  
                   <Divider sx={{ my: 2 }} />
                   <div className={styles.infoRow}>
                     <span>Số tiền:</span>
                     <span>
-                      {currencyFormatter(
-                        order.customOrder.secondRing.price.amount
-                      )}
+                      {
+                        order.customOrder?.secondRing.price.amount.toLocaleString()
+                      }{" "}₫
                     </span>
                   </div>
                 </div>
@@ -389,4 +391,4 @@ function ResellOrderDetail() {
   );
 }
 
-export default ResellOrderDetail;
+export default RefundOrderDetail;

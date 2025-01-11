@@ -115,7 +115,7 @@ function ManagerProductPage() {
         setPieChartData(updateChartData);
       }
 
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      // window.scrollTo({ top: 0, behavior: "smooth" });
 
       console.log(">>>ITEM OF THE DAY", items);
     }

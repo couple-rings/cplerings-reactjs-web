@@ -40,7 +40,7 @@ const defaultStartDate = new Date(
 const defaultEndDate = new Date().toISOString();
 
 function TableCustomPaymentList(props: ITableOrderListProps) {
-  const { selectedOrderType, endDateData, startDateData } = props;
+  const { selectedOrderType, endDateData, startDateData, selectedFilterPaymentType } = props;
   console.log(">>>Selected Order Type", selectedOrderType);
 
   const [rowData, setRowData] = useState<OrderStatistic[]>([]);
@@ -48,6 +48,7 @@ function TableCustomPaymentList(props: ITableOrderListProps) {
   const [totalPayment, setTotalPayment] = useState("0");
   const [paymentNumber, setPaymentNumber] = useState("0");
   const [orderNumber, setOrderNumber] = useState("0");  
+  const [waitingData, setWaitingData] = useState<OrderStatistic[]>([]);
 
   const orderQuery = {
     // RESELL: {
@@ -98,6 +99,10 @@ function TableCustomPaymentList(props: ITableOrderListProps) {
     queryFn: () => getTotalPaymentStatistic(filterOrderStatisticObj),
   })
 
+  
+  
+  
+
   useEffect(() => {
     if (data && data.data) {
       const { items, ...rest } = data.data;
@@ -113,7 +118,7 @@ function TableCustomPaymentList(props: ITableOrderListProps) {
       // setWaitingData(items);
       setPaymentNumber(rest.count.toLocaleString());
       setMetaData(rest);
-      setRowData(items);
+      setWaitingData(items);
 
       if (responseTotalPaymentStatistic && responseTotalPaymentStatistic.data) {
         setTotalPayment(
@@ -126,15 +131,15 @@ function TableCustomPaymentList(props: ITableOrderListProps) {
     }
   }, [data, responseTotalPaymentStatistic]);
 
-  // useEffect(() => {
-  //   const filteredItems =
-  //     selectedFilterPaymentType === "All"
-  //       ? waitingData
-  //       : waitingData.filter(
-  //           (item) => item.paymentMethod === selectedFilterPaymentType
-  //         );
-  //   setRowData(filteredItems);
-  // }, [selectedFilterPaymentType, waitingData]);
+  console.log(">>>>><<<<HEHE", selectedFilterPaymentType);
+
+  useEffect(() => {
+    const filteredItems =
+      selectedFilterPaymentType === "All"
+        ? waitingData
+        : selectedFilterPaymentType === "TRANSFER" ? waitingData : [];
+    setRowData(filteredItems);
+  }, [selectedFilterPaymentType, waitingData]);
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setFilterOrderStatisticObj({

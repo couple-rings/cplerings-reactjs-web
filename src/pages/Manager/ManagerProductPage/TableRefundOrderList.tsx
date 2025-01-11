@@ -60,7 +60,7 @@ function TableRefundOrderList(props: ITableOrderListProps) {
   console.log(">>>Selected Order Type", selectedFilterPaymentType);
 
   const [rowData, setRowData] = useState<OrderStatistic[]>([]);
-  // const [waitingData, setWaitingData] = useState<OrderStatistic[]>([]);
+  const [waitingData, setWaitingData] = useState<OrderStatistic[]>([]);
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
   const [paymentNumber, setPaymentNumber] = useState("0");
 
@@ -122,22 +122,22 @@ function TableRefundOrderList(props: ITableOrderListProps) {
       console.log(">>>>>DATA RESPONSE", data.data.items);
       console.log(">>>>>>>>>>ITEM", items);
 
-      // setWaitingData(items);
+      setWaitingData(items);
       setPaymentNumber(rest.count.toLocaleString());
       setMetaData(rest);
-      setRowData(data.data.items);
+      // setRowData(data.data.items);
     }
   }, [data]);
 
-  // useEffect(() => {
-  //   const filteredItems =
-  //     selectedFilterPaymentType === "All"
-  //       ? waitingData
-  //       : waitingData.filter(
-  //           (item) => item.paymentMethod === selectedFilterPaymentType
-  //         );
-  //   setRowData(filteredItems);
-  // }, [selectedFilterPaymentType, waitingData]);
+  useEffect(() => {
+    const filteredItems =
+      selectedFilterPaymentType === "All"
+        ? waitingData
+        : waitingData.filter(
+            (item) => item.payment?.type === selectedFilterPaymentType
+          );
+    setRowData(filteredItems);
+  }, [selectedFilterPaymentType, waitingData]);
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setFilterOrderStatisticObj({
@@ -324,9 +324,9 @@ function TableRefundOrderList(props: ITableOrderListProps) {
                       </p>
                     </TableCell>
                     <TableCell align="center" style={{ fontWeight: "500" }}>
-                      <button
+                      <button className={styles.button}
                         onClick={() =>
-                          navigate(`/manager/resell-order/detail/${row.id}`)
+                          navigate(`/manager/refund/detail/${row.id}`)
                         }
                       >
                         Chi Tiết
