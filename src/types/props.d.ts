@@ -600,19 +600,18 @@ declare global {
   }
 
   interface IManagerChartFinanceProps {
-    uData:  (number | null)[];
+    uData: (number | null)[];
     xLabels: string[];
     totalRevenue: string;
   }
 
   interface ITotalOrderPieChartProps {
-    orderPieChartData : {
-      label : string;
-      value : number;
-    }[],
-    totalOrder : string;
-    totalRevenue : string;
-    
+    orderPieChartData: {
+      label: string;
+      value: number;
+    }[];
+    totalOrder: string;
+    totalRevenue: string;
   }
 
   interface ITableOrderListProps {
@@ -623,6 +622,10 @@ declare global {
   }
 
   interface IRevenueMenuPaymentType {
-    setFilterPaymentMethod : (v : string) => void;
+    setFilterPaymentMethod: (v: string) => void;
+  }
+
+  interface IRefundModalProps extends IModalProps {
+    data: IRefund;
   }
 }
