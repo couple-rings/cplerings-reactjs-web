@@ -13,6 +13,9 @@ import {
   Grid,
   OutlinedInput,
   Skeleton,
+  SxProps,
+  Tab,
+  Tabs,
 } from "@mui/material";
 import styles from "./CustomOrderDetail.module.scss";
 import { useNavigate, useParams } from "react-router-dom";
@@ -48,6 +51,14 @@ import { getTransportOrderWithCustomOrder } from "src/services/transportOrder.se
 import HoverCard from "src/components/product/HoverCard";
 import { toast } from "react-toastify";
 import LoadingButton from "@mui/lab/LoadingButton";
+import Payments from "src/components/table/customOrder/Payments";
+
+const boxStyle: SxProps = {
+  borderBottom: 1,
+  borderColor: "divider",
+  width: "100%",
+  mb: 6,
+};
 
 function CustomOrderDetail() {
   const [order, setOrder] = useState<ICustomOrder | null>(null);
@@ -55,6 +66,7 @@ function CustomOrderDetail() {
   const [femaleRing, setFemaleRing] = useState<IRing | null>(null);
 
   const [open, setOpen] = useState(false);
+  const [tab, setTab] = useState("general");
 
   const { id } = useParams<{ id: string }>();
 
@@ -172,567 +184,690 @@ function CustomOrderDetail() {
     <Grid container className={styles.container} justifyContent={"center"}>
       <Grid item xs={11} md={10}>
         <div className={styles.title}>Chi Tiết Đơn Gia Công</div>
-        <Grid container>
-          <Grid container item sm={6}>
-            <Grid container item fontSize={"1.2rem"} mt={1} mb={3}>
-              <Grid item xs={6} md={3}>
-                Mã Đơn:
-              </Grid>
-              <Grid item className={styles.info}>
-                {order.orderNo}
-              </Grid>
-            </Grid>
 
-            <Grid container fontSize={"1.2rem"} mb={3}>
-              <Grid item xs={6} md={3}>
-                Ngày Tạo:
-              </Grid>
-              <Grid item className={styles.info}>
-                {moment(order.createdAt).format("DD/MM/YYYY HH:mm")}
-              </Grid>
-            </Grid>
-          </Grid>
-
-          <Grid container item sm={6}>
-            <Grid
-              container
-              item
-              fontSize={"1.2rem"}
-              mb={3}
-              alignItems={"center"}
-            >
-              <Grid item xs={6} md={5}>
-                Trạng Thái:
-              </Grid>
-              <Grid item>
-                <Chip
-                  label={formatCustomOrderStatus(order.status).text}
-                  color={formatCustomOrderStatus(order.status).color}
-                />
-              </Grid>
-            </Grid>
-
-            <Grid container item fontSize={"1.2rem"} mb={2}>
-              <Grid item xs={6} md={5}>
-                Thợ Gia Công:
-              </Grid>
-              <Grid item className={styles.info}>
-                {order.jeweler ? order.jeweler.username : "N/A"}
-              </Grid>
-            </Grid>
-          </Grid>
-
-          <Grid
-            container
-            item
-            sm={6}
-            fontSize={"1.2rem"}
-            mb={2}
-            alignItems={"center"}
+        <Box sx={boxStyle}>
+          <Tabs
+            classes={{
+              indicator: "myIndicator",
+            }}
+            value={tab}
+            onChange={(e, value) => setTab(value)}
           >
-            <Grid item xs={6} md={3}>
-              Tổng Tiền:
-            </Grid>
-            <Grid item className={styles.total}>
-              {currencyFormatter(order.totalPrice.amount)}
-            </Grid>
-          </Grid>
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Thông tin chung"
+              value={"general"}
+            />
+            <Tab
+              classes={{
+                selected: "selectedCustomRequestTab",
+              }}
+              className={styles.tabLabel}
+              label="Lịch sử giao dịch"
+              value={"payments"}
+            />
+          </Tabs>
+        </Box>
 
-          {[
-            CustomOrderStatus.Done,
-            CustomOrderStatus.Delivering,
-            CustomOrderStatus.Completed,
-          ].includes(order.status) && (
-            <Grid container item sm={6}>
-              <Grid container item fontSize={"1.2rem"} mb={2}>
+        {tab === "general" && (
+          <>
+            <Grid container>
+              <Grid container item sm={6}>
+                <Grid container item fontSize={"1.2rem"} mt={1} mb={3}>
+                  <Grid item xs={6} md={3}>
+                    Mã Đơn:
+                  </Grid>
+                  <Grid item className={styles.info}>
+                    {order.orderNo}
+                  </Grid>
+                </Grid>
+
+                <Grid container fontSize={"1.2rem"} mb={3}>
+                  <Grid item xs={6} md={3}>
+                    Ngày Tạo:
+                  </Grid>
+                  <Grid item className={styles.info}>
+                    {moment(order.createdAt).format("DD/MM/YYYY HH:mm")}
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Grid container item sm={6}>
                 <Grid
+                  container
                   item
-                  className={styles.loveVerification}
-                  onClick={() => navigate("/customer/love-agreement")}
+                  fontSize={"1.2rem"}
+                  mb={3}
+                  alignItems={"center"}
                 >
-                  Chứng Nhận Tình Yêu
+                  <Grid item xs={6} md={5}>
+                    Trạng Thái:
+                  </Grid>
+                  <Grid item>
+                    <Chip
+                      label={formatCustomOrderStatus(order.status).text}
+                      color={formatCustomOrderStatus(order.status).color}
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item ml={1}>
-                  Của Bạn
-                </Grid>
-              </Grid>
-            </Grid>
-          )}
-        </Grid>
 
-        <Grid container mt={3}>
-          <Grid item xs={12} md={6}>
-            <fieldset>
-              <legend>Chi Nhánh</legend>
-              <Grid container my={1}>
-                <Grid item xs={4}>
-                  Tên cửa hàng:
-                </Grid>
-                <Grid item>{maleRing.branch.storeName}</Grid>
-              </Grid>
-
-              <Grid container mb={1}>
-                <Grid item xs={4}>
-                  Địa chỉ:
-                </Grid>
-                <Grid item xs={8}>
-                  {maleRing.branch.address}
+                <Grid container item fontSize={"1.2rem"} mb={2}>
+                  <Grid item xs={6} md={5}>
+                    Thợ Gia Công:
+                  </Grid>
+                  <Grid item className={styles.info}>
+                    {order.jeweler ? order.jeweler.username : "N/A"}
+                  </Grid>
                 </Grid>
               </Grid>
 
-              <Grid container mb={1}>
-                <Grid item xs={4}>
-                  Số điện thoại:
+              <Grid
+                container
+                item
+                sm={6}
+                fontSize={"1.2rem"}
+                mb={2}
+                alignItems={"center"}
+              >
+                <Grid item xs={6} md={3}>
+                  Tổng Tiền:
                 </Grid>
-                <Grid item>{maleRing.branch.phone}</Grid>
-              </Grid>
-            </fieldset>
-          </Grid>
-        </Grid>
-
-        {order.status === CustomOrderStatus.Refunded && order.refund && (
-          <Grid container>
-            <Grid item xs={12} my={4} className={styles.refuntTitle}>
-              Thông tin hoàn tiền
-            </Grid>
-
-            <Grid container mb={1} justifyContent={"space-between"}>
-              <Grid container item md={6} alignItems={"baseline"}>
-                <Grid item xs={4} mb={1}>
-                  Số tiền hoàn trả:
-                </Grid>
-
                 <Grid item className={styles.total}>
-                  {currencyFormatter(order.refund.amount.amount)}
+                  {currencyFormatter(order.totalPrice.amount)}
                 </Grid>
               </Grid>
 
-              <Grid container item md={5.7}>
-                <Grid item xs={4}>
-                  Phương thức:
+              {[
+                CustomOrderStatus.Done,
+                CustomOrderStatus.Delivering,
+                CustomOrderStatus.Completed,
+              ].includes(order.status) && (
+                <Grid container item sm={6}>
+                  <Grid container item fontSize={"1.2rem"} mb={2}>
+                    <Grid
+                      item
+                      className={styles.loveVerification}
+                      onClick={() => navigate("/customer/love-agreement")}
+                    >
+                      Chứng Nhận Tình Yêu
+                    </Grid>
+                    <Grid item ml={1}>
+                      Của Bạn
+                    </Grid>
+                  </Grid>
                 </Grid>
-
-                <Grid item>
-                  <FormLabel>
-                    {formatRefundMethodTitle(order.refund.method)}
-                  </FormLabel>
-                </Grid>
-              </Grid>
+              )}
             </Grid>
 
-            <Grid container rowGap={2} mb={3} justifyContent={"space-between"}>
-              <Grid container item md={5.7}>
-                <Grid item mb={2}>
-                  Lý do hoàn trả:
-                </Grid>
-
-                <Grid item xs={12}>
-                  <OutlinedInput
-                    sx={{ borderRadius: 0 }}
-                    fullWidth
-                    readOnly
-                    multiline
-                    rows={4}
-                    defaultValue={order.refund.reason}
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid container item md={5.7}>
-                <Grid item xs={4}>
-                  Ngày thực hiện:
-                </Grid>
-
-                <Grid item>
-                  <FormLabel>
-                    {moment(
-                      order.customOrderHistories.find(
-                        (item) => item.status === CustomOrderStatus.Refunded
-                      )?.createdAt
-                    ).format("DD/MM/YYYY HH:mm")}
-                  </FormLabel>
-                </Grid>
-              </Grid>
-            </Grid>
-
-            <Box sx={{ mb: 1 }}>Hình ảnh giao dịch:</Box>
-            <Grid container rowGap={2} justifyContent={"space-between"}>
-              <Grid item md={5.7}>
-                <img
-                  src={order.refund.proofImage.url}
-                  className={styles.refundImage}
-                />
-              </Grid>
-              <Grid item xs={12} md={5.7}>
-                <fieldset style={{ margin: 0, width: "100%" }}>
-                  <legend>Nhân Viên Thực Hiện</legend>
-                  <Grid container p={2}>
-                    <Grid container justifyContent={"space-between"} mb={1}>
-                      <Grid item>Tên tài khoản:</Grid>
-
-                      <Grid item>{order.refund.staff.username}</Grid>
+            <Grid container mt={3}>
+              <Grid item xs={12} md={6}>
+                <fieldset>
+                  <legend>Chi Nhánh</legend>
+                  <Grid container my={1}>
+                    <Grid item xs={4}>
+                      Tên cửa hàng:
                     </Grid>
+                    <Grid item>{maleRing.branch.storeName}</Grid>
+                  </Grid>
 
-                    <Grid container justifyContent={"space-between"} mb={1}>
-                      <Grid item>Email:</Grid>
-
-                      <Grid item>{order.refund.staff.email}</Grid>
+                  <Grid container mb={1}>
+                    <Grid item xs={4}>
+                      Địa chỉ:
                     </Grid>
-
-                    <Grid container justifyContent={"space-between"} mb={1}>
-                      <Grid item>Số điện thoại:</Grid>
-
-                      <Grid item>
-                        {order.refund.staff.phone
-                          ? order.refund.staff.phone
-                          : "--"}
-                      </Grid>
+                    <Grid item xs={8}>
+                      {maleRing.branch.address}
                     </Grid>
+                  </Grid>
 
-                    <Grid container justifyContent={"space-between"} mb={1}>
-                      <Grid item>Chi Nhánh:</Grid>
-
-                      <Grid item>{order.refund.staff.branch?.storeName}</Grid>
+                  <Grid container mb={1}>
+                    <Grid item xs={4}>
+                      Số điện thoại:
                     </Grid>
+                    <Grid item>{maleRing.branch.phone}</Grid>
                   </Grid>
                 </fieldset>
               </Grid>
             </Grid>
-          </Grid>
-        )}
 
-        <Grid container justifyContent={"center"} mt={5}>
-          <Grid container item lg={10} className={styles.card} py={5}>
-            <Grid
-              container
-              item
-              xs={12}
-              md={6}
-              mb={7}
-              justifyContent={"center"}
-            >
-              <Grid item xs={9} mb={3}>
-                <HoverCard
-                  shadow={true}
-                  image={maleRing.customDesign.designVersion.image.url}
-                  file={maleRing.customDesign.blueprint.url}
-                />
-              </Grid>
-
-              <Grid item xs={12} textAlign={"center"} mb={2}>
-                {maleRing.spouse.customerId
-                  ? "Nhẫn Của Bạn"
-                  : "Nhẫn Của Bạn Đời"}
-              </Grid>
-
-              {maleRing.maintenanceDocument && (
-                <Grid item xs={12} textAlign={"center"} mb={2}>
-                  <a
-                    download={""}
-                    href={maleRing.maintenanceDocument.url}
-                    className={styles.download}
-                    style={{ fontSize: "1rem" }}
-                  >
-                    <DownloadIcon />
-                    Giấy bảo hành
-                  </a>
-                </Grid>
-              )}
-
-              <Grid item xs={10} mt={3}>
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Độ Phức Tạp
-                  </Grid>
-                  <Grid item>
-                    {maleRing.difficulty === CraftingDifficulty.Normal
-                      ? "Bình thường"
-                      : "Khó"}
-                  </Grid>
-                </Grid>
-                <Divider sx={{ my: 2 }} />
-
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Chất Liệu
-                  </Grid>
-                  <Grid item>{maleRing.metalSpecification.name}</Grid>
-                </Grid>
-                <Divider sx={{ my: 2 }} />
-
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Kim Cương Chính
-                  </Grid>
-                  <Grid item>
-                    {`${
-                      maleRing.diamonds.length > 0 &&
-                      maleRing.diamonds[0].diamondSpecification.shape
-                    } ${
-                      maleRing.diamonds.length > 0 &&
-                      getDiamondSpec(maleRing.diamonds[0].diamondSpecification)
-                    }`}
-                  </Grid>
-                </Grid>
-                <Divider sx={{ my: 2 }} />
-
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Số Kim Cương Phụ
-                  </Grid>
-                  <Grid item>
-                    {maleRing.customDesign.sideDiamondsCount} Viên
-                  </Grid>
-                </Grid>
-                <Divider sx={{ my: 2 }} />
-
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Kích Thước
-                  </Grid>
-                  <Grid item>{maleRing.fingerSize}</Grid>
-                </Grid>
-                <Divider sx={{ my: 2 }} />
-
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Khắc Chữ
-                  </Grid>
-                  <Grid item>
-                    {maleRing.engraving ? maleRing.engraving : "--"}
-                  </Grid>
-                </Grid>
-                <Divider sx={{ my: 2 }} />
-
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Khối Lượng
-                  </Grid>
-                  <Grid item>{maleRing.customDesign.metalWeight} Chỉ</Grid>
+            {order.status === CustomOrderStatus.Refunded && order.refund && (
+              <Grid container>
+                <Grid item xs={12} my={4} className={styles.refuntTitle}>
+                  Thông tin hoàn tiền
                 </Grid>
 
-                <Divider sx={{ my: 2 }} />
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Phí Gia Công
+                <Grid container mb={1} justifyContent={"space-between"}>
+                  <Grid container item md={6} alignItems={"baseline"}>
+                    <Grid item xs={4} mb={1}>
+                      Số tiền hoàn trả:
+                    </Grid>
+
+                    <Grid item className={styles.total}>
+                      {currencyFormatter(order.refund.amount.amount)}
+                    </Grid>
                   </Grid>
-                  <Grid item>
-                    {currencyFormatter(maleRing.craftingFee.amount)}
+
+                  <Grid container item md={5.7}>
+                    <Grid item xs={4}>
+                      Phương thức:
+                    </Grid>
+
+                    <Grid item>
+                      <FormLabel>
+                        {formatRefundMethodTitle(order.refund.method)}
+                      </FormLabel>
+                    </Grid>
                   </Grid>
                 </Grid>
 
-                <Divider sx={{ my: 2 }} />
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Tổng Tiền
-                  </Grid>
-                  <Grid item>{currencyFormatter(maleRing.price.amount)}</Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-
-            <Grid
-              container
-              item
-              xs={12}
-              md={6}
-              mb={7}
-              justifyContent={"center"}
-            >
-              <Grid item xs={9} mb={3}>
-                <HoverCard
-                  shadow={true}
-                  image={femaleRing.customDesign.designVersion.image.url}
-                  file={femaleRing.customDesign.blueprint.url}
-                />
-              </Grid>
-
-              <Grid item xs={12} textAlign={"center"} mb={2}>
-                {femaleRing.spouse.customerId
-                  ? "Nhẫn Của Bạn"
-                  : "Nhẫn Của Bạn Đời"}
-              </Grid>
-
-              {femaleRing.maintenanceDocument && (
-                <Grid item xs={12} textAlign={"center"} mb={2}>
-                  <a
-                    download={""}
-                    href={femaleRing.maintenanceDocument.url}
-                    className={styles.download}
-                    style={{ fontSize: "1rem" }}
-                  >
-                    <DownloadIcon />
-                    Giấy bảo hành
-                  </a>
-                </Grid>
-              )}
-
-              <Grid item xs={10} mt={3}>
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Độ Phức Tạp
-                  </Grid>
-                  <Grid item>
-                    {femaleRing.difficulty === CraftingDifficulty.Normal
-                      ? "Bình thường"
-                      : "Khó"}
-                  </Grid>
-                </Grid>
-                <Divider sx={{ my: 2 }} />
-
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Chất Liệu
-                  </Grid>
-                  <Grid item>{femaleRing.metalSpecification.name}</Grid>
-                </Grid>
-                <Divider sx={{ my: 2 }} />
-
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Kim Cương Chính
-                  </Grid>
-                  <Grid item>
-                    {" "}
-                    {`${
-                      femaleRing.diamonds.length > 0 &&
-                      femaleRing.diamonds[0].diamondSpecification.shape
-                    } ${
-                      femaleRing.diamonds.length > 0 &&
-                      getDiamondSpec(
-                        femaleRing.diamonds[0].diamondSpecification
-                      )
-                    }`}
-                  </Grid>
-                </Grid>
-                <Divider sx={{ my: 2 }} />
-
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Số Kim Cương Phụ
-                  </Grid>
-                  <Grid item>
-                    {femaleRing.customDesign.sideDiamondsCount} Viên
-                  </Grid>
-                </Grid>
-                <Divider sx={{ my: 2 }} />
-
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Kích Thước
-                  </Grid>
-                  <Grid item>{femaleRing.fingerSize}</Grid>
-                </Grid>
-                <Divider sx={{ my: 2 }} />
-
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Khắc Chữ
-                  </Grid>
-                  <Grid item>
-                    {femaleRing.engraving ? femaleRing.engraving : "--"}
-                  </Grid>
-                </Grid>
-                <Divider sx={{ my: 2 }} />
-
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Khối Lượng
-                  </Grid>
-                  <Grid item>{femaleRing.customDesign.metalWeight} Chỉ</Grid>
-                </Grid>
-
-                <Divider sx={{ my: 2 }} />
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Phí Gia Công
-                  </Grid>
-                  <Grid item>
-                    {currencyFormatter(femaleRing.craftingFee.amount)}
-                  </Grid>
-                </Grid>
-
-                <Divider sx={{ my: 2 }} />
-                <Grid container justifyContent={"space-between"}>
-                  <Grid item className={styles.label}>
-                    Tổng Tiền
-                  </Grid>
-                  <Grid item>{currencyFormatter(femaleRing.price.amount)}</Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-
-            <Grid container px={4} flexDirection={"column"} gap={1} mb={2}>
-              <FormLabel>
-                * Phí vận chuyển: {currencyFormatter(order.shippingFee.amount)}
-              </FormLabel>
-              <FormLabel>
-                * Kim cương phụ:{" "}
-                {currencyFormatter(maleRing.sideDiamondPrice.amount)}/viên
-              </FormLabel>
-            </Grid>
-
-            {order.contract.document && (
-              <Grid container mt={2} justifyContent={"center"}>
-                <a
-                  download={""}
-                  href={order.contract.document.url}
-                  className={styles.download}
+                <Grid
+                  container
+                  rowGap={2}
+                  mb={3}
+                  justifyContent={"space-between"}
                 >
-                  <DownloadForOfflineRoundedIcon />
-                  <span>Tải Hợp Đồng</span>
-                </a>
+                  <Grid container item md={5.7}>
+                    <Grid item mb={2}>
+                      Lý do hoàn trả:
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <OutlinedInput
+                        sx={{ borderRadius: 0 }}
+                        fullWidth
+                        readOnly
+                        multiline
+                        rows={4}
+                        defaultValue={order.refund.reason}
+                      />
+                    </Grid>
+                  </Grid>
+
+                  <Grid container item md={5.7}>
+                    <Grid item xs={4}>
+                      Ngày thực hiện:
+                    </Grid>
+
+                    <Grid item>
+                      <FormLabel>
+                        {moment(
+                          order.customOrderHistories.find(
+                            (item) => item.status === CustomOrderStatus.Refunded
+                          )?.createdAt
+                        ).format("DD/MM/YYYY HH:mm")}
+                      </FormLabel>
+                    </Grid>
+                  </Grid>
+                </Grid>
+
+                <Box sx={{ mb: 1 }}>Hình ảnh giao dịch:</Box>
+                <Grid container rowGap={2} justifyContent={"space-between"}>
+                  <Grid item md={5.7}>
+                    <img
+                      src={order.refund.proofImage.url}
+                      className={styles.refundImage}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={5.7}>
+                    <fieldset style={{ margin: 0, width: "100%" }}>
+                      <legend>Nhân Viên Thực Hiện</legend>
+                      <Grid container p={2}>
+                        <Grid container justifyContent={"space-between"} mb={1}>
+                          <Grid item>Tên tài khoản:</Grid>
+
+                          <Grid item>{order.refund.staff.username}</Grid>
+                        </Grid>
+
+                        <Grid container justifyContent={"space-between"} mb={1}>
+                          <Grid item>Email:</Grid>
+
+                          <Grid item>{order.refund.staff.email}</Grid>
+                        </Grid>
+
+                        <Grid container justifyContent={"space-between"} mb={1}>
+                          <Grid item>Số điện thoại:</Grid>
+
+                          <Grid item>
+                            {order.refund.staff.phone
+                              ? order.refund.staff.phone
+                              : "--"}
+                          </Grid>
+                        </Grid>
+
+                        <Grid container justifyContent={"space-between"} mb={1}>
+                          <Grid item>Chi Nhánh:</Grid>
+
+                          <Grid item>
+                            {order.refund.staff.branch?.storeName}
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </fieldset>
+                  </Grid>
+                </Grid>
               </Grid>
             )}
 
-            <Grid container justifyContent={"center"} mt={5} gap={3}>
-              {order.status !== CustomOrderStatus.Canceled &&
-                order.status !== CustomOrderStatus.Completed &&
-                order.status !== CustomOrderStatus.Resold && (
-                  <Button
-                    variant="outlined"
-                    sx={outlinedBtn}
-                    onClick={() => setOpen(true)}
-                  >
-                    Hủy Gia Công
-                  </Button>
+            <Grid container justifyContent={"center"} mt={5}>
+              <Grid container item lg={10} className={styles.card} py={5}>
+                <Grid
+                  container
+                  item
+                  xs={12}
+                  md={6}
+                  mb={7}
+                  justifyContent={"center"}
+                >
+                  <Grid item xs={9} mb={3}>
+                    <HoverCard
+                      shadow={true}
+                      image={maleRing.customDesign.designVersion.image.url}
+                      file={maleRing.customDesign.blueprint.url}
+                    />
+                  </Grid>
+
+                  {maleRing.maintenanceDocument && (
+                    <Grid item xs={12} textAlign={"center"} mb={2}>
+                      <a
+                        download={""}
+                        href={maleRing.maintenanceDocument.url}
+                        className={styles.download}
+                        style={{ fontSize: "1rem" }}
+                      >
+                        <DownloadIcon />
+                        Giấy bảo hành
+                      </a>
+                    </Grid>
+                  )}
+
+                  <Grid item xs={10} mt={3}>
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Người Sở Hữu
+                      </Grid>
+                      <Grid item>{maleRing.spouse.fullName}</Grid>
+                    </Grid>
+                    <Grid container justifyContent={"space-between"} mt={1}>
+                      <Grid item className={styles.label}>
+                        Số CCCD
+                      </Grid>
+                      <Grid item>{maleRing.spouse.citizenId}</Grid>
+                    </Grid>
+                    <Divider sx={{ my: 2 }} />
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Độ Phức Tạp
+                      </Grid>
+                      <Grid item>
+                        {maleRing.difficulty === CraftingDifficulty.Normal
+                          ? "Bình thường"
+                          : "Khó"}
+                      </Grid>
+                    </Grid>
+                    <Divider sx={{ my: 2 }} />
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Chất Liệu
+                      </Grid>
+                      <Grid item>{maleRing.metalSpecification.name}</Grid>
+                    </Grid>
+                    <Divider sx={{ my: 2 }} />
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Kim Cương Chính
+                      </Grid>
+                      <Grid item>
+                        {`${
+                          maleRing.diamonds.length > 0 &&
+                          maleRing.diamonds[0].diamondSpecification.shape
+                        } ${
+                          maleRing.diamonds.length > 0 &&
+                          getDiamondSpec(
+                            maleRing.diamonds[0].diamondSpecification
+                          )
+                        }`}
+                      </Grid>
+                    </Grid>
+                    <Divider sx={{ my: 2 }} />
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Số Kim Cương Phụ
+                      </Grid>
+                      <Grid item>
+                        {maleRing.customDesign.sideDiamondsCount} Viên
+                      </Grid>
+                    </Grid>
+                    <Divider sx={{ my: 2 }} />
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Kích Thước
+                      </Grid>
+                      <Grid item>{maleRing.fingerSize}</Grid>
+                    </Grid>
+                    <Divider sx={{ my: 2 }} />
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Khắc Chữ
+                      </Grid>
+                      <Grid item>
+                        {maleRing.engraving ? maleRing.engraving : "--"}
+                      </Grid>
+                    </Grid>
+                    <Divider sx={{ my: 2 }} />
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Khối Lượng
+                      </Grid>
+                      <Grid item>{maleRing.customDesign.metalWeight} Chỉ</Grid>
+                    </Grid>
+
+                    <Divider sx={{ my: 2 }} />
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Phí Gia Công
+                      </Grid>
+                      <Grid item>
+                        {currencyFormatter(maleRing.craftingFee.amount)}
+                      </Grid>
+                    </Grid>
+                    <Grid container justifyContent={"space-between"} mt={1}>
+                      <Grid item className={styles.label}>
+                        Giá Vàng (/gram)
+                      </Grid>
+                      <Grid item>
+                        {currencyFormatter(maleRing.metalPricePerUnit.amount)}
+                      </Grid>
+                    </Grid>
+                    <Grid container justifyContent={"space-between"} mt={1}>
+                      <Grid item className={styles.label}>
+                        Giá Kim Cương Chính
+                      </Grid>
+                      <Grid item>
+                        {currencyFormatter(maleRing.diamondPrice.amount)}
+                      </Grid>
+                    </Grid>
+                    <Grid container justifyContent={"space-between"} mt={1}>
+                      <Grid item className={styles.label}>
+                        Giá Kim Cương Phụ
+                      </Grid>
+                      <Grid item>
+                        {currencyFormatter(
+                          maleRing.sideDiamondPrice.amount *
+                            maleRing.customDesign.sideDiamondsCount
+                        )}
+                      </Grid>
+                    </Grid>
+
+                    <Divider sx={{ my: 2 }} />
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Tổng Tiền
+                      </Grid>
+                      <Grid item>
+                        {currencyFormatter(maleRing.price.amount)}
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+
+                <Grid
+                  container
+                  item
+                  xs={12}
+                  md={6}
+                  mb={7}
+                  justifyContent={"center"}
+                >
+                  <Grid item xs={9} mb={3}>
+                    <HoverCard
+                      shadow={true}
+                      image={femaleRing.customDesign.designVersion.image.url}
+                      file={femaleRing.customDesign.blueprint.url}
+                    />
+                  </Grid>
+
+                  {femaleRing.maintenanceDocument && (
+                    <Grid item xs={12} textAlign={"center"} mb={2}>
+                      <a
+                        download={""}
+                        href={femaleRing.maintenanceDocument.url}
+                        className={styles.download}
+                        style={{ fontSize: "1rem" }}
+                      >
+                        <DownloadIcon />
+                        Giấy bảo hành
+                      </a>
+                    </Grid>
+                  )}
+
+                  <Grid item xs={10} mt={3}>
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Người Sở Hữu
+                      </Grid>
+                      <Grid item>{femaleRing.spouse.fullName}</Grid>
+                    </Grid>
+                    <Grid container justifyContent={"space-between"} mt={1}>
+                      <Grid item className={styles.label}>
+                        Số CCCD
+                      </Grid>
+                      <Grid item>{femaleRing.spouse.citizenId}</Grid>
+                    </Grid>
+                    <Divider sx={{ my: 2 }} />
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Độ Phức Tạp
+                      </Grid>
+                      <Grid item>
+                        {femaleRing.difficulty === CraftingDifficulty.Normal
+                          ? "Bình thường"
+                          : "Khó"}
+                      </Grid>
+                    </Grid>
+                    <Divider sx={{ my: 2 }} />
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Chất Liệu
+                      </Grid>
+                      <Grid item>{femaleRing.metalSpecification.name}</Grid>
+                    </Grid>
+                    <Divider sx={{ my: 2 }} />
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Kim Cương Chính
+                      </Grid>
+                      <Grid item>
+                        {" "}
+                        {`${
+                          femaleRing.diamonds.length > 0 &&
+                          femaleRing.diamonds[0].diamondSpecification.shape
+                        } ${
+                          femaleRing.diamonds.length > 0 &&
+                          getDiamondSpec(
+                            femaleRing.diamonds[0].diamondSpecification
+                          )
+                        }`}
+                      </Grid>
+                    </Grid>
+                    <Divider sx={{ my: 2 }} />
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Số Kim Cương Phụ
+                      </Grid>
+                      <Grid item>
+                        {femaleRing.customDesign.sideDiamondsCount} Viên
+                      </Grid>
+                    </Grid>
+                    <Divider sx={{ my: 2 }} />
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Kích Thước
+                      </Grid>
+                      <Grid item>{femaleRing.fingerSize}</Grid>
+                    </Grid>
+                    <Divider sx={{ my: 2 }} />
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Khắc Chữ
+                      </Grid>
+                      <Grid item>
+                        {femaleRing.engraving ? femaleRing.engraving : "--"}
+                      </Grid>
+                    </Grid>
+                    <Divider sx={{ my: 2 }} />
+
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Khối Lượng
+                      </Grid>
+                      <Grid item>
+                        {femaleRing.customDesign.metalWeight} Chỉ
+                      </Grid>
+                    </Grid>
+
+                    <Divider sx={{ my: 2 }} />
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Phí Gia Công
+                      </Grid>
+                      <Grid item>
+                        {currencyFormatter(femaleRing.craftingFee.amount)}
+                      </Grid>
+                    </Grid>
+                    <Grid container justifyContent={"space-between"} mt={1}>
+                      <Grid item className={styles.label}>
+                        Giá Vàng (/gram)
+                      </Grid>
+                      <Grid item>
+                        {currencyFormatter(femaleRing.metalPricePerUnit.amount)}
+                      </Grid>
+                    </Grid>
+                    <Grid container justifyContent={"space-between"} mt={1}>
+                      <Grid item className={styles.label}>
+                        Giá Kim Cương Chính
+                      </Grid>
+                      <Grid item>
+                        {currencyFormatter(femaleRing.diamondPrice.amount)}
+                      </Grid>
+                    </Grid>
+                    <Grid container justifyContent={"space-between"} mt={1}>
+                      <Grid item className={styles.label}>
+                        Giá Kim Cương Phụ
+                      </Grid>
+                      <Grid item>
+                        {currencyFormatter(
+                          femaleRing.sideDiamondPrice.amount *
+                            femaleRing.customDesign.sideDiamondsCount
+                        )}
+                      </Grid>
+                    </Grid>
+
+                    <Divider sx={{ my: 2 }} />
+                    <Grid container justifyContent={"space-between"}>
+                      <Grid item className={styles.label}>
+                        Tổng Tiền
+                      </Grid>
+                      <Grid item>
+                        {currencyFormatter(femaleRing.price.amount)}
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+
+                <Grid container px={4} flexDirection={"column"} gap={1} mb={2}>
+                  <FormLabel>
+                    * Phí vận chuyển:{" "}
+                    {currencyFormatter(order.shippingFee.amount)}
+                  </FormLabel>
+                  <FormLabel>
+                    * Kim cương phụ:{" "}
+                    {currencyFormatter(maleRing.sideDiamondPrice.amount)}/viên
+                  </FormLabel>
+                </Grid>
+
+                {order.contract.document && (
+                  <Grid container mt={2} justifyContent={"center"}>
+                    <a
+                      download={""}
+                      href={order.contract.document.url}
+                      className={styles.download}
+                    >
+                      <DownloadForOfflineRoundedIcon />
+                      <span>Tải Hợp Đồng</span>
+                    </a>
+                  </Grid>
                 )}
 
-              {order.contract.signature ? (
-                <Button
-                  variant="contained"
-                  sx={secondaryBtn}
-                  onClick={() =>
-                    navigate(
-                      `/customer/support/custom-order/${order.id}/crafting-process`
-                    )
-                  }
-                >
-                  Quá Trình Gia Công
-                </Button>
-              ) : (
-                <Button
-                  variant="contained"
-                  sx={secondaryBtn}
-                  onClick={() => navigate(`/customer/contract/${order.id}`)}
-                >
-                  Ký Hợp Đồng
-                </Button>
-              )}
+                <Grid container justifyContent={"center"} mt={5} gap={3}>
+                  {order.status !== CustomOrderStatus.Canceled &&
+                    order.status !== CustomOrderStatus.Completed &&
+                    order.status !== CustomOrderStatus.Resold &&
+                    order.status !== CustomOrderStatus.Refunded && (
+                      <Button
+                        variant="outlined"
+                        sx={outlinedBtn}
+                        onClick={() => setOpen(true)}
+                      >
+                        Hủy Đơn
+                      </Button>
+                    )}
 
-              {transportResponse?.data?.status ===
-                TransportOrderStatus.Delivering && (
-                <Button
-                  variant="contained"
-                  sx={secondaryBtn}
-                  onClick={() => navigate(`/customer/transport/${order.id}`)}
-                >
-                  Vị Trí Người Giao Hàng
-                </Button>
-              )}
+                  {order.contract.signature ? (
+                    <Button
+                      variant="contained"
+                      sx={secondaryBtn}
+                      onClick={() =>
+                        navigate(
+                          `/customer/support/custom-order/${order.id}/crafting-process`
+                        )
+                      }
+                    >
+                      Quá Trình Gia Công
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      sx={secondaryBtn}
+                      onClick={() => navigate(`/customer/contract/${order.id}`)}
+                    >
+                      Ký Hợp Đồng
+                    </Button>
+                  )}
+
+                  {transportResponse?.data?.status ===
+                    TransportOrderStatus.Delivering && (
+                    <Button
+                      variant="contained"
+                      sx={secondaryBtn}
+                      onClick={() =>
+                        navigate(`/customer/transport/${order.id}`)
+                      }
+                    >
+                      Vị Trí Người Giao Hàng
+                    </Button>
+                  )}
+                </Grid>
+              </Grid>
             </Grid>
-          </Grid>
-        </Grid>
+          </>
+        )}
+
+        {tab === "payments" && id && <Payments orderId={+id} />}
       </Grid>
 
       <Dialog
