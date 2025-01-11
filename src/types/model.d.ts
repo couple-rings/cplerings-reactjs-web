@@ -608,6 +608,7 @@ declare global {
   interface IRefund {
     id: number;
     reason: string;
+    orderNo: string;
     method: PaymentMethod;
     amount: {
       amount: number;

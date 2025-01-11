@@ -22,6 +22,7 @@ import {
   formatRefundMethodTitle,
 } from "src/utils/functions";
 import { primaryBtn } from "src/utils/styles";
+import ViewModal from "src/components/modal/refund/View.modal";
 
 interface Row extends IRefund {}
 
@@ -44,6 +45,8 @@ function RefundOrder() {
   });
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [selected, setSelected] = useState<IRefund | null>(null);
+  const [open, setOpen] = useState(false);
 
   const openPopover = Boolean(anchorEl);
   const id = openPopover ? "simple-popover" : undefined;
@@ -193,11 +196,14 @@ function RefundOrder() {
         width: 200,
         headerAlign: "center",
         align: "center",
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         renderCell: ({ row }) => (
           <Button
             variant="contained"
             sx={{ ...primaryBtn, py: 1, m: 2, borderRadius: 5 }}
+            onClick={() => {
+              setSelected(row);
+              setOpen(true);
+            }}
           >
             Chi Tiết
           </Button>
@@ -266,6 +272,8 @@ function RefundOrder() {
         onPaginationModelChange={handleChangePage}
         rowCount={metaData.count}
       />
+
+      {selected && <ViewModal data={selected} open={open} setOpen={setOpen} />}
     </div>
   );
 }

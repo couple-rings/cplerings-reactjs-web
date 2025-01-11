@@ -9,6 +9,10 @@
         margin-bottom: 3rem;
     }
 
+    .tabLabel {
+        text-transform: capitalize;
+    }
+
     .loveVerification {
         color : $secondaryColor;
         cursor: pointer;

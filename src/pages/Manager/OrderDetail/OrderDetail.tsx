@@ -1,6 +1,6 @@
-import { Grid, Chip, Divider } from "@mui/material";
+import { Grid, Chip, Divider, Button } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import moment from "moment";
 import styles from "./OrderDetail.module.scss";
@@ -28,6 +28,8 @@ function OrderDetail() {
   const [maleRing, setMaleRing] = useState<IRing | null>(null);
   const [femaleRing, setFemaleRing] = useState<IRing | null>(null);
   const [payment, setPayment] = useState<IPayment[]>([]);
+
+  const navigate = useNavigate();
 
   const { id } = useParams<{ id: string }>();
 
@@ -78,6 +80,14 @@ function OrderDetail() {
 
   return (
     <Grid container className={styles.container}>
+      <Button
+        variant="outlined"
+        color="primary"
+        onClick={() => navigate("/manager/product")}
+        style={{ marginBottom: "1rem" }}
+      >
+        Quay lại danh sách đơn
+      </Button>
       <Grid container className={styles.header} mb={4}>
         <Grid container item xs={12} mb={2}>
           <Grid item xs={12} md={6} className={styles.orderInfo}>
