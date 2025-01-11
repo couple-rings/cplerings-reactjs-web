@@ -607,6 +607,7 @@ declare global {
   interface IRefund {
     id: number;
     reason: string;
+    orderNo: string;
     method: PaymentMethod;
     amount: {
       amount: number;
@@ -618,6 +619,8 @@ declare global {
       url: string;
       createdAt: string;
     };
+    createdAt: string;
+    payment: IPayment;
   }
 
   interface IResellOrder {
