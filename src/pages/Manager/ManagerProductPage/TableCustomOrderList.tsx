@@ -313,7 +313,7 @@ function TableCustomOrderList(props: ITableOrderListProps) {
                     <TableCell align="center" style={{ fontWeight: "500" }}>
                       <button
                         onClick={() =>
-                          navigate(`/manager/resell-order/detail/${row.id}`)
+                          navigate(`/manager/product/detail/${row.id}`)
                         }
                       >
                         Chi Tiết
