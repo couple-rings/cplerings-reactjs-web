@@ -455,6 +455,7 @@ declare global {
     status: CraftingStageStatus;
     payment: IPayment;
     craftingStageHistories: IStatusHistory<CraftingStageStatus>[];
+    customOrder?: ICustomOrder;
   }
 
   interface ITransportOrder {
@@ -589,7 +590,7 @@ declare global {
     status: PaymentStatus;
     vnPayTransaction?: {
       amount: {
-        amount: number;
+        amount: number | undefined;
       };
       payDate: string;
     };
@@ -615,12 +616,73 @@ declare global {
     staff: IUser;
     standardOrder?: IStandardOrder;
     customOrder?: ICustomOrder;
+    orderNo?: string;
     proofImage: {
       url: string;
       createdAt: string;
     };
-    createdAt: string;
-    payment: IPayment;
+    payment?: {
+      id: number;
+      type: string;
+      description: string;
+      amount: number;
+      status: string;
+      paymentReceiverType: string;
+      vnPayTransaction?: {
+        id: number;
+        amount: {
+          amount: number;
+        };
+        bankCode: string;
+        payDate: string;
+        orderInfo: string;
+        transactionId: string;
+      }
+      paymentNo: string;
+    }
+    createdAt?: string;
+    orderNo?: string;
+  }
+
+  interface IRefundOrder{
+    refund: {
+      id: number;
+      reason: string;
+      method: PaymentMethod;
+      amount: {
+        amount: number;
+      };
+      staff: IUser;
+      standardOrder?: IStandardOrder;
+      customOrder?: ICustomOrder;
+      orderNo?: string;
+      proofImage: {
+        url: string;
+        createdAt: string;
+      };
+      payment?: {
+        id: number;
+        type: string;
+        description: string;
+        amount: number;
+        status: string;
+        paymentReceiverType: string;
+        vnPayTransaction?: {
+          id: number;
+          amount: {
+            amount: number;
+          };
+          bankCode: string;
+          payDate: string;
+          orderInfo: string;
+          transactionId: string;
+        }
+        paymentNo: string;
+      }
+      createdAt?: string;
+      orderNo?: string;
+    }
+    
   }
 
   interface IResellOrder {
@@ -638,8 +700,28 @@ declare global {
       createdAt: string;
     };
     note: string;
+    payment?: {
+      id: number;
+      type: string;
+      description: string;
+      amount: number;
+      status: string;
+      paymentReceiverType: string;
+      vnPayTransaction?: {
+        id: number;
+        amount: {
+          amount: number;
+        };
+        bankCode: string;
+        payDate: string;
+        orderInfo: string;
+        transactionId: string;
+      }
+      paymentNo: string;
+    }
     customOrder: ICustomOrder;
-    payment: IPayment;
+    orderNo?: string;
+    createdAt: string;
   }
 
   interface IRevenue {
@@ -704,14 +786,34 @@ declare global {
   }
 
   interface IPaymentOrderStatistic {
-    paymentId: number;
+    id: number;
+    type: string;
+    description: string;
     amount: {
       amount: number;
     };
-    orderType: string;
-    paymentMethod: PaymentMethod;
-    orderNo: string;
-    createdAt: string;
+    paymentNo: string;
+    vnPayTransaction: {
+      id: number;
+      amount: {
+        amount: number;
+      };
+      bankCode: string;
+      payDate: string;
+      orderInfo: string;
+      transactionId: string;
+    };
+    customRequest?: ICustomRequest;
+    craftingStage?: ICraftingStage;
+    resellOrder?: {
+      orderNo: string;
+      createdAt: string;
+      amount: {
+        amount: number;
+      };
+      customOrder: ICustomOrder;
+    };
+    refund?: IRefund;
   }
 
   interface ITotalRevenueOfAllTime {
@@ -803,5 +905,12 @@ declare global {
     };
     note: string;
     customOrder: ICustomOrder;
+  }
+
+  interface ITotalPayment {
+    total : {
+      amount: number;
+    };
+    totalOrder: number;
   }
 }

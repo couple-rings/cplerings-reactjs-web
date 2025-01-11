@@ -46,7 +46,7 @@ function ManagerTopProductTable() {
   return (
     <div className="container">
       <div style={{ fontSize: "30px", marginBottom: "20px" }}>
-        Những đơn hàng mới nhất
+        Những đơn gia công mới nhất
       </div>
 
       <TableContainer component={Paper}>

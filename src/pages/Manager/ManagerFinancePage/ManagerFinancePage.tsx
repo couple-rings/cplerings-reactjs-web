@@ -12,28 +12,41 @@ import {
   // fetchRevenueTransferPaymentTypeFollowingBranch,
   fetchTotalExpenditureFollowingTime,
   fetchTotalIncomeFollowingTime,
+  // fetchTotalPaymentStatistic,
 } from "src/utils/querykey";
 import {
   // getRevenueTransferPaymentTypeFollowingBranch,
   getTotalExpenditureFollowingTime,
   getTotalIncomeFollowingTime,
+  // getTotalPaymentStatistic,
   getTotalRevenueFollowingBranch,
 } from "src/services/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
 import RevenueTypeMenu from "src/components/menu/hover/RevenueTypeMenu";
-import TableOrderList from "./TableOrderList";
+// import TableOrderList from "./TableOrderList";
 import { OrderTypeForTableOrderList } from "src/utils/enums";
+import TableCustomPaymentList from "./TableCustomPaymentList";
+import TableRefundPaymentList from "./TableRefundPaymentList";
+import TableResellPaymentList from "./TableResellPaymentList";
 
 function ManagerFiancePage() {
   const [filterObj, setFilterObj] = useState<IRevenueFilter>({
     startDate: "",
     endDate: "",
   });
+
+  // const [filterPaymentStatistic, setFilterPaymentStatistic] = useState<ITotalPaymentStatistic>({
+  //   startDate: "",
+  //   endDate: "",
+  //   orderType: "",
+  // })
+  // const [totalPayment, setTotalPayment] = useState("0");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   // const [paymentType, setPaymentType] = useState<IRevenuePaymentType>();
   const [totalIncome, setTotalIncome] = useState("0");
-  const [expenditure, setExpenditure] = useState<ITotalExpenditureFollowingTime>();
+  const [expenditure, setExpenditure] =
+    useState<ITotalExpenditureFollowingTime>();
   const [filterPaymentMethod, setFilterPaymentMethod] = useState<string>("All");
   const [selectedItem, setSelectedItem] = useState<OrderTypeForTableOrderList>(
     OrderTypeForTableOrderList.Custom
@@ -48,11 +61,18 @@ function ManagerFiancePage() {
       new Date().setDate(new Date().getDate() - 7)
     ).toISOString();
     const initialEndDate = new Date().toISOString();
+    // const initialorderType = OrderTypeForTableOrderList.Custom;
 
     setFilterObj({
       startDate: initialStartDate,
       endDate: initialEndDate,
     });
+
+    // setFilterPaymentStatistic({
+    //   startDate: initialStartDate,
+    //   endDate: initialEndDate,
+    //   orderType: initialorderType,
+    // })
   }, []);
 
   const { data: response } = useQuery({
@@ -70,10 +90,19 @@ function ManagerFiancePage() {
     queryFn: () => getTotalIncomeFollowingTime(filterObj),
   });
 
-  const { data : responseTotalExpenditure } = useQuery({
+  const { data: responseTotalExpenditure } = useQuery({
     queryKey: [fetchTotalExpenditureFollowingTime, filterObj],
     queryFn: () => getTotalExpenditureFollowingTime(filterObj),
-  })
+  });
+
+  // const {data: responseTotalPaymentStatistic} = useQuery({
+  //   queryKey: [fetchTotalPaymentStatistic, filterPaymentStatistic],
+  //   queryFn: () => getTotalPaymentStatistic(filterPaymentStatistic),
+  // })
+
+  // console.log("+-+-+-+****", filterPaymentStatistic);
+  console.log("<<<<HEHEH", selectedItem);
+  
 
   useEffect(() => {
     if (response && response.data) {
@@ -97,24 +126,25 @@ function ManagerFiancePage() {
 
       console.log(">>>DATA OF REVENUE", items);
 
-      // if (
-      //   responseREvenueTransferPaymentType &&
-      //   responseREvenueTransferPaymentType.data
-      // ) {
-      //   setPaymentType(responseREvenueTransferPaymentType.data);
-      // }
-
       if (responseTotalIncome && responseTotalIncome.data) {
-        setTotalIncome(responseTotalIncome.data.totalIn.amount.toLocaleString());
+        setTotalIncome(
+          responseTotalIncome.data.totalIn.amount.toLocaleString()
+        );
       }
 
       if (responseTotalExpenditure && responseTotalExpenditure.data) {
-        setExpenditure(responseTotalExpenditure.data)
+        setExpenditure(responseTotalExpenditure.data);
       }
 
+      // if (responseTotalPaymentStatistic && responseTotalPaymentStatistic.data) {
+      //   console.log("***************>>**", responseTotalPaymentStatistic.data.total.amount);
+        
+      //   setTotalPayment(
+      //     responseTotalPaymentStatistic.data.total.amount.toLocaleString()
+      //   )
+      // }
 
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      // window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [response, responseTotalIncome, responseTotalExpenditure]);
 
@@ -125,7 +155,25 @@ function ManagerFiancePage() {
       startDate: startDate ? new Date(startDate).toISOString() : "",
       endDate: endDate ? new Date(endDate).toISOString() : "",
     });
+
+    // setFilterPaymentStatistic((prev) => ({
+    //   ...prev,
+    //   startDate: startDate ? new Date(startDate).toISOString() : "",
+    //   endDate: startDate ? new Date(startDate).toISOString() : "",
+    // }));
+    
   };
+
+  const handleChangeSelectedItem = (item: OrderTypeForTableOrderList) => {
+    setSelectedItem(item);
+    // setFilterPaymentStatistic((prev) => ({
+    //   ...prev,
+    //   orderType: item,
+    // }));
+  };
+
+  // console.log(">>>>>>>>>>>DDDDDDDDDDDD", filterPaymentStatistic);
+  
 
   const total = response?.data?.totalRevenue?.amount.toLocaleString();
 
@@ -158,7 +206,7 @@ function ManagerFiancePage() {
               className={styles.topBox}
               justifyContent={"space-between"}
             >
-              <Grid lg={2.8} item style={{marginBottom : "20px"}}>
+              <Grid lg={2.8} item style={{ marginBottom: "20px" }}>
                 <div className={styles.revenueContainer}>
                   <div className={styles.boxTitle}>
                     <div className={styles.boxIcon}>
@@ -207,7 +255,10 @@ function ManagerFiancePage() {
                     }}
                   >
                     <div className={styles.numberContainer}>
-                      <p>{expenditure?.totalExpenditureWithCashType.amount.toLocaleString()}</p>₫
+                      <p>
+                        {expenditure?.totalExpenditure.amount.toLocaleString()}
+                      </p>
+                      ₫
                     </div>
                     {/* <div className={styles.trendContainer}>
                       <div className={styles.numberTrendUp}>
@@ -228,7 +279,6 @@ function ManagerFiancePage() {
                     </div>
                     <div className={styles.title}>
                       <p>Chuyển khoản (chi tiêu)</p>
-                
                     </div>
                   </div>
                   <div
@@ -273,7 +323,10 @@ function ManagerFiancePage() {
                     }}
                   >
                     <div className={styles.numberContainer}>
-                      <p>{expenditure?.totalExpenditure.amount.toLocaleString()}</p>₫
+                      <p>
+                        {expenditure?.totalExpenditureWithCashType.amount.toLocaleString()}
+                      </p>
+                      ₫
                     </div>
                     {/* <div className={styles.trendContainer}>
                       <div className={styles.numberTrendUp}>
@@ -359,19 +412,46 @@ function ManagerFiancePage() {
                   <div>
                     <div className={styles.tableHeader}>
                       <div className={styles.tabBar}>
-                        {tabName?.map((item) => (
-                          <p
-                            key={item.key}
-                            className={
-                              selectedItem === item.key
-                                ? styles.itemSelected
-                                : styles.item
-                            }
-                            onClick={() => setSelectedItem(item.key)}
-                          >
-                            {item.name}
-                          </p>
-                        ))}
+                        {tabName?.map((item) => {
+                          const itemClass =
+                            selectedItem === OrderTypeForTableOrderList.Custom
+                              ? styles.itemSelectedCustom
+                              : selectedItem ===
+                                OrderTypeForTableOrderList.Refund
+                              ? styles.itemSelectedRefund
+                              : selectedItem ===
+                                OrderTypeForTableOrderList.Resell
+                              ? styles.itemSelectedResell
+                              : styles.item;
+
+                          return (
+                            <p
+                              key={item.key}
+                              className={
+                                selectedItem === item.key
+                                  ? itemClass
+                                  : styles.item
+                              }
+                              onClick={() => handleChangeSelectedItem(item.key)}
+                            >
+                              {item.name}
+                            </p>
+                          );
+                        })}
+
+                        {/* <div
+                          className="totalInfo"
+                          style={{
+                            padding: "1px 10px",
+                            height: "fit-content",
+                            borderRadius: "10px",
+                            fontSize: "14px",
+                            fontWeight: "500",
+                            marginLeft: "50px",
+                          }}
+                        >
+                          <p>Tổng: {totalPayment} ₫ _ (10 đơn, 26 giao dịch)</p>
+                        </div> */}
                       </div>
 
                       <RevenueTypeMenu
@@ -379,14 +459,45 @@ function ManagerFiancePage() {
                       />
                     </div>
 
-                    <div className={styles.transactionContainer}>
+                    {selectedItem === OrderTypeForTableOrderList.Custom ? (
+                      <div className="{styles.transactionContainer}">
+                        <TableCustomPaymentList
+                          selectedOrderType={selectedItem}
+                          startDateData={filterObj.startDate}
+                          endDateData={filterObj.endDate}
+                          selectedFilterPaymentType={filterPaymentMethod}
+                        />
+                      </div>
+                    ) : selectedItem === OrderTypeForTableOrderList.Refund ? (
+                      <div className="{styles.transactionContainer}">
+                        <TableRefundPaymentList
+                          selectedOrderType={selectedItem}
+                          startDateData={filterObj.startDate}
+                          endDateData={filterObj.endDate}
+                          selectedFilterPaymentType={filterPaymentMethod}
+                        />
+                      </div>
+                    ) : selectedItem === OrderTypeForTableOrderList.Resell ? (
+                      <div className="{styles.transactionContainer}">
+                        <TableResellPaymentList
+                          selectedOrderType={selectedItem}
+                          startDateData={filterObj.startDate}
+                          endDateData={filterObj.endDate}
+                          selectedFilterPaymentType={filterPaymentMethod}
+                        />
+                      </div>
+                    ) : (
+                      ""
+                    )}
+
+                    {/* <div className={styles.transactionContainer}>
                       <TableOrderList
                         selectedOrderType={selectedItem}
                         startDateData={filterObj.startDate}
                         endDateData={filterObj.endDate}
                         selectedFilterPaymentType={filterPaymentMethod}
                       />
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </Grid>
