@@ -31,15 +31,9 @@ const initMetaData = {
 };
 
 type OrderStatistic =
-  // | IResellOrderStatistic
-  // | IRefundOrderStatistic
-  // | ICustomOrderStatistic
   IPaymentOrderStatistic;
 
 type OrderStatisticResponse =
-  // | IResponse<IListResponse<IResellOrderStatistic>>
-  // | IResponse<IListResponse<IRefundOrderStatistic>>
-  // | IResponse<IListResponse<ICustomOrderStatistic>>
   IResponse<IListResponse<IPaymentOrderStatistic>>;
 
 const defaultStartDate = new Date(
@@ -207,9 +201,9 @@ function TableResellPaymentList(props: ITableOrderListProps) {
                   <TableCell align="center" style={{ color: "#A8A7A7" }}>
                     Phương Thức
                   </TableCell>
-                  <TableCell align="center" style={{ color: "#A8A7A7" }}>
+                  {/* <TableCell align="center" style={{ color: "#A8A7A7" }}>
                     Giá Trị Ban Đầu
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell align="center" style={{ color: "#A8A7A7" }}>
                     Giá Trị Thu Mua
                   </TableCell>
@@ -263,13 +257,13 @@ function TableResellPaymentList(props: ITableOrderListProps) {
                           : ""}
                       </p>
                     </TableCell>
-                    <TableCell align="center" style={{ fontWeight: "500" }}>
+                    {/* <TableCell align="center" style={{ fontWeight: "500" }}>
                       <p className={styles.tableMoneyIn}>
                       {row.resellOrder?.customOrder?.totalPrice.amount.toLocaleString()}{" "}
                       ₫
                       </p>
                       
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell align="center" style={{ fontWeight: "500" }}>
                       <p className={styles.tableMoneyOut}>
                         {row.resellOrder?.amount.amount.toLocaleString()} ₫
