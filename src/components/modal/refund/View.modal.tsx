@@ -153,7 +153,7 @@ function ViewModal(props: IRefundModalProps) {
                   <FormLabel>Mã giao dịch:</FormLabel>
                 </Grid>
 
-                <Grid item>{data.payment.paymentNo}</Grid>
+                <Grid item>{data.payment?.paymentNo}</Grid>
               </Grid>
 
               <Grid container>
@@ -190,7 +190,7 @@ function ViewModal(props: IRefundModalProps) {
                     readOnly
                     multiline
                     rows={4}
-                    defaultValue={data.payment.description}
+                    defaultValue={data.payment?.description}
                   />
                 </Grid>
               </Grid>

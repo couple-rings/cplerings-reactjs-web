@@ -20,39 +20,45 @@
 }
 
 .tableCashPayment {
-    background-color: #FFF6ED;
+    background-color: #ffe5cb;
     color: #E6A768;
     padding: 5px;
     font-weight: 500;
     border-radius: 5px;
-    width: 60%;
 }
 
 .tableTransferPayment {
-    background-color: #EEF9FB;
-    color: #7BA7D7;
+    // background-color: #EEF9FB;
+    background-color: #f3f0fd;
+    // color: #7BA7D7;
+    color: #887ec0;
     padding: 5px;
     font-weight: 500;
     border-radius: 5px;
-    width: 60%;
 }
 
-.tableMoneyIn {
+.tableStatusCompleted {
     background-color: #D9ECC0;
     color: #35714E;
     padding: 5px;
     font-weight: 500;
     border-radius: 5px;
-    width: 60%;
 }
 
-.tableMoneyOut {
-    background-color: #FBA8A8;
-    color: #BB271A;
+.tableMoneyIn {
+    background-color: #EEF9FB;
+    color: #5994d3;
     padding: 5px;
     font-weight: 500;
     border-radius: 5px;
-    width: 60%;
+}
+
+.tableMoneyOut {
+    background-color: #ffd2d2;
+    color: #e03d2f;
+    padding: 5px;
+    font-weight: 500;
+    border-radius: 5px;
 }
 
 .tableCustomType {
@@ -61,7 +67,6 @@
     padding: 5px;
     font-weight: 500;
     border-radius: 5px;
-    width: 60%;
 }
 
 .tableRefundType {
@@ -70,7 +75,6 @@
     padding: 5px;
     font-weight: 500;
     border-radius: 5px;
-    width: 60%;
 }
 
 .tableResellType {
@@ -79,5 +83,12 @@
     padding: 5px;
     font-weight: 500;
     border-radius: 5px;
-    width: 60%;
+}
+
+.transactionContainer {
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-top: 5px;
+    margin-bottom: 30px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }

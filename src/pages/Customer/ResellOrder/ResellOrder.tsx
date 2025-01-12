@@ -145,13 +145,13 @@ function ResellOrder() {
                                 <FormLabel>Mã giao dịch:</FormLabel>
                               </Grid>
 
-                              <Grid item>{item.payment.paymentNo}</Grid>
+                              <Grid item>{item.payment?.paymentNo}</Grid>
                             </Grid>
 
                             <fieldset style={{ margin: 0, marginBottom: 20 }}>
                               <legend>Nội dung:</legend>
                               <Grid container p={3}>
-                                {item.payment.description}
+                                {item.payment?.description}
                               </Grid>
                             </fieldset>
 
@@ -175,7 +175,7 @@ function ResellOrder() {
                               >
                                 <Grid item>Mã đơn:</Grid>
 
-                                <Grid item>{item.customOrder.orderNo}</Grid>
+                                <Grid item>{item.customOrder?.orderNo}</Grid>
                               </Grid>
 
                               <Grid
@@ -186,7 +186,7 @@ function ResellOrder() {
                                 <Grid item>Ngày bắt đầu:</Grid>
 
                                 <Grid item>
-                                  {moment(item.customOrder.createdAt).format(
+                                  {moment(item.customOrder?.createdAt).format(
                                     "DD/MM/YYYY HH:mm"
                                   )}
                                 </Grid>
@@ -201,7 +201,7 @@ function ResellOrder() {
 
                                 <Grid item>
                                   {moment(
-                                    item.customOrder.customOrderHistories.find(
+                                    item.customOrder?.customOrderHistories.find(
                                       (item) =>
                                         item.status ===
                                         CustomOrderStatus.Completed
@@ -219,7 +219,7 @@ function ResellOrder() {
 
                                 <Grid item fontWeight={600}>
                                   {currencyFormatter(
-                                    item.customOrder.totalPrice.amount
+                                    item.customOrder?.totalPrice.amount
                                   )}
                                 </Grid>
                               </Grid>
@@ -243,7 +243,7 @@ function ResellOrder() {
                         <WeddingRing
                           ring={item.customOrder.firstRing}
                           gender={
-                            item.customOrder.firstRing.customDesign
+                            item.customOrder?.firstRing.customDesign
                               .designVersion.design.characteristic
                           }
                         />

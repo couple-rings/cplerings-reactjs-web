@@ -1,4 +1,4 @@
-@use 'src/index.scss'as *;
+@use "src/index.scss" as *;
 
 .container {
     padding: 1.5rem;
@@ -83,7 +83,7 @@
         }
 
         .revenueBankingContainer {
-            background-color: #EEF9FB;
+            background-color: #eef9fb;
             border-radius: 10px;
             padding: 25px;
             // padding-bottom: 10px;
@@ -110,7 +110,7 @@
                     }
                 }
                 .title {
-                    color: #7BA7D7;
+                    color: #7ba7d7;
                     padding: 0;
                     margin: 0;
                     font-size: 16px;
@@ -151,7 +151,7 @@
         }
 
         .revenueCashContainer {
-            background-color: #FFF6ED;
+            background-color: #fff6ed;
             border-radius: 10px;
             padding: 25px;
             // padding-bottom: 10px;
@@ -178,7 +178,7 @@
                     }
                 }
                 .title {
-                    color: #E6A768;
+                    color: #e6a768;
                     padding: 0;
                     margin: 0;
                     font-size: 16px;
@@ -335,27 +335,28 @@
                     align-items: center;
                     justify-content: space-between;
                     margin-right: 30px;
+                    margin-bottom: 30px;
                 }
-        
+
                 .tabBar {
                     padding: 0px 20px;
                     display: flex;
                     gap: 20px;
-                    background-color: #F5F6F9;
+                    background-color: #f5f6f9;
                     border-radius: 10px;
                     align-items: center;
                     width: fit-content;
-                    margin-bottom: 30px;
+                    // margin-bottom: 30px;
                     margin-left: 30px;
                     // box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-        
+
                     .item {
                         font-weight: 500;
-                        color: #A8A7A7;
+                        color: #a8a7a7;
                         cursor: pointer;
                         font-size: 14px;
                     }
-        
+
                     .itemSelected {
                         width: fit-content;
                         cursor: pointer;
@@ -367,13 +368,49 @@
                         font-size: 14px;
                         box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
                     }
+
+                    .itemSelectedCustom {
+                        width: fit-content;
+                        cursor: pointer;
+                        padding: 3px 8px;
+                        background-color: #50afae;
+                        color: #fff;
+                        font-weight: 500;
+                        border-radius: 5px;
+                        font-size: 14px;
+                        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+                    }
+
+                    .itemSelectedRefund {
+                        width: fit-content;
+                        cursor: pointer;
+                        padding: 3px 8px;
+                        background-color: #a822d0;
+                        color: #fff;
+                        font-weight: 500;
+                        border-radius: 5px;
+                        font-size: 14px;
+                        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+                    }
+
+                    .itemSelectedResell {
+                        width: fit-content;
+                        cursor: pointer;
+                        padding: 3px 8px;
+                        background-color: #4e94f7;
+                        color: #fff;
+                        font-weight: 500;
+                        border-radius: 5px;
+                        font-size: 14px;
+                        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+                    }
                 }
             }
         }
 
         .empty {
             font-size: 1.2rem;
-            color    : $primaryColor;
+            color: $primaryColor;
         }
     }
 }

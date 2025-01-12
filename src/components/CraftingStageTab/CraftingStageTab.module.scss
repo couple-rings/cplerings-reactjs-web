@@ -1,0 +1,40 @@
+.stageCard {
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.stageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.stageTitle {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.stageDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  span:first-child {
+    color: #666;
+  }
+}
+
+.stageStatus {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+} 
