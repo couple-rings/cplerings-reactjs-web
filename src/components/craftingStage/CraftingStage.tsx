@@ -80,7 +80,8 @@ function CraftingStage(props: ICraftingStageProps) {
           </Grid>
 
           {status === CraftingStageStatus.Pending &&
-            (!previousStage || previousStage.completionDate) && (
+            (!previousStage || previousStage.completionDate) &&
+            order.status !== CustomOrderStatus.Canceled && (
               <Grid
                 container
                 alignItems={"flex-end"}
