@@ -30,11 +30,9 @@ const initMetaData = {
   count: 0,
 };
 
-type OrderStatistic =
-  IPaymentOrderStatistic;
+type OrderStatistic = IPaymentOrderStatistic;
 
-type OrderStatisticResponse =
-  IResponse<IListResponse<IPaymentOrderStatistic>>;
+type OrderStatisticResponse = IResponse<IListResponse<IPaymentOrderStatistic>>;
 
 const defaultStartDate = new Date(
   new Date().setDate(new Date().getDate() - 7)
@@ -139,9 +137,7 @@ function TableResellPaymentList(props: ITableOrderListProps) {
     const filteredItems =
       selectedFilterPaymentType === "All"
         ? waitingData
-        : waitingData.filter(
-            (item) => item.type === selectedFilterPaymentType
-          );
+        : waitingData.filter((item) => item.type === selectedFilterPaymentType);
     setRowData(filteredItems);
   }, [selectedFilterPaymentType, waitingData]);
 
@@ -196,7 +192,7 @@ function TableResellPaymentList(props: ITableOrderListProps) {
                     Ngày Tạo
                   </TableCell>
                   <TableCell align="center" style={{ color: "#A8A7A7" }}>
-                    Mã Đơn
+                    Thuộc Đơn
                   </TableCell>
                   <TableCell align="center" style={{ color: "#A8A7A7" }}>
                     Phương Thức
@@ -205,7 +201,7 @@ function TableResellPaymentList(props: ITableOrderListProps) {
                     Giá Trị Ban Đầu
                   </TableCell> */}
                   <TableCell align="center" style={{ color: "#A8A7A7" }}>
-                    Giá Trị Thu Mua
+                    Số Tiền
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -223,11 +219,7 @@ function TableResellPaymentList(props: ITableOrderListProps) {
                       {metaData.page * metaData.pageSize + index + 1}
                     </TableCell>
                     <TableCell align="left" style={{ fontWeight: "500" }}>
-                      {row.type === "CASH"
-                        ? "N/A"
-                        : row.type === "TRANSFER"
-                        ? row.paymentNo
-                        : ""}
+                      {row.paymentNo}
                     </TableCell>
                     <TableCell align="left" style={{ fontWeight: "500" }}>
                       {row.description}

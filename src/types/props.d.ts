@@ -593,6 +593,7 @@ declare global {
     date: string;
     description: string;
     type: PaymentType;
+    paymentNo: string;
   }
 
   interface IPaymentsProps {

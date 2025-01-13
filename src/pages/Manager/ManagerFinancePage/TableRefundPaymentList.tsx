@@ -63,7 +63,7 @@ function TableRefundPaymentList(props: ITableOrderListProps) {
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
   const [totalPayment, setTotalPayment] = useState("0");
   const [paymentNumber, setPaymentNumber] = useState("0");
-  const [orderNumber, setOrderNumber] = useState("0"); 
+  const [orderNumber, setOrderNumber] = useState("0");
   const [waitingData, setWaitingData] = useState<OrderStatistic[]>([]);
 
   const orderQuery = {
@@ -111,10 +111,10 @@ function TableRefundPaymentList(props: ITableOrderListProps) {
     enabled: Boolean(selectedOrderType),
   });
 
-  const {data: responseTotalPaymentStatistic} = useQuery({
-      queryKey: [fetchTotalPaymentStatistic, filterOrderStatisticObj],
-      queryFn: () => getTotalPaymentStatistic(filterOrderStatisticObj),
-    })
+  const { data: responseTotalPaymentStatistic } = useQuery({
+    queryKey: [fetchTotalPaymentStatistic, filterOrderStatisticObj],
+    queryFn: () => getTotalPaymentStatistic(filterOrderStatisticObj),
+  });
 
   useEffect(() => {
     if (data && data.data) {
@@ -146,9 +146,7 @@ function TableRefundPaymentList(props: ITableOrderListProps) {
     const filteredItems =
       selectedFilterPaymentType === "All"
         ? waitingData
-        : waitingData.filter(
-            (item) => item.type === selectedFilterPaymentType
-          );
+        : waitingData.filter((item) => item.type === selectedFilterPaymentType);
     setRowData(filteredItems);
   }, [selectedFilterPaymentType, waitingData]);
 
@@ -175,7 +173,8 @@ function TableRefundPaymentList(props: ITableOrderListProps) {
         }}
       >
         <p>
-          Tổng: {totalPayment} ₫ _ ({orderNumber} đơn, {paymentNumber} giao dịch)
+          Tổng: {totalPayment} ₫ _ ({orderNumber} đơn, {paymentNumber} giao
+          dịch)
         </p>
       </div>
 
@@ -202,7 +201,7 @@ function TableRefundPaymentList(props: ITableOrderListProps) {
                     Ngày Tạo
                   </TableCell>
                   <TableCell align="center" style={{ color: "#A8A7A7" }}>
-                    Mã Đơn
+                    Thuộc Đơn
                   </TableCell>
                   <TableCell align="center" style={{ color: "#A8A7A7" }}>
                     Phương Thức
@@ -211,7 +210,7 @@ function TableRefundPaymentList(props: ITableOrderListProps) {
                     Giá Trị Ban Đầu
                   </TableCell> */}
                   <TableCell align="center" style={{ color: "#A8A7A7" }}>
-                    Giá Trị Thu Mua
+                    Số Tiền
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -258,9 +257,7 @@ function TableRefundPaymentList(props: ITableOrderListProps) {
                       </p>
                     </div> */}
 
-                      {row.vnPayTransaction?.transactionId
-                        ? row.paymentNo
-                        : "N/A"}
+                      {row.paymentNo}
                     </TableCell>
                     <TableCell align="left" style={{ fontWeight: "500" }}>
                       {/* {row.createdAt
@@ -303,14 +300,19 @@ function TableRefundPaymentList(props: ITableOrderListProps) {
                       {row.refund?.orderNo}
                     </TableCell>
                     <TableCell align="center" style={{ fontWeight: "500" }}>
-                      <p className={row.type === "CASH" ? styles.tableCashPayment : styles.tableTransferPayment}>
-                      {row.type === "CASH"
-                        ? "Tiền Mặt"
-                        : row.type === "TRANSFER"
-                        ? "Chuyển Khoản"
-                        : ""}
+                      <p
+                        className={
+                          row.type === "CASH"
+                            ? styles.tableCashPayment
+                            : styles.tableTransferPayment
+                        }
+                      >
+                        {row.type === "CASH"
+                          ? "Tiền Mặt"
+                          : row.type === "TRANSFER"
+                          ? "Chuyển Khoản"
+                          : ""}
                       </p>
-                      
                     </TableCell>
                     {/* <TableCell align="center" style={{ fontWeight: "500" }}>
                       <p className={styles.tableMoneyIn}>
@@ -321,9 +323,8 @@ function TableRefundPaymentList(props: ITableOrderListProps) {
                     </TableCell> */}
                     <TableCell align="center" style={{ fontWeight: "500" }}>
                       <p className={styles.tableMoneyOut}>
-                      {row.refund?.amount.amount.toLocaleString()} ₫
+                        {row.refund?.amount.amount.toLocaleString()} ₫
                       </p>
-                      
                     </TableCell>
                   </TableRow>
                 ))}

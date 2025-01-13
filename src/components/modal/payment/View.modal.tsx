@@ -9,7 +9,8 @@ import moment from "moment";
 import { PaymentType } from "src/utils/enums";
 
 function ViewModal(props: IPaymentModalProps) {
-  const { open, setOpen, amount, date, description, status, type } = props;
+  const { open, setOpen, amount, date, description, status, type, paymentNo } =
+    props;
 
   const handleClose = (
     event?: object,
@@ -31,6 +32,12 @@ function ViewModal(props: IPaymentModalProps) {
     >
       <DialogTitle>Thông tin thanh toán</DialogTitle>
       <DialogContent>
+        <Grid container mb={1}>
+          <Grid item xs={4}>
+            <FormLabel>Mã giao dịch:</FormLabel>
+          </Grid>
+          <Grid item>{paymentNo}</Grid>
+        </Grid>
         <Grid container mb={1}>
           <Grid item xs={4}>
             <FormLabel>Phương thức:</FormLabel>
