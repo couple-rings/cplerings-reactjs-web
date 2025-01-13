@@ -148,6 +148,18 @@ declare global {
   interface IOrderStatisticFilter extends IPaginationFilter {
     startDate?: string;
     endDate?: string;
+    orderType?: string;
+  }
+
+  interface IOrderStatistic extends IPaginationFilter {
+    startDate?: string;
+    endDate?: string;
+  }
+
+  interface ITotalPaymentStatistic {
+    startDate?: string;
+    endDate?: string;
+    orderType?: string;
   }
 
   

@@ -12,6 +12,9 @@ import ManagerFiancePage from "src/pages/Manager/ManagerFinancePage/ManagerFinan
 import ManageJewelry from "src/pages/Manager/ManageJewelry/ManageJewelry";
 import ManagerProductPage from "src/pages/Manager/ManagerProductPage/ManagerProductPage";
 import ViewAccountInfo from "src/pages/Manager/ViewAccountInfo/ViewAccountInfo";
+import ResellOrderDetail from "src/pages/Manager/ManagerProductPage/OrderDetail/ResellOrderDetail";
+import RefundOrderDetail from "src/pages/Manager/ManagerProductPage/OrderDetail/RefundOrderDetail";
+import OrderDetail from "src/pages/Manager/OrderDetail/OrderDetail";
 
 const ManagerRouteObject: RouteObject = {
   path: "/manager",
@@ -62,9 +65,21 @@ const ManagerRouteObject: RouteObject = {
       element: <ManagerProductPage />,
     },
     {
+      path: "product/detail/:id",
+      element: <OrderDetail />,
+    },
+    {
       path: "account",
       element: <ViewAccountInfo />,
-    }
+    },
+    {
+      path: "resell-order/detail/:id",
+      element: <ResellOrderDetail/>
+    },
+    {
+      path: "refund/detail/:id",
+      element: <RefundOrderDetail/>
+    },
   ],
 };
 
