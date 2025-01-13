@@ -13,52 +13,52 @@ import CollectionsBookmarkRoundedIcon from "@mui/icons-material/CollectionsBookm
 import TopicRoundedIcon from "@mui/icons-material/TopicRounded";
 import LocalOfferRoundedIcon from "@mui/icons-material/LocalOfferRounded";
 import DesignServicesRoundedIcon from "@mui/icons-material/DesignServicesRounded";
-import PersonIcon from '@mui/icons-material/Person';
+// import PersonIcon from '@mui/icons-material/Person';
 import necklace from "src/assets/necklace.png";
 
 const sidebarList = [
   {
-    text: "Dashboard",
+    text: "Thống Kê",
     icon: <DashboardRoundedIcon />,
     path: "/manager",
   },
+  // {
+  //   text: "Tài Khoản",
+  //   icon: <PersonIcon/>,
+  //   path: "/manager/account",
+  // },
   {
-    text: "Account",
-    icon: <PersonIcon/>,
-    path: "/manager/account",
-  },
-  {
-    text: "Manage Branch",
+    text: "Thông Tin Cửa Hàng",
     icon: <StoreMallDirectorySharpIcon />,
     path: "/manager/branch",
   },
   {
-    text: "Manage Diamond",
+    text: "Quản Lý Kim Cương",
     icon: <DiamondSharpIcon />,
     path: "/manager/diamond",
   },
   {
-    text: "Manage Collection",
+    text: "Quản Lý Bộ Sưu Tập",
     icon: <CollectionsBookmarkRoundedIcon />,
     path: "/manager/collection",
   },
   {
-    text: "Manage Design",
+    text: "Quản Lý Thiết Kế",
     icon: <DesignServicesRoundedIcon />,
     path: "/manager/design",
   },
   {
-    text: "Manage Jewelry",
+    text: "Quản Lý Trang Sức",
     icon: <img src={necklace} width={25} />,
     path: "/manager/jewelry",
   },
   {
-    text: "Topic & Tag",
+    text: "Chủ Đề & Tag",
     icon: <TopicRoundedIcon />,
     path: "/manager/topic&tag",
   },
   {
-    text: "Discount Campaign",
+    text: "Chính Sách Giảm Giá",
     icon: <LocalOfferRoundedIcon />,
     path: "/manager/campaign",
   },
