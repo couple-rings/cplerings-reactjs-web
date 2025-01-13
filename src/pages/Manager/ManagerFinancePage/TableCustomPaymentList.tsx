@@ -40,14 +40,19 @@ const defaultStartDate = new Date(
 const defaultEndDate = new Date().toISOString();
 
 function TableCustomPaymentList(props: ITableOrderListProps) {
-  const { selectedOrderType, endDateData, startDateData, selectedFilterPaymentType } = props;
+  const {
+    selectedOrderType,
+    endDateData,
+    startDateData,
+    selectedFilterPaymentType,
+  } = props;
   console.log(">>>Selected Order Type", selectedOrderType);
 
   const [rowData, setRowData] = useState<OrderStatistic[]>([]);
   const [metaData, setMetaData] = useState<IListMetaData>(initMetaData);
   const [totalPayment, setTotalPayment] = useState("0");
   const [paymentNumber, setPaymentNumber] = useState("0");
-  const [orderNumber, setOrderNumber] = useState("0");  
+  const [orderNumber, setOrderNumber] = useState("0");
   const [waitingData, setWaitingData] = useState<OrderStatistic[]>([]);
 
   const orderQuery = {
@@ -94,14 +99,10 @@ function TableCustomPaymentList(props: ITableOrderListProps) {
     enabled: Boolean(selectedOrderType),
   });
 
-  const {data: responseTotalPaymentStatistic} = useQuery({
+  const { data: responseTotalPaymentStatistic } = useQuery({
     queryKey: [fetchTotalPaymentStatistic, filterOrderStatisticObj],
     queryFn: () => getTotalPaymentStatistic(filterOrderStatisticObj),
-  })
-
-  
-  
-  
+  });
 
   useEffect(() => {
     if (data && data.data) {
@@ -123,10 +124,10 @@ function TableCustomPaymentList(props: ITableOrderListProps) {
       if (responseTotalPaymentStatistic && responseTotalPaymentStatistic.data) {
         setTotalPayment(
           responseTotalPaymentStatistic.data.total.amount.toLocaleString()
-        )
+        );
         setOrderNumber(
           responseTotalPaymentStatistic.data.totalOrder.toLocaleString()
-        )
+        );
       }
     }
   }, [data, responseTotalPaymentStatistic]);
@@ -137,7 +138,9 @@ function TableCustomPaymentList(props: ITableOrderListProps) {
     const filteredItems =
       selectedFilterPaymentType === "All"
         ? waitingData
-        : selectedFilterPaymentType === "TRANSFER" ? waitingData : [];
+        : selectedFilterPaymentType === "TRANSFER"
+        ? waitingData
+        : [];
     setRowData(filteredItems);
   }, [selectedFilterPaymentType, waitingData]);
 
@@ -163,7 +166,10 @@ function TableCustomPaymentList(props: ITableOrderListProps) {
           width: "fit-content",
         }}
       >
-        <p>Tổng: {totalPayment} ₫ _ ({orderNumber} đơn, {paymentNumber} giao dịch)</p>
+        <p>
+          Tổng: {totalPayment} ₫ _ ({orderNumber} đơn, {paymentNumber} giao
+          dịch)
+        </p>
       </div>
       <div className={styles.transactionContainer}>
         <div style={{ fontSize: "30px", marginBottom: "20px" }}></div>
@@ -188,13 +194,13 @@ function TableCustomPaymentList(props: ITableOrderListProps) {
                     Ngày Tạo
                   </TableCell>
                   <TableCell align="center" style={{ color: "#A8A7A7" }}>
-                    Mã Đơn
+                    Thuộc Đơn
                   </TableCell>
                   <TableCell align="center" style={{ color: "#A8A7A7" }}>
                     Phương Thức
                   </TableCell>
                   <TableCell align="center" style={{ color: "#A8A7A7" }}>
-                    Giá Trị
+                    Số Tiền
                   </TableCell>
                 </TableRow>
               </TableHead>

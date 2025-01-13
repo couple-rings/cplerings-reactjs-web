@@ -30,6 +30,9 @@ export default function Payments(props: IPaymentsProps) {
         <TableHead>
           <TableRow>
             <TableCell>
+              <FormLabel>Mã Giao Dịch</FormLabel>
+            </TableCell>
+            <TableCell>
               <FormLabel>Ngày Thực hiện</FormLabel>
             </TableCell>
             <TableCell>
@@ -49,6 +52,7 @@ export default function Payments(props: IPaymentsProps) {
         <TableBody>
           {response?.data?.payments.map((row) => (
             <TableRow key={row.id}>
+              <TableCell>{row.paymentNo}</TableCell>
               <TableCell>
                 {moment(row.vnPayTransaction?.payDate).format(
                   "DD/MM/YYYY HH:mm"
