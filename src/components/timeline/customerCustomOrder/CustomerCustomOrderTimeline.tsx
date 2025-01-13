@@ -361,6 +361,7 @@ function CustomerCustomOrderTimeline(props: ICustomerCustomOrderTimelineProps) {
           date={payment.vnPayTransaction?.payDate ?? ""}
           description={payment.description}
           type={payment.type}
+          paymentNo={payment.paymentNo}
         />
       )}
     </Timeline>
