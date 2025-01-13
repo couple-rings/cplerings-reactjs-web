@@ -521,7 +521,8 @@ function WeddingRingsDetail() {
                 <Accordion sx={{ boxShadow: "none" }}>
                   <AccordionSummary expandIcon={<CustomExpandIcon />}>
                     <div className={styles.title}>
-                      Kim Cương: {getDiamondSpec(firstDiamond)}
+                      Kim Cương: {firstDiamond.shape}{" "}
+                      {getDiamondSpec(firstDiamond)}
                     </div>
                   </AccordionSummary>
                   <AccordionDetails>
@@ -544,6 +545,7 @@ function WeddingRingsDetail() {
                               }
                               className={`${styles.spec} ${selected}`}
                             >
+                              {item.diamondSpecification.shape}{" "}
                               {getDiamondSpec(item.diamondSpecification)}
                             </Grid>
                           );
@@ -662,7 +664,8 @@ function WeddingRingsDetail() {
                 <Accordion sx={{ boxShadow: "none" }}>
                   <AccordionSummary expandIcon={<CustomExpandIcon />}>
                     <div className={styles.title}>
-                      Kim Cương: {getDiamondSpec(secondDiamond)}
+                      Kim Cương: {secondDiamond.shape}{" "}
+                      {getDiamondSpec(secondDiamond)}
                     </div>
                   </AccordionSummary>
                   <AccordionDetails>
@@ -685,6 +688,7 @@ function WeddingRingsDetail() {
                               }
                               className={`${styles.spec} ${selected}`}
                             >
+                              {item.diamondSpecification.shape}{" "}
                               {getDiamondSpec(item.diamondSpecification)}
                             </Grid>
                           );
